@@ -90,7 +90,7 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
                 subject = experiment.subjects.get(subject_name)
                 evoked = subject.evoked.get(evoked_name)
 
-                mne_evokeds = evoked.content
+                rne_evokeds = evoked.content
                 for mne_evoked in mne_evokeds.values():
                     sfreqs.append(mne_evoked.info['sfreq'])
                     times.append(mne_evoked.times)

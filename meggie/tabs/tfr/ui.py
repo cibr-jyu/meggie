@@ -36,7 +36,7 @@ def create(experiment, data, window):
     else:
         stem = 'TFR'
     default_name = next_available_name(
-        experiment.active_subject.spectrum.keys(), stem)
+        experiment.active_subject.tfr.keys(), stem)
 
     dialog = TFRDialog(experiment, window, selected_names, default_name)
     dialog.show()
@@ -170,6 +170,38 @@ def save_tse(experiment, data, window):
     """ Computes TSE and saves averages or channels 
     to csv from selected item from all subjects
     """
+    try:
+        selected_name = data['outputs']['tfr'][0]
+    except IndexError as exc:
+        return
+
+    time_arrays = []
+    freq_arrays = []
+    for subject in experiment.subjects.values():
+        tfr = subject.tfr.get(selected_name)
+        if not tfr:
+            continue
+        time_arrays.append(tfr.times)
+        freq_arrays.append(tfr.freqs)
+    assert_arrays_same(time_arrays)
+    assert_arrays_same(freq_arrays)
+
+    def handler(output, condition, blmode, blstart, blend,
+                tmin, tmax, fmin, fmax):
+        try:
+            if output == 'all_channels':
+                save_tse_all_channels(experiment, selected_name,
+                                      blmode, blstart, blend,
+                                      tmin, tmax, fmin, fmax)
+            else:
+                save_tse_channel_averages(experiment, selected_name,
+                                          blmode, blstart, blend,
+                                          tmin, tmax, fmin, fmax)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+
+    dialog = TFROutputOptions(window, experiment, selected_name, handler)
+    dialog.show()
 
 
 def group_average(experiment, data, window):
