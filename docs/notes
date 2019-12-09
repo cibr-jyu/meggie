@@ -1,0 +1,6 @@
+Bad channels:
+  - Are set through raw plot
+  - Are kept in epoch collection creation
+  - Are kept in evoked collection creation, but excluded in plotting / saving
+  - Are excluded in spectrum creation
+  - are excluded in tfr creation

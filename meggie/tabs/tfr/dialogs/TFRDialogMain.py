@@ -98,16 +98,16 @@ class TFRDialog(QtWidgets.QDialog):
         subtract_evoked = self.ui.checkBoxSubtractEvoked.isChecked()
 
         if self.ui.radioButtonFixed.isChecked():
-            ncycles = self.ui.doubleSpinBoxNcycles.value()
+            n_cycles = self.ui.doubleSpinBoxNcycles.value()
         elif self.ui.radioButtonAdapted.isChecked():
-            ncycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()
+            n_cycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()
 
         experiment = self.experiment
         subject = experiment.active_subject
 
         try:
             create_tfr(subject, tfr_name, self.epoch_names,
-                       freqs=freqs, decim=decim, ncycles=ncycles,
+                       freqs=freqs, decim=decim, n_cycles=n_cycles,
                        subtract_evoked=subtract_evoked,
                        do_meanwhile=self.parent.update_ui)
 
@@ -143,9 +143,9 @@ class TFRDialog(QtWidgets.QDialog):
         subtract_evoked = self.ui.checkBoxSubtractEvoked.isChecked()
 
         if self.ui.radioButtonFixed.isChecked():
-            ncycles = self.ui.doubleSpinBoxNcycles.value()
+            n_cycles = self.ui.doubleSpinBoxNcycles.value()
         elif self.ui.radioButtonAdapted.isChecked():
-            ncycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()
+            n_cycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()
 
         experiment = self.experiment
 
@@ -155,7 +155,7 @@ class TFRDialog(QtWidgets.QDialog):
                 try:
                     create_tfr(subject, tfr_name,
                                self.epoch_names, freqs=freqs,
-                               decim=decim, ncycles=ncycles,
+                               decim=decim, n_cycles=n_cycles,
                                subtract_evoked=subtract_evoked,
                                do_meanwhile=self.parent.update_ui)
                     subject.release_memory()

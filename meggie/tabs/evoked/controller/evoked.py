@@ -82,23 +82,21 @@ def create_averages(experiment, mne_evoked):
 def group_average_evoked(experiment, evoked_name, groups, new_name):
     """
     """
-    sfreqs = []
-    times = []
+    keys = []
+    time_arrays = []
     for group_key, group_subjects in groups.items():
         for subject_name in group_subjects:
             try:
                 subject = experiment.subjects.get(subject_name)
                 evoked = subject.evoked.get(evoked_name)
 
-                rne_evokeds = evoked.content
+                mne_evokeds = evoked.content
                 for mne_evoked in mne_evokeds.values():
-                    sfreqs.append(mne_evoked.info['sfreq'])
-                    times.append(mne_evoked.times)
+                    time_arrays.append(mne_evoked.times)
             except Exception as exc:
                 continue
 
-    assert_arrays_same(times)
-    assert_arrays_same(sfreqs, message='Sampling rates do not match')
+    assert_arrays_same(time_arrays)
 
     grand_evokeds = {}
     for group_key, group_subjects in groups.items():
@@ -128,7 +126,7 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
 
     evoked_directory = subject.evoked_directory
 
-    params = {'event_names': new_keys,
+    params = {'conditions': new_keys,
               'groups': groups}
 
     grand_average_evoked = Evoked(new_name, evoked_directory, params,

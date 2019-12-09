@@ -146,7 +146,7 @@ def save_tfr(experiment, data, window):
         time_arrays.append(tfr.times)
         freq_arrays.append(tfr.freqs)
     assert_arrays_same(time_arrays)
-    assert_arrays_same(freq_arrays)
+    assert_arrays_same(freq_arrays, 'Freqs do no match')
 
     def handler(output, condition, blmode, blstart, blend,
                 tmin, tmax, fmin, fmax):
@@ -184,7 +184,7 @@ def save_tse(experiment, data, window):
         time_arrays.append(tfr.times)
         freq_arrays.append(tfr.freqs)
     assert_arrays_same(time_arrays)
-    assert_arrays_same(freq_arrays)
+    assert_arrays_same(freq_arrays, 'Freqs do no match')
 
     def handler(output, condition, blmode, blstart, blend,
                 tmin, tmax, fmin, fmax):
@@ -207,7 +207,27 @@ def save_tse(experiment, data, window):
 def group_average(experiment, data, window):
     """ Handles group average item creation
     """
-    pass
+    try:
+        selected_name = data['outputs']['tfr'][0]
+    except IndexError as exc:
+        return
+
+    def handler(name, groups):
+        try:
+            group_average_tfr(experiment, selected_name, groups, name,
+                              do_meanwhile=window.update_ui)
+            experiment.save_experiment_settings()
+            window.initialize_ui()
+
+        except Exception as exc:
+            exc_messagebox(window, exc)
+            return
+
+    default_name = next_available_name(
+        experiment.active_subject.tfr.keys(),
+        'group_' + selected_name)
+    dialog = GroupAverageDialog(experiment, window, handler, default_name)
+    dialog.show()
 
 
 def tfr_info(experiment, data, window):
@@ -215,8 +235,8 @@ def tfr_info(experiment, data, window):
     """
     try:
         selected_name = data['outputs']['tfr'][0]
-        evoked = experiment.active_subject.tfr[selected_name]
-        message = pformat(evoked.params)
+        tfr = experiment.active_subject.tfr[selected_name]
+        message = pformat(tfr.params)
     except Exception as exc:
         message = ""
 

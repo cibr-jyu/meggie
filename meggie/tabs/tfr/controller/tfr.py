@@ -20,6 +20,7 @@ from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
 from meggie.utilities.units import get_power_unit
 from meggie.utilities.validators import assert_arrays_same
+from meggie.utilities.decorators import threaded
 
 from meggie.datatypes.tfr.tfr import TFR
 
@@ -266,7 +267,7 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
 
 @threaded
 def create_tfr(subject, tfr_name, epochs_names,
-               freqs, decim, ncycles, subtract_evoked):
+               freqs, decim, n_cycles, subtract_evoked):
 
     time_arrays = []
     for name in epochs_names:
@@ -283,7 +284,7 @@ def create_tfr(subject, tfr_name, epochs_names,
 
         tfr = mne.time_frequency.tfr.tfr_morlet(epochs, 
                                                 freqs=freqs, 
-                                                n_cycles=ncycles,
+                                                n_cycles=n_cycles,
                                                 decim=decim, 
                                                 average=True,
                                                 return_itc=False)
@@ -291,13 +292,13 @@ def create_tfr(subject, tfr_name, epochs_names,
         tfrs[epoch_name] = tfr
 
     # convert list-like to list
-    if hasattr(ncycles, '__len__'):
-        ncycles = list(ncycles)
+    if hasattr(n_cycles, '__len__'):
+        n_cycles = list(n_cycles)
 
     params = {
         'decim': decim,
-        'ncycles': ncycles,
-        'subtract_evoked': subtract_evoked,
+        'n_cycles': n_cycles,
+        'evoked_subtracted': subtract_evoked,
         'conditions': epochs_names
     }
 
@@ -307,51 +308,46 @@ def create_tfr(subject, tfr_name, epochs_names,
     subject.add(meggie_tfr, "tfr")
 
 
-def group_average_tfr(experiment, tfr_name, groups):
+@threaded
+def group_average_tfr(experiment, tfr_name, groups, new_name):
 
-    # check data coherence
+    # check data cohesion
     keys = []
-    freqs = []
-    times = []
-    ch_names = []
-    decims = []
-    subtracts = []
-
+    freq_arrays = []
+    time_arrays = []
     for group_key, group_subjects in groups.items():
         for subject_name in group_subjects:
-            subject = experiment.subjects.get(subject_name)
-            if not subject:
+            try:
+                subject = experiment.subjects.get(subject_name)
+                tfr = subject.tfr.get(tfr_name)
+                keys.append(tuple(sorted(tfr.content.keys())))
+                freq_arrays.append(tuple(tfr.freqs))
+                time_arrays.append(tuple(tfr.times))
+            except Exception as exc:
                 continue
-            meggie_tfr = subject.tfrs.get(tfr_name)
-            if not meggie_tfr:
+
+    assert_arrays_same(keys, 'Conditions do no match')
+    assert_arrays_same(freq_arrays, 'Freqs do not match')
+    assert_arrays_same(time_arrays)
+
+    # handle channel differences
+    ch_names = []
+    for group_key, group_subjects in groups.items():
+        for subject_name in group_subjects:
+            try:
+                subject = experiment.subjects.get(subject_name)
+                tfr = subject.tfr.get(tfr_name)
+                ch_names.append(tuple([ch_name.replace(" ", "")
+                                       for ch_name in tfr.ch_names]))
+            except Exception as exc:
                 continue
-
-            tfr = list(meggie_tfr.tfrs.values())[0]
-
-            keys.append(tuple(list(meggie_tfr.tfrs.keys())))
-
-            freqs.append(tuple(tfr.freqs))
-            times.append(tuple(tfr.times))
-            ch_names.append(tuple([ch_name.replace(" ", "") for ch_name in
-                                   tfr.info['ch_names']]))
-            decims.append(meggie_tfr.decim)
-            subtracts.append(meggie_tfr.evoked_subtracted)
-
-    if len(set(keys)) != 1:
-        raise Exception("TFR's contain different sets of conditions")
-    if len(set(freqs)) != 1:
-        raise Exception("TFR's contain different sets of freqs")
-    if len(set(times)) != 1:
-        raise Exception("TFR's contain different sets of times")
-    if len(set(decims)) != 1:
-        raise Exception("TFR's contain different sets of decims")
-    if len(set(subtracts)) != 1:
-        raise Exception("TFR's contain different evoked subtraction settings")
 
     if len(set(ch_names)) != 1:
         logging.getLogger('ui_logger').info(
             "TFR's contain different sets of channels. Identifying common ones..")
+
         common_ch_names = list(set.intersection(*map(set, ch_names)))
+
         logging.getLogger('ui_logger').info(str(len(common_ch_names)) +
                                             ' common channels found.')
         logging.getLogger('ui_logger').debug(
@@ -362,15 +358,16 @@ def group_average_tfr(experiment, tfr_name, groups):
     grand_tfrs = {}
     for group_key, group_subjects in groups.items():
         for subject in experiment.subjects.values():
-            if subject.subject_name not in group_subjects:
+            if subject.name not in group_subjects:
                 continue
-            meggie_tfr = subject.tfrs.get(tfr_name)
+            meggie_tfr = subject.tfr.get(tfr_name)
             if not meggie_tfr:
                 continue
-            for tfr_item_key, tfr_item in meggie_tfr.tfrs.items():
+            for tfr_item_key, tfr_item in meggie_tfr.content.items():
                 grand_key = (group_key, tfr_item_key)
 
                 idxs = []
+
                 # get common channels in "subject specific space"
                 for ch_idx, ch_name in enumerate(
                     [ch.replace(' ', '') for ch in tfr_item.info['ch_names']]
@@ -397,21 +394,23 @@ def group_average_tfr(experiment, tfr_name, groups):
             grand_averages[new_key] = grand_tfr[0].copy()
         else:
             grand_averages[new_key] = mne.grand_average(
-                grand_tfr, drop_bads=False)
+                grand_tfr)
 
     active_subject = experiment.active_subject
-    meggie_tfr = active_subject.tfrs.get(tfr_name)
+    meggie_tfr = active_subject.tfr.get(tfr_name)
 
-    decim = meggie_tfr.decim
-    n_cycles = meggie_tfr.n_cycles
-    evoked_subtracted = meggie_tfr.evoked_subtracted
+    params = {
+        'decim': meggie_tfr.decim,
+        'n_cycles': meggie_tfr.n_cycles,
+        'evoked_subtracted': meggie_tfr.evoked_subtracted,
+        'conditions': list(grand_averages.keys()),
+        'groups': groups
+    }
 
-    meggie_tfr = TFR(grand_averages, 'group_' + tfr_name,
-                     active_subject,
-                     decim, n_cycles, evoked_subtracted)
+    meggie_tfr = TFR(new_name, active_subject.tfr_directory, params, grand_averages)
 
     meggie_tfr.save_content()
-    experiment.active_subject.add(meggie_tfr, "tfr")
+    active_subject.add(meggie_tfr, "tfr")
 
 
 def save_tfr_all_channels(experiment, tfr_name,

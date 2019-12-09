@@ -134,7 +134,7 @@ def save(experiment, data, window):
         if not spectrum:
             continue
         freq_arrays.append(spectrum.freqs)
-    assert_arrays_same(freq_arrays)
+    assert_arrays_same(freq_arrays, 'Freqs do not match')
 
     def handler(selected_option):
         try:

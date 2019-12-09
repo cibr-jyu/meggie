@@ -44,7 +44,7 @@ class Evoked(object):
             except Exception:
                 raise IOError('Reading evokeds failed.')
 
-        for key in self._params['event_names']:
+        for key in self._params['conditions']:
             for evoked in evokeds:
                 if key == evoked.comment:
                     self._content[key] = evoked

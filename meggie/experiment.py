@@ -290,7 +290,7 @@ class ExperimentHandler(QObject):
 
             raise ValueError('Experiment from ' + exp_file + ' could not be ' +
                              'opened. There might be a problem with ' +
-                             'coherence of the experiment file.')
+                             'cohesion of the experiment file.')
 
         prefs = self.parent.preferencesHandler
         experiment = Experiment()
@@ -369,8 +369,8 @@ class ExperimentHandler(QObject):
                         # for backwards compatibility
                         if datatype == 'evoked':
                             if not params.get(
-                                    'event_names') and 'event_names' in inst_data:
-                                params['event_names'] = inst_data['event_names']
+                                    'conditions') and 'event_names' in inst_data:
+                                params['conditions'] = inst_data['event_names']
                             params['bwc_path'] = os.path.join(
                                 subject.path, 'epochs/average')
                         if datatype == 'spectrum':

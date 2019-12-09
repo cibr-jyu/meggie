@@ -79,7 +79,7 @@ class CreateEvokedDialog(QtWidgets.QDialog):
             evokeds[name] = mne_evoked
 
         evoked_name = validate_name(self.ui.lineEditName.text())
-        params = {'event_names': selected_epochs}
+        params = {'conditions': selected_epochs}
 
         evoked_directory = subject.evoked_directory
         evoked = Evoked(evoked_name, evoked_directory, params, content=evokeds)

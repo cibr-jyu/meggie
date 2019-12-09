@@ -21,10 +21,15 @@ def validate_name(name, minlength=1, maxlength=30, fieldname='name'):
 
 
 def assert_arrays_same(arrays, message='Times do not match'):
-    for i, i_times in enumerate(arrays):
-        for j, j_times in enumerate(arrays):
+    for i, i_values in enumerate(arrays):
+        for j, j_values in enumerate(arrays):
             if i != j:
                 try:
-                    np.testing.assert_array_almost_equal(i_times, j_times)
+                    np.testing.assert_array_almost_equal(i_values, j_values)
                 except AssertionError:
                     raise Exception(message)
+                except TypeError:
+                    try:
+                        assert(i_values == j_values)
+                    except AssertionError:
+                        raise Exception(message)

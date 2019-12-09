@@ -90,11 +90,11 @@ class TFR(object):
 
     @property
     def decim(self):
-        return self._params['decim']
+        return self._params.get('decim')
 
     @property
     def n_cycles(self):
-        return self._params['n_cycles']
+        return self._params.get('n_cycles')
 
     @property
     def ch_names(self):
@@ -114,4 +114,4 @@ class TFR(object):
 
     @property
     def evoked_subtracted(self):
-        return self._params['evoked_subtracted']
+        return self._params.get('evoked_subtracted')

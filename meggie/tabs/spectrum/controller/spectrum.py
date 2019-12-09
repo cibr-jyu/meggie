@@ -20,6 +20,7 @@ from meggie.datatypes.spectrum.spectrum import Spectrum
 from meggie.utilities.events import find_stim_channel
 from meggie.utilities.events import Events
 
+from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.formats import format_floats
 from meggie.utilities.colors import color_cycle
 from meggie.utilities.groups import average_data_to_channel_groups
@@ -301,36 +302,40 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
 
     # check data cohesion
     keys = []
-    ch_names = []
-    freqs = []
+    freq_arrays = []
     logs = []
     for group_key, group_subjects in groups.items():
         for subject_name in group_subjects:
-            subject = experiment.subjects.get(subject_name)
-            if not subject:
+            try:
+                subject = experiment.subjects.get(subject_name)
+                spectrum = subject.spectrum.get(spectrum_name)
+                keys.append(tuple(sorted(spectrum.content.keys())))
+                freq_arrays.append(tuple(spectrum.freqs))
+                logs.append(spectrum.log_transformed)
+            except Exception as exc:
                 continue
-            spectrum = subject.spectrum.get(spectrum_name)
-            if not spectrum:
+
+    assert_arrays_same(keys, 'Conditions do not match')
+    assert_arrays_same(freq_arrays, 'Freqs do not match')
+    assert_arrays_same(logs, 'Log transforms do not match')
+
+    # handle channel differences
+    ch_names = []
+    for group_key, group_subjects in groups.items():
+        for subject_name in group_subjects:
+            try:
+                subject = experiment.subjects.get(subject_name)
+                spectrum = subject.spectrum.get(spectrum_name)
+                ch_names.append(tuple([ch_name.replace(" ", "")
+                                       for ch_name in spectrum.ch_names]))
+            except Exception as exc:
                 continue
-            keys.append(tuple(spectrum.content.keys()))
-            ch_names.append(tuple([ch_name.replace(" ", "")
-                                   for ch_name in spectrum.ch_names]))
-            freqs.append(tuple(spectrum.freqs))
-            logs.append(spectrum.log_transformed)
-
-    if len(set(keys)) != 1:
-        raise Exception("PSD's contain different conditions")
-
-    if len(set(freqs)) != 1:
-        raise Exception("PSD's contain different sets of freqs")
-    if len(set(logs)) != 1:
-        raise Exception(
-            "Some of the PSD's are log transformed and some are not")
-
     if len(set(ch_names)) != 1:
         logging.getLogger('ui_logger').info(
             "PSD's contain different sets of channels. Identifying common ones..")
+
         common_ch_names = list(set.intersection(*map(set, ch_names)))
+
         logging.getLogger('ui_logger').info(
             str(len(common_ch_names)) + ' common channels found.')
         logging.getLogger('ui_logger').debug(
@@ -349,6 +354,7 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
             for spectrum_item_key, spectrum_item in spectrum.content.items():
                 grand_key = (group_key, spectrum_item_key)
 
+                # get common channels in "subject specific space"
                 idxs = []
                 for ch_name in common_ch_names:
                     # find the channel from current subject
