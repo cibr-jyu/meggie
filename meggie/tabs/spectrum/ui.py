@@ -154,8 +154,39 @@ def spectrum_info(experiment, data, window):
     """
     try:
         selected_name = data['outputs']['spectrum'][0]
+
         spectrum = experiment.active_subject.spectrum[selected_name]
-        message = pformat(spectrum.params)
+        params = spectrum.params
+
+        message = ""
+
+        if 'fmin' in params and 'fmax' in params:
+            message += 'Frequencies: {0}Hz - {1}Hz\n'.format(params['fmin'], 
+                                                             params['fmax'])
+
+        if 'log_transformed' in params:
+            message += 'Log transformed: {0}\n'.format(params['log_transformed'])
+
+        if 'nfft' in params:
+            message += 'Window length (samples): {0}\n'.format(params['nfft'])
+
+        if 'overlap' in params:
+            message += 'Overlap (samples): {0}\n'.format(params['overlap'])
+
+        if 'intervals' in params:
+            message += '\nIntervals: \n'
+            for key, ivals in params['intervals'].items():
+                message += 'Condition ' + str(key) + ': '
+                message += ', '.join(['({0}s - {1}s)'.format(ival[0], ival[1])
+                                      for ival in ivals])
+                message += '\n'
+
+        if 'groups' in params:
+            for key, names in params['groups'].items():
+                message += '\nGroup ' + str(key) + ': \n'
+                for name in names:
+                    message += name + '\n'
+
     except Exception as exc:
         message = ""
 

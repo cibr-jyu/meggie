@@ -1,8 +1,7 @@
-  - And check that figure saving works and dpi to preferences (yes it cropped very weirdly did not it), and think about lower()
-  - For user, info boxes are very important
-  - unify dialog names: "Meggie - " or without
+  (- When saving configuration files or exp files, do backup first)
+  (- eeg support so that on every plot both meg and eeg are plotted, maybe layouts should be set by channel type. so next big update will be groups and channel types)
+  (- And check that figure saving works and maybe add dpi to preferences (currently my computer "crops weirdly" as when the save dialog opens, the plot window is tiled away.. should work on other people))
   (- Remove more of those logged messages)
   (- are you sure to remove to all deletes.)
   (- should ensure that mainwindow and dialogs have tryexcepts, everything else should be fine as dynamic.py catches everything but handlers, and handlers already have tryexcepts)
   (- but bad channel selection should be more clear again, and should ensure unified appreciation of bad channels, both when creating and when plotting/saving. currently with evoked, bad channels are kept until saving or plotting. with specturm, bad channels are removed on creation. with tfrs.., tfr_morlet excludes bad channels)
-  (- take baseline away from tse computation and add toplotting)

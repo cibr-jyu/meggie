@@ -228,8 +228,18 @@ def evoked_info(experiment, data, window):
     try:
         selected_name = data['outputs']['evoked'][0]
         evoked = experiment.active_subject.evoked[selected_name]
-        filtered = {key: evoked.params[key] for key in ['conditions']}
-        message = pformat(filtered)
+        params = evoked.params
+
+        message = ""
+        if 'conditions' in params:
+            message += 'Conditions: ' + ', '.join(params['conditions']) + '\n'
+
+        if 'groups' in params:
+            for key, names in params['groups'].items():
+                message += '\nGroup '+ str(key) + ': \n'
+                for name in names:
+                    message += name + '\n'
+        
     except Exception as exc:
         message = ""
 

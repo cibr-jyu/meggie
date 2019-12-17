@@ -103,7 +103,11 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
         for subject in experiment.subjects.values():
             if subject.name not in group_subjects:
                 continue
+
             evoked = subject.evoked.get(evoked_name)
+            if not evoked:
+                continue
+
             for evoked_item_key, evoked_item in evoked.content.items():
                 grand_key = (group_key, evoked_item_key)
 

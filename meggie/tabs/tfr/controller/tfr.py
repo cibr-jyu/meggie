@@ -242,12 +242,22 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
 
     layout = read_layout(experiment.layout)
 
+    # temporary solution for channel types ( show eeg only if no meg )
+    meg_channels = mne.pick_types(tfr.info, meg=True, eeg=False)
+    eeg_channels = mne.pick_types(tfr.info, meg=False, eeg=True)
+    if meg_channels.size > 0:
+        picks = meg_channels
+    elif eeg_channels.size > 0:
+        picks = eeg_channels
+    else:
+        raise Exception('No proper channels found')
+
     title = 'TFR_{0}_{1}'.format(tfr_name, tfr_condition)
     fig = tfr.plot_topo(layout=layout, show=False,
                         baseline=bline, mode=mode,
                         tmin=tmin, tmax=tmax,
                         fmin=fmin, fmax=fmax,
-                        title=title)
+                        title=title, picks=picks)
 
     fig.canvas.set_window_title(title)
 
@@ -360,9 +370,11 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
         for subject in experiment.subjects.values():
             if subject.name not in group_subjects:
                 continue
+
             meggie_tfr = subject.tfr.get(tfr_name)
             if not meggie_tfr:
                 continue
+
             for tfr_item_key, tfr_item in meggie_tfr.content.items():
                 grand_key = (group_key, tfr_item_key)
 

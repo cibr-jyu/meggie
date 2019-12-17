@@ -235,8 +235,24 @@ def tfr_info(experiment, data, window):
     """
     try:
         selected_name = data['outputs']['tfr'][0]
+
         tfr = experiment.active_subject.tfr[selected_name]
-        message = pformat(tfr.params)
+        params = tfr.params
+
+        message = ""
+        if 'decim' in params:
+            message += 'Decimated by factor: {0}\n'.format(params['decim'])
+        if 'evoked_subtracted' in params:
+            message += 'Evoked subtracted: {0}\n'.format(params['evoked_subtracted'])
+        if 'conditions' in params:
+            message += 'Conditions: ' + ', '.join(params['conditions']) + '\n'
+
+        if 'groups' in params:
+            for key, names in params['groups'].items():
+                message += '\nGroup ' + str(key) + ': \n'
+                for name in names:
+                    message += name + '\n'
+
     except Exception as exc:
         message = ""
 

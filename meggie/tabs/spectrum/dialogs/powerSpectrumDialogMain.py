@@ -153,6 +153,9 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
             return
 
         intervals = self.intervals
+        if not intervals:
+            return
+
         fmin = self.ui.spinBoxFmin.value()
         fmax = self.ui.spinBoxFmax.value()
 
@@ -190,6 +193,9 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
             return
 
         intervals = self.intervals
+        if not intervals:
+            return
+
         fmin = self.ui.spinBoxFmin.value()
         fmax = self.ui.spinBoxFmax.value()
 

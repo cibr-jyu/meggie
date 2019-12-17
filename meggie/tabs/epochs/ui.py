@@ -5,6 +5,7 @@ import logging
 from pprint import pformat
 
 from meggie.utilities.names import next_available_name
+from meggie.utilities.formats import format_float
 
 from meggie.tabs.epochs.dialogs.createEpochsFromEventsDialogMain import CreateEpochsFromEventsDialog
 
@@ -14,12 +15,31 @@ def epochs_info(experiment, data, window):
     """
     try:
         selected_name = data['outputs']['epochs'][0]
+
         epochs = experiment.active_subject.epochs[selected_name]
         params = epochs.params
 
-        filtered = {key: params[key] for key in
-                    ['bstart', 'bend', 'tmin', 'tmax', 'events']}
-        message = pformat(filtered)
+        message = ""
+
+        message += 'Baseline: {0}s - {1}s\n'.format(format_float(params['bstart']), 
+                                                    format_float(params['bend']))
+        message += 'Times: {0}s - {1}s\n'.format(format_float(params['tmin']), 
+                                                 format_float(params['tmax']))
+
+        message += '\nReject params: \n'
+        if 'grad' in params: 
+            message += 'Gradiometers: ({})\n'.format(params.get('reject').get('grad'))
+        if 'mag' in params:
+            message += 'Magnetometers: ({})\n'.format(params.get('reject').get('mag'))
+        if 'eeg' in params:
+            message += 'EEG: ({})\n'.format(params.get('reject').get('eeg'))
+
+        if 'events' in params:
+            message += '\nCreated from events: \n'
+            for event in params.get('events'):
+                message += 'ID: {0}, mask: {1}\n'.format(event['event_id'], 
+                                                         event['mask'])
+
     except BaseException:
         message = ""
 

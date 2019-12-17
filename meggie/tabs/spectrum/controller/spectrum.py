@@ -348,9 +348,11 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
         for subject in experiment.subjects.values():
             if subject.name not in group_subjects:
                 continue
+
             spectrum = subject.spectrum.get(spectrum_name)
             if not spectrum:
                 continue
+
             for spectrum_item_key, spectrum_item in spectrum.content.items():
                 grand_key = (group_key, spectrum_item_key)
 
@@ -388,6 +390,7 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
     data = grand_averages
 
     params = deepcopy(spectrum.params)
+    params.pop('intervals')
     params['groups'] = groups
     params['conditions'] = [elem for elem in grand_averages.keys()]
 
