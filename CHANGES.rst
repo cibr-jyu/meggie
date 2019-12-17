@@ -1,10 +1,26 @@
 Changelog
 =========
 
-0.13.2 (unreleased)
+0.14.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.14.0 (2019-12-17)
+------------------
+
+- New dynamic tab and datatype handling unifies both code and look
+- Tab presets for pipelines
+- Look and implementation of dialogs unified
+- MaiWindow left bar updated
+- Be more defensive on getting maxfilter info
+- Improve spectrum batching with more options to dynamic interval selection
+- CSV saving for TFR's
+- Add more baselining options to TFR's
+- Make mne==0.19.2 compatible
+- Add default object namings for dialogs
+- Lots of codebase cleaning
+- Update mne logging from whitelisting to blacklisting
 
 0.13.1 (2019-04-28)
 ------------------

@@ -1,6 +1,6 @@
 package:
   name: meggie
-  version: "0.13.1"
+  version: "0.14.0"
 
 source:
   path: .
@@ -14,7 +14,7 @@ requirements:
   build:
     - python
     - setuptools
-    - mne ==0.17.2
+    - mne ==0.19.2
 
   run:
     - python
