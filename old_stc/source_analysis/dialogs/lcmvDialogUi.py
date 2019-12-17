@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'designer_ui_files/lcmvDialogUi.ui'
+# Form implementation generated from reading ui file 'lcmvDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -138,7 +138,7 @@ class Ui_lcmvDialog(object):
 
     def retranslateUi(self, lcmvDialog):
         _translate = QtCore.QCoreApplication.translate
-        lcmvDialog.setWindowTitle(_translate("lcmvDialog", "Create new beamformer estimate"))
+        lcmvDialog.setWindowTitle(_translate("lcmvDialog", "Meggie - Create new beamformer estimate"))
         self.labelSourceEstimateName.setText(_translate("lcmvDialog", "Source estimate name:"))
         self.labelBasedOn.setText(_translate("lcmvDialog", "Based on forward solution:"))
         self.labelData.setText(_translate("lcmvDialog", "Based on dataset:"))

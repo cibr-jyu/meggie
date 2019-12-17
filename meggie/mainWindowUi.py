@@ -142,7 +142,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Meggie"))
         self.groupBoxSubjects.setTitle(_translate("MainWindow", "Subjects"))
         self.pushButtonAddSubjects.setText(_translate("MainWindow", "Add new..."))
         self.pushButtonRemoveSubject.setText(_translate("MainWindow", "Remove selected"))

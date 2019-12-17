@@ -191,7 +191,7 @@ class Ui_DialogFilter(object):
 
     def retranslateUi(self, DialogFilter):
         _translate = QtCore.QCoreApplication.translate
-        DialogFilter.setWindowTitle(_translate("DialogFilter", "Filtering"))
+        DialogFilter.setWindowTitle(_translate("DialogFilter", "Meggie - Filtering"))
         self.pushButtonCancel.setText(_translate("DialogFilter", "Cancel"))
         self.pushButtonBatch.setText(_translate("DialogFilter", "Batch"))
         self.pushButtonApply.setText(_translate("DialogFilter", "Apply"))

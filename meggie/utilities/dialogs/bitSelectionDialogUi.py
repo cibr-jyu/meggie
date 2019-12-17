@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../bitSelectionDialogUi.ui'
+# Form implementation generated from reading ui file 'bitSelectionDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -332,7 +332,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Edit"))
+        Dialog.setWindowTitle(_translate("Dialog", "Meggie - Edit"))
         self.label.setText(_translate("Dialog", "ID:"))
         self.label_3.setText(_translate("Dialog", "Mask:"))
         self.bitLabel16.setText(_translate("Dialog", "16"))

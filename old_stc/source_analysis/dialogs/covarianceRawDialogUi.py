@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'designer_ui_files/covarianceRawDialogUi.ui'
+# Form implementation generated from reading ui file 'covarianceRawDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -108,7 +108,7 @@ class Ui_covarianceRawDialog(object):
 
     def retranslateUi(self, covarianceRawDialog):
         _translate = QtCore.QCoreApplication.translate
-        covarianceRawDialog.setWindowTitle(_translate("covarianceRawDialog", "Compute covariance from raw file"))
+        covarianceRawDialog.setWindowTitle(_translate("covarianceRawDialog", "Meggie - Covariance from raw"))
         self.groupBoxName.setTitle(_translate("covarianceRawDialog", "General:"))
         self.labelName.setText(_translate("covarianceRawDialog", "Name:"))
         self.groupBoxSource.setTitle(_translate("covarianceRawDialog", "Use raw file from:"))

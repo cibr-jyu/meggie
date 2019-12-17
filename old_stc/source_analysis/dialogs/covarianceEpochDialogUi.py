@@ -88,7 +88,7 @@ class Ui_covarianceEpochDialog(object):
 
     def retranslateUi(self, covarianceEpochDialog):
         _translate = QtCore.QCoreApplication.translate
-        covarianceEpochDialog.setWindowTitle(_translate("covarianceEpochDialog", "Compute covariance from epoch file"))
+        covarianceEpochDialog.setWindowTitle(_translate("covarianceEpochDialog", "Meggie - Covariance from epochs"))
         self.groupBoxName.setTitle(_translate("covarianceEpochDialog", "General:"))
         self.labelName.setText(_translate("covarianceEpochDialog", "Name:"))
         self.groupBoxEpochs.setTitle(_translate("covarianceEpochDialog", "Select epochs for computation:"))

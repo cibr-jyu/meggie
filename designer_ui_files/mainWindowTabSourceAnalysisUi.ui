@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Meggie - Source analysis</string>
   </property>
   <widget class="QTabWidget" name="tabWidgetSourceAnalysis">
    <property name="enabled">

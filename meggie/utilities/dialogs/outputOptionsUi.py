@@ -47,7 +47,7 @@ class Ui_outputOptions(object):
 
     def retranslateUi(self, outputOptions):
         _translate = QtCore.QCoreApplication.translate
-        outputOptions.setWindowTitle(_translate("outputOptions", "Output options"))
+        outputOptions.setWindowTitle(_translate("outputOptions", "Meggie - Output options"))
         self.groupBoxType.setTitle(_translate("outputOptions", "Type"))
         self.radioButtonAllChannels.setText(_translate("outputOptions", "All channels"))
         self.radioButtonChannelAverages.setText(_translate("outputOptions", "Channel averages"))

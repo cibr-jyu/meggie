@@ -71,7 +71,7 @@ class Ui_rereferencingDialog(object):
 
     def retranslateUi(self, rereferencingDialog):
         _translate = QtCore.QCoreApplication.translate
-        rereferencingDialog.setWindowTitle(_translate("rereferencingDialog", "Rereferencing"))
+        rereferencingDialog.setWindowTitle(_translate("rereferencingDialog", "Meggie - Rereferencing"))
         self.pushButtonCancel.setText(_translate("rereferencingDialog", "Cancel"))
         self.pushButtonBatch.setText(_translate("rereferencingDialog", "Batch"))
         self.pushButtonApply.setText(_translate("rereferencingDialog", "Apply"))

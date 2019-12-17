@@ -199,7 +199,7 @@ class Ui_CreateEpochsFromEventsDialog(object):
 
     def retranslateUi(self, CreateEpochsFromEventsDialog):
         _translate = QtCore.QCoreApplication.translate
-        CreateEpochsFromEventsDialog.setWindowTitle(_translate("CreateEpochsFromEventsDialog", "Create epochs"))
+        CreateEpochsFromEventsDialog.setWindowTitle(_translate("CreateEpochsFromEventsDialog", "Meggie - Create epochs from events"))
         self.pushButtonCancel.setText(_translate("CreateEpochsFromEventsDialog", "Cancel"))
         self.pushButtonBatch.setText(_translate("CreateEpochsFromEventsDialog", "Batch"))
         self.pushButtonApply.setText(_translate("CreateEpochsFromEventsDialog", "Apply"))

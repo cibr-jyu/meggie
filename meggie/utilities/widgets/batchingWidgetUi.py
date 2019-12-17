@@ -91,7 +91,7 @@ class Ui_BatchingWidget(object):
 
     def retranslateUi(self, BatchingWidget):
         _translate = QtCore.QCoreApplication.translate
-        BatchingWidget.setWindowTitle(_translate("BatchingWidget", "Batch processing"))
+        BatchingWidget.setWindowTitle(_translate("BatchingWidget", "Meggie - Batch processing"))
         self.checkBoxBatch.setText(_translate("BatchingWidget", "Batch processing"))
         self.pushButtonApplyAll.setText(_translate("BatchingWidget", "Select all"))
         self.label_7.setText(_translate("BatchingWidget", "subjects on the list"))

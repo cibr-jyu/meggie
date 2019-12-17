@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create evoked</string>
+   <string>Meggie - Create evoked</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="0">

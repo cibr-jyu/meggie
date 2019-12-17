@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'resamplingDialog.ui'
+# Form implementation generated from reading ui file 'resamplingDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -83,7 +83,7 @@ class Ui_resamplingDialog(object):
 
     def retranslateUi(self, resamplingDialog):
         _translate = QtCore.QCoreApplication.translate
-        resamplingDialog.setWindowTitle(_translate("resamplingDialog", "Resampling"))
+        resamplingDialog.setWindowTitle(_translate("resamplingDialog", "Meggie - Resampling"))
         self.groupBoxResample.setTitle(_translate("resamplingDialog", "Resampling options:"))
         self.labelCurrentRateHeading.setText(_translate("resamplingDialog", "Current rate:"))
         self.labelNewRateHeading.setText(_translate("resamplingDialog", "Resample to:"))

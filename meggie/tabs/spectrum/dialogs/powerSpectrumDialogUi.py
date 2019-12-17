@@ -175,7 +175,7 @@ class Ui_PowerSpectrumDialog(object):
 
     def retranslateUi(self, PowerSpectrumDialog):
         _translate = QtCore.QCoreApplication.translate
-        PowerSpectrumDialog.setWindowTitle(_translate("PowerSpectrumDialog", "Power spectrum"))
+        PowerSpectrumDialog.setWindowTitle(_translate("PowerSpectrumDialog", "Meggie - Create spectrums"))
         self.groupBoxGeneral.setTitle(_translate("PowerSpectrumDialog", "General"))
         self.labelName.setText(_translate("PowerSpectrumDialog", "Spectrum name:"))
         self.groupBoxIntervals.setTitle(_translate("PowerSpectrumDialog", "Select time intervals"))

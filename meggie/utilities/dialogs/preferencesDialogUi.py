@@ -81,7 +81,7 @@ class Ui_DialogPreferences(object):
 
     def retranslateUi(self, DialogPreferences):
         _translate = QtCore.QCoreApplication.translate
-        DialogPreferences.setWindowTitle(_translate("DialogPreferences", "Preferences"))
+        DialogPreferences.setWindowTitle(_translate("DialogPreferences", "Meggie - Preferences"))
         self.pushButtonCancel.setText(_translate("DialogPreferences", "Cancel"))
         self.pushButtonAccept.setText(_translate("DialogPreferences", "Ok"))
         self.groupBoxWorkingDirectory.setTitle(_translate("DialogPreferences", "Working directory:"))

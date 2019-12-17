@@ -76,7 +76,7 @@ class Ui_forwardSolutionDialog(object):
 
     def retranslateUi(self, forwardSolutionDialog):
         _translate = QtCore.QCoreApplication.translate
-        forwardSolutionDialog.setWindowTitle(_translate("forwardSolutionDialog", "Create new forward solution"))
+        forwardSolutionDialog.setWindowTitle(_translate("forwardSolutionDialog", "Meggie - Create new forward solution"))
         self.labelForwardSolutionName.setText(_translate("forwardSolutionDialog", "Forward solution name:"))
         self.groupBoxSourceSpaceSetup.setTitle(_translate("forwardSolutionDialog", "Source space setup parameters:"))
         self.labelIco.setText(_translate("forwardSolutionDialog", "Cortical surface decimation method:"))

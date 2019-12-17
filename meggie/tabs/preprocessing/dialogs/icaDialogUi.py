@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../icaDialogUi.ui'
+# Form implementation generated from reading ui file 'icaDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -38,7 +38,6 @@ class Ui_Dialog(object):
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 499, 587))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
-        self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.groupBoxComputation = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxComputation.setObjectName("groupBoxComputation")
@@ -124,7 +123,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "ICA"))
+        Dialog.setWindowTitle(_translate("Dialog", "Meggie - ICA"))
         self.pushButtonCancel.setText(_translate("Dialog", "Cancel"))
         self.pushButtonApply.setText(_translate("Dialog", "Apply"))
         self.groupBoxComputation.setTitle(_translate("Dialog", "ICA computation"))

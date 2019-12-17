@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create epochs</string>
+   <string>Meggie - Create epochs from events</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="0">

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'customTabsDialog.ui'
+# Form implementation generated from reading ui file 'customTabsDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -33,5 +33,5 @@ class Ui_customTabsDialog(object):
 
     def retranslateUi(self, customTabsDialog):
         _translate = QtCore.QCoreApplication.translate
-        customTabsDialog.setWindowTitle(_translate("customTabsDialog", "Custom tabs"))
+        customTabsDialog.setWindowTitle(_translate("customTabsDialog", "Meggie - Custom tabs"))
 

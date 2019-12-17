@@ -66,7 +66,7 @@ class Ui_LogDialog(object):
 
     def retranslateUi(self, LogDialog):
         _translate = QtCore.QCoreApplication.translate
-        LogDialog.setWindowTitle(_translate("LogDialog", "Dialog"))
+        LogDialog.setWindowTitle(_translate("LogDialog", "Meggie - Dialog"))
         self.pushButtonClose.setText(_translate("LogDialog", "Close"))
         self.labelBufferSize.setText(_translate("LogDialog", "Buffer size (lines):"))
         self.pushButtonBufferSize.setText(_translate("LogDialog", "Accept"))

@@ -67,7 +67,7 @@ class Ui_groupAverageDialog(object):
 
     def retranslateUi(self, groupAverageDialog):
         _translate = QtCore.QCoreApplication.translate
-        groupAverageDialog.setWindowTitle(_translate("groupAverageDialog", "Group average"))
+        groupAverageDialog.setWindowTitle(_translate("groupAverageDialog", "Meggie - Group average"))
         self.groupBoxAverageGroups.setTitle(_translate("groupAverageDialog", "Average groups:"))
         self.groupBoxGeneral.setTitle(_translate("groupAverageDialog", "General"))
         self.labelName.setText(_translate("groupAverageDialog", "Name:"))

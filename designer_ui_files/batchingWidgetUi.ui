@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Batch processing</string>
+   <string>Meggie - Batch processing</string>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">

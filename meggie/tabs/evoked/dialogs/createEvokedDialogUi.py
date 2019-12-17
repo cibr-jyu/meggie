@@ -70,7 +70,7 @@ class Ui_CreateEvokedDialog(object):
 
     def retranslateUi(self, CreateEvokedDialog):
         _translate = QtCore.QCoreApplication.translate
-        CreateEvokedDialog.setWindowTitle(_translate("CreateEvokedDialog", "Create evoked"))
+        CreateEvokedDialog.setWindowTitle(_translate("CreateEvokedDialog", "Meggie - Create evoked"))
         self.pushButtonCancel.setText(_translate("CreateEvokedDialog", "Cancel"))
         self.pushButtonBatch.setText(_translate("CreateEvokedDialog", "Batch"))
         self.pushButtonApply.setText(_translate("CreateEvokedDialog", "Apply"))

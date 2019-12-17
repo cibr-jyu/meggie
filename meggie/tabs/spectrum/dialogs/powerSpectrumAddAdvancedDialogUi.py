@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'powerSpectrumAddAdvancedUi.ui'
+# Form implementation generated from reading ui file 'powerSpectrumAddAdvancedDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -144,7 +144,7 @@ class Ui_PowerSpectrumAddAdvancedDialog(object):
 
     def retranslateUi(self, PowerSpectrumAddAdvancedDialog):
         _translate = QtCore.QCoreApplication.translate
-        PowerSpectrumAddAdvancedDialog.setWindowTitle(_translate("PowerSpectrumAddAdvancedDialog", "Add advanced"))
+        PowerSpectrumAddAdvancedDialog.setWindowTitle(_translate("PowerSpectrumAddAdvancedDialog", "Meggie - Add advanced"))
         self.groupBoxGeneral.setTitle(_translate("PowerSpectrumAddAdvancedDialog", "General:"))
         self.labelGroup.setText(_translate("PowerSpectrumAddAdvancedDialog", "Average group:"))
         self.comboBoxAvgGroup.setItemText(0, _translate("PowerSpectrumAddAdvancedDialog", "1"))

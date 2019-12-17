@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../stcPlotDialogUi.ui'
+# Form implementation generated from reading ui file 'stcPlotDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -72,7 +72,7 @@ class Ui_stcPlotDialog(object):
 
     def retranslateUi(self, stcPlotDialog):
         _translate = QtCore.QCoreApplication.translate
-        stcPlotDialog.setWindowTitle(_translate("stcPlotDialog", "Plot source estimate"))
+        stcPlotDialog.setWindowTitle(_translate("stcPlotDialog", "Meggie - Plot source estimate"))
         self.groupBoxGeneral.setTitle(_translate("stcPlotDialog", "General:"))
         self.labelSource.setText(_translate("stcPlotDialog", "Source epochs / evoked:"))
         self.groupBoxTimeParameters.setTitle(_translate("stcPlotDialog", "Time parameters:"))

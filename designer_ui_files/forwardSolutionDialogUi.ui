@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create new forward solution</string>
+   <string>Meggie - Create new forward solution</string>
   </property>
   <property name="modal">
    <bool>true</bool>

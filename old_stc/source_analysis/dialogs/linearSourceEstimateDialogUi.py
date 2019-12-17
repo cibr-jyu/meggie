@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'designer_ui_files/linearSourceEstimateDialogUi.ui'
+# Form implementation generated from reading ui file 'linearSourceEstimateDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -165,7 +165,7 @@ class Ui_linearSourceEstimateDialog(object):
 
     def retranslateUi(self, linearSourceEstimateDialog):
         _translate = QtCore.QCoreApplication.translate
-        linearSourceEstimateDialog.setWindowTitle(_translate("linearSourceEstimateDialog", "Create new linear source estimate"))
+        linearSourceEstimateDialog.setWindowTitle(_translate("linearSourceEstimateDialog", "Meggie - Create new linear source estimate"))
         self.labelSourceEstimateName.setText(_translate("linearSourceEstimateDialog", "Source estimate name:"))
         self.labelBasedOn.setText(_translate("linearSourceEstimateDialog", "Based on forward solution:"))
         self.labelData.setText(_translate("linearSourceEstimateDialog", "Based on dataset:"))
