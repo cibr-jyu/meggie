@@ -1,0 +1,548 @@
+# coding: utf-8
+
+"""
+"""
+import os
+import sys
+import gc
+import json
+import logging
+import warnings
+import pkg_resources
+
+from meggie.utilities.dynamic import construct_tab
+from meggie.utilities.dynamic import find_all_tab_specs
+
+from meggie.mainWindowUi import Ui_MainWindow
+
+from meggie.utilities.units import get_unit
+from meggie.utilities.measurement_info import MeasurementInfo
+from meggie.utilities.preferences import PreferencesHandler
+from meggie.utilities.events import create_event_set
+from meggie.utilities.mne_wrapper import wrap_mne
+
+from meggie.experiment import Experiment
+from meggie.experiment import ExperimentHandler
+
+from meggie.utilities.decorators import threaded
+from meggie.utilities.messaging import messagebox
+from meggie.utilities.messaging import exc_messagebox
+
+from meggie.utilities.dialogs.logDialogMain import LogDialog
+from meggie.utilities.dialogs.aboutDialogMain import AboutDialog
+from meggie.utilities.dialogs.preferencesDialogMain import PreferencesDialog
+from meggie.utilities.dialogs.layoutDialogMain import LayoutDialog
+from meggie.utilities.dialogs.addSubjectDialogMain import AddSubjectDialog
+from meggie.utilities.dialogs.createExperimentDialogMain import CreateExperimentDialog
+
+from PyQt5.Qt import QApplication
+
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
+from PyQt5 import QtCore
+
+
+class MainWindow(QtWidgets.QMainWindow):
+    """
+    Class containing the logic for the MainWindow
+    """
+
+    def __init__(self, application):
+        QtWidgets.QMainWindow.__init__(self)
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+
+        self.experiment = None
+
+        self.setup_loggers()
+        wrap_mne()
+
+        # Direct output to console
+        if 'debug' not in sys.argv:
+            self.directOutput()
+
+        # For storing and handling program wide prefences.
+        self.preferencesHandler = PreferencesHandler()
+        self.preferencesHandler.set_env_variables()
+
+        # For handling initialization and switching of experiments.
+        self.experimentHandler = ExperimentHandler(self)
+
+        # If the user has chosen to open the previous experiment automatically.
+        if self.preferencesHandler.auto_load_last_open_experiment:
+            exp = None
+
+            try:
+                exp = self.experimentHandler.open_existing_experiment(
+                    self.preferencesHandler)
+            except Exception as exc:
+                exc_messagebox(self, exc)
+
+            if exp:
+                self.experiment = exp
+            else:
+                self.preferencesHandler.previous_experiment_name = ''
+                self.preferencesHandler.write_preferences_to_disk()
+
+        self.reconstruct_tabs()
+        self.initialize_ui()
+
+    def on_actionQuit_triggered(self, checked=None):
+        """Closes the program, possibly after a confirmation by the user."""
+        if checked is None:
+            return
+
+        if self.preferencesHandler.confirm_quit:
+            reply = QtWidgets.QMessageBox.question(self, 'Close Meggie',
+                                                   'Are you sure you want to quit Meggie?',
+                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                                   QtWidgets.QMessageBox.No)
+
+            if reply == QtWidgets.QMessageBox.Yes:
+                self.close()
+        else:
+            self.close()
+
+    def on_actionCreateExperiment_triggered(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+
+        if not self.preferencesHandler.working_directory:
+            messagebox(
+                self, "Please set up a working directory before creating experiments")
+            self.check_workspace()
+        else:
+            dialog = CreateExperimentDialog(self)
+            dialog.experimentCreated.connect(self.set_experiment)
+            dialog.show()
+
+    @QtCore.pyqtSlot(Experiment)
+    def set_experiment(self, experiment):
+        """
+        """
+        self.experiment = experiment
+        self.initialize_ui()
+
+    def on_actionOpenExperiment_triggered(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+
+        if self.experiment is not None:
+            directory = self.experiment.workspace
+        else:
+            directory = ''
+
+        path = QtCore.QDir.toNativeSeparators(str(
+            QtWidgets.QFileDialog.getExistingDirectory(self,
+                                                       "Select experiment directory", directory)))
+
+        if path == '':
+            return
+
+        logging.getLogger('ui_logger').info('Opening experiment ' + path)
+
+        try:
+            exp = self.experimentHandler.open_existing_experiment(
+                self.preferencesHandler, path=path)
+            self.experiment = exp
+            self.initialize_ui()
+        except Exception as exc:
+            exc_messagebox(self, exc)
+
+        self.preferencesHandler.write_preferences_to_disk()
+
+    def on_pushButtonAddSubjects_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+
+        # Check that we have an experiment that we can add a subject to
+        if not self.experiment:
+            msg = ('No active experiment to add a subject to. Load an '
+                   'experiment or make a new one, then try again.')
+            messagebox(self, msg)
+            return
+
+        dialog = AddSubjectDialog(self)
+        dialog.show()
+
+    def on_pushButtonRemoveSubject_clicked(self, checked=None):
+        """ Completely removes selected subjects from the experiment """
+        if checked is None:
+            return
+
+        selIndexes = self.ui.listWidgetSubjects.selectedIndexes()
+
+        if selIndexes == []:
+            return
+
+        message = 'Permanently remove the selected subjects and the related files?'
+        reply = QtWidgets.QMessageBox.question(self, 'Delete selected subjects',
+                                               message, QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
+
+        failures = []
+        if reply == QtWidgets.QMessageBox.Yes:
+            for index in selIndexes:
+                subject_name = index.data()
+
+                try:
+                    self.experiment.remove_subject(subject_name)
+                except Exception:
+                    failures.append(subject_name)
+
+        if failures:
+            msg = ''.join(['Could not remove the contents of the subject ',
+                           'folder for following subjects: ',
+                           '\n'.join(failures)])
+            messagebox(self, msg)
+
+        self.experiment.save_experiment_settings()
+        self.initialize_ui()
+
+    def closeEvent(self, event):
+        """Redefine window close event to allow confirming on quit."""
+
+        if self.preferencesHandler.confirm_quit:
+            reply = QtWidgets.QMessageBox.question(self, 'Close Meggie',
+                                                   'Are you sure you want to '
+                                                   'quit?', QtWidgets.QMessageBox.Yes |
+                                                   QtWidgets.QMessageBox.No,
+                                                   QtWidgets.QMessageBox.No)
+
+            if reply == QtWidgets.QMessageBox.Yes:
+                event.accept()
+            else:
+                event.ignore()
+        else:
+            event.accept()
+
+    def on_actionShowLog_triggered(self, checked=None):
+        if checked is None:
+            return
+
+        if not self.experiment:
+            message = 'Please open an experiment first.'
+            messagebox(self, message)
+            return
+
+        dialog = LogDialog(self)
+        dialog.show()
+
+    def on_actionPreferences_triggered(self, checked=None):
+        """Open the preferences-dialog."""
+        if checked is None:
+            return
+
+        dialog = PreferencesDialog(self)
+        dialog.show()
+
+    def on_actionAbout_triggered(self, checked=None):
+        """Open the About-dialog."""
+        if checked is None:
+            return
+
+        dialog = AboutDialog(self)
+        dialog.show()
+
+    def on_pushButtonLayout_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        if not self.experiment:
+            return
+
+        dialog = LayoutDialog(self)
+        dialog.show()
+
+    def on_pushButtonActivateSubject_clicked(self, checked=None):
+        """
+        Activates a subject.
+        """
+        if checked is None:
+            return
+
+        items = self.ui.listWidgetSubjects.selectedItems()
+        if not items:
+            return
+
+        subject_name = items[0].text()
+
+        if self.experiment.active_subject:
+            if subject_name == self.experiment.active_subject.name:
+                return
+
+        previous_subject = self.experiment.active_subject
+        try:
+            @threaded
+            def activate(subject_name):
+                self.experiment.activate_subject(subject_name)
+            activate(subject_name, do_meanwhile=self.update_ui)
+
+        except Exception as exc:
+            self.experiment.active_subject = None
+            messagebox(self, "Could not activate the subject.")
+
+            if previous_subject:
+                message = "Couldn't activate the subject, resuming to previous one."
+                logging.getLogger('ui_logger').info(message)
+                self.experiment.activate_subject(previous_subject.name)
+
+        self.initialize_ui()
+
+    def update_ui(self):
+        """
+        Used for keeping the ui responsive when threading.
+        """
+        QApplication.processEvents()
+
+    def reconstruct_tabs(self):
+        """
+        """
+        self.preferencesHandler = PreferencesHandler()
+
+        self.tabs = []
+
+        config_path = pkg_resources.resource_filename(
+            'meggie', 'configuration.json')
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+
+        tab_presets = config.get('tab_presets')
+        enabled_tabs = self.preferencesHandler.enabled_tabs
+        user_preset = self.preferencesHandler.tab_preset
+
+        found = False
+        try:
+            if user_preset and user_preset == 'custom':
+                enabled_tabs = self.preferencesHandler.enabled_tabs
+                found = True
+            elif user_preset:
+                for idx, preset in enumerate(tab_presets):
+                    if preset['id'] == user_preset:
+                        enabled_tabs = tab_presets[idx]['tabs']
+                        found = True
+                        break
+        except Exception as exc:
+            pass
+
+        if not found:
+            enabled_tabs = tab_presets[0]['tabs']
+
+        tab_specs = find_all_tab_specs()
+
+        for tab_id in enabled_tabs:
+            try:
+                package, tab_spec = tab_specs[tab_id]
+            except Exception:
+                continue
+            tab = construct_tab(package, tab_spec, self)
+            self.tabs.append(tab)
+
+    def initialize_ui(self):
+        """
+        """
+        self.update_tabs()
+        self.setup_loggers()
+
+        self.ui.listWidgetSubjects.clear()
+
+        if not self.experiment:
+            self.setWindowTitle('Meggie')
+            return
+
+        if self.experiment.name:
+            self.ui.labelExperimentNameValue.setText(self.experiment.name)
+        if self.experiment.author:
+            self.ui.labelExperimentAuthorValue.setText(self.experiment.author)
+
+        self.setWindowTitle('Meggie - ' + self.experiment.name)
+
+        self.populate_subject_list()
+
+
+    def populate_subject_list(self):
+        """ """
+        active_subject_name = None
+        if self.experiment and self.experiment.active_subject:
+            active_subject_name = self.experiment.active_subject.name
+
+        for subject_name in sorted(self.experiment.subjects.keys()):
+            item = QtWidgets.QListWidgetItem()
+            item.setText(subject_name)
+            if subject_name == active_subject_name:
+                font = item.font()
+                font.setBold(True)
+                item.setFont(font)
+            self.ui.listWidgetSubjects.addItem(item)
+
+    def update_tabs(self):
+        """ method for initializing the tabs. """
+
+        current_tab = self.ui.tabWidget.currentIndex()
+        while self.ui.tabWidget.count() > 0:
+            self.ui.tabWidget.removeTab(0)
+
+        for tab_idx, tab in enumerate(self.tabs):
+            self.ui.tabWidget.insertTab(
+                tab_idx + 1, tab, tab.name)
+
+        self.ui.tabWidget.setCurrentIndex(current_tab)
+
+        for tab in self.tabs:
+            tab.initialize_ui()
+
+    def directOutput(self):
+        """
+        Method for directing stdout to the console and back.
+        """
+        stdout_stream = EmittingStream(
+            textWritten=self.normalOutputWritten)
+        stdout_stream.orig_stream = sys.__stdout__
+        stderr_stream = EmittingStream(textWritten=self.errorOutputWritten)
+        stderr_stream.orig_stream = sys.__stderr__
+
+        sys.stdout = stdout_stream
+        sys.stderr = stderr_stream
+
+    def check_workspace(self):
+        """
+        Open the preferences dialog, in this case for choosing the workspace.
+        """
+        dialog = PreferencesDialog(self)
+        dialog.exec_()
+
+    def normalOutputWritten(self, text):
+        """
+        Appends text to 'console' at the bottom of the dialog.
+        Used for redirecting stdout.
+        Parameters:
+        text - Text to write to the console.
+        """
+        cursor = self.ui.textEditConsole.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.End)
+        cursor.insertText(text)
+        self.ui.textEditConsole.setTextCursor(cursor)
+        self.ui.textEditConsole.ensureCursorVisible()
+
+    def errorOutputWritten(self, text):
+        """
+        Appends text to 'console' at the bottom of the dialog.
+        Used for redirecting stderr.
+        Parameters:
+        text - Text to write to the console.
+        """
+        cursor = self.ui.textEditConsole.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.End)
+        cursor.insertText(text)
+        self.ui.textEditConsole.setTextCursor(cursor)
+        self.ui.textEditConsole.ensureCursorVisible()
+
+    def setup_loggers(self):
+
+        # hide warnings-module warnings,
+        # most of these are still contained
+        # in mne-level logging
+        warnings.simplefilter('ignore')
+
+        logging.getLogger().setLevel(logging.DEBUG)
+
+        # logger for mne wrapper functions
+        mne_wrapper_logger = logging.getLogger('mne_wrapper_logger')
+        formatter = logging.Formatter('MNE call: %(asctime)s %(message)s',
+                                      datefmt='%Y-%m-%d %H:%M:%S')
+
+        mne_wrapper_logger.handlers = []
+
+        # setup file handler
+        if self.experiment:
+            logfile = os.path.join(
+                self.experiment.workspace,
+                self.experiment.name,
+                'meggie.log')
+            file_handler = logging.FileHandler(logfile)
+            file_handler.setLevel('DEBUG')
+            file_handler.setFormatter(formatter)
+            mne_wrapper_logger.addHandler(file_handler)
+
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        stream_handler.setLevel('INFO')
+        mne_wrapper_logger.addHandler(stream_handler)
+
+        # logger for ui output
+        ui_logger = logging.getLogger('ui_logger')
+        formatter = logging.Formatter('Meggie: %(asctime)s %(message)s',
+                                      datefmt='%Y-%m-%d %H:%M:%S')
+
+        ui_logger.handlers = []
+
+        # setup file handler
+        if self.experiment:
+            logfile = os.path.join(
+                self.experiment.workspace,
+                self.experiment.name,
+                'meggie.log')
+            file_handler = logging.FileHandler(logfile)
+            file_handler.setLevel('DEBUG')
+            file_handler.setFormatter(formatter)
+            ui_logger.addHandler(file_handler)
+
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        stream_handler.setLevel('INFO')
+        ui_logger.addHandler(stream_handler)
+
+        # logger for real mne
+        mne_logger = logging.getLogger('mne')
+        formatter = logging.Formatter('MNE: %(asctime)s %(message)s',
+                                      datefmt='%Y-%m-%d %H:%M:%S')
+
+        mne_logger.handlers = []
+
+        # setup file handler
+        if self.experiment:
+            logfile = os.path.join(
+                self.experiment.workspace,
+                self.experiment.name,
+                'meggie.log')
+            file_handler = logging.FileHandler(logfile)
+            file_handler.setLevel('DEBUG')
+            file_handler.setFormatter(formatter)
+            mne_logger.addHandler(file_handler)
+
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        stream_handler.setLevel('ERROR')
+        mne_logger.addHandler(stream_handler)
+
+        # TODO: trait logger ..
+
+
+class EmittingStream(QtCore.QObject):
+    textWritten = QtCore.pyqtSignal(str)
+
+    def write(self, text):
+        self.textWritten.emit(str(text))
+
+    def flush(self):
+        pass
+
+    def fileno(self):
+        return self.orig_stream.fileno()
+
+
+def main():
+
+    app = QtWidgets.QApplication(sys.argv)
+    window = MainWindow(app)
+
+    window.showMaximized()
+
+    sys.exit(app.exec_())

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>683</width>
-    <height>604</height>
+    <width>506</width>
+    <height>171</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,133 +25,135 @@
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents_2">
+     <widget class="QWidget" name="scrollAreaWidgetContents">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>665</width>
-        <height>549</height>
+        <width>488</width>
+        <height>122</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
-        <width>645</width>
-        <height>540</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
-      <widget class="QWidget" name="layoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>2</y>
-         <width>641</width>
-         <height>522</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Experiment information</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="3" column="0">
-            <widget class="QTextEdit" name="textEditDescription"/>
-           </item>
-           <item row="1" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QLabel" name="labelAuthor">
-               <property name="text">
-                <string>Experiment author:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEditAuthor"/>
-             </item>
-            </layout>
-           </item>
-           <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QLabel" name="labelExperimentName">
-               <property name="text">
-                <string>Experiment name:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEditExperimentName"/>
-             </item>
-            </layout>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="labelDescription">
-             <property name="text">
-              <string>Experiment description:</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="groupBoxInfo">
+         <property name="title">
+          <string>Experiment information</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelExperimentName">
+            <property name="text">
+             <string>Experiment name:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEditExperimentName"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEditAuthor"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelAuthor">
+            <property name="text">
+             <string>Experiment author:</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QDialogButtonBox" name="cancelOkButtonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayoutButtons">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCancel">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonAccept">
+       <property name="text">
+        <string>Ok</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <tabstops>
   <tabstop>scrollArea</tabstop>
-  <tabstop>lineEditExperimentName</tabstop>
-  <tabstop>lineEditAuthor</tabstop>
-  <tabstop>textEditDescription</tabstop>
-  <tabstop>cancelOkButtonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>cancelOkButtonBox</sender>
-   <signal>accepted()</signal>
+   <sender>pushButtonAccept</sender>
+   <signal>clicked()</signal>
    <receiver>CreateExperimentDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>434</x>
-     <y>781</y>
+     <x>332</x>
+     <y>155</y>
     </hint>
     <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
+     <x>310</x>
+     <y>116</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>cancelOkButtonBox</sender>
-   <signal>rejected()</signal>
+   <sender>pushButtonCancel</sender>
+   <signal>clicked()</signal>
    <receiver>CreateExperimentDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>434</x>
-     <y>781</y>
+     <x>418</x>
+     <y>155</y>
     </hint>
     <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
+     <x>310</x>
+     <y>116</y>
     </hint>
    </hints>
   </connection>

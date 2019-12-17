@@ -1,0 +1,7 @@
+{
+    "id": "tfr",
+    "name": "TFR",
+    "entry": "tfr.TFR",
+    "dir": "tfrs",
+    "save_key": "tfrs"
+}

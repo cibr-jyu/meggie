@@ -1,0 +1,19 @@
+{
+	"id": "spectrums",
+	"name": "Spectrums",
+	"outputs": ["spectrum"],
+	"transforms": ["create"],
+	"actions": ["delete",
+                "delete_from_all",
+                "plot_spectrum",
+                "group_average",
+                "save"],
+    "info": ["spectrum_info"],
+    "translations": {"plot_spectrum": "Plot spectrum",
+                     "group_average": "Average spectrum over subjects",
+                     "delete": "Delete spectrum",
+                     "delete_from_all": "Delete spectrum from all",
+                     "save": "Save spectrum to csv",
+                     "spectrum_info": "Spectrum info"}
+
+}

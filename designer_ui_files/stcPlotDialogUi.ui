@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Plot source estimate</string>
+   <string>Meggie - Plot source estimate</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_7">
    <item row="2" column="0">

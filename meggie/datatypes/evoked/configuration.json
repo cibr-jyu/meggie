@@ -1,0 +1,7 @@
+{
+    "id": "evoked",
+    "name": "Evoked",
+    "entry": "evoked.Evoked",
+    "dir": "evokeds",
+    "save_key": "evokeds"
+}

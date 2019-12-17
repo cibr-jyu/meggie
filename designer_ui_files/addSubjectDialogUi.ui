@@ -68,13 +68,6 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="pushButtonShowFileInfo">
-     <property name="text">
-      <string>Show file info</string>
-     </property>
-    </widget>
-   </item>
    <item row="3" column="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="sizePolicy">
@@ -91,7 +84,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="2" column="0">
     <widget class="QPushButton" name="pushButtonRemove">
      <property name="enabled">
       <bool>false</bool>
