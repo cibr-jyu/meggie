@@ -45,6 +45,8 @@ def get_raw_blocks_from_intervals(subject, intervals):
     """
     raw = subject.get_raw()
 
+    raw_times = raw.times.copy()
+
     raw_blocks = OrderedDict()
     times = {}
     for ival_type, (avg_group, start, end) in intervals:
@@ -60,16 +62,16 @@ def get_raw_blocks_from_intervals(subject, intervals):
             # the following code finds all start points of intervals by events or
             # start of recording. then matching end point is found by
             # (can be same) other events or end of recording.
-            if not start[0]:
-                start_times = [raw.times[0]]
-            else:
-                start_times = find_event_times(raw, start[0], start[1])
+            if start[0] == 'events':
+                start_times = find_event_times(raw, start[1], start[2])
+            elif start[0] == 'start':
+                start_times = [raw_times[0]]
+            elif start[0] == 'end':
+                start_times = [raw_times[-1]]
 
             for start_time in start_times:
-                if not end[0]:
-                    end_time = raw.times[-1]
-                else:
-                    end_times = find_event_times(raw, end[0], end[1])
+                if end[0] == 'events':
+                    end_times = find_event_times(raw, end[1], end[2])
                     found = False
                     for end_time in end_times:
                         # use equality so that one can also specify same trigger for
@@ -80,12 +82,16 @@ def get_raw_blocks_from_intervals(subject, intervals):
                     if not found:
                         raise Exception(
                             'Found start event with no matching end event')
+                elif end[0] == 'start':
+                    end_time = raw_times[0]
+                elif end[0] == 'end':
+                    end_time = raw_times[-1]
 
                 # crop with offsets
-                times[avg_group].append((start_time + start[2],
-                                         end_time + end[2]))
-                block = raw.copy().crop(tmin=start_time + start[2],
-                                        tmax=end_time + end[2])
+                times[avg_group].append((start_time + start[3],
+                                         end_time + end[3]))
+                block = raw.copy().crop(tmin=(start_time + start[3]),
+                                        tmax=(end_time + end[3]))
                 raw_blocks[avg_group].append(block)
 
     return times, raw_blocks
@@ -150,6 +156,7 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
 
     psd_data = dict(zip(psd_groups.keys(), psds))
 
+    params = deepcopy(params)
     params['conditions'] = [elem for elem in psd_groups.keys()]
     params['intervals'] = ival_times
 
@@ -390,7 +397,10 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
     data = grand_averages
 
     params = deepcopy(spectrum.params)
-    params.pop('intervals')
+
+    # individual intervals not relevant in the group item
+    params.pop('intervals', None)
+
     params['groups'] = groups
     params['conditions'] = [elem for elem in grand_averages.keys()]
 

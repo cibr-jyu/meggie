@@ -99,19 +99,24 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
                     ))
             else:
                 item_string = str(interval[0]) + ': ['
-                if interval[1][0]:
+                if interval[1][0] == 'events':
                     item_string += ', '.join([str(elem)
-                                              for elem in interval[1]])
-                else:
-                    item_string += 'start, ' + str(interval[1][2])
+                                              for elem in interval[1][1:]])
+                elif interval[1][0] == 'start':
+                    item_string += 'start, ' + str(interval[1][3])
+                elif interval[1][0] == 'end':
+                    item_string += 'end, ' + str(interval[1][3])
 
                 item_string += '] – ['
 
-                if interval[2][0]:
+                if interval[2][0] == 'events':
                     item_string += ', '.join([str(elem)
-                                              for elem in interval[2]])
-                else:
-                    item_string += 'end, ' + str(interval[2][2])
+                                              for elem in interval[2][1:]])
+                elif interval[2][0] == 'start':
+                    item_string += 'start, ' + str(interval[2][3])
+
+                elif interval[2][0] == 'end':
+                    item_string += 'end, ' + str(interval[2][3])
 
                 item_string += '] (dynamic)'
 

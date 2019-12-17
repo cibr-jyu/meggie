@@ -37,8 +37,10 @@ class PowerSpectrumAddAdvancedDialog(QtWidgets.QDialog):
 
     def accept(self):
         average_group = int(self.ui.comboBoxAvgGroup.currentText())
-        use_events_start = self.ui.radioButtonStartUseEvents.isChecked()
-        use_events_end = self.ui.radioButtonEndUseEvents.isChecked()
+        start_use_events = self.ui.radioButtonStartUseEvents.isChecked()
+        end_use_events = self.ui.radioButtonEndUseEvents.isChecked()
+        start_use_start = self.ui.radioButtonStartUseStart.isChecked()
+        end_use_start = self.ui.radioButtonEndUseStart.isChecked()
         start_id = self.ui.spinBoxStartId.value()
         start_mask = self.ui.spinBoxStartMask.value()
         end_id = self.ui.spinBoxEndId.value()
@@ -46,15 +48,19 @@ class PowerSpectrumAddAdvancedDialog(QtWidgets.QDialog):
         start_offset = self.ui.doubleSpinBoxStartOffset.value()
         end_offset = self.ui.doubleSpinBoxEndOffset.value()
 
-        if use_events_start:
-            start = (start_id, start_mask, start_offset)
+        if start_use_events:
+            start = ('events', start_id, start_mask, start_offset)
+        elif start_use_start:
+            start = ('start', None, None, start_offset)
         else:
-            start = (None, None, start_offset)
+            start = ('end', None, None, start_offset)
 
-        if use_events_end:
-            end = (end_id, end_mask, end_offset)
+        if end_use_events:
+            end = ('events', end_id, end_mask, end_offset)
+        elif end_use_start:
+            end = ('start', None, None, end_offset)
         else:
-            end = (None, None, end_offset)
+            end = ('end', None, None, end_offset)
 
         interval = (average_group, start, end)
 

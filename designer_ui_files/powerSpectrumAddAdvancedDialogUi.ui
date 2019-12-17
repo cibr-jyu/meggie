@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>356</width>
-    <height>486</height>
+    <height>546</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -118,7 +118,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="5" column="0">
        <widget class="QLabel" name="labelStartOffset">
         <property name="text">
          <string>Offset:</string>
@@ -159,7 +159,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="2">
+      <item row="5" column="2">
        <widget class="QDoubleSpinBox" name="doubleSpinBoxStartOffset">
         <property name="suffix">
          <string>s</string>
@@ -198,6 +198,13 @@
         </property>
        </widget>
       </item>
+      <item row="4" column="0" colspan="4">
+       <widget class="QRadioButton" name="radioButtonStartUseEnd">
+        <property name="text">
+         <string>Use end of recording</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -207,7 +214,7 @@
       <string>Ending points:</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
-      <item row="4" column="2">
+      <item row="6" column="2">
        <widget class="QDoubleSpinBox" name="doubleSpinBoxEndOffset">
         <property name="suffix">
          <string>s</string>
@@ -237,7 +244,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="6" column="0">
        <widget class="QLabel" name="labelEndOffset">
         <property name="text">
          <string>Offset:</string>
@@ -261,7 +268,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="4">
+      <item row="4" column="0" colspan="4">
        <widget class="QRadioButton" name="radioButtonEndUseEnd">
         <property name="text">
          <string>Use end of recording</string>
@@ -291,6 +298,13 @@
         </property>
         <property name="maximum">
          <number>1000000000</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="4">
+       <widget class="QRadioButton" name="radioButtonEndUseStart">
+        <property name="text">
+         <string>Use start of recording</string>
         </property>
        </widget>
       </item>
