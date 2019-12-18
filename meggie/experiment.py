@@ -220,6 +220,23 @@ class Experiment(QObject):
         except OSError:
             pass
 
+        path = os.path.join(self.workspace, self.name, self.name + '.exp')
+
+        # let's backup file with version number
+        if os.path.exists(path):
+            try:
+                with open(path, 'r') as f:
+                    old_data = json.load(f)
+
+                version = str(old_data['version']).replace('.', '-')
+
+                backup_path = os.path.join(self.workspace, self.name, self.name + '_' + version + '.exp.bak')
+
+                shutil.copy(path, backup_path)
+
+            except ValueError as exc:
+                raise Exception('Could not backup experiment file. Aborting saving..')
+
         # save to file
         with open(os.path.join(self.workspace, self.name,
                                self.name + '.exp'), 'w') as f:
