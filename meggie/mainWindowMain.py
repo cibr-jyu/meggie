@@ -51,6 +51,10 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        
+        # set default ratio of splitter
+        self.ui.splitterTopBottom.setStretchFactor(0, 2)
+        self.ui.splitterTopBottom.setStretchFactor(1, 1)
 
         self.experiment = None
 
