@@ -40,10 +40,10 @@ def read_layout(layout):
         'meggie', os.path.join('data', 'layouts'))
 
     if os.path.exists(os.path.join(path_mne, layout)):
-        return mne.read_layout(layout, path_mne)
+        return mne.channels.read_layout(layout, path_mne)
 
     if os.path.exists(os.path.join(path_meggie, layout)):
-        return mne.read_layout(layout, path_meggie)
+        return mne.channels.read_layout(layout, path_meggie)
 
 
 def get_layouts():
