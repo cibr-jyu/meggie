@@ -1,10 +1,15 @@
 Changelog
 =========
 
-0.14.2 (unreleased)
+0.14.3 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.14.2 (2019-12-18)
+------------------
+
+- Fix layout problem
 
 0.14.1 (2019-12-18)
 ------------------
