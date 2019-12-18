@@ -1,10 +1,18 @@
 Changelog
 =========
 
-0.14.1 (unreleased)
+0.14.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.14.1 (2019-12-18)
+------------------
+
+- Experiment file backup when saving
+- Splitter to main window
+- Improve dynamic spectrum creation
+- Fix bugs
 
 0.14.0 (2019-12-17)
 ------------------
