@@ -84,7 +84,11 @@ class GroupAverageDialog(QtWidgets.QDialog):
             else:
                 groups[group_id] = [subject]
 
-        name = validate_name(self.ui.lineEditName.text())
+        try:
+            name = validate_name(self.ui.lineEditName.text())
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
 
         self.handler(name, groups)
 

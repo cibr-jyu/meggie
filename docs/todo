@@ -1,3 +1,4 @@
+  (- group info's should only include subjects that finished without error, batching widget can probably give the info)
   (- for tfr's frequency info, cycles info, for epochs, add also epoch counts)
   (- When saving configuration files or exp files, do backup first, also could do version backup when version is changing))
   (- eeg support so that on every plot both meg and eeg are plotted, maybe layouts should be set by channel type. so next big update will be groups and channel types)
