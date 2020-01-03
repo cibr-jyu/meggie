@@ -7,7 +7,6 @@ from PyQt5 import QtCore
 
 from meggie.utilities.dialogs.groupAverageDialogUi import Ui_groupAverageDialog
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
 
 

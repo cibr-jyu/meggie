@@ -13,6 +13,7 @@ from meggie.utilities.dialogs.addSubjectDialogUi import Ui_AddSubject
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
+from meggie.utilities.decorators import threaded
 from meggie.utilities.names import next_available_name
 
 
@@ -29,8 +30,7 @@ class AddSubjectDialog(QtWidgets.QDialog):
 
     
     def accept(self):
-        """ Add the new subject. """
-        failed_subjects = []
+        """ Add new subjects. """
         for i in range(self.ui.listWidgetFileNames.count()):
             item = self.ui.listWidgetFileNames.item(i)
             raw_path = item.text()
@@ -41,14 +41,17 @@ class AddSubjectDialog(QtWidgets.QDialog):
 
             try:
                 subject_name = next_available_name(old_names, subject_name)
-                experiment.create_subject(subject_name,
-                                          basename,
-                                          raw_path)
+
+                @threaded
+                def _create_subject():
+                    experiment.create_subject(subject_name, basename,
+                                              raw_path)
+                
+                _create_subject(do_meanwhile=self.parent.update_ui)
+
             except Exception as exc:
                 exc_messagebox(self.parent, exc)
-
-        # Set source file path here temporarily. create_active_subject in
-        # experiment sets the real value for this attribute.
+                logging.getLogger('ui_logger').exception(str(exc))
 
         self.parent.experiment.save_experiment_settings()
         self.parent.initialize_ui()

@@ -79,7 +79,7 @@ class Subject(object):
             try:
                 raw = filemanager.open_raw(self.raw_path, preload=preload)
             except OSError:
-                raise IOError("Couldn't find raw file.")
+                raise IOError("Could not find the raw file.")
             self._raw = raw
 
             return raw
@@ -100,10 +100,13 @@ class Subject(object):
         Returns True if sss/tsss found.
         """
 
-        raw = self.get_raw()
-        for item in raw.info['proc_history']:
-            if 'maxfilter' in item.get('creator', []):
-                return True
+        try:
+            raw = self.get_raw()
+            for item in raw.info['proc_history']:
+                if 'maxfilter' in item.get('creator', []):
+                    return True
+        except Exception as exc:
+            return False
 
         return False
 

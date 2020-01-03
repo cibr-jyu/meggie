@@ -143,6 +143,10 @@ class Experiment(QObject):
             self.active_subject.release_memory()
 
         self.active_subject = self.subjects[subject_name]
+
+        # test validity
+        self.active_subject.get_raw(preload=False)
+
         return self.active_subject
 
     def create_subject(self, subject_name, raw_fname, raw_path):

@@ -287,6 +287,7 @@ class MainWindow(QtWidgets.QMainWindow):
             @threaded
             def activate(subject_name):
                 self.experiment.activate_subject(subject_name)
+
             activate(subject_name, do_meanwhile=self.update_ui)
 
         except Exception as exc:

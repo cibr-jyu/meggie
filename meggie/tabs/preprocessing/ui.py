@@ -112,17 +112,21 @@ def measurement_info(experiment, data, window):
 def event_info(experiment, data, window):
     """
     """
-    subject = experiment.active_subject
-    if not subject:
+    try:
+        subject = experiment.active_subject
+        if not subject:
+            return ""
+
+        event_counts = create_event_set(subject.get_raw())
+
+        if not event_counts:
+            events_string = 'No events found.'
+        else:
+            events_string = ''
+            for key, value in event_counts.items():
+                events_string += 'Trigger %s, %s events\n' % (str(key), str(value))
+
+        return events_string
+    except Exception as exc:
         return ""
 
-    event_counts = create_event_set(subject.get_raw())
-
-    if not event_counts:
-        events_string = 'No events found.'
-    else:
-        events_string = ''
-        for key, value in event_counts.items():
-            events_string += 'Trigger %s, %s events\n' % (str(key), str(value))
-
-    return events_string
