@@ -1,10 +1,15 @@
 Changelog
 =========
 
-0.14.3 (unreleased)
+0.14.4 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.14.3 (2019-02-14)
+------------------
+
+- Fix saving exceptions
 
 0.14.2 (2019-12-18)
 ------------------
