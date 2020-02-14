@@ -154,13 +154,13 @@ def save_all_channels(experiment, selected_name):
             continue
 
         for key, mne_evoked in evoked.content.items():
-            csv_data.extend(mne_evoked.data.tolist())
             column_names = format_floats(mne_evoked.times)
 
-            for ch_name in mne_evoked.info['ch_names']:
-                name = subject.name + '{' + key + '}' + '[' + ch_name + ']'
+            for ch_idx, ch_name in enumerate(mne_evoked.info['ch_names']):
                 if ch_name in mne_evoked.info['bads']:
                     continue
+                name = subject.name + '{' + key + '}' + '[' + ch_name + ']'
+                csv_data.append(mne_evoked.data[ch_idx].tolist())
                 row_names.append(name)
 
     folder = filemanager.create_timestamped_folder(experiment)

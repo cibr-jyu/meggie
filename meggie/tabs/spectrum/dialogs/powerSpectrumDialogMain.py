@@ -77,7 +77,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None:
             return
-        group = int(self.ui.comboBoxAvgGroup.currentText())
+        group = str(self.ui.comboBoxAvgGroup.currentText())
         tmin = self.ui.doubleSpinBoxTmin.value()
         tmax = self.ui.doubleSpinBoxTmax.value()
         if tmin >= tmax:

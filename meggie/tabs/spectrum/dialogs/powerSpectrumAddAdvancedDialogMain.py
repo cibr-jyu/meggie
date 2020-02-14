@@ -36,7 +36,7 @@ class PowerSpectrumAddAdvancedDialog(QtWidgets.QDialog):
         self.bitDialog.show()
 
     def accept(self):
-        average_group = int(self.ui.comboBoxAvgGroup.currentText())
+        average_group = str(self.ui.comboBoxAvgGroup.currentText())
         start_use_events = self.ui.radioButtonStartUseEvents.isChecked()
         end_use_events = self.ui.radioButtonEndUseEvents.isChecked()
         start_use_start = self.ui.radioButtonStartUseStart.isChecked()
