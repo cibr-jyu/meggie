@@ -121,7 +121,7 @@ class Experiment(QObject):
         """
 
         if getattr(self, 'active_subject',
-                   None) and self.active_subject.subject_name == name:
+                   None) and self.active_subject.name == name:
             self.active_subject = None
 
         subject = self.subjects.pop(name)
