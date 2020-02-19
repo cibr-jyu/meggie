@@ -6,6 +6,7 @@ import os
 from pprint import pformat
 
 import mne
+import numpy as np
 import matplotlib.pyplot as plt
 
 from meggie.tabs.evoked.controller.evoked import create_averages
@@ -26,6 +27,7 @@ from meggie.utilities.names import next_available_name
 
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
+from meggie.tabs.evoked.dialogs.evokedTopomapDialogMain import EvokedTopomapDialog
 
 
 def create(experiment, data, window):
@@ -151,14 +153,20 @@ def plot_topomap(experiment, data, window):
 
     evoked = subject.evoked.get(selected_name)
 
-    for key, evoked in evoked.content.items():
-        channels = get_channels(evoked.info)
-        for ch_type in channels.keys():
-            title = '{0}_{1}_{2}'.format(selected_name, key, ch_type)
-            fig = mne.viz.plot_evoked_topomap(
-                evoked, ch_type=ch_type, layout=layout,
-                title=title)
-            fig.canvas.set_window_title(title)
+    def handler(tmin, tmax, step, evoked):
+
+        for key, evok in evoked.content.items():
+            channels = get_channels(evok.info)
+            for ch_type in channels.keys():
+                title = '{0}_{1}_{2}'.format(selected_name, key, ch_type)
+                times = np.arange(tmin, tmax, step)
+                fig = mne.viz.plot_evoked_topomap(
+                    evok, times=times, ch_type=ch_type, layout=layout,
+                    title=title)
+                fig.canvas.set_window_title(title)
+
+    dialog = EvokedTopomapDialog(window, evoked, handler)
+    dialog.show()
 
 
 def group_average(experiment, data, window):
