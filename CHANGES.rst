@@ -1,12 +1,18 @@
 Changelog
 =========
 
-0.14.4 (unreleased)
+0.14.5 (unreleased)
 ------------------
 
 - nothing changed yet.
 
-0.14.3 (2019-02-14)
+0.14.4 (2020-02-19)
+------------------
+
+- Fix subject removal error when any subject activated
+- Add times settings to evoked topomaps
+
+0.14.3 (2020-02-14)
 ------------------
 
 - Fix saving exceptions
