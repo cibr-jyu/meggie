@@ -4,12 +4,13 @@
 	"inputs": [],
 	"actions": ["plot", "ica", "filter",
 				"resample", "rereference",
-				"projections"],
+				"projections", "events_from_annotations"],
     "info": ["measurement_info", "event_info"],
     "translations": {"plot": "Plot raw / set bads",
                      "ica": "Remove artifacts using ICA",
                      "rereference": "Rereference EEG data",
                      "projections": "Plot SSP vectors",
                      "measurement_info": "Measurement info",
-                     "event_info": "Event info"}
+                     "event_info": "Event info",
+                     "events_from_annotations": "Events from annotations"}
 }
