@@ -10,6 +10,8 @@ from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.decorators import threaded
 
+from meggie.tabs.preprocessing.controller.events import events_from_annotations
+
 
 class EventsFromAnnotationsDialog(QtWidgets.QDialog):
 
@@ -80,16 +82,18 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
         """
 
         subject = self.experiment.active_subject
-        raw = subject.get_raw()
 
-        # rate = self.ui.doubleSpinBoxNewRate.value()
-        # @threaded
-        # def resample_fun():
-        #     raw.resample(rate)
-        #     subject.save()
+        @threaded
+        def evs_from_annots():
+            try:
+                events_from_annotations(subject, self.items)
+            except Exception as exc:
+                exc_messagebox(self, exc)
+                return
 
-        # resample_fun(do_meanwhile=self.parent.update_ui)
+            subject.save()
 
+        evs_from_annots(do_meanwhile=self.parent.update_ui)
         self.parent.initialize_ui()
 
         logging.getLogger('ui_logger').info('Finished.')
@@ -106,17 +110,13 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    raw = subject.get_raw()
+                    @threaded
+                    def evs_from_annots():
+                        events_from_annotations(subject, self.items)
+                        subject.save()
+                        subject.release_memory()
 
-                    # rate = self.ui.doubleSpinBoxNewRate.value()
-
-                    # @threaded
-                    # def resample_fun():
-                    #     raw.resample(rate)
-                    #     subject.save()
-                    #     subject.release_memory()
-
-                    # resample_fun(do_meanwhile=self.parent.update_ui)
+                    evs_from_annots(do_meanwhile=self.parent.update_ui)
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append(
                         (subject, str(exc)))

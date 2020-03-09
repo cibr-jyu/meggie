@@ -80,8 +80,9 @@ def get_raw_blocks_from_intervals(subject, intervals):
                             found = True
                             break
                     if not found:
-                        raise Exception(
+                        logging.getLogger('ui_logger').info(
                             'Found start event with no matching end event')
+                        continue
                 elif end[0] == 'start':
                     end_time = raw_times[0]
                 elif end[0] == 'end':
@@ -94,6 +95,10 @@ def get_raw_blocks_from_intervals(subject, intervals):
                                         tmax=(end_time + end[3]))
                 raw_blocks[avg_group].append(block)
 
+    for key in raw_blocks:
+        if len(raw_blocks[key]) == 0:
+            raise Exception('Was not able to find raw segments for all groups')
+     
     return times, raw_blocks
 
 

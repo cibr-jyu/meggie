@@ -54,6 +54,7 @@ class Ui_EventsFromAnnotationsDialog(object):
         self.labelEventID.setObjectName("labelEventID")
         self.gridLayout_3.addWidget(self.labelEventID, 3, 0, 1, 1)
         self.spinBoxEventID = QtWidgets.QSpinBox(self.groupBoxConfiguration)
+        self.spinBoxEventID.setMinimum(1)
         self.spinBoxEventID.setMaximum(1000000)
         self.spinBoxEventID.setObjectName("spinBoxEventID")
         self.gridLayout_3.addWidget(self.spinBoxEventID, 3, 1, 1, 1)
