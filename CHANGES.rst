@@ -1,10 +1,16 @@
 Changelog
 =========
 
-0.14.5 (unreleased)
+0.14.6 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.14.5 (2020-03-09)
+------------------
+
+- Add events from annotations dialog
+- Allow missing end points in dynamic spectrum creation
 
 0.14.4 (2020-02-19)
 ------------------
