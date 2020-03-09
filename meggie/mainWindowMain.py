@@ -364,8 +364,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if self.experiment.name:
             self.ui.labelExperimentNameValue.setText(self.experiment.name)
+
         if self.experiment.author:
             self.ui.labelExperimentAuthorValue.setText(self.experiment.author)
+        else:
+            self.ui.labelExperimentAuthorValue.setText("")
 
         self.setWindowTitle('Meggie - ' + self.experiment.name)
 

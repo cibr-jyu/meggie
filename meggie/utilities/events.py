@@ -25,6 +25,19 @@ def find_stim_channel(raw):
         return 'STI014'
 
 
+def update_stim_channel(raw, events):
+    """ Writes events to stim channel
+    """
+    # time on in samples
+    length = 5
+
+    stim_channel = find_stim_channel(raw)
+    ch_idx = raw.info['ch_names'].index(stim_channel)
+    for event in events:
+        start = event[0] - raw.first_samp
+        raw._data[ch_idx][start:start+length] = event[2]
+
+
 def create_event_set(raw):
     """
     Creates an event set where the first element is the id

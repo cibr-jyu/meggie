@@ -2,14 +2,19 @@
 """
 import logging 
 
+import numpy as np
+
 from meggie.tabs.preprocessing.dialogs.icaDialogMain import ICADialog
 from meggie.tabs.preprocessing.dialogs.filterDialogMain import FilterDialog
 from meggie.tabs.preprocessing.dialogs.resamplingDialogMain import ResamplingDialog
 from meggie.tabs.preprocessing.dialogs.rereferencingDialogMain import RereferencingDialog
+from meggie.tabs.preprocessing.dialogs.eventsFromAnnotationsDialogMain import EventsFromAnnotationsDialog
 
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.events import create_event_set
+from meggie.utilities.events import find_stim_channel
+from meggie.utilities.events import Events
 from meggie.utilities.measurement_info import MeasurementInfo
 
 
@@ -22,15 +27,31 @@ def plot(experiment, data, window):
         return
 
     old_bads = raw.info['bads'].copy()
+    old_annotations = raw.annotations.copy()
 
     def handle_close(event):
-        if sorted(raw.info['bads']) != sorted(old_bads):
-            # if bads differ, should save and initialize window
+        bads_changed = (sorted(raw.info['bads']) != sorted(old_bads))
+        
+        annotations_changed = False
+        if len(raw.annotations) != len(old_annotations):
+            annotations_changed = True
+        if not np.allclose(raw.annotations.onset, old_annotations.onset):
+            annotations_changed = True
+
+        if bads_changed:
+            logging.getLogger('ui_logger').info('Bads changed!')
+        if annotations_changed:
+            logging.getLogger('ui_logger').info('Annotations changed!')
+        if bads_changed or annotations_changed:
             subject.save()
             window.initialize_ui()
-            logging.getLogger('ui_logger').info('Bads changed!')
 
-    fig = raw.plot()
+    # find events
+    stim_ch = find_stim_channel(raw)
+    if not stim_ch:
+        return
+    events = Events(raw, stim_ch=stim_ch).events
+    fig = raw.plot(events=events)
     fig.canvas.mpl_connect('close_event', handle_close)
 
 
@@ -76,6 +97,13 @@ def rereference(experiment, data, window):
     """
     rereferencing_dialog = RereferencingDialog(window, experiment)
     rereferencing_dialog.show()
+
+
+def events_from_annotations(experiment, data, window):
+    """
+    """
+    dialog = EventsFromAnnotationsDialog(window, experiment)
+    dialog.show()
 
 
 def measurement_info(experiment, data, window):
