@@ -107,6 +107,7 @@ class RereferencingDialog(QtWidgets.QDialog):
                     rereference_fun(do_meanwhile=self.parent.update_ui)
                     subject.save()
                     subject.rereferenced = True
+                    subject.release_memory()
 
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append(

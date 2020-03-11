@@ -119,6 +119,7 @@ class CreateEvokedDialog(QtWidgets.QDialog):
             if name in selected_subject_names:
                 try:
                     self.create_evoked(subject, selected_epochs)
+                    subject.release_memory()
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append(
                         (subject, str(exc)))
