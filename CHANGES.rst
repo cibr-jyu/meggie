@@ -1,10 +1,15 @@
 Changelog
 =========
 
-0.14.6 (unreleased)
+0.14.7 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.14.6 (2020-03-11)
+------------------
+
+- Improve memory handling
 
 0.14.5 (2020-03-09)
 ------------------
