@@ -59,8 +59,6 @@ class PreferencesHandler(object):
         config.set('Tabs', 'enabledTabs', ','.join(self.enabled_tabs or []))
         config.set('Tabs', 'preset', self.tab_preset)
 
-        # test this!
-
         with open(os.path.join(homepath(), '.meggieprefs'), 'w') as configfile:
             config.write(configfile)
 

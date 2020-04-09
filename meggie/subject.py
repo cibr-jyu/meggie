@@ -13,6 +13,8 @@ import numpy as np
 
 import meggie.utilities.filemanager as filemanager
 
+from meggie.utilities.dynamic import find_all_sources
+
 from meggie.utilities.events import Events
 
 
@@ -34,21 +36,24 @@ class Subject(object):
                                  experiment.name,
                                  name)
 
-        datatype_path = pkg_resources.resource_filename('meggie', 'datatypes')
-        for package in os.listdir(datatype_path):
-            config_path = os.path.join(
-                datatype_path, package, 'configuration.json')
-            if os.path.exists(config_path):
-                with open(config_path, 'r') as f:
-                    config = json.load(f)
-                    datatype = config['id']
-                    dir_ = config['dir']
+        for source in find_all_sources():
+            datatype_path = pkg_resources.resource_filename(source, 'datatypes')
+            if not os.path.exists(datatype_path):
+                continue
+            for package in os.listdir(datatype_path):
+                config_path = os.path.join(
+                    datatype_path, package, 'configuration.json')
+                if os.path.exists(config_path):
+                    with open(config_path, 'r') as f:
+                        config = json.load(f)
+                        datatype = config['id']
+                        dir_ = config['dir']
 
-                    # for example: self.epochs
-                    setattr(self, datatype, dict())
-                    # for example: self.epochs_directory
-                    setattr(self, datatype + '_directory',
-                            os.path.join(self.path, dir_))
+                        # for example: self.epochs
+                        setattr(self, datatype, dict())
+                        # for example: self.epochs_directory
+                        setattr(self, datatype + '_directory',
+                                os.path.join(self.path, dir_))
 
     def add(self, dataobject, datatype):
         container = getattr(self, datatype)
@@ -113,16 +118,19 @@ class Subject(object):
     def ensure_folders(self):
 
         paths = []
-        datatype_path = pkg_resources.resource_filename('meggie', 'datatypes')
-        for package in os.listdir(datatype_path):
-            config_path = os.path.join(datatype_path, package,
-                                       'configuration.json')
-            if os.path.exists(config_path):
-                with open(config_path, 'r') as f:
-                    config = json.load(f)
-                    datatype = config['id']
-                    path = getattr(self, datatype + '_directory')
-                    paths.append(path)
+        for source in find_all_sources():
+            datatype_path = pkg_resources.resource_filename(source, 'datatypes')
+            if not os.path.exists(datatype_path):
+                continue
+            for package in os.listdir(datatype_path):
+                config_path = os.path.join(datatype_path, package,
+                                           'configuration.json')
+                if os.path.exists(config_path):
+                    with open(config_path, 'r') as f:
+                        config = json.load(f)
+                        datatype = config['id']
+                        path = getattr(self, datatype + '_directory')
+                        paths.append(path)
 
         try:
             filemanager.ensure_folders(

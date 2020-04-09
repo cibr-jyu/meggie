@@ -14,6 +14,8 @@ import copy
 
 import meggie.utilities.filemanager as filemanager
 
+from meggie.utilities.dynamic import find_all_sources
+
 from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
 from meggie.subject import Subject
@@ -178,17 +180,20 @@ class Experiment(QObject):
             }
 
             datatypes = []
-            datatype_path = pkg_resources.resource_filename(
-                'meggie', 'datatypes')
-            for package in os.listdir(datatype_path):
-                config_path = os.path.join(
-                    datatype_path, package, 'configuration.json')
-                if os.path.exists(config_path):
-                    with open(config_path, 'r') as f:
-                        config = json.load(f)
-                        datatype = config['id']
-                        key = config['save_key']
-                        datatypes.append((key, datatype))
+            for source in find_all_sources():
+                datatype_path = pkg_resources.resource_filename(
+                    source, 'datatypes')
+                if not os.path.exists(datatype_path):
+                    continue
+                for package in os.listdir(datatype_path):
+                    config_path = os.path.join(
+                        datatype_path, package, 'configuration.json')
+                    if os.path.exists(config_path):
+                        with open(config_path, 'r') as f:
+                            config = json.load(f)
+                            datatype = config['id']
+                            key = config['save_key']
+                            datatypes.append((key, datatype))
 
             for save_key, datatype in datatypes:
                 for inst in getattr(subject, datatype).values():
@@ -357,24 +362,27 @@ class ExperimentHandler(QObject):
                                   )
 
                 datatypes = []
-                datatype_path = pkg_resources.resource_filename(
-                    'meggie', 'datatypes')
-                for package in os.listdir(datatype_path):
-                    config_path = os.path.join(
-                        datatype_path, package, 'configuration.json')
-                    if os.path.exists(config_path):
-                        with open(config_path, 'r') as f:
-                            config = json.load(f)
-                            datatype = config['id']
-                            key = config['save_key']
-                            entry = config['entry']
-                            datatypes.append((key, package, entry, datatype))
+                for source in find_all_sources():
+                    datatype_path = pkg_resources.resource_filename(
+                        source, 'datatypes')
+                    if not os.path.exists(datatype_path):
+                        continue
+                    for package in os.listdir(datatype_path):
+                        config_path = os.path.join(
+                            datatype_path, package, 'configuration.json')
+                        if os.path.exists(config_path):
+                            with open(config_path, 'r') as f:
+                                config = json.load(f)
+                                datatype = config['id']
+                                key = config['save_key']
+                                entry = config['entry']
+                                datatypes.append((key, source, package, entry, datatype))
 
-                for save_key, package, entry, datatype in datatypes:
+                for save_key, source, package, entry, datatype in datatypes:
                     for inst_data in subject_data.get(save_key, []):
                         module_name, class_name = entry.split('.')
                         module = importlib.import_module(
-                            '.'.join(['meggie', 'datatypes', package, module_name]))
+                            '.'.join([source, 'datatypes', package, module_name]))
                         inst_class = getattr(module, class_name, None)
 
                         name = inst_data.get('name')

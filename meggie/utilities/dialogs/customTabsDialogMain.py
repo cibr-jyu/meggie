@@ -35,6 +35,7 @@ class CustomTabsDialog(QtWidgets.QDialog):
         for tab_id in all_tabs:
             if tab_id not in enabled_tabs:
                 tablist.append(tab_id)
+
         for tab_id in tablist:
             item = QtWidgets.QListWidgetItem(tab_id)
             self.ui.listWidgetTabs.addItem(item)

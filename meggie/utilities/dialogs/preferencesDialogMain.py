@@ -12,6 +12,8 @@ from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSignal
 
+from meggie.utilities.dynamic import find_all_sources
+
 from meggie.utilities.dialogs.preferencesDialogUi import Ui_DialogPreferences
 from meggie.utilities.dialogs.customTabsDialogMain import CustomTabsDialog
 
@@ -46,12 +48,16 @@ class PreferencesDialog(QtWidgets.QDialog):
         if self.parent.preferencesHandler.confirm_quit:
             self.ui.checkBoxConfirmQuit.setChecked(True)
 
-        config_path = pkg_resources.resource_filename(
-            'meggie', 'configuration.json')
-        with open(config_path, 'r') as f:
-            config = json.load(f)
-
-        tab_presets = config['tab_presets']
+        tab_presets = []
+        for source in find_all_sources():
+            config_path = pkg_resources.resource_filename(
+                source, 'configuration.json')
+            with open(config_path, 'r') as f:
+                config = json.load(f)
+            if 'tab_presets' not in config:
+                raise Exception('Invalid configuration file in ' +
+                                str(config_path))
+            tab_presets.extend(config['tab_presets'])
 
         enabled_tabs = self.parent.preferencesHandler.enabled_tabs
         user_preset = self.parent.preferencesHandler.tab_preset
@@ -143,12 +149,16 @@ class PreferencesDialog(QtWidgets.QDialog):
             confirmQuit = False
         self.parent.preferencesHandler.confirm_quit = confirmQuit
 
-        config_path = pkg_resources.resource_filename(
-            'meggie', 'configuration.json')
-        with open(config_path, 'r') as f:
-            config = json.load(f)
-
-        tab_presets = config['tab_presets']
+        tab_presets = []
+        for source in find_all_sources():
+            config_path = pkg_resources.resource_filename(
+                source, 'configuration.json')
+            with open(config_path, 'r') as f:
+                config = json.load(f)
+            if 'tab_presets' not in config:
+                raise Exception('Invalid configuration file in ' +
+                                str(config_path))
+            tab_presets.extend(config['tab_presets'])
 
         selected_preset = 'custom'
         for idx, button in enumerate(self.tabButtons):

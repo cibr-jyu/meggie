@@ -11,22 +11,47 @@ from PyQt5 import QtWidgets
 from meggie.utilities.messaging import exc_messagebox
 
 
+def find_all_plugins():
+    plugins = []
+    package_keys = [dist.key.replace('-', '_') for dist 
+                    in pkg_resources.working_set]
+    for key in package_keys:
+        if key.startswith('meggie_'):
+            # check that there exists configuration.json
+            if not os.path.exists(
+                    pkg_resources.resource_filename(key, 'configuration.json')):
+                continue
+            plugins.append(key)
+    return plugins
+
+
+def find_all_sources():
+    """ Returns all packages where to look for tabs / datatypes.
+    """
+    return ['meggie'] + find_all_plugins()
+
+
 def find_all_tab_specs():
     """ Finds all valid tab packages under tabs-folder.
     """
     tab_specs = {}
-    tab_path = pkg_resources.resource_filename('meggie', 'tabs')
-    for package in os.listdir(tab_path):
-        config_path = os.path.join(tab_path, package, 'configuration.json')
-        if os.path.exists(config_path):
-            with open(config_path, 'r') as f:
-                config = json.load(f)
-                if config:
-                    tab_specs[config['id']] = package, config
+
+    sources = find_all_sources()
+    for source in sources:
+        tab_path = pkg_resources.resource_filename(source, 'tabs')
+        if not os.path.exists(tab_path):
+            continue
+        for package in os.listdir(tab_path):
+            config_path = os.path.join(tab_path, package, 'configuration.json')
+            if os.path.exists(config_path):
+                with open(config_path, 'r') as f:
+                    config = json.load(f)
+                    if config:
+                        tab_specs[config['id']] = source, package, config
     return tab_specs
 
 
-def construct_tab(package, tab_spec, parent):
+def construct_tab(source, package, tab_spec, parent):
     """ Constructs analysis tab dynamically.
 
     Constructs analysis tab dynamically from python package
@@ -239,7 +264,7 @@ def construct_tab(package, tab_spec, parent):
             # add handlers for list selection changed -> info updates
             def connect_to_handler(list_element, info_element, info_name):
                 module = importlib.import_module(
-                    '.'.join(['meggie', 'tabs', package, 'ui']))
+                    '.'.join([source, 'tabs', package, 'ui']))
                 handler = getattr(module, info_name)
 
                 def handler_wrapper():
@@ -281,7 +306,7 @@ def construct_tab(package, tab_spec, parent):
 
             def connect_to_handler(button, name):
                 module = importlib.import_module(
-                    '.'.join(['meggie', 'tabs', package, 'ui']))
+                    '.'.join([source, 'tabs', package, 'ui']))
                 handler = getattr(module, name)
 
                 def handler_wrapper(checked):
@@ -401,7 +426,7 @@ def construct_tab(package, tab_spec, parent):
                     self, 'plainTextEditInfoElement_' + str(idx + 1))
 
                 module = importlib.import_module(
-                    '.'.join(['meggie', 'tabs', package, 'ui']))
+                    '.'.join([source, 'tabs', package, 'ui']))
                 handler = getattr(module, info_name)
                 info_content = handler(experiment, None, self.parent)
                 ui_element.setPlainText(info_content)

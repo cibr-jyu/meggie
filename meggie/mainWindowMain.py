@@ -28,6 +28,8 @@ from meggie.utilities.decorators import threaded
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 
+from meggie.utilities.dynamic import find_all_sources
+
 from meggie.utilities.dialogs.logDialogMain import LogDialog
 from meggie.utilities.dialogs.aboutDialogMain import AboutDialog
 from meggie.utilities.dialogs.preferencesDialogMain import PreferencesDialog
@@ -314,12 +316,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.tabs = []
 
-        config_path = pkg_resources.resource_filename(
-            'meggie', 'configuration.json')
-        with open(config_path, 'r') as f:
-            config = json.load(f)
+        tab_presets = []
+        for source in find_all_sources():
+            config_path = pkg_resources.resource_filename(
+                source, 'configuration.json')
+            with open(config_path, 'r') as f:
+                config = json.load(f)
+            if 'tab_presets' not in config:
+                raise Exception('Invalid configuration file in ' +
+                                str(config_path))
+            tab_presets.extend(config['tab_presets'])
 
-        tab_presets = config.get('tab_presets')
         enabled_tabs = self.preferencesHandler.enabled_tabs
         user_preset = self.preferencesHandler.tab_preset
 
@@ -344,10 +351,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         for tab_id in enabled_tabs:
             try:
-                package, tab_spec = tab_specs[tab_id]
+                source, package, tab_spec = tab_specs[tab_id]
             except Exception:
                 continue
-            tab = construct_tab(package, tab_spec, self)
+            tab = construct_tab(source, package, tab_spec, self)
             self.tabs.append(tab)
 
     def initialize_ui(self):
