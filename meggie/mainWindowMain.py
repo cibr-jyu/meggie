@@ -64,8 +64,7 @@ class MainWindow(QtWidgets.QMainWindow):
         wrap_mne()
 
         # Direct output to console
-        if 'debug' not in sys.argv:
-            self.directOutput()
+        self.directOutput()
 
         # For storing and handling program wide prefences.
         self.preferencesHandler = PreferencesHandler()
@@ -544,6 +543,7 @@ class EmittingStream(QtCore.QObject):
     textWritten = QtCore.pyqtSignal(str)
 
     def write(self, text):
+        self.orig_stream.write(str(text))
         self.textWritten.emit(str(text))
 
     def flush(self):
