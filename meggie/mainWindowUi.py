@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainWindowUi.ui'
+# Form implementation generated from reading ui file 'designer_ui_files/mainWindowUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -145,6 +145,14 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(-1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.scrollAreaLeft, self.pushButtonLayout)
+        MainWindow.setTabOrder(self.pushButtonLayout, self.listWidgetSubjects)
+        MainWindow.setTabOrder(self.listWidgetSubjects, self.pushButtonActivateSubject)
+        MainWindow.setTabOrder(self.pushButtonActivateSubject, self.pushButtonRemoveSubject)
+        MainWindow.setTabOrder(self.pushButtonRemoveSubject, self.pushButtonAddSubjects)
+        MainWindow.setTabOrder(self.pushButtonAddSubjects, self.scrollAreaRight)
+        MainWindow.setTabOrder(self.scrollAreaRight, self.tabWidget)
+        MainWindow.setTabOrder(self.tabWidget, self.textEditConsole)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate

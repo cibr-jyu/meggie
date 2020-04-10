@@ -290,6 +290,17 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>scrollAreaLeft</tabstop>
+  <tabstop>pushButtonLayout</tabstop>
+  <tabstop>listWidgetSubjects</tabstop>
+  <tabstop>pushButtonActivateSubject</tabstop>
+  <tabstop>pushButtonRemoveSubject</tabstop>
+  <tabstop>pushButtonAddSubjects</tabstop>
+  <tabstop>scrollAreaRight</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>textEditConsole</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
