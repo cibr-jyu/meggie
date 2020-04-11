@@ -23,54 +23,43 @@ class MeasurementInfo(object):
     @property
     def high_pass(self):
         """
-        Returns the online high pass cutoff frequency in Hz.
-        Raises an exception if the field highpass does not exist.
         """
-        if self._info.get('highpass') is None:
-            raise Exception('Field highpass does not exist.')
-        else:
+        try:
             return round(self._info.get('highpass'), 2)
+        except Exception as exc:
+            pass
 
     @property
     def low_pass(self):
         """
-        Returns the online low pass filter cutoff frequency.
-        Raises an exception if the field lowpass does not exist.
         """
-        if self._info.get('lowpass') is None:
-            raise Exception('Field lowpass does not exist.')
-        else:
+        try:
             return round(self._info.get('lowpass'), 2)
+        except Exception as exc:
+            return ""
 
     @property
     def sampling_freq(self):
         """
-        returns the sampling frequency.
         """
-        if self._info.get('sfreq') is None:
-            raise Exception('Field sfreq does not exist.')
-        else:
+        try:
             return round(self._info.get('sfreq'), 2)
+        except Exception as exc:
+            return ""
 
     @property
     def date(self):
         """
         Returns the date of measurement in form yyyy-mm-dd.
         """
-        if self._info.get('meas_date') is None:
-            raise Exception('Field meas_date does not exist.')
-        elif not isinstance(datetime.datetime.fromtimestamp
-                            (self._info.get('meas_date')[0]), datetime.datetime):
-            raise TypeError('Field meas_date is not a valid timestamp.')
-        else:
-            d = datetime.datetime.fromtimestamp(self._info.get('meas_date')[0])
-            return d.strftime('%Y-%m-%d')
+        try:
+            return str(self._info['meas_date'].date())
+        except Exception as exc:
+            return ""
 
     @property
     def subject_name(self):
         """
-        Returns the subjects name. If some of the name fields are nonexistent
-        or empty, substitutes information with emptry strings.
         """
         subj_info = self._info.get('subject_info')
 

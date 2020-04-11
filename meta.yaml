@@ -14,11 +14,11 @@ requirements:
   build:
     - python
     - setuptools
-    - mne ==0.19.2
+    - mne ==0.20.0
 
   run:
     - python
-    - mne ==0.19.2
+    - mne ==0.20.0
     - pyqt >=5.0.0
     - xlwt
     - xlrd

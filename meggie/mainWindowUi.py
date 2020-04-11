@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'designer_ui_files/mainWindowUi.ui'
+# Form implementation generated from reading ui file 'mainWindowUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -64,9 +64,9 @@ class Ui_MainWindow(object):
         self.labelExperimentAuthor = QtWidgets.QLabel(self.groupBoxExperiment)
         self.labelExperimentAuthor.setObjectName("labelExperimentAuthor")
         self.gridLayout_4.addWidget(self.labelExperimentAuthor, 1, 0, 1, 1)
-        self.pushButtonLayout = QtWidgets.QPushButton(self.groupBoxExperiment)
-        self.pushButtonLayout.setObjectName("pushButtonLayout")
-        self.gridLayout_4.addWidget(self.pushButtonLayout, 2, 0, 1, 3)
+        self.pushButtonChannelGroups = QtWidgets.QPushButton(self.groupBoxExperiment)
+        self.pushButtonChannelGroups.setObjectName("pushButtonChannelGroups")
+        self.gridLayout_4.addWidget(self.pushButtonChannelGroups, 2, 0, 1, 3)
         self.labelExperimentNameValue = QtWidgets.QLabel(self.groupBoxExperiment)
         self.labelExperimentNameValue.setText("")
         self.labelExperimentNameValue.setObjectName("labelExperimentNameValue")
@@ -145,8 +145,8 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(-1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        MainWindow.setTabOrder(self.scrollAreaLeft, self.pushButtonLayout)
-        MainWindow.setTabOrder(self.pushButtonLayout, self.listWidgetSubjects)
+        MainWindow.setTabOrder(self.scrollAreaLeft, self.pushButtonChannelGroups)
+        MainWindow.setTabOrder(self.pushButtonChannelGroups, self.listWidgetSubjects)
         MainWindow.setTabOrder(self.listWidgetSubjects, self.pushButtonActivateSubject)
         MainWindow.setTabOrder(self.pushButtonActivateSubject, self.pushButtonRemoveSubject)
         MainWindow.setTabOrder(self.pushButtonRemoveSubject, self.pushButtonAddSubjects)
@@ -164,7 +164,7 @@ class Ui_MainWindow(object):
         self.groupBoxExperiment.setTitle(_translate("MainWindow", "Experiment"))
         self.labelExperimentName.setText(_translate("MainWindow", "Name:"))
         self.labelExperimentAuthor.setText(_translate("MainWindow", "Author:"))
-        self.pushButtonLayout.setText(_translate("MainWindow", "Change sensor layout..."))
+        self.pushButtonChannelGroups.setText(_translate("MainWindow", "Channel groups..."))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuTools.setTitle(_translate("MainWindow", "Tools"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))

@@ -2,9 +2,12 @@
 """
 import logging 
 
+import mne
 import numpy as np
+import matplotlib.pyplot as plt
 
 from meggie.tabs.preprocessing.dialogs.icaDialogMain import ICADialog
+from meggie.tabs.preprocessing.dialogs.montageDialogMain import MontageDialog
 from meggie.tabs.preprocessing.dialogs.filterDialogMain import FilterDialog
 from meggie.tabs.preprocessing.dialogs.resamplingDialogMain import ResamplingDialog
 from meggie.tabs.preprocessing.dialogs.rereferencingDialogMain import RereferencingDialog
@@ -49,8 +52,10 @@ def plot(experiment, data, window):
     # find events
     stim_ch = find_stim_channel(raw)
     if not stim_ch:
-        return
-    events = Events(raw, stim_ch=stim_ch).events
+        events = None
+    else:
+        events = Events(raw, stim_ch=stim_ch).events
+
     fig = raw.plot(events=events)
     fig.canvas.mpl_connect('close_event', handle_close)
 
@@ -61,7 +66,7 @@ def projections(experiment, data, window):
     subject = experiment.active_subject
     raw = subject.get_raw()
     if not raw.info['projs']:
-        messagebox(window, "No added projections.")
+        messagebox(window, "Raw contains no projection vectors")
         return
 
     fig = raw.plot_projs_topomap()
@@ -90,6 +95,13 @@ def resample(experiment, data, window):
     """
     resampling_dialog = ResamplingDialog(window, experiment)
     resampling_dialog.show()
+
+
+def montage(experiment, data, window):
+    """
+    """
+    montage_dialog = MontageDialog(window, experiment)
+    montage_dialog.show()
 
 
 def rereference(experiment, data, window):

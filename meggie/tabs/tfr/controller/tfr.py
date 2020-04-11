@@ -12,9 +12,8 @@ import mne
 import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.formats import format_floats
-from meggie.utilities.channels import read_layout
 from meggie.utilities.colors import color_cycle
-from meggie.utilities.groups import average_data_to_channel_groups
+from meggie.utilities.channels import average_data_to_channel_groups
 from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
@@ -76,10 +75,10 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
 
     ch_names = meggie_tfr.ch_names
     info = meggie_tfr.info
-    layout = read_layout(experiment.layout)
     colors = color_cycle(len(tses))
 
     logging.getLogger('ui_logger').info('Plotting TSE from all channels..')
+
 
     def individual_plot(ax, ch_idx):
         """
@@ -111,7 +110,7 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
 
     for ax, ch_idx in mne.viz.iter_topography(info, fig_facecolor='white',
                                               axis_spinecolor='white',
-                                              axis_facecolor='white', layout=layout,
+                                              axis_facecolor='white',
                                               on_pick=individual_plot):
 
         for color_idx, tse in enumerate(tses.values()):
@@ -120,6 +119,7 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
     title = 'TSE_{0}'.format(tfr_name)
     plt.gcf().canvas.set_window_title(title)
     plt.gcf().suptitle(title)
+
     plt.show()
 
 
@@ -134,7 +134,6 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
 
     ch_names = meggie_tfr.ch_names
     info = meggie_tfr.info
-    layout = read_layout(experiment.layout)
     colors = color_cycle(len(tses))
 
     channel_groups = experiment.channel_groups
@@ -188,7 +187,6 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
 
     logging.getLogger('ui_logger').info("Plotting TFR channel averages...")
 
-    layout = read_layout(experiment.layout)
     data = tfr.data
     ch_names = meggie_tfr.ch_names
     channel_groups = experiment.channel_groups
@@ -215,6 +213,7 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
         # prevent interaction as no topography is involved now
         def onselect(*args, **kwargs):
             pass
+
         tfr._onselect = onselect
 
         fig = tfr.plot(baseline=bline, mode=mode, title=title, 
@@ -240,24 +239,12 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
 
     logging.getLogger('ui_logger').info("Plotting TFR from all channels...")
 
-    layout = read_layout(experiment.layout)
-
-    # temporary solution for channel types ( show eeg only if no meg )
-    meg_channels = mne.pick_types(tfr.info, meg=True, eeg=False)
-    eeg_channels = mne.pick_types(tfr.info, meg=False, eeg=True)
-    if meg_channels.size > 0:
-        picks = meg_channels
-    elif eeg_channels.size > 0:
-        picks = eeg_channels
-    else:
-        raise Exception('No proper channels found')
-
     title = 'TFR_{0}_{1}'.format(tfr_name, tfr_condition)
-    fig = tfr.plot_topo(layout=layout, show=False,
+    fig = tfr.plot_topo(show=False,
                         baseline=bline, mode=mode,
                         tmin=tmin, tmax=tmax,
                         fmin=fmin, fmax=fmax,
-                        title=title, picks=picks)
+                        title=title)
 
     fig.canvas.set_window_title(title)
 
@@ -272,6 +259,7 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
         plt.show(block=False)
 
     fig.canvas.mpl_connect('button_press_event', onclick)
+
     fig.show()
 
 

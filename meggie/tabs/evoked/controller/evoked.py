@@ -16,9 +16,8 @@ import meggie.utilities.filemanager as filemanager
 from meggie.datatypes.evoked.evoked import Evoked
 
 from meggie.utilities.formats import format_floats
-from meggie.utilities.channels import read_layout
 from meggie.utilities.colors import color_cycle
-from meggie.utilities.groups import average_data_to_channel_groups
+from meggie.utilities.channels import average_data_to_channel_groups
 from meggie.utilities.validators import assert_arrays_same
 
 from meggie.utilities.decorators import threaded
@@ -40,7 +39,6 @@ def plot_channel_averages(experiment, evoked):
                 averages[data_labels[idx]] = []
             averages[data_labels[idx]].append(averaged_data[idx])
 
-    layout = read_layout(experiment.layout)
     colors = color_cycle(len(list(averages.values())[0]))
 
     for type_key, item in averages.items():

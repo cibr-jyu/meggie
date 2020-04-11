@@ -19,7 +19,6 @@ import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 
-from meggie.utilities.channels import read_layout
 from meggie.utilities.channels import get_channels
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
@@ -114,6 +113,8 @@ def _plot_evoked_topo(experiment, evoked):
     fig.suptitle(title)
 
 
+
+
 def plot_evoked(experiment, data, window):
     """ Plots topo or averages of selected item
     """
@@ -148,9 +149,6 @@ def plot_topomap(experiment, data, window):
     except IndexError as exc:
         return
 
-    layout = experiment.layout
-    layout = read_layout(layout)
-
     evoked = subject.evoked.get(selected_name)
 
     def handler(tmin, tmax, step, evoked):
@@ -160,8 +158,9 @@ def plot_topomap(experiment, data, window):
             for ch_type in channels.keys():
                 title = '{0}_{1}_{2}'.format(selected_name, key, ch_type)
                 times = np.arange(tmin, tmax, step)
+
                 fig = mne.viz.plot_evoked_topomap(
-                    evok, times=times, ch_type=ch_type, layout=layout,
+                    evok, times=times, ch_type=ch_type,
                     title=title)
                 fig.canvas.set_window_title(title)
 

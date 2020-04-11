@@ -23,12 +23,11 @@ from meggie.utilities.events import Events
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.formats import format_floats
 from meggie.utilities.colors import color_cycle
-from meggie.utilities.groups import average_data_to_channel_groups
+from meggie.utilities.channels import average_data_to_channel_groups
 from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
 from meggie.utilities.units import get_power_unit
 from meggie.utilities.decorators import threaded
-from meggie.utilities.channels import read_layout
 
 
 def find_event_times(raw, event_id, mask):
@@ -238,8 +237,6 @@ def plot_spectrum_topo(experiment, name):
 
     spectrum = subject.spectrum.get(name)
 
-    layout = read_layout(experiment.layout)
-
     data = spectrum.content
     freqs = spectrum.freqs
     ch_names = [ch_name.replace(' ', '') for ch_name in spectrum.ch_names]
@@ -291,7 +288,7 @@ def plot_spectrum_topo(experiment, name):
 
     for ax, idx in mne.viz.iter_topography(raw_info, fig_facecolor='white',
                                            axis_spinecolor='white',
-                                           axis_facecolor='white', layout=layout,
+                                           axis_facecolor='white',
                                            on_pick=individual_plot):
 
         ch_name = raw_info['ch_names'][idx].replace(' ', '')
@@ -307,7 +304,6 @@ def plot_spectrum_topo(experiment, name):
     plt.gcf().canvas.set_window_title(title)
     plt.gcf().suptitle(title)
     plt.show()
-
 
 @threaded
 def group_average_spectrum(experiment, spectrum_name, groups, new_name):

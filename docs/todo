@@ -1,3 +1,4 @@
+  (- update tab orders)
   (- should implement some tab as a plugin as an example. maybe the source analysis or maybe hmm?-)
   (- should make save so that subject name, channel etc are in the different columns)
   (- group info's should only include subjects that finished without error, batching widget can probably give the info)

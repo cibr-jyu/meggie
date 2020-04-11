@@ -5,6 +5,7 @@
 import os
 import logging
 
+import numpy as np
 import mne
 
 
@@ -22,53 +23,73 @@ def get_channels(info):
     return channels
 
 
-def read_layout(layout):
+def average_data_to_channel_groups(data, ch_names, channel_groups):
+    """ averages data by ch groups and ch types
     """
-    """
-    if not layout or layout == "Infer from data":
-        return
+    ch_types = ['grad', 'mag', 'eeg']
 
-    if os.path.isabs(layout):
-        fname = os.path.basename(layout)
-        folder = os.path.dirname(layout)
-        return mne.channels.read_layout(fname, folder)
+    averaged_data = []
+    data_labels = []
 
-    import pkg_resources
-    path_mne = pkg_resources.resource_filename(
-        'mne', os.path.join('channels', 'data', 'layouts'))
-    path_meggie = pkg_resources.resource_filename(
-        'meggie', os.path.join('data', 'layouts'))
+    if channel_groups == 'MNE':
+        for ch_type in ch_types:
+            if ch_type in ['mag', 'grad']:
+                selections = mne.selection._SELECTIONS
+                for selection in selections:
+                    selected_ch_names = mne.utils._clean_names(
+                        mne.read_selection(selection),
+                        remove_whitespace=True)
 
-    if os.path.exists(os.path.join(path_mne, layout)):
-        return mne.channels.read_layout(layout, path_mne)
+                    cleaned_ch_names = mne.utils._clean_names(ch_names,
+                                                              remove_whitespace=True)
 
-    if os.path.exists(os.path.join(path_meggie, layout)):
-        return mne.channels.read_layout(layout, path_meggie)
+                    if ch_type == 'grad':
+                        ch_names_filt = [ch_name for ch_name in selected_ch_names
+                                         if not ch_name.endswith('1') and
+                                         'MEG' in ch_name]
+                        average_type = 'rms'
+                    elif ch_type == 'mag':
+                        ch_names_filt = [ch_name for ch_name in selected_ch_names
+                                         if ch_name.endswith('1') and
+                                         'MEG' in ch_name]
+                        average_type = 'mean'
 
+                    if not set(cleaned_ch_names).intersection(
+                            set(ch_names_filt)):
+                        continue
 
-def get_layouts():
-    """
-    """
-    from pkg_resources import resource_filename
+                    # calculate average
+                    data_in_chs = [data[ch_idx] for ch_idx, ch_name
+                                   in enumerate(cleaned_ch_names)
+                                   if ch_name in ch_names_filt]
+                    if average_type == 'mean':
+                        ch_average = np.mean(data_in_chs, axis=0)
+                    else:
+                        ch_average = np.sqrt(
+                            np.sum(np.array(data_in_chs)**2, axis=0))
 
-    files = []
+                    averaged_data.append(ch_average)
+                    data_labels.append((ch_type, selection))
+            elif ch_type == 'eeg':
+                cleaned_ch_names = mne.utils._clean_names(ch_names,
+                                                          remove_whitespace=True)
 
-    try:
-        path_meggie = resource_filename(
-            'meggie', os.path.join('data', 'layouts'))
+                # without further knowledge, we average all channels for eeg
+                eeg_ch_names = [ch_name for ch_name in cleaned_ch_names
+                                if ch_name.startswith('E')]
 
-        files.extend([f for f in os.listdir(path_meggie)])
-    except BaseException:
-        pass
+                if not eeg_ch_names:
+                    continue
 
-    try:
-        path = resource_filename(
-            'mne', os.path.join('channels', 'data', 'layouts'))
+                # calculate average
+                ch_average = np.mean(
+                    [data[ch_idx] for ch_idx, ch_name
+                     in enumerate(cleaned_ch_names)
+                     if ch_name in eeg_ch_names], axis=0)
 
-        files.extend([f for f in os.listdir(path)
-                      if os.path.isfile(os.path.join(path, f))
-                      and f.endswith('.lout')])
-    except BaseException:
-        pass
+                averaged_data.append(ch_average)
+                data_labels.append((ch_type, 'All channels'))
 
-    return files
+        averaged_data = np.array(averaged_data)
+
+        return data_labels, averaged_data

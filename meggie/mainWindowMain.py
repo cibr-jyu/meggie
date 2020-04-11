@@ -33,7 +33,7 @@ from meggie.utilities.dynamic import find_all_sources
 from meggie.utilities.dialogs.logDialogMain import LogDialog
 from meggie.utilities.dialogs.aboutDialogMain import AboutDialog
 from meggie.utilities.dialogs.preferencesDialogMain import PreferencesDialog
-from meggie.utilities.dialogs.layoutDialogMain import LayoutDialog
+from meggie.utilities.dialogs.channelGroupsDialogMain import ChannelGroupsDialog
 from meggie.utilities.dialogs.addSubjectDialogMain import AddSubjectDialog
 from meggie.utilities.dialogs.createExperimentDialogMain import CreateExperimentDialog
 
@@ -64,7 +64,8 @@ class MainWindow(QtWidgets.QMainWindow):
         wrap_mne()
 
         # Direct output to console
-        self.directOutput()
+        if not sys.argv[-1] == 'debug':
+            self.directOutput()
 
         # For storing and handling program wide prefences.
         self.preferencesHandler = PreferencesHandler()
@@ -256,14 +257,14 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog = AboutDialog(self)
         dialog.show()
 
-    def on_pushButtonLayout_clicked(self, checked=None):
+    def on_pushButtonChannelGroups_clicked(self, checked=None):
         if checked is None:
             return
 
         if not self.experiment:
             return
 
-        dialog = LayoutDialog(self)
+        dialog = ChannelGroupsDialog(self)
         dialog.show()
 
     def on_pushButtonActivateSubject_clicked(self, checked=None):

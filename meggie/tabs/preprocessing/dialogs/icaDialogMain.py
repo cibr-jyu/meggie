@@ -5,6 +5,8 @@
 
 import logging
 
+import mne
+
 from PyQt5 import QtWidgets
 
 from meggie.tabs.preprocessing.dialogs.icaDialogUi import Ui_Dialog
@@ -139,10 +141,13 @@ class ICADialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        layout = self.experiment.layout
+        raw = self.experiment.active_subject.get_raw()
+
+        meg_channels = mne.pick_types(raw.info, eeg=False, meg=True)
+        eeg_channels = mne.pick_types(raw.info, eeg=True, meg=False)
 
         try:
-            plot_topographies(self.ica, len(self.component_info), layout)
+            plot_topographies(self.ica, len(self.component_info))
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -174,10 +179,11 @@ class ICADialog(QtWidgets.QDialog):
 
         raw = self.experiment.active_subject.get_raw()
 
-        layout = self.experiment.layout
+        meg_channels = mne.pick_types(raw.info, eeg=False, meg=True)
+        eeg_channels = mne.pick_types(raw.info, eeg=True, meg=False)
 
         try:
-            plot_properties(raw, self.ica, picks, layout)
+            plot_properties(raw, self.ica, picks)
         except Exception as exc:
             exc_messagebox(self, exc)
             return

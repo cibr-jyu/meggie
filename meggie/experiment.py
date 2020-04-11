@@ -12,6 +12,8 @@ import logging
 import pkg_resources
 import copy
 
+import mne
+
 import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.dynamic import find_all_sources
@@ -29,19 +31,25 @@ class Experiment(QObject):
     all the subjects within, and so forth.
     """
 
-    def __init__(self):
+    def __init__(self, name, author):
         """
         """
         QObject.__init__(self)
 
-        # set some defaults
-        self._name = 'experiment'
-        self._author = 'unknown author'
+        self._name = name
+        self._author = author
         self._subjects = {}
         self._active_subject = None
         self._workspace = None
-        self._layout = 'Infer from data'
-        self._channel_groups = 'MNE'
+
+        self._layout = ''
+        self._channel_groups = {
+            'eeg': {},
+            'meg': dict([(sel, mne.read_selection(sel)) for sel in 
+                               mne.selection._SELECTIONS])
+        }
+
+
 
     @property
     def workspace(self):
@@ -269,9 +277,8 @@ class ExperimentHandler(QObject):
         """
         prefs = self.parent.preferencesHandler
 
-        experiment = Experiment()
-        experiment.author = exp_dict['author']
-        experiment.name = os.path.basename(exp_dict['name'])
+        experiment = Experiment(exp_dict['author'], 
+                                os.path.basename(exp_dict['name']))
 
         experiment.workspace = prefs.working_directory
 
@@ -319,19 +326,24 @@ class ExperimentHandler(QObject):
                              'cohesion of the experiment file.')
 
         prefs = self.parent.preferencesHandler
-        experiment = Experiment()
-        experiment.author = data['author']
-        experiment.name = data['name']
+        experiment = Experiment(data['name'], data['author'])
 
-        if 'layout' in data.keys():
+        if 'layout' in data.keys() and data['layout'] != 'Infer from data':
             experiment.layout = data['layout']
         else:
-            experiment.layout = 'Infer from data'
+            experiment.layout = ''
 
-        if 'channel_groups' in data.keys():
+        if 'channel_groups' in data.keys() and data['channel_groups'] != 'MNE':
             experiment.channel_groups = data['channel_groups']
         else:
-            experiment.channel_groups = 'MNE'
+
+            meg_selections = dict([(sel, mne.read_selection(sel)) for sel in 
+                                   mne.selection._SELECTIONS])
+
+            experiment.channel_groups = {
+                'eeg': {},
+                'meg': meg_selections
+            }
 
         # if opening old experiment manually
         if path:

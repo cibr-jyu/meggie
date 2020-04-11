@@ -8,7 +8,6 @@ from copy import deepcopy
 import numpy as np
 import mne
 
-from meggie.utilities.channels import read_layout
 from meggie.utilities.compare import compare_raws
 
 
@@ -27,12 +26,11 @@ def compute_ica(raw, n_components, method, max_iter):
     return ica
 
 
-def plot_topographies(ica, n_components, layout):
+def plot_topographies(ica, n_components):
     """
     """
-    layout = read_layout(layout)
 
-    figs = ica.plot_components(layout=layout)
+    figs = ica.plot_components()
 
     def update_topography_texts():
         """ Change texts in the axes to match names in the dialog """
@@ -61,12 +59,11 @@ def plot_sources(raw, ica):
     sources.plot()
 
 
-def plot_properties(raw, ica, picks, layout):
+def plot_properties(raw, ica, picks):
     """
     """
-    layout = read_layout(layout)
     figs = ica.plot_properties(
-        raw, picks, topomap_args={'layout': layout})
+        raw, picks)
 
     # fix the names
     idx = 0
