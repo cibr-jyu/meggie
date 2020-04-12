@@ -84,41 +84,42 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
         """
         """
         ch_name = ch_names[ch_idx]
-        plt.gca().set_title('')
-
-        fig = plt.gcf()
 
         title = 'TSE_{0}_{1}'.format(tfr_name, ch_name)
-        fig.canvas.set_window_title(title)
-        fig.suptitle(title)
+        ax.figure.canvas.set_window_title(title)
+        ax.figure.suptitle(title)
+        ax.set_title('')
 
-        color_idx = 0
-        for key, tse in tses.items():
-            plt.plot(times, tse[ch_idx], color=colors[color_idx], label=key)
-            plt.axhline(0)
-            color_idx += 1
+        for color_idx, (key, tse) in enumerate(tses.items()):
+            ax.plot(times, tse[ch_idx], color=colors[color_idx], label=key)
+            ax.axhline(0)
 
         ax.legend()
 
-        plt.xlabel('Time (s)')
-        plt.ylabel('Power ({})'.format(get_power_unit(
+        ax.set_xlabel('Time (s)')
+        ax.set_ylabel('Power ({})'.format(get_power_unit(
             mne.io.pick.channel_type(info, ch_idx),
             False
         )))
 
         plt.show()
 
-    for ax, ch_idx in mne.viz.iter_topography(info, fig_facecolor='white',
+    fig = plt.figure()
+    for ax, ch_idx in mne.viz.iter_topography(info, fig=fig,
+                                              fig_facecolor='white',
                                               axis_spinecolor='white',
                                               axis_facecolor='white',
                                               on_pick=individual_plot):
 
-        for color_idx, tse in enumerate(tses.values()):
-            ax.plot(tse[ch_idx], linewidth=0.2, color=colors[color_idx])
+        handles = []
+        for color_idx, (key, tse) in enumerate(tses.items()):
+            handles.append(ax.plot(tse[ch_idx], linewidth=0.2, color=colors[color_idx],
+                           label=key)[0])
 
+    fig.legend(handles=handles)
     title = 'TSE_{0}'.format(tfr_name)
-    plt.gcf().canvas.set_window_title(title)
-    plt.gcf().suptitle(title)
+    fig.canvas.set_window_title(title)
+    fig.suptitle(title)
 
     plt.show()
 

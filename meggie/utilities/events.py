@@ -32,6 +32,14 @@ def update_stim_channel(raw, events):
     length = 5
 
     stim_channel = find_stim_channel(raw)
+    
+    if not stim_channel:
+        # create stim_channel
+        info = mne.create_info(['STI101'], raw.info['sfreq'], ['stim'])
+        stim_raw = mne.io.RawArray(np.zeros((1, len(raw.times))), info)
+        raw.add_channels([stim_raw], force_update_info=True)
+        stim_channel = 'STI101'
+
     ch_idx = raw.info['ch_names'].index(stim_channel)
     for event in events:
         start = event[0] - raw.first_samp

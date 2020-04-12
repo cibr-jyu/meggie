@@ -38,7 +38,8 @@ def plot(experiment, data, window):
         annotations_changed = False
         if len(raw.annotations) != len(old_annotations):
             annotations_changed = True
-        if not np.allclose(raw.annotations.onset, old_annotations.onset):
+
+        elif not np.allclose(raw.annotations.onset, old_annotations.onset):
             annotations_changed = True
 
         if bads_changed:

@@ -28,11 +28,11 @@ def epochs_info(experiment, data, window):
 
         message += '\nReject params: \n'
         if 'grad' in params: 
-            message += 'Gradiometers: ({})\n'.format(params.get('reject').get('grad'))
+            message += 'Gradiometers: {}\n'.format(params.get('reject').get('grad'))
         if 'mag' in params:
-            message += 'Magnetometers: ({})\n'.format(params.get('reject').get('mag'))
+            message += 'Magnetometers: {}\n'.format(params.get('reject').get('mag'))
         if 'eeg' in params:
-            message += 'EEG: ({})\n'.format(params.get('reject').get('eeg'))
+            message += 'EEG: {}\n'.format(params.get('reject').get('eeg'))
 
         if 'events' in params:
             message += '\nCreated from events: \n'

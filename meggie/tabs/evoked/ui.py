@@ -9,6 +9,8 @@ import mne
 import numpy as np
 import matplotlib.pyplot as plt
 
+from matplotlib.lines import Line2D
+
 from meggie.tabs.evoked.controller.evoked import create_averages
 from meggie.tabs.evoked.controller.evoked import plot_channel_averages
 from meggie.tabs.evoked.controller.evoked import group_average_evoked
@@ -90,18 +92,30 @@ def _plot_evoked_averages(experiment, evoked):
 
 def _plot_evoked_topo(experiment, evoked):
     evokeds = []
+    labels = []
     for key, evok in evoked.content.items():
         evokeds.append(evok)
+        labels.append(key)
+
+    # setup legend to subplots
+    colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+    lines = [Line2D([0], [0], color=colors[idx], label=labels[idx]) 
+             for idx in range(len(labels))]
 
     def onclick(event):
         try:
-            channel = plt.getp(plt.gca(), 'title')
-            plt.gca().set_title('')
+            # not nice:
+            ax = plt.gca()
+
+            channel = plt.getp(ax, 'title')
+            ax.set_title('')
 
             title = "evoked_{0}_{1}".format(evoked.name, channel)
 
-            plt.gcf().canvas.set_window_title(title)
-            plt.gcf().suptitle(title)
+            ax.legend(handles=lines, loc='upper right')
+
+            ax.figure.canvas.set_window_title(title)
+            ax.figure.suptitle(title)
             plt.show()
         except Exception as exc:
             pass

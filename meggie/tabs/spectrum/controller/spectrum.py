@@ -262,19 +262,14 @@ def plot_spectrum_topo(experiment, name):
         ch_name = raw_info['ch_names'][ch_idx].replace(' ', '')
         psd_idx = ch_names.index(ch_name)
 
-        plt.gca().set_title('')
-
-        fig = plt.gcf()
-
-        title = 'spectrum_{0}_{1}'.format(name, ch_name)
-        fig.canvas.set_window_title(title)
-        fig.suptitle(title)
-
-        color_idx = 0
-        for key, psd in data.items():
+        for color_idx, (key, psd) in enumerate(data.items()):
             ax.plot(freqs, psd[psd_idx], color=colors[color_idx],
                     label=key)
-            color_idx += 1
+
+        title = 'spectrum_{0}_{1}'.format(name, ch_name)
+        ax.figure.canvas.set_window_title(title)
+        ax.figure.suptitle(title)
+        ax.set_title('')
 
         ax.legend()
 
@@ -286,7 +281,9 @@ def plot_spectrum_topo(experiment, name):
 
         plt.show()
 
-    for ax, idx in mne.viz.iter_topography(raw_info, fig_facecolor='white',
+    fig = plt.figure()
+    for ax, idx in mne.viz.iter_topography(raw_info, fig=fig,
+                                           fig_facecolor='white',
                                            axis_spinecolor='white',
                                            axis_facecolor='white',
                                            on_pick=individual_plot):
@@ -294,15 +291,17 @@ def plot_spectrum_topo(experiment, name):
         ch_name = raw_info['ch_names'][idx].replace(' ', '')
         if ch_name not in ch_names:
             continue
-
         psd_idx = ch_names.index(ch_name)
 
-        for color_idx, psd in enumerate(data.values()):
-            ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx])
+        handles = []
+        for color_idx, (key, psd) in enumerate(data.items()):
+            handles.append(ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx],
+                                   label=key)[0])
 
+    fig.legend(handles=handles)
     title = 'spectrum_{0}'.format(name)
-    plt.gcf().canvas.set_window_title(title)
-    plt.gcf().suptitle(title)
+    fig.canvas.set_window_title(title)
+    fig.suptitle(title)
     plt.show()
 
 @threaded

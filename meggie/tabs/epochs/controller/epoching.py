@@ -17,9 +17,7 @@ from meggie.utilities.events import Events
 
 
 def create_epochs_from_events(params, subject):
-    """ Epochs are created in a way that one collection consists of such
-    things that belong together. We wanted multiple collections because
-    mne epochs did not allow multiple id's for one event name.
+    """
     """
     raw = subject.get_raw()
 
@@ -27,9 +25,17 @@ def create_epochs_from_events(params, subject):
     event_params = params['events']
     reject_params = params['reject']
 
-    # convert data from human readable units to standard units
+    # convert reject params from human readable units to standard units
     for key in reject_params:
         reject_params[key] /= get_scaling(key)
+
+    # remove params that don't match with the channel types present in raw
+    if mne.pick_types(raw.info, meg='grad', eeg=False).size == 0:
+        reject_params.pop('grad')
+    if mne.pick_types(raw.info, meg='mag', eeg=False).size == 0:
+        reject_params.pop('mag')
+    if mne.pick_types(raw.info, meg=False, eeg=True).size == 0:
+        reject_params.pop('eeg')
 
     events = []
     category = {}

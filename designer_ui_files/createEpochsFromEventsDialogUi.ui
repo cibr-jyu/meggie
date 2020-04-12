@@ -197,14 +197,14 @@
              <string>EEG</string>
             </property>
             <property name="checked">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
            <widget class="QDoubleSpinBox" name="doubleSpinBoxEEGReject">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="suffix">
              <string> uV</string>
