@@ -9,10 +9,13 @@ from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 import mne
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.messaging import messagebox
+from meggie.utilities.channels import get_default_channel_groups
 
 from meggie.utilities.dialogs.channelGroupsDialogUi import Ui_channelGroupsDialog
 
@@ -87,15 +90,21 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
         if checked is None:
             return
 
+        subject = self.parent.experiment.active_subject
+        if not subject:
+            messagebox(self.parent, 'To reset, active subject is needed')
+            return
+
+        info = subject.get_raw().info
+
         if self.ui.radioButtonEEG.isChecked():
-            self.eeg_channel_groups = {}
+            self.eeg_channel_groups = get_default_channel_groups(info, 'eeg')
             self.ui.listWidgetChannelGroups.clear()
             for ch_name in sorted(self.eeg_channel_groups.keys()):
                 self.ui.listWidgetChannelGroups.addItem(ch_name)
 
         else:
-            meg_defaults = dict([(sel, mne.read_selection(sel)) for sel in
-                             mne.selection._SELECTIONS])
+            meg_defaults = get_default_channel_groups(info, 'meg')
             self.meg_channel_groups = meg_defaults
             self.ui.listWidgetChannelGroups.clear()
             for ch_name in sorted(self.meg_channel_groups.keys()):
@@ -105,12 +114,55 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        if not self.parent.experiment.active_subject:
+        subject = self.parent.experiment.active_subject
+        if not subject:
             messagebox(self.parent, 'To set channels, active subject is needed')
             return
 
-        # plot_sensors with selection here
-            
+        try:
+            selected_item = self.ui.listWidgetChannelGroups.selectedItems()[0]
+        except IndexError:
+            messagebox(self.parent, 'Select a channel group first')
+            return
+
+        info = subject.get_raw().info
+        
+        if self.ui.radioButtonEEG.isChecked():
+            if mne.pick_types(info, meg=False, eeg=True).size == 0:
+                messagebox(self.parent, 'No EEG channels found')
+                return
+
+            ch_groups = [[], self.eeg_channel_groups[selected_item.text()]]
+
+            fig, selection = mne.viz.plot_sensors(info, kind='select', ch_type='eeg',
+                                                  ch_groups=ch_groups, show=False)
+
+        else:
+            if mne.pick_types(info, meg=True, eeg=False).size == 0:
+                messagebox(self.parent, 'No MEG channels found')
+                return
+
+            ch_groups = [[], self.meg_channel_groups[selected_item.text()]]
+
+            fig, selection = mne.viz.plot_sensors(info, kind='select', ch_type='mag',
+                                                  ch_groups=ch_groups, show=False)
+
+        # make markers bigger
+        for child in fig.axes[0].get_children():
+            if isinstance(child, mpl.collections.PathCollection):
+                child.set_sizes([100])
+                child.set_lw([1])
+                break
+
+        plt.show(block=True)
+
+        ch_idxs = [info['ch_names'].index(ch_name) for ch_name in selection]
+
+        if self.ui.radioButtonMEG.isChecked(): 
+            self.meg_channel_groups[selected_item.text()] = ch_idxs
+        else:
+            self.eeg_channel_groups[selected_item.text()] = ch_idxs
+
     def on_radioButtonEEG_toggled(self):
         self.ui.listWidgetChannelGroups.clear()
         for ch_name in sorted(self.eeg_channel_groups.keys()):

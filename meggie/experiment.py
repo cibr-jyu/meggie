@@ -45,8 +45,7 @@ class Experiment(QObject):
         self._layout = ''
         self._channel_groups = {
             'eeg': {},
-            'meg': dict([(sel, mne.read_selection(sel)) for sel in 
-                               mne.selection._SELECTIONS])
+            'meg': {},
         }
 
 
@@ -336,13 +335,9 @@ class ExperimentHandler(QObject):
         if 'channel_groups' in data.keys() and data['channel_groups'] != 'MNE':
             experiment.channel_groups = data['channel_groups']
         else:
-
-            meg_selections = dict([(sel, mne.read_selection(sel)) for sel in 
-                                   mne.selection._SELECTIONS])
-
             experiment.channel_groups = {
                 'eeg': {},
-                'meg': meg_selections
+                'meg': {},
             }
 
         # if opening old experiment manually

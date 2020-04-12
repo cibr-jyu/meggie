@@ -9,6 +9,42 @@ import numpy as np
 import mne
 
 
+def get_default_channel_groups(info, ch_type):
+
+    from mne.selection import _divide_to_regions
+
+    if ch_type == 'meg':
+        picks = mne.pick_types(info, meg=True, eeg=False)
+    else:
+        picks = mne.pick_types(info, meg=False, eeg=True)
+
+    ch_names = [ch_name for idx, ch_name in enumerate(info['ch_names'])
+                if idx in picks]
+
+    if not ch_names:
+        return {}
+
+    info_filt = info.copy().pick_channels(ch_names)
+
+    # check if there is no montage set..
+    ch_norms = []
+    for ch in info_filt['chs']:
+        ch_norms.append(np.linalg.norm(ch['loc']))
+    if np.all(np.isclose(ch_norms, ch_norms[0])):
+        return {}
+
+    regions = _divide_to_regions(info_filt, add_stim=False)
+
+    ch_groups = {}
+    for region_key, region in regions.items():
+        region_ch_names = [info_filt['ch_names'][ch_idx] for ch_idx 
+                           in region]
+        ch_groups[region_key] = [info['ch_names'].index(ch_name) 
+                                 for ch_name in region_ch_names]
+
+    return ch_groups
+
+
 def get_channels(info):
     channels = {}
     grads = mne.pick_types(info, meg='grad', eeg=False)
