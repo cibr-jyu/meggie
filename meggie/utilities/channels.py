@@ -10,7 +10,8 @@ import mne
 
 
 def get_default_channel_groups(info, ch_type):
-
+    """
+    """
     from mne.selection import _divide_to_regions
 
     if ch_type == 'meg':
@@ -39,93 +40,82 @@ def get_default_channel_groups(info, ch_type):
     for region_key, region in regions.items():
         region_ch_names = [info_filt['ch_names'][ch_idx] for ch_idx 
                            in region]
-        ch_groups[region_key] = [info['ch_names'].index(ch_name) 
-                                 for ch_name in region_ch_names]
+        ch_groups[region_key] = region_ch_names
 
     return ch_groups
 
 
-def get_channels(info):
+def get_channels_by_type(info):
+    """
+    """
     channels = {}
-    grads = mne.pick_types(info, meg='grad', eeg=False)
-    if grads.size > 0:
-        channels['grad'] = grads
-    mags = mne.pick_types(info, meg='mag', eeg=False)
-    if mags.size > 0:
-        channels['mag'] = mags
-    eegs = mne.pick_types(info, meg=False, eeg=True)
-    if eegs.size > 0:
-        channels['eeg'] = eegs
+    grad_idxs = mne.pick_types(info, meg='grad', eeg=False)
+    if grad_idxs.size > 0:
+        channels['grad'] = [ch_name for idx, ch_name 
+                            in enumerate(info['ch_names'])
+                            if idx in grad_idxs]
+    mag_idxs = mne.pick_types(info, meg='mag', eeg=False)
+    if mag_idxs.size > 0:
+        channels['mag'] = [ch_name for idx, ch_name 
+                           in enumerate(info['ch_names'])
+                           if idx in mag_idxs]
+    eeg_idxs = mne.pick_types(info, meg=False, eeg=True)
+    if eeg_idxs.size > 0:
+        channels['eeg'] = [ch_name for idx, ch_name 
+                           in enumerate(info['ch_names'])
+                           if idx in eeg_idxs]
+
     return channels
 
 
-def average_data_to_channel_groups(data, ch_names, channel_groups):
-    """ averages data by ch groups and ch types
+def get_triplet_from_mag(info, ch_name):
+    """ get the triplet from mag by channel name in a bit hacky way
+    """ 
+    return [ch_name, ch_name[:-1] + '2', ch_name[:-1] + '3']
+
+
+def average_to_channel_groups(data, info, ch_names, channel_groups):
+    """ Averages data to ch groups. Get types from info but indices from ch_names
     """
-    ch_types = ['grad', 'mag', 'eeg']
+    chs_by_type = get_channels_by_type(info)
+
+    ch_names_cleaned = [ch_name.replace(' ', '') for ch_name in ch_names]
 
     averaged_data = []
     data_labels = []
 
-    if channel_groups == 'MNE':
-        for ch_type in ch_types:
-            if ch_type in ['mag', 'grad']:
-                selections = mne.selection._SELECTIONS
-                for selection in selections:
-                    selected_ch_names = mne.utils._clean_names(
-                        mne.read_selection(selection),
-                        remove_whitespace=True)
+    for ch_type, chs in chs_by_type.items():
+        channels_cleaned = [ch_name.replace(' ', '') for ch_name in ch_names if ch_name in chs]
 
-                    cleaned_ch_names = mne.utils._clean_names(ch_names,
-                                                              remove_whitespace=True)
+        if ch_type in ['grad', 'mag']:
+            ch_groups = channel_groups['meg']
+        else:
+            ch_groups = channel_groups['eeg']
 
-                    if ch_type == 'grad':
-                        ch_names_filt = [ch_name for ch_name in selected_ch_names
-                                         if not ch_name.endswith('1') and
-                                         'MEG' in ch_name]
-                        average_type = 'rms'
-                    elif ch_type == 'mag':
-                        ch_names_filt = [ch_name for ch_name in selected_ch_names
-                                         if ch_name.endswith('1') and
-                                         'MEG' in ch_name]
-                        average_type = 'mean'
+        for ch_group, ch_group_channels in ch_groups.items():
+            ch_group_channels_cleaned = [ch_name.replace(' ', '') for ch_name 
+                                         in ch_group_channels]
+            final_ch_names = [ch_name for ch_name in channels_cleaned if ch_name 
+                              in ch_group_channels_cleaned]
 
-                    if not set(cleaned_ch_names).intersection(
-                            set(ch_names_filt)):
-                        continue
+            # leave here if for example ch names in ch_groups and info don't match
+            if not final_ch_names:
+                continue
 
-                    # calculate average
-                    data_in_chs = [data[ch_idx] for ch_idx, ch_name
-                                   in enumerate(cleaned_ch_names)
-                                   if ch_name in ch_names_filt]
-                    if average_type == 'mean':
-                        ch_average = np.mean(data_in_chs, axis=0)
-                    else:
-                        ch_average = np.sqrt(
-                            np.sum(np.array(data_in_chs)**2, axis=0))
+            ch_idxs = [idx for idx, ch_name in enumerate(ch_names_cleaned) if 
+                       ch_name in final_ch_names]
 
-                    averaged_data.append(ch_average)
-                    data_labels.append((ch_type, selection))
-            elif ch_type == 'eeg':
-                cleaned_ch_names = mne.utils._clean_names(ch_names,
-                                                          remove_whitespace=True)
+            # calculate average
+            data_in_chs = [data[ch_idx] for ch_idx in ch_idxs]
+            if ch_type == 'grad':
+                ch_average = np.sqrt(
+                    np.sum(np.array(data_in_chs)**2, axis=0))
+            else:
+                ch_average = np.mean(data_in_chs, axis=0)
 
-                # without further knowledge, we average all channels for eeg
-                eeg_ch_names = [ch_name for ch_name in cleaned_ch_names
-                                if ch_name.startswith('E')]
+            averaged_data.append(ch_average)
+            data_labels.append((ch_type, ch_group))
 
-                if not eeg_ch_names:
-                    continue
+    averaged_data = np.array(averaged_data)
 
-                # calculate average
-                ch_average = np.mean(
-                    [data[ch_idx] for ch_idx, ch_name
-                     in enumerate(cleaned_ch_names)
-                     if ch_name in eeg_ch_names], axis=0)
-
-                averaged_data.append(ch_average)
-                data_labels.append((ch_type, 'All channels'))
-
-        averaged_data = np.array(averaged_data)
-
-        return data_labels, averaged_data
+    return data_labels, averaged_data

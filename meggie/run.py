@@ -1,7 +1,10 @@
 # coding: utf-8
 
-from meggie import mainWindowMain
+# use Qt5Agg as TkAgg really hates threads
+import matplotlib
+matplotlib.use('Qt5Agg')
 
+from meggie import mainWindowMain
 
 def main():
     mainWindowMain.main()

@@ -17,7 +17,7 @@ from meggie.datatypes.evoked.evoked import Evoked
 
 from meggie.utilities.formats import format_floats
 from meggie.utilities.colors import color_cycle
-from meggie.utilities.channels import average_data_to_channel_groups
+from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.validators import assert_arrays_same
 
 from meggie.utilities.decorators import threaded
@@ -39,6 +39,9 @@ def plot_channel_averages(experiment, evoked):
                 averages[data_labels[idx]] = []
             averages[data_labels[idx]].append(averaged_data[idx])
 
+    if not averages:
+        raise Exception('No channel groups matching the data found')
+
     colors = color_cycle(len(list(averages.values())[0]))
 
     for type_key, item in averages.items():
@@ -54,6 +57,9 @@ def plot_channel_averages(experiment, evoked):
             ax.plot(times, evoked_data,
                     color=colors[evoked_idx],
                     label=evoked_name)
+
+            ax.axhline(0)
+            ax.axvline(0)
             ax.legend()
 
         title = 'evoked_{0}_{1}'.format(type_key[0], type_key[1])
@@ -70,8 +76,9 @@ def create_averages(experiment, mne_evoked):
 
     mne_evoked = mne_evoked.copy().drop_channels(mne_evoked.info['bads'])
 
-    data_labels, averaged_data = average_data_to_channel_groups(
-        mne_evoked.data, mne_evoked.info['ch_names'], channel_groups)
+    data_labels, averaged_data = average_to_channel_groups(
+        mne_evoked.data, mne_evoked.info, 
+        mne_evoked.info['ch_names'], channel_groups)
 
     return data_labels, averaged_data
 
@@ -186,6 +193,9 @@ def save_channel_averages(experiment, selected_name):
 
             data_labels, averaged_data = create_averages(
                 experiment, mne_evoked)
+
+            if not data_labels:
+                raise Exception('No channel groups matching the data found')
 
             csv_data.extend(averaged_data.tolist())
             column_names = format_floats(mne_evoked.times)

@@ -13,7 +13,7 @@ import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.formats import format_floats
 from meggie.utilities.colors import color_cycle
-from meggie.utilities.channels import average_data_to_channel_groups
+from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
@@ -144,8 +144,11 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
     averages = {}
     for idx, (key, tse) in enumerate(tses.items()):
 
-        data_labels, averaged_data = average_data_to_channel_groups(
-            tse, ch_names, channel_groups)
+        data_labels, averaged_data = average_to_channel_groups(
+            tse, info, ch_names, channel_groups)
+
+        if not data_labels:
+            raise Exception('No channel groups matching the data found.')
 
         averages[key] = data_labels, averaged_data
         shape = averaged_data.shape
@@ -192,8 +195,11 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
     ch_names = meggie_tfr.ch_names
     channel_groups = experiment.channel_groups
 
-    data_labels, averaged_data = average_data_to_channel_groups(
-        data, ch_names, channel_groups)
+    data_labels, averaged_data = average_to_channel_groups(
+        data, meggie_tfr.info, ch_names, channel_groups)
+
+    if not data_labels:
+        raise Exception('No channel groups matching the data found')
 
     sfreq = meggie_tfr.info['sfreq']
     times = meggie_tfr.times
@@ -336,8 +342,7 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
             try:
                 subject = experiment.subjects.get(subject_name)
                 tfr = subject.tfr.get(tfr_name)
-                ch_names.append(tuple([ch_name.replace(" ", "")
-                                       for ch_name in tfr.ch_names]))
+                ch_names.append(tuple(tfr.ch_names))
             except Exception as exc:
                 continue
 
@@ -367,17 +372,12 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
             for tfr_item_key, tfr_item in meggie_tfr.content.items():
                 grand_key = (group_key, tfr_item_key)
 
-                idxs = []
-
                 # get common channels in "subject specific space"
-                for ch_idx, ch_name in enumerate(
-                    [ch.replace(' ', '') for ch in tfr_item.info['ch_names']]
-                ):
-                    if ch_name in common_ch_names:
-                        idxs.append(ch_idx)
-                tfr_item = tfr_item.copy().drop_channels(
-                    [ch_name for ch_idx, ch_name in enumerate(tfr_item.info['ch_names'])
-                     if ch_idx not in idxs])
+                for ch_idx, ch_name in enumerate(tfr_item.info['ch_names']):
+                    drop_names = []
+                    if ch_name not in common_ch_names:
+                        drop_names.append(ch_name)
+                tfr_item = tfr_item.copy().drop_channels(drop_names)
 
                 # sanity check
                 if len(tfr_item.info['ch_names']) != len(common_ch_names):
@@ -481,6 +481,7 @@ def save_tfr_channel_averages(experiment, tfr_name,
             continue
 
         ch_names = tfr.ch_names
+        info = tfr.info
 
         for key, mne_tfr in tfr.content.items():
 
@@ -496,8 +497,11 @@ def save_tfr_channel_averages(experiment, tfr_name,
             data = mne.baseline.rescale(mne_tfr.data, times, baseline=(blstart, blend), 
                                        mode=blmode)
 
-            data_labels, averaged_data = average_data_to_channel_groups(
-                data, ch_names, channel_groups)
+            data_labels, averaged_data = average_to_channel_groups(
+                data, info, ch_names, channel_groups)
+
+            if not data_labels:
+                raise Exception('No channel groups matching the data found')
 
             for ix in range(averaged_data.shape[0]):
                 for iy in range(averaged_data.shape[1]):
@@ -575,8 +579,11 @@ def save_tse_channel_averages(experiment, tfr_name, blmode, blstart,
 
         for key, tse in tses.items():
 
-            data_labels, averaged_data = average_data_to_channel_groups(
-                tse, tfr.ch_names, channel_groups)
+            data_labels, averaged_data = average_to_channel_groups(
+                tse, tfr.info, tfr.ch_names, channel_groups)
+
+            if not data_labels:
+                raise Exception('No channel groups matching the data found.')
 
             csv_data.extend(averaged_data.tolist())
 

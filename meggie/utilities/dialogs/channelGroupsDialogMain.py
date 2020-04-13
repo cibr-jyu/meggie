@@ -2,6 +2,7 @@
 """
 
 import os
+import logging
 
 from copy import deepcopy
 
@@ -16,6 +17,7 @@ import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.channels import get_default_channel_groups
+from meggie.utilities.channels import get_triplet_from_mag
 
 from meggie.utilities.dialogs.channelGroupsDialogUi import Ui_channelGroupsDialog
 
@@ -132,17 +134,37 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
                 messagebox(self.parent, 'No EEG channels found')
                 return
 
-            ch_groups = [[], self.eeg_channel_groups[selected_item.text()]]
+            ch_names = self.eeg_channel_groups[selected_item.text()]
+            try:
+                ch_idxs = [info['ch_names'].index(ch_name) for ch_name in ch_names]
+            except ValueError:
+                messagebox(self.parent, "Channel names in the group "
+                                        "and the current subject don't match")
+                return
 
-            fig, selection = mne.viz.plot_sensors(info, kind='select', ch_type='eeg',
-                                                  ch_groups=ch_groups, show=False)
+            ch_groups = [[], ch_idxs]
+
+            try:
+                fig, selection = mne.viz.plot_sensors(info, kind='select', ch_type='eeg',
+                                                      ch_groups=ch_groups, show=False)
+            except RuntimeError:
+                messagebox(self.parent, 'Could not plot sensors. Is the montage set?')
+                return
 
         else:
             if mne.pick_types(info, meg=True, eeg=False).size == 0:
                 messagebox(self.parent, 'No MEG channels found')
                 return
 
-            ch_groups = [[], self.meg_channel_groups[selected_item.text()]]
+            ch_names = self.meg_channel_groups[selected_item.text()]
+            try:
+                ch_idxs = [info['ch_names'].index(ch_name) for ch_name in ch_names]
+            except ValueError:
+                messagebox(self.parent, "Channel names in the group "
+                                        "and the current subject don't match")
+                return
+
+            ch_groups = [[], ch_idxs]
 
             fig, selection = mne.viz.plot_sensors(info, kind='select', ch_type='mag',
                                                   ch_groups=ch_groups, show=False)
@@ -156,12 +178,15 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
 
         plt.show(block=True)
 
-        ch_idxs = [info['ch_names'].index(ch_name) for ch_name in selection]
-
         if self.ui.radioButtonMEG.isChecked(): 
-            self.meg_channel_groups[selected_item.text()] = ch_idxs
+            if selection:
+                all_megs = []
+                for ch_name in selection:
+                    all_megs.extend(get_triplet_from_mag(info, ch_name))
+                self.meg_channel_groups[selected_item.text()] = all_megs
         else:
-            self.eeg_channel_groups[selected_item.text()] = ch_idxs
+            if selection:
+                self.eeg_channel_groups[selected_item.text()] = selection
 
     def on_radioButtonEEG_toggled(self):
         self.ui.listWidgetChannelGroups.clear()
@@ -174,5 +199,13 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
             self.ui.listWidgetChannelGroups.addItem(ch_name)
 
     def accept(self):
-        # self.parent.experiment.save_experiment_settings()
+        """
+        """
+        self.parent.experiment.channel_groups['eeg'] = self.eeg_channel_groups
+        self.parent.experiment.channel_groups['meg'] = self.meg_channel_groups
+
+        self.parent.experiment.save_experiment_settings()
+
+        logging.getLogger('ui_logger').info('Channel groups saved.')
+        
         self.close()

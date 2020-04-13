@@ -57,8 +57,9 @@ def plot(experiment, data, window):
     else:
         events = Events(raw, stim_ch=stim_ch).events
 
-    fig = raw.plot(events=events)
+    fig = raw.plot(events=events, show=False)
     fig.canvas.mpl_connect('close_event', handle_close)
+    plt.show()
 
 
 def projections(experiment, data, window):

@@ -21,7 +21,7 @@ import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 
-from meggie.utilities.channels import get_channels
+from meggie.utilities.channels import get_channels_by_type
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.names import next_available_name
@@ -168,7 +168,7 @@ def plot_topomap(experiment, data, window):
     def handler(tmin, tmax, step, evoked):
 
         for key, evok in evoked.content.items():
-            channels = get_channels(evok.info)
+            channels = get_channels_by_type(evok.info)
             for ch_type in channels.keys():
                 title = '{0}_{1}_{2}'.format(selected_name, key, ch_type)
                 times = np.arange(tmin, tmax, step)
