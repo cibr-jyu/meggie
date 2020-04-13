@@ -93,6 +93,7 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
         for color_idx, (key, tse) in enumerate(tses.items()):
             ax.plot(times, tse[ch_idx], color=colors[color_idx], label=key)
             ax.axhline(0)
+            ax.axvline(0)
 
         ax.legend()
 
@@ -336,28 +337,29 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
     assert_arrays_same(time_arrays)
 
     # handle channel differences
-    ch_names = []
+    ch_names_cleaned = []
     for group_key, group_subjects in groups.items():
         for subject_name in group_subjects:
             try:
                 subject = experiment.subjects.get(subject_name)
                 tfr = subject.tfr.get(tfr_name)
-                ch_names.append(tuple(tfr.ch_names))
+                ch_names_cleaned.append(tuple(
+                    [ch_name.replace(' ', '') for ch_name in tfr.ch_names]))
             except Exception as exc:
                 continue
 
-    if len(set(ch_names)) != 1:
+    if len(set(ch_names_cleaned)) != 1:
         logging.getLogger('ui_logger').info(
             "TFR's contain different sets of channels. Identifying common ones..")
 
-        common_ch_names = list(set.intersection(*map(set, ch_names)))
+        common_ch_names_cleaned = list(set.intersection(*map(set, ch_names_cleaned)))
 
-        logging.getLogger('ui_logger').info(str(len(common_ch_names)) +
+        logging.getLogger('ui_logger').info(str(len(common_ch_names_cleaned)) +
                                             ' common channels found.')
         logging.getLogger('ui_logger').debug(
-            'Common channels are ' + str(ch_names))
+            'Common channels are ' + str(common_ch_names_cleaned))
     else:
-        common_ch_names = ch_names[0]
+        common_ch_names_cleaned = ch_names_cleaned[0]
 
     grand_tfrs = {}
     for group_key, group_subjects in groups.items():
@@ -375,7 +377,7 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
                 # get common channels in "subject specific space"
                 for ch_idx, ch_name in enumerate(tfr_item.info['ch_names']):
                     drop_names = []
-                    if ch_name not in common_ch_names:
+                    if ch_name.replace(' ', '') not in common_ch_names_cleaned:
                         drop_names.append(ch_name)
                 tfr_item = tfr_item.copy().drop_channels(drop_names)
 
