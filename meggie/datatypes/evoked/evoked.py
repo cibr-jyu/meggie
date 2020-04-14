@@ -65,10 +65,6 @@ class Evoked(object):
         self._name = name
 
     @property
-    def info(self):
-        return str(self._params)
-
-    @property
     def params(self):
         """
         """

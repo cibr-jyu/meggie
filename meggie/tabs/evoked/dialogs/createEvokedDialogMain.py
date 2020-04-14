@@ -78,11 +78,7 @@ class CreateEvokedDialog(QtWidgets.QDialog):
             mne_evoked.comment = name
             evokeds[name] = mne_evoked
 
-        try:
-            evoked_name = validate_name(self.ui.lineEditName.text())
-        except Exception as exc:
-            exc_messagebox(self, exc)
-            return
+        evoked_name = validate_name(self.ui.lineEditName.text())
 
         params = {'conditions': selected_epochs}
 

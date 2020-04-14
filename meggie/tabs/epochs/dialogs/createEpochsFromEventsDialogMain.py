@@ -80,12 +80,8 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         grad = self.ui.checkBoxGrad.isChecked()
         eeg = self.ui.checkBoxEeg.isChecked()
 
-        try:
-            collection_name = validate_name(
-                str(self.ui.lineEditCollectionName.text()))
-        except Exception as exc:
-            exc_messagebox(self, exc)
-            return
+        collection_name = validate_name(
+            str(self.ui.lineEditCollectionName.text()))
 
         reject = dict()
         if mag:
