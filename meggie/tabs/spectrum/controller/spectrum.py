@@ -109,10 +109,19 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     ival_times, raw_block_groups = get_raw_blocks_from_intervals(subject,
                                                                  intervals)
 
-    info = subject.get_raw().info
+    raw = subject.get_raw()
+    info = raw.info
 
     picks = mne.pick_types(info, meg=True, eeg=True,
                            exclude='bads')
+
+    # remove zero channels from picks
+    zero_idxs = []
+    for idx, row in enumerate(raw._data):
+        if np.all(np.isclose(row, 0)):
+            zero_idxs.append(idx)
+    picks = [pick for pick in picks if pick not in zero_idxs]
+
 
     fmin = params['fmin']
     fmax = params['fmax']
