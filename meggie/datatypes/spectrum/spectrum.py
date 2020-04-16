@@ -64,6 +64,14 @@ class Spectrum(object):
                 freqs, ch_names, psd = filemanager.load_csv(
                     os.path.join(self._spectrum_directory, fname))
 
+                # for backwards compatibility
+                # (used to have possibility to have spectrum data
+                # saved as log transformed)
+                if 'log_transformed' in self._params:
+                    if self._params['log_transformed'] is True:
+                        if np.mean(psd) < 0:
+                            psd = 10 ** (psd / 10.0)
+
                 freqs = np.array(freqs).astype(np.float)
 
                 self._freqs = freqs
@@ -125,10 +133,6 @@ class Spectrum(object):
         if not self._content:
             self._load_content()
         return self._ch_names
-
-    @property
-    def log_transformed(self):
-        return self._params['log_transformed']
 
     @property
     def name(self):

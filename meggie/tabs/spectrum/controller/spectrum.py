@@ -127,7 +127,6 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     fmax = params['fmax']
     nfft = params['nfft']
     overlap = params['overlap']
-    log = params['log_transformed']
 
     # compute psd's
     psd_groups = OrderedDict()
@@ -138,9 +137,6 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
                 raw_block, fmin=fmin, fmax=fmax,
                 n_fft=nfft, n_overlap=overlap, picks=picks,
                 proj=True)
-
-            if log:
-                psds = 10 * np.log10(psds)
 
             if key not in psd_groups:
                 psd_groups[key] = []
@@ -180,7 +176,7 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     subject.add(spectrum, 'spectrum')
 
 
-def plot_spectrum_averages(experiment, name):
+def plot_spectrum_averages(experiment, name, log_transformed=True):
     """
     """
 
@@ -192,7 +188,6 @@ def plot_spectrum_averages(experiment, name):
     data = spectrum.content
     freqs = spectrum.freqs
     ch_names = spectrum.ch_names 
-    log_transformed = spectrum.log_transformed
 
     channel_groups = experiment.channel_groups
 
@@ -206,17 +201,11 @@ def plot_spectrum_averages(experiment, name):
     averages = {}
     for idx, (key, psd) in enumerate(data.items()):
 
-        if log_transformed:
-            psd = 10 ** (psd / 10.0)
-
         data_labels, averaged_data = average_to_channel_groups(
             psd, info, ch_names, channel_groups)
 
         if not data_labels:
             raise Exception('No channel groups matching the data found.')
-
-        if log_transformed:
-            averaged_data = 10 * np.log10(averaged_data)
 
         averages[key] = data_labels, averaged_data
         shape = averaged_data.shape
@@ -225,12 +214,19 @@ def plot_spectrum_averages(experiment, name):
         fig, ax = plt.subplots()
         for color_idx, key in enumerate(averages.keys()):
             ax.set_xlabel('Frequency (Hz)')
+
             ax.set_ylabel('Power ({})'.format(get_power_unit(
                 averages[key][0][ii][0],
                 log_transformed
             )))
-            ax.plot(freqs, averages[key][1][ii], color=colors[color_idx],
-                    label=key)
+
+            if log_transformed:
+                curve = 10 * np.log10(averages[key][1][ii])
+            else:
+                curve = averages[key][1][ii]
+
+            ax.plot(freqs, curve, color=colors[color_idx], label=key)
+
         ax.legend()
         ch_type, ch_group = averages[key][0][ii]
         title = 'spectrum_{0}_{1}_{2}'.format(name, ch_type, ch_group)
@@ -240,7 +236,7 @@ def plot_spectrum_averages(experiment, name):
     plt.show()
 
 
-def plot_spectrum_topo(experiment, name):
+def plot_spectrum_topo(experiment, name, log_transformed=True):
     """
     """
 
@@ -252,8 +248,6 @@ def plot_spectrum_topo(experiment, name):
     data = spectrum.content
     freqs = spectrum.freqs
     ch_names_cleaned = [ch_name.replace(' ', '') for ch_name in spectrum.ch_names]
-
-    log_transformed = spectrum.log_transformed
 
     channel_groups = experiment.channel_groups
 
@@ -278,6 +272,12 @@ def plot_spectrum_topo(experiment, name):
         psd_idx = ch_names_cleaned.index(ch_name)
 
         for color_idx, (key, psd) in enumerate(data.items()):
+
+            if log_transformed:
+                curve = 10 * np.log10(psd[psd_idx])
+            else:
+                curve = psd[psd_idx]
+
             ax.plot(freqs, psd[psd_idx], color=colors[color_idx],
                     label=key)
 
@@ -310,7 +310,13 @@ def plot_spectrum_topo(experiment, name):
 
         handles = []
         for color_idx, (key, psd) in enumerate(data.items()):
-            handles.append(ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx],
+
+            if log_transformed:
+                curve = 10 * np.log10(psd[psd_idx])
+            else:
+                curve = psd[psd_idx]
+
+            handles.append(ax.plot(curve, linewidth=0.2, color=colors[color_idx],
                                    label=key)[0])
 
     fig.legend(handles=handles)
@@ -325,7 +331,6 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
     # check data cohesion
     keys = []
     freq_arrays = []
-    logs = []
     for group_key, group_subjects in groups.items():
         for subject_name in group_subjects:
             try:
@@ -333,13 +338,11 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
                 spectrum = subject.spectrum.get(spectrum_name)
                 keys.append(tuple(sorted(spectrum.content.keys())))
                 freq_arrays.append(tuple(spectrum.freqs))
-                logs.append(spectrum.log_transformed)
             except Exception as exc:
                 continue
 
     assert_arrays_same(keys, 'Conditions do not match')
     assert_arrays_same(freq_arrays, 'Freqs do not match')
-    assert_arrays_same(logs, 'Log transforms do not match')
 
     # handle channel differences
     ch_names_cleaned = []
@@ -451,7 +454,7 @@ def save_all_channels(experiment, selected_name):
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
 
-def save_channel_averages(experiment, selected_name):
+def save_channel_averages(experiment, selected_name, log_transformed=False):
     column_names = []
     row_names = []
     csv_data = []
@@ -464,7 +467,6 @@ def save_channel_averages(experiment, selected_name):
         if not spectrum:
             continue
 
-        log_transformed = spectrum.log_transformed
         ch_names = spectrum.ch_names
         freqs = spectrum.freqs
 
@@ -472,17 +474,11 @@ def save_channel_averages(experiment, selected_name):
 
         for key, psd in spectrum.content.items():
 
-            if log_transformed:
-                psd = 10 ** (psd / 10.0)
-
             data_labels, averaged_data = average_to_channel_groups(
                 psd, info, ch_names, channel_groups)
 
             if not data_labels:
                 raise Exception('No channel groups matching the data found.')
-
-            if log_transformed:
-                averaged_data = 10 * np.log10(averaged_data)
 
             csv_data.extend(averaged_data.tolist())
 
