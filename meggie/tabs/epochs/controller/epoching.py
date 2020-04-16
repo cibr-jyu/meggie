@@ -57,6 +57,7 @@ def create_epochs_from_events(params, subject):
             if len(new_events) == 0:
                 logging.warning('No events found with setting ' +
                                 str(category_id))
+                continue
 
             category[category_id] = idx + 1
             new_events[:, 2] = idx + 1
