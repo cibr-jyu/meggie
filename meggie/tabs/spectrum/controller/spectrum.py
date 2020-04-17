@@ -24,6 +24,8 @@ from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.formats import format_floats
 from meggie.utilities.colors import color_cycle
 from meggie.utilities.channels import average_to_channel_groups
+from meggie.utilities.channels import iterate_topography
+from meggie.utilities.channels import clean_names
 from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
 from meggie.utilities.units import get_power_unit
@@ -247,38 +249,29 @@ def plot_spectrum_topo(experiment, name, log_transformed=True):
 
     data = spectrum.content
     freqs = spectrum.freqs
-    ch_names_cleaned = [ch_name.replace(' ', '') for ch_name in spectrum.ch_names]
-
-    channel_groups = experiment.channel_groups
+    ch_names = spectrum.ch_names
 
     info = subject.get_raw().info
-    info_ch_names_cleaned = [ch_name.replace(' ', '') for ch_name in 
-                             info['ch_names']]
+    info_names = info['ch_names']
 
     colors = color_cycle(len(data))
 
     logging.getLogger('ui_logger').info(
         'Plotting spectrum from all channels..')
 
-    def individual_plot(ax, ch_idx):
+    def individual_plot(ax, info_idx, names_idx):
         """
-        Callback for the interactive plot.
-        Opens a channel specific plot.
         """
-
-        # notice that ch_idx is index in the original ch_names,
-        # and ch_names from spectrum object are only the data channels
-        ch_name = info_ch_names_cleaned[ch_idx]
-        psd_idx = ch_names_cleaned.index(ch_name)
-
+        print("miau")
+        ch_name = ch_names[names_idx]
         for color_idx, (key, psd) in enumerate(data.items()):
 
             if log_transformed:
-                curve = 10 * np.log10(psd[psd_idx])
+                curve = 10 * np.log10(psd[names_idx])
             else:
-                curve = psd[psd_idx]
+                curve = psd[names_idx]
 
-            ax.plot(freqs, psd[psd_idx], color=colors[color_idx],
+            ax.plot(freqs, psd[names_idx], color=colors[color_idx],
                     label=key)
 
         title = 'spectrum_{0}_{1}'.format(name, ch_name)
@@ -290,34 +283,27 @@ def plot_spectrum_topo(experiment, name, log_transformed=True):
 
         ax.set_xlabel('Frequency (Hz)')
         ax.set_ylabel('Power ({})'.format(get_power_unit(
-            mne.io.pick.channel_type(info, ch_idx),
+            mne.io.pick.channel_type(info, info_idx),
             log_transformed
         )))
 
         plt.show()
 
     fig = plt.figure()
-    for ax, idx in mne.viz.iter_topography(info, fig=fig,
-                                           fig_facecolor='white',
-                                           axis_spinecolor='white',
-                                           axis_facecolor='white',
-                                           on_pick=individual_plot):
 
-        ch_name = info_ch_names_cleaned[idx]
-        if ch_name not in ch_names_cleaned:
-            continue
-        psd_idx = ch_names_cleaned.index(ch_name)
+    for ax, info_idx, names_idx in iterate_topography(
+            fig, info, ch_names, individual_plot):
 
         handles = []
         for color_idx, (key, psd) in enumerate(data.items()):
 
             if log_transformed:
-                curve = 10 * np.log10(psd[psd_idx])
+                curve = 10 * np.log10(psd[names_idx])
             else:
-                curve = psd[psd_idx]
+                curve = psd[names_idx]
 
-            handles.append(ax.plot(curve, linewidth=0.2, color=colors[color_idx],
-                                   label=key)[0])
+            handles.append(ax.plot(curve, color=colors[color_idx],
+                                   linewidth=0.5, label=key)[0])
 
     fig.legend(handles=handles)
     title = 'spectrum_{0}'.format(name)
@@ -345,28 +331,27 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
     assert_arrays_same(freq_arrays, 'Freqs do not match')
 
     # handle channel differences
-    ch_names_cleaned = []
+    ch_names = []
     for group_key, group_subjects in groups.items():
         for subject_name in group_subjects:
             try:
                 subject = experiment.subjects.get(subject_name)
                 spectrum = subject.spectrum.get(spectrum_name)
-                ch_names_cleaned.append(tuple(
-                    [ch_name.replace(' ', '') for ch_name in spectrum.ch_names]))
+                ch_names.append(tuple(clean_names(spectrum.ch_names)))
             except Exception as exc:
                 continue
-    if len(set(ch_names_cleaned)) != 1:
+    if len(set(ch_names)) != 1:
         logging.getLogger('ui_logger').info(
             "PSD's contain different sets of channels. Identifying common ones..")
 
-        common_ch_names_cleaned = list(set.intersection(*map(set, ch_names_cleaned)))
+        common_ch_names = list(set.intersection(*map(set, ch_names)))
 
         logging.getLogger('ui_logger').info(
-            str(len(common_ch_names_cleaned)) + ' common channels found.')
+            str(len(common_ch_names)) + ' common channels found.')
         logging.getLogger('ui_logger').debug(
-            'Common channels are ' + str(common_ch_names_cleaned))
+            'Common channels are ' + str(common_ch_names))
     else:
-        common_ch_names_cleaned = ch_names_cleaned[0]
+        common_ch_names = ch_names[0]
 
     grand_psds = {}
     for group_key, group_subjects in groups.items():
@@ -378,15 +363,15 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
             if not spectrum:
                 continue
 
-            subject_ch_names_cleaned = [ch_name.replace(' ', '') for ch_name 
-                                        in spectrum.ch_names]
+            subject_ch_names = clean_names(spectrum.ch_names) 
 
             for spectrum_item_key, spectrum_item in spectrum.content.items():
                 grand_key = (group_key, spectrum_item_key)
 
                 # get common channels in "subject specific space"
-                idxs = [subject_ch_names_cleaned.index(ch_name) for ch_name 
-                        in common_ch_names_cleaned]
+                idxs = [subject_ch_names.index(ch_name) for ch_name 
+                        in common_ch_names]
+
                 spectrum_item = spectrum_item[idxs]
 
                 if grand_key not in grand_psds:
@@ -411,7 +396,7 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
     spectrum_directory = subject.spectrum_directory
 
     freqs = spectrum.freqs
-    ch_names = common_ch_names_cleaned[0]
+    ch_names = common_ch_names[0]
     data = grand_averages
 
     params = deepcopy(spectrum.params)

@@ -14,6 +14,8 @@ import meggie.utilities.filemanager as filemanager
 from meggie.utilities.formats import format_floats
 from meggie.utilities.colors import color_cycle
 from meggie.utilities.channels import average_to_channel_groups
+from meggie.utilities.channels import iterate_topography
+from meggie.utilities.channels import clean_names
 from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
@@ -80,10 +82,10 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
     logging.getLogger('ui_logger').info('Plotting TSE from all channels..')
 
 
-    def individual_plot(ax, ch_idx):
+    def individual_plot(ax, info_idx, names_idx):
         """
         """
-        ch_name = ch_names[ch_idx]
+        ch_name = ch_names[names_idx]
 
         title = 'TSE_{0}_{1}'.format(tfr_name, ch_name)
         ax.figure.canvas.set_window_title(title)
@@ -91,7 +93,7 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
         ax.set_title('')
 
         for color_idx, (key, tse) in enumerate(tses.items()):
-            ax.plot(times, tse[ch_idx], color=colors[color_idx], label=key)
+            ax.plot(times, tse[names_idx], color=colors[color_idx], label=key)
             ax.axhline(0)
             ax.axvline(0)
 
@@ -99,22 +101,20 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
 
         ax.set_xlabel('Time (s)')
         ax.set_ylabel('Power ({})'.format(get_power_unit(
-            mne.io.pick.channel_type(info, ch_idx),
+            mne.io.pick.channel_type(info, info_idx),
             False
         )))
 
         plt.show()
 
     fig = plt.figure()
-    for ax, ch_idx in mne.viz.iter_topography(info, fig=fig,
-                                              fig_facecolor='white',
-                                              axis_spinecolor='white',
-                                              axis_facecolor='white',
-                                              on_pick=individual_plot):
+    for idx, info_idx, names_idx in iterate_topography(
+            fig, info, ch_names, individual_plot):
 
         handles = []
         for color_idx, (key, tse) in enumerate(tses.items()):
-            handles.append(ax.plot(tse[ch_idx], linewidth=0.2, color=colors[color_idx],
+            handles.append(ax.plot(tse[names_idx], linewidth=0.2, 
+                           color=colors[color_idx],
                            label=key)[0])
 
     fig.legend(handles=handles)
@@ -337,29 +337,28 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
     assert_arrays_same(time_arrays)
 
     # handle channel differences
-    ch_names_cleaned = []
+    ch_names = []
     for group_key, group_subjects in groups.items():
         for subject_name in group_subjects:
             try:
                 subject = experiment.subjects.get(subject_name)
                 tfr = subject.tfr.get(tfr_name)
-                ch_names_cleaned.append(tuple(
-                    [ch_name.replace(' ', '') for ch_name in tfr.ch_names]))
+                ch_names.append(tuple(clean_names(tfr.ch_names)))
             except Exception as exc:
                 continue
 
-    if len(set(ch_names_cleaned)) != 1:
+    if len(set(ch_names)) != 1:
         logging.getLogger('ui_logger').info(
             "TFR's contain different sets of channels. Identifying common ones..")
 
-        common_ch_names_cleaned = list(set.intersection(*map(set, ch_names_cleaned)))
+        common_ch_names = list(set.intersection(*map(set, ch_names)))
 
-        logging.getLogger('ui_logger').info(str(len(common_ch_names_cleaned)) +
+        logging.getLogger('ui_logger').info(str(len(common_ch_names)) +
                                             ' common channels found.')
         logging.getLogger('ui_logger').debug(
-            'Common channels are ' + str(common_ch_names_cleaned))
+            'Common channels are ' + str(common_ch_names))
     else:
-        common_ch_names_cleaned = ch_names_cleaned[0]
+        common_ch_names = ch_names[0]
 
     grand_tfrs = {}
     for group_key, group_subjects in groups.items():
@@ -375,10 +374,11 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
                 grand_key = (group_key, tfr_item_key)
 
                 # get common channels in "subject specific space"
-                for ch_idx, ch_name in enumerate(tfr_item.info['ch_names']):
+                subject_ch_names = tfr_item.info['ch_names']
+                for ch_idx, ch_name in enumerate(clean_names(subject_ch_names)):
                     drop_names = []
-                    if ch_name.replace(' ', '') not in common_ch_names_cleaned:
-                        drop_names.append(ch_name)
+                    if ch_name not in common_ch_names:
+                        drop_names.append(subject_ch_names[ch_idx])
                 tfr_item = tfr_item.copy().drop_channels(drop_names)
 
                 # sanity check

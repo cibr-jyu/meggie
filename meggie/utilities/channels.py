@@ -74,18 +74,47 @@ def get_triplet_from_mag(info, ch_name):
     return [ch_name, ch_name[:-1] + '2', ch_name[:-1] + '3']
 
 
+def clean_names(names):
+    """
+    """
+    return [name.replace(' ', '') for name in names]
+
+
+def iterate_topography(fig, info, ch_names, on_pick):
+    """ Convenience wrapper to return idx in ch_names in addition to info['ch_names']
+    """
+    ch_names = clean_names(ch_names)
+    info_names = clean_names(info['ch_names'])
+
+    def handler(ax, info_idx):
+        names_idx = ch_names.index(info_names[info_idx])
+        on_pick(ax, info_idx, names_idx)
+
+    for ax, info_idx in mne.viz.iter_topography(info, fig=fig,
+                                           fig_facecolor='white',
+                                           axis_spinecolor='white',
+                                           axis_facecolor='white',
+                                           on_pick=handler):
+        try: 
+            names_idx = ch_names.index(info_names[info_idx])
+            yield ax, info_idx, names_idx
+        except ValueError as exc:
+            continue
+
+
 def average_to_channel_groups(data, info, ch_names, channel_groups):
     """ Averages data to ch groups. Get types from info but indices from ch_names
     """
     chs_by_type = get_channels_by_type(info)
 
-    ch_names_cleaned = [ch_name.replace(' ', '') for ch_name in ch_names]
+    ch_names = clean_names(ch_names)
 
     averaged_data = []
     data_labels = []
 
     for ch_type, chs in chs_by_type.items():
-        channels_cleaned = [ch_name.replace(' ', '') for ch_name in ch_names if ch_name in chs]
+        chs = clean_names(ch_names)
+        ch_names_in_chs = [ch_name for ch_name in ch_names if ch_name in chs]
 
         if ch_type in ['grad', 'mag']:
             ch_groups = channel_groups['meg']
@@ -93,16 +122,15 @@ def average_to_channel_groups(data, info, ch_names, channel_groups):
             ch_groups = channel_groups['eeg']
 
         for ch_group, ch_group_channels in ch_groups.items():
-            ch_group_channels_cleaned = [ch_name.replace(' ', '') for ch_name 
-                                         in ch_group_channels]
-            final_ch_names = [ch_name for ch_name in channels_cleaned if ch_name 
-                              in ch_group_channels_cleaned]
+            ch_group_channels = clean_names(ch_group_channels)
+            final_ch_names = [ch_name for ch_name in ch_names_in_chs if ch_name 
+                              in ch_group_channels]
 
             # leave here if for example ch names in ch_groups and info don't match
             if not final_ch_names:
                 continue
 
-            ch_idxs = [idx for idx, ch_name in enumerate(ch_names_cleaned) if 
+            ch_idxs = [idx for idx, ch_name in enumerate(ch_names) if 
                        ch_name in final_ch_names]
 
             # calculate average

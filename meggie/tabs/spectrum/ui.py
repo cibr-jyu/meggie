@@ -161,9 +161,6 @@ def spectrum_info(experiment, data, window):
             message += 'Frequencies: {0}Hz - {1}Hz\n'.format(params['fmin'], 
                                                              params['fmax'])
 
-        if 'log_transformed' in params:
-            message += 'Log transformed: {0}\n'.format(params['log_transformed'])
-
         if 'nfft' in params:
             message += 'Window length (samples): {0}\n'.format(params['nfft'])
 
