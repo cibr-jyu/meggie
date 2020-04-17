@@ -2,68 +2,10 @@
 
 """
 """
-
 import logging
 
 import numpy as np
-
 import mne
-
-
-def find_stim_channel(raw):
-    """
-    Finds the appropriate stim channel from raw
-    """
-    channels = raw.info.get('ch_names')
-    if 'STI101' in channels:
-        return 'STI101'
-    elif 'STI 101' in channels:
-        return 'STI 101'
-    elif 'STI 014' in channels:
-        return 'STI 014'
-    elif 'STI014' in channels:
-        return 'STI014'
-
-
-def update_stim_channel(raw, events):
-    """ Writes events to stim channel
-    """
-    # time on in samples
-    length = 5
-
-    stim_channel = find_stim_channel(raw)
-    
-    if not stim_channel:
-        # create stim_channel
-        info = mne.create_info(['STI101'], raw.info['sfreq'], ['stim'])
-        stim_raw = mne.io.RawArray(np.zeros((1, len(raw.times))), info)
-        raw.add_channels([stim_raw], force_update_info=True)
-        stim_channel = 'STI101'
-
-    ch_idx = raw.info['ch_names'].index(stim_channel)
-    for event in events:
-        start = event[0] - raw.first_samp
-        raw._data[ch_idx][start:start+length] = event[2]
-
-
-def create_event_set(raw):
-    """
-    Creates an event set where the first element is the id
-    and the second element is the number of the events.
-    """
-    stim_ch = find_stim_channel(raw)
-    if not stim_ch:
-        return
-
-    events = Events(raw, stim_ch=stim_ch).events
-    if events is None:
-        return
-
-    bins = np.bincount(events[:, 2])
-    result = dict()
-    for idx in set(events[:, 2]):
-        result[idx] = bins[idx]
-    return result
 
 
 class Events(object):
@@ -74,7 +16,6 @@ class Events(object):
     def __init__(self, raw, stim_ch=None, mask=0, id_=None):
         """
         """
-
         events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1,
                                  uint_cast=True)
 
@@ -121,3 +62,40 @@ class Events(object):
         Property for events.
         """
         return self._events
+
+
+def find_stim_channel(raw):
+    """
+    Finds the appropriate stim channel from raw
+    """
+    channels = raw.info.get('ch_names')
+    if 'STI101' in channels:
+        return 'STI101'
+    elif 'STI 101' in channels:
+        return 'STI 101'
+    elif 'STI 014' in channels:
+        return 'STI 014'
+    elif 'STI014' in channels:
+        return 'STI014'
+
+
+def update_stim_channel(raw, events):
+    """ Writes events to stim channel
+    """
+    # time on in samples
+    length = 5
+
+    stim_channel = find_stim_channel(raw)
+    
+    if not stim_channel:
+        # create stim_channel
+        info = mne.create_info(['STI101'], raw.info['sfreq'], ['stim'])
+        stim_raw = mne.io.RawArray(np.zeros((1, len(raw.times))), info)
+        raw.add_channels([stim_raw], force_update_info=True)
+        stim_channel = 'STI101'
+
+    ch_idx = raw.info['ch_names'].index(stim_channel)
+    for event in events:
+        start = event[0] - raw.first_samp
+        raw._data[ch_idx][start:start+length] = event[2]
+

@@ -2,7 +2,6 @@
 """
 import logging 
 
-import mne
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -15,7 +14,6 @@ from meggie.tabs.preprocessing.dialogs.eventsFromAnnotationsDialogMain import Ev
 
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.events import create_event_set
 from meggie.utilities.events import find_stim_channel
 from meggie.utilities.events import Events
 from meggie.utilities.measurement_info import MeasurementInfo
@@ -159,14 +157,24 @@ def event_info(experiment, data, window):
         if not subject:
             return ""
 
-        event_counts = create_event_set(subject.get_raw())
+        raw = subject.get_raw()
 
-        if not event_counts:
-            events_string = 'No events found.'
-        else:
-            events_string = ''
-            for key, value in event_counts.items():
-                events_string += 'Trigger %s, %s events\n' % (str(key), str(value))
+        stim_ch = find_stim_channel(subject.get_raw())
+        if not stim_ch:
+            return ""
+
+        events = Events(raw, stim_ch=stim_ch).events
+        if events is None:
+            return ""
+
+        bins = np.bincount(events[:,2])
+        event_counts = dict()
+        for event_id in set(events[:, 2]):
+            event_counts[event_id] = bins[event_id]
+
+        events_string = ''
+        for key, value in event_counts.items():
+            events_string += 'Trigger %s, %s events\n' % (str(key), str(value))
 
         return events_string
     except Exception as exc:

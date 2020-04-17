@@ -11,15 +11,14 @@ from meggie.utilities.filemanager import homepath
 
 
 class PreferencesHandler(object):
-    '''
-    Class for storing Meggie preferences and setting them into effect.
-    '''
+    """ Class for storing Meggie preferences and setting them into effect.
+    """
 
     def __init__(self):
-        '''Constructor'''
-        self.working_directory = ''
-        self.freesurfer_home = ''
-        self.previous_experiment_name = ''
+        """
+        """
+        self.working_directory = ""
+        self.previous_experiment_name = ""
         self.auto_load_last_open_experiment = False
         self.confirm_quit = False
         self.save_bads = False
@@ -39,7 +38,6 @@ class PreferencesHandler(object):
         config.set('MiscOptions', 'previousExperimentName',
                    self.previous_experiment_name)
         config.set('Workspace', 'workspaceDir', self.working_directory)
-        config.set('EnvVariables', 'FreeSurferHomeDir', self.freesurfer_home)
 
         if self.auto_load_last_open_experiment:
             config.set('MiscOptions', 'autoReloadPreviousExperiment', 'True')
@@ -77,12 +75,6 @@ class PreferencesHandler(object):
             self.working_directory = ''
 
         try:
-            self.freesurfer_home = config.get(
-                'EnvVariables', 'FreeSurferHomeDir')
-        except BaseException:
-            self.freesurfer_home = ''
-
-        try:
             if config.get('MiscOptions',
                           'autoreloadpreviousexperiment') == 'True':
                 self.auto_load_last_open_experiment = True
@@ -115,21 +107,3 @@ class PreferencesHandler(object):
         except BaseException:
             self.tab_preset = ''
 
-    def set_env_variables(self):
-        """
-        """
-        message = ('Setting environment variables...')
-        logging.getLogger('ui_logger').info(message)
-
-        # Set environment directly for FreeSurfer.
-        if self.freesurfer_home:
-            freeSurferBinPath = os.path.join(self.freesurfer_home, 'bin')
-            freeSurferTktoolsPath = os.path.join(
-                self.freesurfer_home, 'tktools')
-            os.environ['FREESURFER_HOME'] = self.freesurfer_home
-            os.environ['PATH'] += os.pathsep + freeSurferBinPath
-            os.environ['PATH'] += os.pathsep + freeSurferTktoolsPath
-
-        # to make graphical MNE-Python utilities
-        # use QT4 backend instead of wx.
-        os.environ['ETS_TOOLKIT'] = "qt4"

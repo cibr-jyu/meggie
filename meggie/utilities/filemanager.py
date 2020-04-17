@@ -11,32 +11,12 @@ import re
 import sys
 import datetime
 import logging
+import errno
 
 from distutils import dir_util
 
 import numpy as np
-
 import mne
-
-
-def copy_recon_files(activeSubject, sourceDirectory):
-    """
-    Copies mri and surf files from the given directory to under the active
-    subject's reconFiles directory (after creating the said directory,
-    if need be).
-    """
-    reconDir = activeSubject.reconfiles_directory
-
-    # Empty the destination directory first by removing it, then make it
-    # again.
-    if os.path.isdir(reconDir):
-        dir_util.remove_tree(reconDir)
-
-    logger = logging.getLogger('ui_logger')
-
-    logger.info('Copying recon files...')
-    dir_util.copy_tree(sourceDirectory, reconDir)
-    logger.info('Recon files copying complete!')
 
 
 def open_raw(fname, preload=True):
@@ -116,7 +96,6 @@ def create_timestamped_folder(experiment):
                         experiment.name, 'output')
     timestamped_folder = os.path.join(path, current_time_str)
 
-    import errno
     try:
         os.makedirs(timestamped_folder)
     except OSError as e:
@@ -143,7 +122,8 @@ def copy_subject_raw(subject, path):
 
 
 def save_csv(path, data, column_names, row_names):
-
+    """
+    """
     # gather all the data to list of rows
     all_data = []
 
@@ -161,7 +141,8 @@ def save_csv(path, data, column_names, row_names):
 
 
 def load_csv(path):
-
+    """
+    """
     all_data = np.loadtxt(path, dtype=np.str, delimiter=', ')
     data = []
     column_names = []

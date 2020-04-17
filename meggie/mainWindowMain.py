@@ -4,7 +4,6 @@
 """
 import os
 import sys
-import gc
 import json
 import logging
 import warnings
@@ -15,10 +14,7 @@ from meggie.utilities.dynamic import find_all_tab_specs
 
 from meggie.mainWindowUi import Ui_MainWindow
 
-from meggie.utilities.units import get_unit
-from meggie.utilities.measurement_info import MeasurementInfo
 from meggie.utilities.preferences import PreferencesHandler
-from meggie.utilities.events import create_event_set
 from meggie.utilities.mne_wrapper import wrap_mne
 
 from meggie.experiment import Experiment
@@ -69,7 +65,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # For storing and handling program wide prefences.
         self.preferencesHandler = PreferencesHandler()
-        self.preferencesHandler.set_env_variables()
 
         # For handling initialization and switching of experiments.
         self.experimentHandler = ExperimentHandler(self)
