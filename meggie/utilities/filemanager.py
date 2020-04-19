@@ -121,18 +121,17 @@ def copy_subject_raw(subject, path):
                                             os.path.basename(f)))
 
 
-def save_csv(path, data, column_names, row_names):
+def save_csv(path, data, column_names, row_descs):
     """
     """
     # gather all the data to list of rows
     all_data = []
 
     # freqs data, assume same lengths
-    all_data.append([''] + column_names)
+    all_data.append(['']*len(row_descs[0]) + column_names)
 
     for idx in range(len(data)):
-        row_name = row_names[idx]
-        row = [row_name] + data[idx]
+        row = list(row_descs[idx]) + data[idx]
         all_data.append(row)
 
     # save to file
@@ -144,15 +143,18 @@ def load_csv(path):
     """
     """
     all_data = np.loadtxt(path, dtype=np.str, delimiter=', ')
+
     data = []
     column_names = []
-    row_names = []
+    row_descs = []
 
-    column_names = all_data[0, 1:].tolist()
-    row_names = all_data[1:, 0].tolist()
-    data = all_data[1:, 1:].astype(np.float)
+    first_data_idx = np.min(np.where(all_data[0] != '')[0])
 
-    return column_names, row_names, data
+    column_names = all_data[0, first_data_idx:].tolist()
+    row_descs = [tuple(elems) for elems in all_data[1:, :first_data_idx]]
+    data = all_data[1:, first_data_idx:].astype(np.float)
+
+    return column_names, row_descs, data
 
 
 # see https://stackoverflow.com/a/13790289

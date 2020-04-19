@@ -61,8 +61,10 @@ class Spectrum(object):
                 logging.getLogger('ui_logger').debug(
                     'Reading spectrum file: ' + str(fname))
 
-                freqs, ch_names, psd = filemanager.load_csv(
+                freqs, row_descs, psd = filemanager.load_csv(
                     os.path.join(self._spectrum_directory, fname))
+
+                ch_names = [desc[0] for desc in row_descs]
 
                 # for backwards compatibility
                 # (used to have possibility to have spectrum data
@@ -85,14 +87,14 @@ class Spectrum(object):
 
         for key, psd in self._content.items():
 
-            row_names = self._ch_names
+            row_descs = [(ch_name,) for ch_name in self._ch_names]
             column_names = self._freqs.tolist()
             data = psd.tolist()
 
             path = os.path.join(self._spectrum_directory,
                                 self._name + '_' + str(key) + '.csv')
 
-            filemanager.save_csv(path, data, column_names, row_names)
+            filemanager.save_csv(path, data, column_names, row_descs)
 
     def delete_content(self):
 

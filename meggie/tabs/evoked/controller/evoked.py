@@ -149,7 +149,7 @@ def save_all_channels(experiment, selected_name):
     """
     """
     column_names = []
-    row_names = []
+    row_descs = []
     csv_data = []
 
     # accumulate csv contents
@@ -164,15 +164,16 @@ def save_all_channels(experiment, selected_name):
             for ch_idx, ch_name in enumerate(mne_evoked.info['ch_names']):
                 if ch_name in mne_evoked.info['bads']:
                     continue
-                name = subject.name + '{' + key + '}' + '[' + ch_name + ']'
                 csv_data.append(mne_evoked.data[ch_idx].tolist())
-                row_names.append(name)
+
+                row_desc = (subject.name, key, ch_name)
+                row_descs.append(row_desc)
 
     folder = filemanager.create_timestamped_folder(experiment)
     fname = selected_name + '_all_subjects_all_channels_evoked.csv'
     path = os.path.join(folder, fname)
 
-    filemanager.save_csv(path, csv_data, column_names, row_names)
+    filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
 
@@ -180,7 +181,7 @@ def save_channel_averages(experiment, selected_name):
     """
     """
     column_names = []
-    row_names = []
+    row_descs = []
     csv_data = []
 
     # accumulate csv contents
@@ -201,15 +202,13 @@ def save_channel_averages(experiment, selected_name):
             column_names = format_floats(mne_evoked.times)
 
             for ch_type, area in data_labels:
-                name = (subject.name + 
-                        '{' + key + '}' + 
-                        '[' + ch_type + '|' + area + ']')
-                row_names.append(name)
+                row_desc = (subject.name, key, ch_type, area)
+                row_descs.append(row_desc)
 
     folder = filemanager.create_timestamped_folder(experiment)
     fname = selected_name + '_all_subjects_channel_averages_evoked.csv'
     path = os.path.join(folder, fname)
 
-    filemanager.save_csv(path, csv_data, column_names, row_names)
+    filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 

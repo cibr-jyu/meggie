@@ -262,7 +262,6 @@ def plot_spectrum_topo(experiment, name, log_transformed=True):
     def individual_plot(ax, info_idx, names_idx):
         """
         """
-        print("miau")
         ch_name = ch_names[names_idx]
         for color_idx, (key, psd) in enumerate(data.items()):
 
@@ -271,7 +270,7 @@ def plot_spectrum_topo(experiment, name, log_transformed=True):
             else:
                 curve = psd[names_idx]
 
-            ax.plot(freqs, psd[names_idx], color=colors[color_idx],
+            ax.plot(freqs, curve, color=colors[color_idx],
                     label=key)
 
         title = 'spectrum_{0}_{1}'.format(name, ch_name)
@@ -340,6 +339,7 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
                 ch_names.append(tuple(clean_names(spectrum.ch_names)))
             except Exception as exc:
                 continue
+
     if len(set(ch_names)) != 1:
         logging.getLogger('ui_logger').info(
             "PSD's contain different sets of channels. Identifying common ones..")
@@ -416,7 +416,7 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
 
 def save_all_channels(experiment, selected_name):
     column_names = []
-    row_names = []
+    row_descs = []
     csv_data = []
 
     for subject in experiment.subjects.values():
@@ -428,20 +428,20 @@ def save_all_channels(experiment, selected_name):
             column_names = format_floats(spectrum.freqs)
 
             for ch_name in spectrum.ch_names:
-                name = subject.name + '{' + key + '}[' + ch_name + ']'
-                row_names.append(name)
+                row_desc = (subject.name, key, ch_name)
+                row_descs.append(row_desc)
 
     folder = filemanager.create_timestamped_folder(experiment)
     fname = selected_name + '_all_subjects_all_channels_spectrum.csv'
     path = os.path.join(folder, fname)
 
-    filemanager.save_csv(path, csv_data, column_names, row_names)
+    filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
 
 def save_channel_averages(experiment, selected_name, log_transformed=False):
     column_names = []
-    row_names = []
+    row_descs = []
     csv_data = []
 
     channel_groups = experiment.channel_groups
@@ -465,19 +465,21 @@ def save_channel_averages(experiment, selected_name, log_transformed=False):
             if not data_labels:
                 raise Exception('No channel groups matching the data found.')
 
-            csv_data.extend(averaged_data.tolist())
+            if log_transformed:
+                csv_data.extend(10 * np.log10(averaged_data.tolist()))
+            else:
+                csv_data.extend(averaged_data.tolist())
 
             column_names = format_floats(freqs)
 
             for ch_type, area in data_labels:
-                name = (subject.name + '{' + key + '}[' +
-                        ch_type + '|' + area + ']')
-                row_names.append(name)
+                row_desc = (subject.name, key, ch_type, area)
+                row_descs.append(row_desc)
 
     folder = filemanager.create_timestamped_folder(experiment)
     fname = selected_name + '_all_subjects_channel_averages_spectrum.csv'
     path = os.path.join(folder, fname)
 
-    filemanager.save_csv(path, csv_data, column_names, row_names)
+    filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
