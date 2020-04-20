@@ -180,7 +180,6 @@ class PreferencesDialog(QtWidgets.QDialog):
             self.parent.preferencesHandler.tab_preset = selected_preset
 
         self.parent.preferencesHandler.write_preferences_to_disk()
-        self.parent.preferencesHandler.set_env_variables()
 
         self.parent.reconstruct_tabs()
         self.parent.initialize_ui()

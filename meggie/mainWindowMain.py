@@ -415,7 +415,8 @@ class MainWindow(QtWidgets.QMainWindow):
         stdout_stream = EmittingStream(
             textWritten=self.normalOutputWritten)
         stdout_stream.orig_stream = sys.__stdout__
-        stderr_stream = EmittingStream(textWritten=self.errorOutputWritten)
+        stderr_stream = EmittingStream(
+            textWritten=self.errorOutputWritten)
         stderr_stream.orig_stream = sys.__stderr__
 
         sys.stdout = stdout_stream

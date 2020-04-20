@@ -127,8 +127,6 @@ def _plot_evoked_topo(experiment, evoked):
     fig.suptitle(title)
 
 
-
-
 def plot_evoked(experiment, data, window):
     """ Plots topo or averages of selected item
     """
@@ -173,10 +171,13 @@ def plot_topomap(experiment, data, window):
                 title = '{0}_{1}_{2}'.format(selected_name, key, ch_type)
                 times = np.arange(tmin, tmax, step)
 
-                fig = mne.viz.plot_evoked_topomap(
-                    evok, times=times, ch_type=ch_type,
-                    title=title)
-                fig.canvas.set_window_title(title)
+                try:
+                    fig = mne.viz.plot_evoked_topomap(
+                        evok, times=times, ch_type=ch_type,
+                        title=title)
+                    fig.canvas.set_window_title(title)
+                except Exception as exc:
+                    exc_messagebox(window, exc)
 
     dialog = EvokedTopomapDialog(window, evoked, handler)
     dialog.show()

@@ -30,7 +30,7 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
         subject = self.experiment.active_subject
         raw = subject.get_raw()
 
-        for annotation_name in raw.annotations.description:
+        for annotation_name in sorted(list(set(raw.annotations.description))):
             self.ui.comboBoxAnnotation.addItem(annotation_name)
 
         self.batching_widget = BatchingWidget(

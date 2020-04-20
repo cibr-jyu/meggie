@@ -108,7 +108,7 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
         plt.show()
 
     fig = plt.figure()
-    for idx, info_idx, names_idx in iterate_topography(
+    for ax, info_idx, names_idx in iterate_topography(
             fig, info, ch_names, individual_plot):
 
         handles = []

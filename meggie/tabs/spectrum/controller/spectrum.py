@@ -120,10 +120,9 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     # remove zero channels from picks
     zero_idxs = []
     for idx, row in enumerate(raw._data):
-        if np.all(np.isclose(row, 0)):
+        if np.all(row == 0):
             zero_idxs.append(idx)
     picks = [pick for pick in picks if pick not in zero_idxs]
-
 
     fmin = params['fmin']
     fmax = params['fmax']
@@ -304,6 +303,9 @@ def plot_spectrum_topo(experiment, name, log_transformed=True):
             handles.append(ax.plot(curve, color=colors[color_idx],
                                    linewidth=0.5, label=key)[0])
 
+    if not handles:
+        return
+
     fig.legend(handles=handles)
     title = 'spectrum_{0}'.format(name)
     fig.canvas.set_window_title(title)
@@ -396,7 +398,7 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
     spectrum_directory = subject.spectrum_directory
 
     freqs = spectrum.freqs
-    ch_names = common_ch_names[0]
+    ch_names = common_ch_names
     data = grand_averages
 
     params = deepcopy(spectrum.params)

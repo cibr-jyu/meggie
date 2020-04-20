@@ -389,9 +389,6 @@ def construct_tab(source, package, tab_spec, parent):
 
                 data = getattr(subject, input_name, None)
                 if not data:
-                    logging.getLogger('ui_logger').debug(
-                        "Data not found for " + str(input_name) +
-                        " in " + self.name + " tab.")
                     continue
 
                 for key in sorted(list(data.keys())):
@@ -410,9 +407,6 @@ def construct_tab(source, package, tab_spec, parent):
 
                 data = getattr(subject, output_name, None)
                 if not data:
-                    logging.getLogger('ui_logger').debug(
-                        "Data not found for " + str(output_name) +
-                        " in " + self.name + " tab.")
                     continue
 
                 for key in sorted(list(data.keys())):

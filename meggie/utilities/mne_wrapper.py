@@ -92,7 +92,16 @@ blacklist = ['tests',
              'tridisolve',
              'next_fast_len',
              'make_eeg_layout',
-             'tight_layout']
+             'tight_layout',
+             'shorten',
+             'get_fitting_dig',
+             'compute_native_head_t',
+             'get_ras_to_neuromag_trans',
+             'translation',
+             'write_double',
+             'make_dig_montage',
+             'write_hdf5',
+             'write_tfrs']
 
 blacklist.extend(['pick_types',
                   'pick_channels',

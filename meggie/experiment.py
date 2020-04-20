@@ -250,13 +250,16 @@ class Experiment(QObject):
 
                 shutil.copy(path, backup_path)
 
-            except ValueError as exc:
-                raise Exception('Could not backup experiment file. Aborting saving..')
+            except Exception as exc:
+                logging.getLogger('ui_logger').warning('Could not backup experiment file. Please check your permissions..')
 
         # save to file
-        with open(os.path.join(self.workspace, self.name,
-                               self.name + '.exp'), 'w') as f:
-            json.dump(save_dict, f, sort_keys=True, indent=4)
+        try:
+            with open(os.path.join(self.workspace, self.name,
+                                   self.name + '.exp'), 'w') as f:
+                json.dump(save_dict, f, sort_keys=True, indent=4)
+        except Exception as exc:
+            logging.getLogger('ui_logger').error('Could not save the experiment file. Please check your permissions..')
 
 
 class ExperimentHandler(QObject):
@@ -276,8 +279,8 @@ class ExperimentHandler(QObject):
         """
         prefs = self.parent.preferencesHandler
 
-        experiment = Experiment(exp_dict['author'], 
-                                os.path.basename(exp_dict['name']))
+        experiment = Experiment(os.path.basename(exp_dict['name']),
+                                exp_dict['author'])
 
         experiment.workspace = prefs.working_directory
 
