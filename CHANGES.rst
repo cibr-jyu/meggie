@@ -1,10 +1,24 @@
 Changelog
 =========
 
-0.14.7 (unreleased)
+0.15.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.15.0 (2020-04-20)
+------------------
+
+- Use Qt5 backend instead off Tkinter for matplotlib (fixes threading issues, hopefully not much slower)
+- Implement plugin discovery
+- Try printing more info on terminal on crash even on non-debug session
+- Update to mne==0.20.0
+- Replace layouts with default montages (mne is deprecating layouts)
+- Add dialog for setting and computing channel average groups
+- Store spectrums under the hood only in power units
+- Fix couple of crashes
+- Clean up iterate_topography code and name cleaning code
+- In saved csvs, use different columns for ch_name, ch_type, subject name etc.
 
 0.14.6 (2020-03-11)
 ------------------
