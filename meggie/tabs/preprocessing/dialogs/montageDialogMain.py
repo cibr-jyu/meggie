@@ -15,6 +15,7 @@ import mne
 import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.messaging import messagebox
+from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.decorators import threaded
 
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
