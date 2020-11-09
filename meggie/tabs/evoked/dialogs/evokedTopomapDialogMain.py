@@ -36,6 +36,11 @@ class EvokedTopomapDialog(QtWidgets.QDialog):
         tmax = self.ui.doubleSpinBoxEnd.value()
         step = self.ui.doubleSpinBoxStep.value()
 
-        self.handler(tmin, tmax, step, self.evoked)
+
+        radius = None
+        if self.ui.checkBoxRadius.isChecked():
+            radius = self.ui.doubleSpinBoxRadius.value()
+
+        self.handler(tmin, tmax, step, radius, self.evoked)
 
         self.close()

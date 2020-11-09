@@ -9,6 +9,7 @@ import mne
 import numpy as np
 import matplotlib.pyplot as plt
 
+from matplotlib.gridspec import GridSpec
 from matplotlib.lines import Line2D
 
 from meggie.tabs.evoked.controller.evoked import create_averages
@@ -163,7 +164,7 @@ def plot_topomap(experiment, data, window):
 
     evoked = subject.evoked.get(selected_name)
 
-    def handler(tmin, tmax, step, evoked):
+    def handler(tmin, tmax, step, radius, evoked):
 
         for key, evok in evoked.content.items():
             channels = get_channels_by_type(evok.info)
@@ -171,10 +172,30 @@ def plot_topomap(experiment, data, window):
                 title = '{0}_{1}_{2}'.format(selected_name, key, ch_type)
                 times = np.arange(tmin, tmax, step)
 
+                # Use custom figure so that mne does not remove the mpl toolbar
+                fig = plt.figure()
+                axes = []
+
+                # one subplot for each topomap
+                for idx in range(len(times)):
+                    spec = GridSpec(5, 2*(len(times)+1)).new_subplotspec((1, 2*idx), 
+                                                                     rowspan=3, colspan=2)
+                    axes.append(fig.add_subplot(spec))
+
+                # and one for colorbar
+                spec = GridSpec(5, 2*(len(times)+1)).new_subplotspec((1, 2*len(times)), 
+                                                                 rowspan=3, colspan=1)
+                axes.append(fig.add_subplot(spec))
+
+                # until there is a good solution to topomap skirts, fix a value
+                sphere = None
+                if ch_type in ['mag', 'grad']:
+                    sphere = radius
+
                 try:
                     fig = mne.viz.plot_evoked_topomap(
                         evok, times=times, ch_type=ch_type,
-                        title=title)
+                        title=title, axes=axes, sphere=sphere)
                     fig.canvas.set_window_title(title)
                 except Exception as exc:
                     exc_messagebox(window, exc)

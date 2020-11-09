@@ -58,6 +58,17 @@ class Ui_evokedTopomapDialog(object):
         self.doubleSpinBoxStep.setProperty("value", 0.1)
         self.doubleSpinBoxStep.setObjectName("doubleSpinBoxStep")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxStep)
+        self.checkBoxRadius = QtWidgets.QCheckBox(self.groupBoxTimes)
+        self.checkBoxRadius.setObjectName("checkBoxRadius")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.checkBoxRadius)
+        self.doubleSpinBoxRadius = QtWidgets.QDoubleSpinBox(self.groupBoxTimes)
+        self.doubleSpinBoxRadius.setEnabled(False)
+        self.doubleSpinBoxRadius.setDecimals(3)
+        self.doubleSpinBoxRadius.setMaximum(10.0)
+        self.doubleSpinBoxRadius.setSingleStep(0.01)
+        self.doubleSpinBoxRadius.setProperty("value", 0.15)
+        self.doubleSpinBoxRadius.setObjectName("doubleSpinBoxRadius")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxRadius)
         self.gridLayout_2.addWidget(self.groupBoxTimes, 0, 0, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem, 1, 0, 1, 1)
@@ -78,6 +89,7 @@ class Ui_evokedTopomapDialog(object):
         self.retranslateUi(evokedTopomapDialog)
         self.pushButtonCancel.clicked.connect(evokedTopomapDialog.reject)
         self.pushButtonApply.clicked.connect(evokedTopomapDialog.accept)
+        self.checkBoxRadius.toggled['bool'].connect(self.doubleSpinBoxRadius.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(evokedTopomapDialog)
 
     def retranslateUi(self, evokedTopomapDialog):
@@ -90,6 +102,7 @@ class Ui_evokedTopomapDialog(object):
         self.doubleSpinBoxEnd.setSuffix(_translate("evokedTopomapDialog", "s"))
         self.labelStep.setText(_translate("evokedTopomapDialog", "Step:"))
         self.doubleSpinBoxStep.setSuffix(_translate("evokedTopomapDialog", "s"))
+        self.checkBoxRadius.setText(_translate("evokedTopomapDialog", "Radius:"))
         self.pushButtonCancel.setText(_translate("evokedTopomapDialog", "Cancel"))
         self.pushButtonApply.setText(_translate("evokedTopomapDialog", "Apply"))
 

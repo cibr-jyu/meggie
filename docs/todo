@@ -1,11 +1,7 @@
   (- mne_wrapper make sure that it is safe, apparently pkgutil has bug (https://github.com/python/cpython/pull/11956) -)
-  (- add montage set info)
-
   (- group info's should only include subjects that finished without error, batching widget can probably give the info)
-  (- have to be able to adjust the skirt of topomap..., oon kyllä sitä mieltä että sen pitäis olla mahollista..)
+  (- tse should not look like a spider)
+  (- saving plots should always be possible, though at least the raw plot removes toolbar for more space which can make sense)
+
   (- plot channel for evoked)
-  (- evoked topographyssä vois silti olla legend?)
-  (- saving plots should always be possible, check, aika monessa ei oo.., 
-    * esim ica ploteissa, 
-    * evoked topomapissa)
-  (- tse:n ei pitäisi näyttää hämähäkiltä)
+  (- add legend to evoked topography)
