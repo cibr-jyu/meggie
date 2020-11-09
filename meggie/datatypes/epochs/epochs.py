@@ -27,7 +27,8 @@ class Epochs:
             return self._content
         else:
             try:
-                return mne.read_epochs(self._path)
+                self._content = mne.read_epochs(self._path)
+                return self._content
             except IOError:
                 raise Exception('Reading epochs failed.')
 
@@ -42,6 +43,12 @@ class Epochs:
         """
         """
         return self._name
+
+    @property
+    def count(self):
+        """
+        """
+        return len(self.content.events)
 
     @name.setter
     def name(self, name):

@@ -21,6 +21,8 @@ def epochs_info(experiment, data, window):
 
         message = ""
 
+        message += "Count: {0}\n".format(epochs.count)
+
         message += 'Baseline: {0}s - {1}s\n'.format(format_float(params['bstart']), 
                                                     format_float(params['bend']))
         message += 'Times: {0}s - {1}s\n'.format(format_float(params['tmin']), 
