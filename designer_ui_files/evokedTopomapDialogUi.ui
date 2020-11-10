@@ -51,9 +51,9 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBoxTimes">
+        <widget class="QGroupBox" name="groupBoxSettings">
          <property name="title">
-          <string>Times:</string>
+          <string>Settings:</string>
          </property>
          <layout class="QFormLayout" name="formLayout">
           <item row="0" column="0">

@@ -24,6 +24,12 @@ from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_unit
 
 
+def plot_channel(evoked, channel, smoothing_factor, title, legend, yscale):
+    """
+    """
+    logging.getLogger('ui_logger').info('Plotting single channel')
+
+
 def plot_channel_averages(experiment, evoked):
     """
     Draws a topography representation of the evoked potentials.

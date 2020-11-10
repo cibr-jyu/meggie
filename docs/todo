@@ -4,4 +4,3 @@
   (- saving plots should always be possible, though at least the raw plot removes toolbar for more space which can make sense)
 
   (- plot channel for evoked)
-  (- add legend to evoked topography)

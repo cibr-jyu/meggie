@@ -14,13 +14,12 @@ from matplotlib.lines import Line2D
 
 from meggie.tabs.evoked.controller.evoked import create_averages
 from meggie.tabs.evoked.controller.evoked import plot_channel_averages
+from meggie.tabs.evoked.controller.evoked import plot_channel
 from meggie.tabs.evoked.controller.evoked import group_average_evoked
 from meggie.tabs.evoked.controller.evoked import save_all_channels
 from meggie.tabs.evoked.controller.evoked import save_channel_averages
 
 import meggie.utilities.filemanager as filemanager
-
-from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 
 from meggie.utilities.channels import get_channels_by_type
 from meggie.utilities.validators import assert_arrays_same
@@ -28,8 +27,11 @@ from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.names import next_available_name
 
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
+from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
+
 from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
 from meggie.tabs.evoked.dialogs.evokedTopomapDialogMain import EvokedTopomapDialog
+from meggie.tabs.evoked.dialogs.singleChannelDialogMain import SingleChannelDialog
 
 
 def create(experiment, data, window):
@@ -201,6 +203,25 @@ def plot_topomap(experiment, data, window):
                     exc_messagebox(window, exc)
 
     dialog = EvokedTopomapDialog(window, evoked, handler)
+    dialog.show()
+
+def plot_single_channel(experiment, data, window):
+    """ Plots a single channel from selected evoked
+    """
+    try:
+        selected_name = data['outputs']['evoked'][0]
+    except IndexError as exc:
+        return
+    subject = experiment.active_subject
+    evoked = subject.evoked.get(selected_name)
+
+    def handler(ch_name, smoothing_factor, title, legend, yscale):
+        try:
+            plot_channel(evoked, ch_name, smoothing_factor, title, legend, yscale)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+
+    dialog = SingleChannelDialog(window, evoked=evoked, handler=handler)
     dialog.show()
 
 
