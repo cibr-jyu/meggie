@@ -2,5 +2,3 @@
   (- group info's should only include subjects that finished without error, batching widget can probably give the info)
   (- tse should not look like a spider)
   (- saving plots should always be possible, though at least the raw plot removes toolbar for more space which can make sense)
-
-  (- plot channel for evoked)
