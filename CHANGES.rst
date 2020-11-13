@@ -1,10 +1,15 @@
 Changelog
 =========
 
-0.16.1 (unreleased)
+0.16.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.16.1 (2020-11-13)
+------------------
+
+- Fix broken import
 
 0.16.0 (2020-11-13)
 ------------------
