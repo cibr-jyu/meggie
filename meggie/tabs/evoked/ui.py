@@ -14,7 +14,6 @@ from matplotlib.lines import Line2D
 
 from meggie.tabs.evoked.controller.evoked import create_averages
 from meggie.tabs.evoked.controller.evoked import plot_channel_averages
-from meggie.tabs.evoked.controller.evoked import plot_channel
 from meggie.tabs.evoked.controller.evoked import group_average_evoked
 from meggie.tabs.evoked.controller.evoked import save_all_channels
 from meggie.tabs.evoked.controller.evoked import save_channel_averages
