@@ -13,9 +13,9 @@ We use a simplified variant of GitFlow-model, and have two main branches: master
 1. Clone the forked repository to your computer and cd in.
 1. Run following command to create isolated environment for development: conda create -n meggie-dev python=3
 1. Activate the environment using: source activate meggie-dev
-1. Install dependencies from conda-forge: conda install -c defaults -c conda-forge mne
+1. Install dependencies from conda-forge: conda install -c conda-forge mne
 1. Install meggie in develop mode: python setup.py develop
-1. Try if meggie runs by running: meggie
+1. Try if meggie runs by running: meggie debug
 
 ### Using Git 
 
@@ -34,8 +34,8 @@ Now you are all set to write your code.
 Some notes and guidelines:
 * Try to keep your code clean. Use for example pycodestyle or flake8 to check your pep8-compliance. Generated code from Qtdesigner is kept as it is.
 * UI files (\*.ui) are in the designer\_ui\_files directory. You can use Qtdesigner (open with command *designer* while in the environment) to update UI files, and then *pyuic5* command to generate \*Ui.py files in the meggie/ui/..-directories.
-* You can use command *meggie develop* to start meggie in mode, where all output is written into terminal, and you can use python debugger normally.
-* If you are fond of *import pdb; pdb.set_trace()*, you should use *meggie.code\_meggie.utils.debug import debug\_trace; debug\_trace()*. Otherwise Qt will spam the window full.
+* You can use command *meggie debug* to start meggie in mode, where all output is written into terminal, and you can use python debugger normally.
+* If you are fond of *import pdb; pdb.set_trace()*, you should use *meggie.utilities.debug import debug\_trace; debug\_trace()*. Otherwise Qt will spam the window full.
 
 ### Finishing with pull request
 

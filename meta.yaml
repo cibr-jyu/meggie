@@ -1,6 +1,6 @@
 package:
   name: meggie
-  version: "0.15.0"
+  version: "0.16.0"
 
 source:
   path: .
@@ -14,11 +14,11 @@ requirements:
   build:
     - python
     - setuptools
-    - mne ==0.20.0
+    - mne ==0.21.1
 
   run:
     - python
-    - mne ==0.20.0
+    - mne ==0.21.1
     - pyqt >=5.0.0
     - xlwt
     - xlrd

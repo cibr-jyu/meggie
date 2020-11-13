@@ -1,10 +1,20 @@
 Changelog
 =========
 
-0.15.1 (unreleased)
+0.16.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.16.0 (2020-11-13)
+------------------
+
+- Add single channel plotting functionality for evokeds
+- Add radius setting for evoked topomaps (to allow different "skirts")
+- Add more information to info boxes
+- Overwrite when saving epochs
+- Fix import bug in montage dialog
+- Fix reject param ticks bug
 
 0.15.0 (2020-04-20)
 ------------------
