@@ -9,24 +9,31 @@ import mne
 import numpy as np
 import matplotlib.pyplot as plt
 
+from matplotlib.gridspec import GridSpec
 from matplotlib.lines import Line2D
 
 from meggie.tabs.evoked.controller.evoked import create_averages
 from meggie.tabs.evoked.controller.evoked import plot_channel_averages
+from meggie.tabs.evoked.controller.evoked import plot_channel
 from meggie.tabs.evoked.controller.evoked import group_average_evoked
 from meggie.tabs.evoked.controller.evoked import save_all_channels
 from meggie.tabs.evoked.controller.evoked import save_channel_averages
 
 import meggie.utilities.filemanager as filemanager
 
-from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
-
 from meggie.utilities.channels import get_channels_by_type
+from meggie.utilities.colors import color_cycle
+from meggie.utilities.units import get_scaling
+from meggie.utilities.units import get_unit
+from meggie.utilities.smooth import smooth_signal
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.names import next_available_name
 
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
+from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
+from meggie.utilities.dialogs.singleChannelDialogMain import SingleChannelDialog
+
 from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
 from meggie.tabs.evoked.dialogs.evokedTopomapDialogMain import EvokedTopomapDialog
 
@@ -97,11 +104,11 @@ def _plot_evoked_topo(experiment, evoked):
         evokeds.append(evok)
         labels.append(key)
 
-    # setup legend to subplots
-    colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+    colors = color_cycle(len(evoked.content.keys()))
+
+    # setup legend for subplots
     lines = [Line2D([0], [0], color=colors[idx], label=labels[idx]) 
              for idx in range(len(labels))]
-
     def onclick(event):
         try:
             # not nice:
@@ -120,7 +127,7 @@ def _plot_evoked_topo(experiment, evoked):
         except Exception as exc:
             pass
 
-    fig = mne.viz.plot_evoked_topo(evokeds)
+    fig = mne.viz.plot_evoked_topo(evokeds, color=colors)
     fig.canvas.mpl_connect('button_press_event', onclick)
     title = "evoked_{0}".format(evoked.name)
     fig.canvas.set_window_title(title)
@@ -163,7 +170,7 @@ def plot_topomap(experiment, data, window):
 
     evoked = subject.evoked.get(selected_name)
 
-    def handler(tmin, tmax, step, evoked):
+    def handler(tmin, tmax, step, radius, evoked):
 
         for key, evok in evoked.content.items():
             channels = get_channels_by_type(evok.info)
@@ -171,15 +178,117 @@ def plot_topomap(experiment, data, window):
                 title = '{0}_{1}_{2}'.format(selected_name, key, ch_type)
                 times = np.arange(tmin, tmax, step)
 
+                # Use custom figure so that mne does not remove the mpl toolbar
+                fig = plt.figure()
+                axes = []
+
+                # one subplot for each topomap
+                for idx in range(len(times)):
+                    spec = GridSpec(5, 2*(len(times)+1)).new_subplotspec((1, 2*idx), 
+                                                                     rowspan=3, colspan=2)
+                    axes.append(fig.add_subplot(spec))
+
+                # and one for colorbar
+                spec = GridSpec(5, 2*(len(times)+1)).new_subplotspec((1, 2*len(times)), 
+                                                                 rowspan=3, colspan=1)
+                axes.append(fig.add_subplot(spec))
+
+                # until there is a good solution to topomap skirts, fix a value
+                sphere = None
+                if ch_type in ['mag', 'grad']:
+                    sphere = radius
+
                 try:
                     fig = mne.viz.plot_evoked_topomap(
                         evok, times=times, ch_type=ch_type,
-                        title=title)
+                        title=title, axes=axes, sphere=sphere)
                     fig.canvas.set_window_title(title)
                 except Exception as exc:
                     exc_messagebox(window, exc)
 
     dialog = EvokedTopomapDialog(window, evoked, handler)
+    dialog.show()
+
+def plot_single_channel(experiment, data, window):
+    """ Plots a single channel from selected evoked
+    """
+    try:
+        selected_name = data['outputs']['evoked'][0]
+    except IndexError as exc:
+        return
+    subject = experiment.active_subject
+    evokeds = subject.evoked.get(selected_name)
+    content = evokeds.content
+
+    info = list(content.values())[0].info
+
+    conditions = [key for key in content.keys()]
+
+    title = evokeds.name
+
+    ch_names = info['ch_names']
+    chs_by_type = get_channels_by_type(info)
+
+    ylims = {}
+    scalings = {}
+    units = {}
+    ch_types = {}
+    for ch_name in ch_names:
+        ch_type = None
+
+        for key, values in chs_by_type.items():
+            if ch_name in values:
+                ch_type = key
+
+        if not ch_type:
+            continue
+
+        ch_types[ch_name] = ch_type
+
+        ymin, ymax = 0, 0
+        idx = info['ch_names'].index(ch_name)
+        for mne_evoked in content.values():
+            if np.max(mne_evoked.data[idx]) > ymax:
+                ymax = np.max(mne_evoked.data[idx])
+            if np.min(mne_evoked.data[idx]) < ymin:
+                ymin = np.min(mne_evoked.data[idx])
+
+        ylims[ch_name] = (ymin, ymax)
+        scalings[ch_name] = get_scaling(ch_type)
+        units[ch_name] = get_unit(ch_type)
+
+    colors = color_cycle(len(content.keys()))
+
+    def handler(ch_name, title, legend, ylim, window, window_len):
+        try:
+            ch_idx = info['ch_names'].index(ch_name)
+
+            # create new evoked based on old
+            new_evokeds = {}
+            for key, evoked in content.items():
+                new_evoked = evoked.copy()
+                
+                # smoothen
+                if window:
+                    try:
+                        new_evoked.data[ch_idx] = smooth_signal(new_evoked.data[ch_idx], 
+                            window_len=window_len, window=window)
+                    except ValueError as exc:
+                        exc_messagebox(window, exc)
+
+                new_evoked.comment = legend[key]
+                new_evokeds[legend[key]] = new_evoked
+
+            ylim = {ch_types[ch_name]: ylim}
+
+            mne.viz.plot_compare_evokeds(new_evokeds, title=title, picks=[ch_idx],
+                                         colors=colors, ylim=ylim, show_sensors=False)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+
+    dialog = SingleChannelDialog(window, handler, title,
+                                 ch_names, scalings, units,
+                                 ylims, conditions)
     dialog.show()
 
 

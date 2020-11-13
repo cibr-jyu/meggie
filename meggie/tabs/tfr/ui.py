@@ -17,6 +17,9 @@ from meggie.tabs.tfr.controller.tfr import save_tse_channel_averages
 from meggie.tabs.tfr.controller.tfr import save_tse_all_channels
 from meggie.tabs.tfr.controller.tfr import group_average_tfr
 
+from meggie.utilities.formats import format_float
+from meggie.utilities.formats import format_floats
+
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 
 from meggie.tabs.tfr.dialogs.TFROutputOptionsMain import TFROutputOptions
@@ -246,6 +249,16 @@ def tfr_info(experiment, data, window):
             message += 'Evoked subtracted: {0}\n'.format(params['evoked_subtracted'])
         if 'conditions' in params:
             message += 'Conditions: ' + ', '.join(params['conditions']) + '\n'
+        if 'n_cycles' in params:
+            message += 'Cycles: ' + ', '.join(format_floats(params['n_cycles'])) + '\n'
+
+        if hasattr(tfr, 'times'):
+            message += 'Times: {0}s - {1}s\n'.format(
+                format_float(tfr.times[0]), format_float(tfr.times[-1]))
+
+        if hasattr(tfr, 'freqs'):
+            message += 'Freqs: {0} - {1}\n'.format(
+                format_float(tfr.freqs[0]), format_float(tfr.freqs[-1]))
 
         if 'groups' in params:
             for key, names in params['groups'].items():

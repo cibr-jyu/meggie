@@ -1,4 +1,4 @@
-  (- should probably add overwrite=True when creating epochs and evokeds and tfrs also?)
+  (- mne_wrapper make sure that it is safe, apparently pkgutil has bug (https://github.com/python/cpython/pull/11956) -)
   (- group info's should only include subjects that finished without error, batching widget can probably give the info)
-  (- for tfr's frequency info, cycles info, for epochs, add also epoch counts)
-  (- add montageset info)
+  (- tse should not look like a spider)
+  (- saving plots should always be possible, though at least the raw plot removes toolbar for more space which can make sense)
