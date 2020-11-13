@@ -9,7 +9,7 @@ from meggie.utilities.dialogs.singleChannelDialogUi import Ui_singleChannelDialo
 
 class SingleChannelDialog(QtWidgets.QDialog):
 
-    def __init__(self, parent, handler, title, ch_names, 
+    def __init__(self, parent, handler, title, ch_names,
                  scalings, units, ylims, default_legend_names):
         """
         """
@@ -34,14 +34,14 @@ class SingleChannelDialog(QtWidgets.QDialog):
 
             label_item = QtWidgets.QLabel(self.ui.groupBoxLegend)
             label_item.setText(legend_name)
-            self.ui.formLayoutLegend.setWidget(legend_idx, 
+            self.ui.formLayoutLegend.setWidget(legend_idx,
                 QtWidgets.QFormLayout.LabelRole, label_item)
 
             line_edit_item = QtWidgets.QLineEdit(self.ui.groupBoxLegend)
-            setattr(self.ui, 'lineEditItem_' + str(legend_idx), 
+            setattr(self.ui, 'lineEditItem_' + str(legend_idx),
                 line_edit_item)
             line_edit_item.setText(legend_name)
-            self.ui.formLayoutLegend.setWidget(legend_idx, 
+            self.ui.formLayoutLegend.setWidget(legend_idx,
                 QtWidgets.QFormLayout.FieldRole, line_edit_item)
 
     def on_comboBoxChannel_currentTextChanged(self, item):
@@ -50,7 +50,7 @@ class SingleChannelDialog(QtWidgets.QDialog):
         self.ui.doubleSpinBoxMin.setSuffix(' ' + self.units[item])
         self.ui.doubleSpinBoxMax.setSuffix(' ' + self.units[item])
 
-        self.ui.doubleSpinBoxMin.setValue(self.ylims[item][0] * 
+        self.ui.doubleSpinBoxMin.setValue(self.ylims[item][0] *
                                           self.scalings[item] * 1.05)
         self.ui.doubleSpinBoxMax.setValue(self.ylims[item][1] *
                                           self.scalings[item] * 1.05)

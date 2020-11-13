@@ -281,14 +281,13 @@ def plot_single_channel(experiment, data, window):
 
             ylim = {ch_types[ch_name]: ylim}
 
-            mne.viz.plot_compare_evokeds(new_evokeds, title=title, picks=[ch_idx], 
+            mne.viz.plot_compare_evokeds(new_evokeds, title=title, picks=[ch_idx],
                                          colors=colors, ylim=ylim, show_sensors=False)
-            # plot_channel(evoked, ch_name, smoothing_factor, title, legend, yscale)
         except Exception as exc:
             exc_messagebox(window, exc)
 
-    dialog = SingleChannelDialog(window, handler, title, 
-                                 ch_names, scalings, units, 
+    dialog = SingleChannelDialog(window, handler, title,
+                                 ch_names, scalings, units,
                                  ylims, conditions)
     dialog.show()
 
