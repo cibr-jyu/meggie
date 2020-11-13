@@ -1,3 +1,4 @@
+  (- should probably add overwrite=True when creating epochs and evokeds and tfrs also?)
   (- group info's should only include subjects that finished without error, batching widget can probably give the info)
   (- for tfr's frequency info, cycles info, for epochs, add also epoch counts)
   (- add montageset info)

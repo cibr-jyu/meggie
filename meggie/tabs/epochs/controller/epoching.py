@@ -31,11 +31,11 @@ def create_epochs_from_events(params, subject):
 
     # remove params that don't match with the channel types present in raw
     if mne.pick_types(raw.info, meg='grad', eeg=False).size == 0:
-        reject_params.pop('grad')
+        reject_params.pop('grad', None)
     if mne.pick_types(raw.info, meg='mag', eeg=False).size == 0:
-        reject_params.pop('mag')
+        reject_params.pop('mag', None)
     if mne.pick_types(raw.info, meg=False, eeg=True).size == 0:
-        reject_params.pop('eeg')
+        reject_params.pop('eeg', None)
 
     events = []
     category = {}
