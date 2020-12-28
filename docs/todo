@@ -1,4 +1,3 @@
-  (- save_content (at least for evoked) should print the real error message too)
   (- mne_wrapper make sure that it is safe, apparently pkgutil has bug (https://github.com/python/cpython/pull/11956) -)
   (- group info's should only include subjects that finished without error, batching widget can probably give the info)
   (- tse should not look like a spider, so always compute longer, but save tmin and tmax that are used to crop?)

@@ -2,6 +2,7 @@
 """
 
 import os
+import logging
 
 import mne
 
@@ -82,6 +83,7 @@ class Evoked(object):
         try:
             mne.write_evokeds(self._path, list(self.content.values()))
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             raise IOError('Writing evokeds failed')
 
     def delete_content(self):

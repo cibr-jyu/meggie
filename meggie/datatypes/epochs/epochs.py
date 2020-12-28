@@ -3,6 +3,7 @@
 """
 """
 import os
+import logging
 
 import mne
 
@@ -76,4 +77,8 @@ class Epochs:
         os.remove(self._path)
 
     def save_content(self):
-        self._content.save(self._path, overwrite=True)
+        try:
+            self._content.save(self._path, overwrite=True)
+        except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
+            raise IOError('Writing epochs failed')

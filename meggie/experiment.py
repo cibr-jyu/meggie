@@ -320,9 +320,7 @@ class ExperimentHandler(QObject):
             with open(exp_file, 'r') as f:
                 data = json.load(f)
         except ValueError as exc:
-            import traceback
-            traceback.print_exc()
-
+            logging.getLogger('ui_logger').exception(str(exc))
             raise ValueError('Experiment from ' + exp_file + ' could not be ' +
                              'opened. There might be a problem with ' +
                              'cohesion of the experiment file.')

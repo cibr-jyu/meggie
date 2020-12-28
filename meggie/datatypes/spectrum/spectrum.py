@@ -81,23 +81,25 @@ class Spectrum(object):
                 self._content[key] = np.array(psd)
 
     def save_content(self):
+        try:
+            # if exists, delete first
+            self.delete_content()
 
-        # if exists, delete first
-        self.delete_content()
+            for key, psd in self._content.items():
 
-        for key, psd in self._content.items():
+                row_descs = [(ch_name,) for ch_name in self._ch_names]
+                column_names = self._freqs.tolist()
+                data = psd.tolist()
 
-            row_descs = [(ch_name,) for ch_name in self._ch_names]
-            column_names = self._freqs.tolist()
-            data = psd.tolist()
+                path = os.path.join(self._spectrum_directory,
+                                    self._name + '_' + str(key) + '.csv')
 
-            path = os.path.join(self._spectrum_directory,
-                                self._name + '_' + str(key) + '.csv')
-
-            filemanager.save_csv(path, data, column_names, row_descs)
+                filemanager.save_csv(path, data, column_names, row_descs)
+        except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
+            raise IOError('Writing spectrums failed')
 
     def delete_content(self):
-
         template = self.name + '_' + r'([a-zA-Z1-9_]+)\.csv'
         for fname in os.listdir(self._spectrum_directory):
             match = re.match(template, fname)

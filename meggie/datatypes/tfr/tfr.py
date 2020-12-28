@@ -34,9 +34,13 @@ class TFR(object):
         return fname
 
     def save_content(self):
-        for tfr_name, tfr in self._content.items():
-            fname = self._get_fname(tfr_name)
-            tfr.save(fname, overwrite=True)
+        try:
+            for tfr_name, tfr in self._content.items():
+                fname = self._get_fname(tfr_name)
+                tfr.save(fname, overwrite=True)
+        except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
+            raise IOError('Writing TFRs failed')
 
     def delete_content(self):
         if not self._content:
