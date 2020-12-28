@@ -128,13 +128,18 @@ def wrap(log_level, original_func):
     return wrapped
 
 
-def wrap_package(root, path):
+def wrap_package(root, path, suffix):
     contents = pkgutil.walk_packages(path)
 
     paths = []
     modules = []
     for item in contents:
         if item.name in blacklist:
+            continue
+
+        # ensure walk_packages has not walked away from mne directory
+        # see https://bugs.python.org/issue36053
+        if not item.module_finder.path.startswith(suffix):
             continue
 
         if item.ispkg:
@@ -163,8 +168,8 @@ def wrap_package(root, path):
             # ...
 
     for path in paths:
-        wrap_package('.'.join([root, path[0]]), [path[1]])
+        wrap_package('.'.join([root, path[0]]), [path[1]], suffix)
 
 
 def wrap_mne():
-    wrap_package('mne', mne.__path__)
+    wrap_package('mne', mne.__path__, mne.__path__[0])
