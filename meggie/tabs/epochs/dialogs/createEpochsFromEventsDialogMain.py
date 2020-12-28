@@ -75,6 +75,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         tmax = float(self.ui.doubleSpinBoxTmax.value())
         bstart = float(self.ui.doubleSpinBoxBaselineStart.value())
         bend = float(self.ui.doubleSpinBoxBaselineEnd.value())
+        delay = float(self.ui.doubleSpinBoxDelay.value())
 
         mag = self.ui.checkBoxMag.isChecked()
         grad = self.ui.checkBoxGrad.isChecked()
@@ -93,8 +94,9 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
 
         params = {'mag': mag, 'grad': grad, 'eeg': eeg,
                   'reject': reject,
-                  'tmin': float(tmin), 'tmax': float(tmax),
-                  'bstart': float(bstart), 'bend': float(bend),
+                  'tmin': tmin, 'tmax': tmax,
+                  'bstart': bstart, 'bend': bend,
+                  'delay': delay,
                   'collection_name': collection_name,
                   'events': self.events}
         return params

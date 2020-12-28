@@ -61,11 +61,14 @@ def create_epochs_from_events(params, subject):
 
             category[category_id] = idx + 1
             new_events[:, 2] = idx + 1
-            events.extend([event for event in new_events])
+
+            events.extend([[event[0] + int(round(raw.info['sfreq']*params['delay'])), 
+                            event[1], event[2]] 
+                           for event in new_events])
 
     if len(events) == 0:
         raise ValueError(
-            'No events found.')
+            'No matching events found. Please check rejection limits and other parameters.')
 
     # prepare parameters for pick_types
     if params['mag'] and params['grad']:

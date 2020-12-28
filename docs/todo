@@ -1,9 +1,8 @@
-  (- mne_wrapper make sure that it is safe, apparently pkgutil has bug (https://github.com/python/cpython/pull/11956) -)
-  (- group info's should only include subjects that finished without error, batching widget can probably give the info)
-  (- tse should not look like a spider, so always compute longer, but save tmin and tmax that are used to crop?)
-  (- tfr topographies more vivid, issue)
-  (- add tests, should try to at least figure out a strategy)
-  (- add statistics, issue)
   (- improve datasets import possibilities, issue)
   (- event delay, min duration, 2 issues)
   (- add and improve ui_logger logs, issue)
+
+isot:
+  (- tse should not look like a spider, so always compute longer, but save tmin and tmax that are used to crop?)
+  (- add statistics, issue)
+  (- add tests, should try to at least figure out a strategy)
