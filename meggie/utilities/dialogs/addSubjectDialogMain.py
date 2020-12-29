@@ -6,6 +6,8 @@ import os
 import traceback
 import logging
 
+import mne
+
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
@@ -63,8 +65,24 @@ class AddSubjectDialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        self.fnames = QtWidgets.QFileDialog.getOpenFileNames(self,
-                                                             'Select one or more files to open.', os.path.expanduser("~"))[0]
+        mne_supported = mne.io._read_raw.supported
+
+        all_ext = []
+        all_items = []
+        for row in mne_supported.items():
+            ext = row[0]
+            name = row[1].__name__.split('_')[-1]
+            all_ext.append(ext)
+            all_items.append(name + ' files (*' + ext + ')')
+
+        filter_string = 'All supported (*' + ' *'.join(all_ext) + ');'';'
+        filter_string = filter_string + ';'';'.join(all_items)
+
+        self.fnames = QtWidgets.QFileDialog.getOpenFileNames(
+            self,
+            'Select one or more files to open.', 
+            os.path.expanduser("~"),
+            filter_string)[0]
 
         if len(self.fnames) > 0:
             for name in self.fnames:

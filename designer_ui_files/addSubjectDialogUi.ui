@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Meggie - Add subject</string>
+   <string>Meggie - Add subjects</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="2">
@@ -23,7 +23,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Add subject file to the experiment:</string>
+      <string>Add subjects (raw files) to the experiment:</string>
      </property>
     </widget>
    </item>

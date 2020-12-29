@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'designer_ui_files/addSubjectDialogUi.ui'
+# Form implementation generated from reading ui file 'addSubjectDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -63,8 +63,8 @@ class Ui_AddSubject(object):
 
     def retranslateUi(self, AddSubject):
         _translate = QtCore.QCoreApplication.translate
-        AddSubject.setWindowTitle(_translate("AddSubject", "Meggie - Add subject"))
-        self.label.setText(_translate("AddSubject", "Add subject file to the experiment:"))
+        AddSubject.setWindowTitle(_translate("AddSubject", "Meggie - Add subjects"))
+        self.label.setText(_translate("AddSubject", "Add subjects (raw files) to the experiment:"))
         self.pushButtonBrowse.setText(_translate("AddSubject", "Browse..."))
         self.pushButtonRemove.setText(_translate("AddSubject", "Remove"))
 

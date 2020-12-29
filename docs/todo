@@ -1,8 +1,15 @@
-  (- improve datasets import possibilities, issue)
+done:
+  (- save_content (at least for evoked) should print the real error message too)
+  (- mne_wrapper make sure that it is safe, apparently pkgutil has bug (https://github.com/python/cpython/pull/11956) -)
+  (- group info's should only include subjects that finished without error, now prints warnings)
   (- event delay, min duration, 2 issues)
   (- add and improve ui_logger logs, issue)
+  (- tfr topographies more vivid, issue)
+  (- tse should not look like a spider, so always compute longer, but save tmin and tmax that are used to crop?, not doing)
+  (- improve datasets import possibilities, should test with few, issue)
 
-isot:
-  (- tse should not look like a spider, so always compute longer, but save tmin and tmax that are used to crop?)
-  (- add statistics, issue)
+next:
+  (- create branch for old stc code?)
   (- add tests, should try to at least figure out a strategy)
+
+left:
