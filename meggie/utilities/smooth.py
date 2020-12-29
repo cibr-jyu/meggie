@@ -5,6 +5,7 @@ from: http://scipy.org/Cookbook/SignalSmooth
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def smooth_signal(x, window_len=10, window='hanning'):
     """
     """

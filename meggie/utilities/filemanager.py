@@ -6,7 +6,6 @@
 import os
 import pickle
 import shutil
-import glob
 import re
 import sys
 import datetime
@@ -127,6 +126,9 @@ def save_csv(path, data, column_names, row_descs):
     """
     # gather all the data to list of rows
     all_data = []
+
+    if type(data) == np.ndarray:
+        data = data.tolist()
 
     # freqs data, assume same lengths
     all_data.append(['']*len(row_descs[0]) + column_names)

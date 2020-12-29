@@ -68,7 +68,7 @@ def get_channels_by_type(info):
     return channels
 
 
-def get_triplet_from_mag(info, ch_name):
+def get_triplet_from_mag(ch_name):
     """ get the triplet from mag by channel name in a bit hacky way
     """ 
     return [ch_name, ch_name[:-1] + '2', ch_name[:-1] + '3']

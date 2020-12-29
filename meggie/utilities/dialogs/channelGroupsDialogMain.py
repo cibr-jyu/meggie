@@ -182,7 +182,7 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
             if selection:
                 all_megs = []
                 for ch_name in selection:
-                    all_megs.extend(get_triplet_from_mag(info, ch_name))
+                    all_megs.extend(get_triplet_from_mag(ch_name))
                 self.meg_channel_groups[selected_item.text()] = all_megs
         else:
             if selection:
