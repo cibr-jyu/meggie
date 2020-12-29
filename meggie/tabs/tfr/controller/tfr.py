@@ -30,7 +30,6 @@ def _compute_tse(meggie_tfr, fmin, fmax, tmin, tmax, blmode, blstart, blend):
     """
     """
     tfrs = meggie_tfr.content
-
     times = meggie_tfr.times
 
     fmin_idx = np.where(meggie_tfr.freqs >= fmin)[0][0]
@@ -67,7 +66,7 @@ def _compute_tse(meggie_tfr, fmin, fmax, tmin, tmax, blmode, blstart, blend):
 
 
 def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend, 
-                  tmin, tmax, fmin, fmax):
+                  tmin, tmax, fmin, fmax, ch_type):
     """
     """
     meggie_tfr = subject.tfr.get(tfr_name)
@@ -75,8 +74,16 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
     times, tses = _compute_tse(meggie_tfr, fmin, fmax, 
                                tmin, tmax, blmode, blstart, blend)
 
-    ch_names = meggie_tfr.ch_names
     info = meggie_tfr.info
+    if ch_type == 'meg':
+        picked_channels = [ch_name for ch_idx, ch_name in enumerate(info['ch_names'])
+                            if ch_idx in mne.pick_types(info, meg=True, eeg=False)]
+    else:
+        picked_channels = [ch_name for ch_idx, ch_name in enumerate(info['ch_names'])
+                            if ch_idx in mne.pick_types(info, meg=False, eeg=True)]
+    info = info.copy().pick_channels(picked_channels)
+
+    ch_names = meggie_tfr.ch_names
     colors = color_cycle(len(tses))
 
     logging.getLogger('ui_logger').info('Plotting TSE from all channels..')
@@ -232,7 +239,7 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
 
 def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition, 
                   blmode, blstart, blend,
-                  tmin, tmax, fmin, fmax):
+                  tmin, tmax, fmin, fmax, ch_type):
 
     meggie_tfr = subject.tfr[tfr_name]
 
@@ -245,9 +252,18 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
 
     tfr = meggie_tfr.content.get(tfr_condition)
 
+    if ch_type == 'eeg':
+        dropped_names = [ch_name for ch_idx, ch_name in enumerate(tfr.info['ch_names'])
+                         if ch_idx not in mne.pick_types(tfr.info, eeg=True, meg=False)]
+    else:
+        dropped_names = [ch_name for ch_idx, ch_name in enumerate(tfr.info['ch_names'])
+                         if ch_idx not in mne.pick_types(tfr.info, eeg=False, meg=True)]
+
+    tfr = tfr.copy().drop_channels(dropped_names)
+
     logging.getLogger('ui_logger').info("Plotting TFR from all channels...")
 
-    title = 'TFR_{0}_{1}'.format(tfr_name, tfr_condition)
+    title = 'TFR_{0}_{1}_{2}'.format(tfr_name, tfr_condition, ch_type)
     fig = tfr.plot_topo(show=False,
                         baseline=bline, mode=mode,
                         tmin=tmin, tmax=tmax,
@@ -267,9 +283,7 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
         plt.show(block=False)
 
     fig.canvas.mpl_connect('button_press_event', onclick)
-
     fig.show()
-
 
 @threaded
 def create_tfr(subject, tfr_name, epochs_names,

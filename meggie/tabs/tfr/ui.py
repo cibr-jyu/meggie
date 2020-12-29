@@ -19,6 +19,7 @@ from meggie.tabs.tfr.controller.tfr import group_average_tfr
 
 from meggie.utilities.formats import format_float
 from meggie.utilities.formats import format_floats
+from meggie.utilities.channels import get_channels_by_type
 
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 
@@ -91,10 +92,18 @@ def plot_tfr(experiment, data, window):
     def handler(output, condition, blmode, blstart, blend,
                 tmin, tmax, fmin, fmax):
         try:
+            info = experiment.active_subject.tfr[selected_name].info
             if output == 'all_channels':
-                plot_tfr_topo(experiment, experiment.active_subject, 
-                              selected_name, condition, blmode, blstart, 
-                              blend, tmin, tmax, fmin, fmax)
+                chs = list(get_channels_by_type(info).keys())
+                if 'eeg' in chs:
+                    plot_tfr_topo(experiment, experiment.active_subject,
+                                  selected_name, condition, blmode, blstart, 
+                                  blend, tmin, tmax, fmin, fmax, ch_type='eeg')
+                if 'grad' in chs or 'mag' in chs:
+                    plot_tfr_topo(experiment, experiment.active_subject,
+                                  selected_name, condition, blmode, blstart, 
+                                  blend, tmin, tmax, fmin, fmax, ch_type='meg')
+
             else:
                 plot_tfr_averages(experiment, experiment.active_subject,
                                   selected_name, condition, blmode, blstart,
@@ -117,10 +126,17 @@ def plot_tse(experiment, data, window):
     def handler(output, condition, blmode, blstart, blend,
                 tmin, tmax, fmin, fmax):
         try:
+            info = experiment.active_subject.tfr[selected_name].info
             if output == 'all_channels':
-                plot_tse_topo(experiment, experiment.active_subject, 
-                              selected_name, blmode, blstart, 
-                              blend, tmin, tmax, fmin, fmax)
+                chs = list(get_channels_by_type(info).keys())
+                if 'eeg' in chs:
+                    plot_tse_topo(experiment, experiment.active_subject, 
+                                  selected_name, blmode, blstart, 
+                                  blend, tmin, tmax, fmin, fmax, ch_type='eeg')
+                if 'grad' in chs or 'mag' in chs:
+                    plot_tse_topo(experiment, experiment.active_subject, 
+                                  selected_name, blmode, blstart, 
+                                  blend, tmin, tmax, fmin, fmax, ch_type='meg')
             else:
                 plot_tse_averages(experiment, experiment.active_subject,
                                   selected_name, blmode, blstart,

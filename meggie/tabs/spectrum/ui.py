@@ -21,6 +21,8 @@ from meggie.tabs.spectrum.controller.spectrum import group_average_spectrum
 from meggie.tabs.spectrum.controller.spectrum import save_channel_averages
 from meggie.tabs.spectrum.controller.spectrum import save_all_channels
 
+from meggie.utilities.channels import get_channels_by_type
+
 
 def create(experiment, data, window):
     """ Opens spectrum creation dialog
@@ -80,7 +82,12 @@ def plot_spectrum(experiment, data, window):
             if selected_option == 'channel_averages':
                 plot_spectrum_averages(experiment, selected_name)
             else:
-                plot_spectrum_topo(experiment, selected_name)
+                info = experiment.active_subject.get_raw().info
+                chs = list(get_channels_by_type(info).keys())
+                if 'eeg' in chs:
+                    plot_spectrum_topo(experiment, selected_name, ch_type='eeg')
+                if 'grad' in chs or 'mag' in chs:
+                    plot_spectrum_topo(experiment, selected_name, ch_type='meg')
         except Exception as exc:
             exc_messagebox(window, exc)
 

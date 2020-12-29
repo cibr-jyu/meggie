@@ -237,7 +237,7 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
     plt.show()
 
 
-def plot_spectrum_topo(experiment, name, log_transformed=True):
+def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
     """
     """
 
@@ -251,7 +251,13 @@ def plot_spectrum_topo(experiment, name, log_transformed=True):
     ch_names = spectrum.ch_names
 
     info = subject.get_raw().info
-    info_names = info['ch_names']
+    if ch_type == 'meg':
+        picked_channels = [ch_name for ch_idx, ch_name in enumerate(info['ch_names'])
+                           if ch_idx in mne.pick_types(info, meg=True, eeg=False)]
+    else:
+        picked_channels = [ch_name for ch_idx, ch_name in enumerate(info['ch_names'])
+                           if ch_idx in mne.pick_types(info, eeg=True, meg=False)]
+    info = info.copy().pick_channels(picked_channels)
 
     colors = color_cycle(len(data))
 
@@ -307,7 +313,7 @@ def plot_spectrum_topo(experiment, name, log_transformed=True):
         return
 
     fig.legend(handles=handles)
-    title = 'spectrum_{0}'.format(name)
+    title = 'spectrum_{0}_{1}'.format(name, ch_type)
     fig.canvas.set_window_title(title)
     fig.suptitle(title)
     plt.show()
