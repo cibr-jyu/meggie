@@ -201,9 +201,11 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
     def accept(self):
         """
         """
-        self.parent.experiment.channel_groups['eeg'] = self.eeg_channel_groups
-        self.parent.experiment.channel_groups['meg'] = self.meg_channel_groups
-
+        channel_groups = {
+            'eeg': self.eeg_channel_groups,
+            'meg': self.meg_channel_groups
+        }
+        self.parent.experiment.channel_groups = channel_groups
         self.parent.experiment.save_experiment_settings()
 
         logging.getLogger('ui_logger').info('Channel groups saved.')

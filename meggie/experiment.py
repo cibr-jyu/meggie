@@ -14,9 +14,9 @@ import copy
 
 import mne
 
-import meggie.utilities.filemanager as filemanager
-
+from meggie.utilities.filemanager import copy_subject_raw
 from meggie.utilities.dynamic import find_all_sources
+from meggie.utilities.channels import get_default_channel_groups
 
 from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
@@ -89,7 +89,26 @@ class Experiment:
 
     @property
     def channel_groups(self):
-        return self._channel_groups
+        channel_groups = self._channel_groups.copy()
+
+        # if channel groups not found, use defaults..
+        if not channel_groups.get('eeg'):
+            if self.active_subject:
+                raw = self.active_subject.get_raw(preload=False)
+                try:
+                    channel_groups['eeg'] = get_default_channel_groups(raw.info, 'eeg')
+                except Exception as exc:
+                    logging.getLogger('ui_logger').debug('Could not get default channel groups for EEG')
+
+        if not channel_groups.get('meg'):
+            if self.active_subject:
+                raw = self.active_subject.get_raw(preload=False)
+                try:
+                    channel_groups['meg'] = get_default_channel_groups(raw.info, 'meg')
+                except Exception as exc:
+                    logging.getLogger('ui_logger').debug('Could not get default channel groups for MEG')
+
+        return channel_groups
 
     @channel_groups.setter
     def channel_groups(self, channel_groups):
@@ -160,7 +179,7 @@ class Experiment:
         subject = Subject(self, subject_name, raw_fname)
         subject.ensure_folders()
 
-        filemanager.copy_subject_raw(subject, raw_path)
+        copy_subject_raw(subject, raw_path)
         self.add_subject(subject)
 
     def save_experiment_settings(self):
