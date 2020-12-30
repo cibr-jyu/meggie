@@ -125,10 +125,8 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
                            label=key)[0])
 
     fig.legend(handles=handles)
-    title = 'TSE_{0}'.format(tfr_name)
+    title = 'TSE_{0}_{1}'.format(tfr_name, ch_type)
     fig.canvas.set_window_title(title)
-    fig.suptitle(title)
-
     plt.show()
 
 
@@ -268,7 +266,7 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
                         baseline=bline, mode=mode,
                         tmin=tmin, tmax=tmax,
                         fmin=fmin, fmax=fmax,
-                        title=title)
+                        title="")
 
     fig.canvas.set_window_title(title)
 

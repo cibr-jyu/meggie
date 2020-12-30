@@ -315,7 +315,6 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
     fig.legend(handles=handles)
     title = 'spectrum_{0}_{1}'.format(name, ch_type)
     fig.canvas.set_window_title(title)
-    fig.suptitle(title)
     plt.show()
 
 @threaded

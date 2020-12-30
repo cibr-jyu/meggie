@@ -143,7 +143,6 @@ def _plot_evoked_topo(experiment, evoked, ch_type):
     fig.canvas.mpl_connect('button_press_event', onclick)
     title = "evoked_{0}_{1}".format(evoked.name, ch_type)
     fig.canvas.set_window_title(title)
-    fig.suptitle(title)
 
 
 def plot_evoked(experiment, data, window):
