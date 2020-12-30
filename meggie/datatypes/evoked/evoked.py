@@ -11,7 +11,7 @@ class Evoked(object):
     """
     """
 
-    def __init__(self, name, evoked_directory, params, content=None):
+    def __init__(self, name, evoked_directory, params={}, content=None):
         """
         """
         self._name = name.strip('.fif')
@@ -45,11 +45,14 @@ class Evoked(object):
             except Exception:
                 raise IOError('Reading evokeds failed.')
 
-        for key in self._params['conditions']:
-            for evoked in evokeds:
-                if key == evoked.comment:
-                    self._content[key] = evoked
-                    break
+        # for key in self._params['conditions']:
+        #     for evoked in evokeds:
+        #         if key == evoked.comment:
+        #             self._content[key] = evoked
+        #             break
+
+        for evoked in evokeds:
+            self._content[evoked.comment] = evoked
 
         return self._content
 

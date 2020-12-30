@@ -10,32 +10,33 @@ from meggie.utilities.filemanager import load_csv
 
 
 def test_create_timestamped_folder():
-    dirpath = tempfile.mkdtemp()
+    with tempfile.TemporaryDirectory() as dirpath:
 
-    experiment = Experiment('test_experiment', '')
-    experiment.workspace = dirpath
+        experiment = Experiment('test_experiment', '')
+        experiment.workspace = dirpath
 
-    create_timestamped_folder(experiment)
+        create_timestamped_folder(experiment)
 
-    contents = os.listdir(os.path.join(experiment.workspace, experiment.name, 
-                                       'output'))
-    assert(len(contents) > 0)
+        contents = os.listdir(os.path.join(experiment.workspace, experiment.name, 
+                                           'output'))
+        assert(len(contents) > 0)
 
 
 def test_save_and_load_csv():
-    dirpath = tempfile.mkdtemp()
-    filepath = os.path.join(dirpath, 'data.csv')
+    with tempfile.TemporaryDirectory() as dirpath:
 
-    data = np.array([[1,2,3], [4,5,6]])
-    column_names = ['A', 'B', 'C']
-    row_descs = [('X', 'Kissa'), ('Y', 'Koira')]
+        filepath = os.path.join(dirpath, 'data.csv')
 
-    save_csv(filepath, data, column_names, row_descs)
+        data = np.array([[1,2,3], [4,5,6]])
+        column_names = ['A', 'B', 'C']
+        row_descs = [('X', 'Kissa'), ('Y', 'Koira')]
 
-    loaded_column_names, loaded_row_descs, loaded_data = load_csv(filepath)
+        save_csv(filepath, data, column_names, row_descs)
 
-    assert(loaded_column_names == column_names)
-    assert(loaded_row_descs[0] == row_descs[0])
-    assert(loaded_row_descs[1] == row_descs[1])
-    assert(np.array_equal(loaded_data, data))
+        loaded_column_names, loaded_row_descs, loaded_data = load_csv(filepath)
+
+        assert(loaded_column_names == column_names)
+        assert(loaded_row_descs[0] == row_descs[0])
+        assert(loaded_row_descs[1] == row_descs[1])
+        assert(np.array_equal(loaded_data, data))
 

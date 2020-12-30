@@ -43,12 +43,32 @@ class TFR(object):
             raise IOError('Writing TFRs failed')
 
     def delete_content(self):
-        if not self._content:
-            return
 
-        for tfr_name, tfr in self._content.items():
-            fname = self._get_fname(tfr_name)
-            os.remove(fname)
+        # if not self._content:
+        #     return
+        # for tfr_name, tfr in self._content.items():
+        #     fname = self._get_fname(tfr_name)
+        #     os.remove(fname)
+
+        template = self._name + '-' + r'([a-zA-Z1-9_]+)\-tfr\.h5'
+        for fname in os.listdir(self._tfr_directory):
+            match = re.match(template, fname)
+            if match:
+                try:
+                    key = str(match.group(1))
+                except Exception as exc:
+                    continue
+
+                # if proper condition parameters set,
+                # check if the key is in there
+                if 'conditions' in self._params:
+                    if key not in [str(elem) for elem in
+                                   self._params['conditions']]:
+                        continue
+
+                logging.getLogger('ui_logger').debug(
+                    'Removing existing tfr file: ' + str(fname))
+                os.remove(os.path.join(self._tfr_directory, fname))
 
     def _load_content(self):
         self._content = {}
@@ -65,6 +85,13 @@ class TFR(object):
                         key = str(match.group(1))
                     except Exception as exc:
                         raise Exception("Unknown file name format.")
+
+                    # if proper condition parameters set,
+                    # check if the key is in there
+                    if 'conditions' in self._params:
+                        if key not in [str(elem) for elem in
+                                       self._params['conditions']]:
+                            continue
 
                     path = os.path.join(self._tfr_directory,
                                         fname)

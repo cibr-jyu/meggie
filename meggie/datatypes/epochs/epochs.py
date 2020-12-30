@@ -12,7 +12,7 @@ class Epochs:
     """
     """
 
-    def __init__(self, name, epochs_directory, params, content=None):
+    def __init__(self, name, epochs_directory, params={}, content=None):
         """
         """
         self._name = name

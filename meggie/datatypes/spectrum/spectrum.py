@@ -13,10 +13,8 @@ import meggie.utilities.filemanager as filemanager
 
 
 class Spectrum(object):
-
     """
     """
-
     def __init__(self, name, spectrum_directory, params,
                  content=None, freqs=None, ch_names=None):
         """
@@ -30,15 +28,8 @@ class Spectrum(object):
         if content is not None:
             self._content = content
 
-        if freqs is not None:
-            self._freqs = freqs
-        else:
-            self._freqs = None
-
-        if ch_names is not None:
-            self._ch_names = ch_names
-        else:
-            self._ch_names = None
+        self._freqs = freqs
+        self._ch_names = ch_names
 
     def _load_content(self):
 
