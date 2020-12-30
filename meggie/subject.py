@@ -15,10 +15,8 @@ import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.dynamic import find_all_sources
 
-from meggie.utilities.events import Events
 
-
-class Subject(object):
+class Subject:
 
     def __init__(self, experiment, name, raw_fname,
                  ica_applied=False, rereferenced=False):

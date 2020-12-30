@@ -8,60 +8,48 @@ import numpy as np
 import mne
 
 
-class Events(object):
+def _should_take(id_, mask, event):
+    """ check if event has same non-masked bits as id_
     """
-    Class for getting events from the raw file, by type if need be.
-    """
+    id_bin = '{0:016b}'.format(id_)
+    mask_bin = '{0:016b}'.format(mask)
+    event_bin = '{0:016b}'.format(event[2])
 
-    def __init__(self, raw, stim_ch=None, mask=0, id_=None):
-        """
-        """
-        events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1,
-                                 uint_cast=True)
+    take_event = True
+    for i in range(len(mask_bin)):
+        if int(mask_bin[i]) == 1:
+            continue
+        if int(id_bin[i]) != int(event_bin[i]):
+            take_event = False
+            break
 
-        if mask or id_:
-            events = list(filter(
-                lambda event: self._should_take(id_, mask, event), events))
-            events = np.array(events)
+    return take_event
 
-        # remove spurious events
-        counter = 0
-        for idx in reversed(range(1, len(events))):
-            if events[idx][0] - events[idx - 1][0] < 2:
-                events = np.delete(events, idx - 1, axis=0)
-                counter += 1
 
-        if counter > 0:
-            message = (str(counter) +
-                       " events dropped because they seem spurious "
-                       "(only one sample difference to next event)")
-            logging.getLogger('ui_logger').warning(message)
+def find_events(raw, stim_ch=None, mask=0, id_=None):
 
-        self._events = events
+    events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1,
+                             uint_cast=True)
 
-    def _should_take(self, id_, mask, event):
-        """ check if event has same non-masked bits as id_
-        """
-        id_bin = '{0:016b}'.format(id_)
-        mask_bin = '{0:016b}'.format(mask)
-        event_bin = '{0:016b}'.format(event[2])
+    if mask or id_:
+        events = list(filter(
+            lambda event: _should_take(id_, mask, event), events))
+        events = np.array(events)
 
-        take_event = True
-        for i in range(len(mask_bin)):
-            if int(mask_bin[i]) == 1:
-                continue
-            if int(id_bin[i]) != int(event_bin[i]):
-                take_event = False
-                break
+    # remove spurious events (only one sample difference to next event)
+    counter = 0
+    for idx in reversed(range(1, len(events))):
+        if events[idx][0] - events[idx - 1][0] < 2:
+            events = np.delete(events, idx - 1, axis=0)
+            counter += 1
 
-        return take_event
+    if counter > 0:
+        message = (str(counter) +
+                   " events dropped because they seem spurious "
+                   "(only one sample difference to next event)")
+        logging.getLogger('ui_logger').warning(message)
 
-    @property
-    def events(self):
-        """
-        Property for events.
-        """
-        return self._events
+    return events
 
 
 def find_stim_channel(raw):

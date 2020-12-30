@@ -17,6 +17,7 @@ class PreferencesHandler(object):
     def __init__(self):
         """
         """
+        self.prefs_path = ""
         self.working_directory = ""
         self.previous_experiment_name = ""
         self.auto_load_last_open_experiment = False
@@ -57,7 +58,11 @@ class PreferencesHandler(object):
         config.set('Tabs', 'enabledTabs', ','.join(self.enabled_tabs or []))
         config.set('Tabs', 'preset', self.tab_preset)
 
-        with open(os.path.join(homepath(), '.meggieprefs'), 'w') as configfile:
+        path = self.prefs_path
+        if not path:
+            path = os.path.join(homepath(), '.meggieprefs')
+
+        with open(path, 'w') as configfile:
             config.write(configfile)
 
     def read_preferences_from_disk(self):

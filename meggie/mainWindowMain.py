@@ -18,7 +18,7 @@ from meggie.utilities.preferences import PreferencesHandler
 from meggie.utilities.mne_wrapper import wrap_mne
 
 from meggie.experiment import Experiment
-from meggie.experiment import ExperimentHandler
+from meggie.experiment import open_existing_experiment
 
 from meggie.utilities.decorators import threaded
 from meggie.utilities.messaging import messagebox
@@ -64,26 +64,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self.directOutput()
 
         # For storing and handling program wide prefences.
-        self.preferencesHandler = PreferencesHandler()
-
-        # For handling initialization and switching of experiments.
-        self.experimentHandler = ExperimentHandler(self)
+        self.prefs = PreferencesHandler()
 
         # If the user has chosen to open the previous experiment automatically.
-        if self.preferencesHandler.auto_load_last_open_experiment:
+        if self.prefs.auto_load_last_open_experiment:
             exp = None
 
             try:
-                exp = self.experimentHandler.open_existing_experiment(
-                    self.preferencesHandler)
+                exp = open_existing_experiment(self.prefs)
             except Exception as exc:
                 exc_messagebox(self, exc)
 
             if exp:
                 self.experiment = exp
             else:
-                self.preferencesHandler.previous_experiment_name = ''
-                self.preferencesHandler.write_preferences_to_disk()
+                self.prefs.previous_experiment_name = ''
+                self.prefs.write_preferences_to_disk()
 
         self.reconstruct_tabs()
         self.initialize_ui()
@@ -93,7 +89,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if checked is None:
             return
 
-        if self.preferencesHandler.confirm_quit:
+        if self.prefs.confirm_quit:
             reply = QtWidgets.QMessageBox.question(self, 'Close Meggie',
                                                    'Are you sure you want to quit Meggie?',
                                                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
@@ -110,21 +106,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if checked is None:
             return
 
-        if not self.preferencesHandler.working_directory:
+        if not self.prefs.working_directory:
             messagebox(
                 self, "Please set up a working directory before creating experiments")
             self.check_workspace()
         else:
             dialog = CreateExperimentDialog(self)
-            dialog.experimentCreated.connect(self.set_experiment)
             dialog.show()
-
-    @QtCore.pyqtSlot(Experiment)
-    def set_experiment(self, experiment):
-        """
-        """
-        self.experiment = experiment
-        self.initialize_ui()
 
     def on_actionOpenExperiment_triggered(self, checked=None):
         """
@@ -147,14 +135,13 @@ class MainWindow(QtWidgets.QMainWindow):
         logging.getLogger('ui_logger').info('Opening experiment ' + path)
 
         try:
-            exp = self.experimentHandler.open_existing_experiment(
-                self.preferencesHandler, path=path)
+            exp = open_existing_experiment(self.prefs, path=path)
             self.experiment = exp
             self.initialize_ui()
         except Exception as exc:
             exc_messagebox(self, exc)
 
-        self.preferencesHandler.write_preferences_to_disk()
+        self.prefs.write_preferences_to_disk()
 
     def on_pushButtonAddSubjects_clicked(self, checked=None):
         """
@@ -210,7 +197,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def closeEvent(self, event):
         """Redefine window close event to allow confirming on quit."""
 
-        if self.preferencesHandler.confirm_quit:
+        if self.prefs.confirm_quit:
             reply = QtWidgets.QMessageBox.question(self, 'Close Meggie',
                                                    'Are you sure you want to '
                                                    'quit?', QtWidgets.QMessageBox.Yes |
@@ -307,8 +294,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def reconstruct_tabs(self):
         """
         """
-        self.preferencesHandler = PreferencesHandler()
-
         self.tabs = []
 
         tab_presets = []
@@ -322,13 +307,13 @@ class MainWindow(QtWidgets.QMainWindow):
                                 str(config_path))
             tab_presets.extend(config['tab_presets'])
 
-        enabled_tabs = self.preferencesHandler.enabled_tabs
-        user_preset = self.preferencesHandler.tab_preset
+        enabled_tabs = self.prefs.enabled_tabs
+        user_preset = self.prefs.tab_preset
 
         found = False
         try:
             if user_preset and user_preset == 'custom':
-                enabled_tabs = self.preferencesHandler.enabled_tabs
+                enabled_tabs = self.prefs.enabled_tabs
                 found = True
             elif user_preset:
                 for idx, preset in enumerate(tab_presets):

@@ -18,7 +18,7 @@ import meggie.utilities.filemanager as filemanager
 from meggie.datatypes.spectrum.spectrum import Spectrum
 
 from meggie.utilities.events import find_stim_channel
-from meggie.utilities.events import Events
+from meggie.utilities.events import find_events
 
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.formats import format_floats
@@ -36,7 +36,7 @@ def find_event_times(raw, event_id, mask):
     stim_ch = find_stim_channel(raw)
     sfreq = raw.info['sfreq']
 
-    events = Events(raw, stim_ch, mask, event_id).events
+    events = find_events(raw, stim_ch, mask, event_id)
     times = [(event[0] - raw.first_samp) / sfreq for event in events]
     return times
 

@@ -41,12 +41,6 @@ def threaded(func):
                 pool.terminate()
                 QtWidgets.QApplication.restoreOverrideCursor()
 
-                # try:
-                #     msg = exc[1].args[0]
-                # except:
-                #     msg = str(exc[1])
-                # raise BaseException(exc[0], msg, exc[2])
-
                 raise exc[1].with_traceback(exc[2])
 
             except Empty:

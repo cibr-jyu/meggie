@@ -25,17 +25,15 @@ from meggie.subject import Subject
 from PyQt5.QtCore import QObject
 
 
-class Experiment(QObject):
+class Experiment:
 
-    """A top-level class that contains structure of an experiment,
+    """ A top-level class that contains structure of an experiment,
     all the subjects within, and so forth.
     """
 
     def __init__(self, name, author):
         """
         """
-        QObject.__init__(self)
-
         self._name = name
         self._author = author
         self._subjects = {}
@@ -47,8 +45,6 @@ class Experiment(QObject):
             'eeg': {},
             'meg': {},
         }
-
-
 
     @property
     def workspace(self):
@@ -262,184 +258,171 @@ class Experiment(QObject):
             logging.getLogger('ui_logger').error('Could not save the experiment file. Please check your permissions..')
 
 
-class ExperimentHandler(QObject):
+def initialize_new_experiment(name, author, prefs):
     """
-    Class for handling the creation of a new experiment.
+    Initializes the experiment object with the given data.
+    """
+    experiment = Experiment(os.path.basename(name),
+                            author)
+
+    experiment.workspace = prefs.working_directory
+
+    if os.path.exists(os.path.join(experiment.workspace,
+                                   experiment.name)):
+        raise Exception('Experiment with same name already exists.')
+
+    experiment.save_experiment_settings()
+
+    prefs.previous_experiment_name = os.path.join(
+        experiment.workspace, experiment.name)
+
+    prefs.write_preferences_to_disk()
+
+    return experiment
+
+
+def open_existing_experiment(prefs, path=None):
+    """
     """
 
-    def __init__(self, parent):
-        """
-        """
-        self.parent = parent
+    if path:
+        exp_file = os.path.join(path, os.path.basename(path) + '.exp')
+    else:
+        if prefs.previous_experiment_name == '':
+            return
 
-    def initialize_new_experiment(self, exp_dict):
-        """
-        Initializes the experiment object with the given data.
+        exp_file = os.path.join(
+            prefs.previous_experiment_name,
+            os.path.basename(prefs.previous_experiment_name) + '.exp'
+        )
 
-        """
-        prefs = self.parent.preferencesHandler
+    if not os.path.isfile(exp_file):
+        raise ValueError(
+            'Trying to open experiment without settings file (.exp).')
 
-        experiment = Experiment(os.path.basename(exp_dict['name']),
-                                exp_dict['author'])
+    try:
+        with open(exp_file, 'r') as f:
+            data = json.load(f)
+    except ValueError as exc:
+        logging.getLogger('ui_logger').exception(str(exc))
+        raise ValueError('Experiment from ' + exp_file + ' could not be ' +
+                         'opened. There might be a problem with ' +
+                         'cohesion of the experiment file.')
 
-        experiment.workspace = prefs.working_directory
+    experiment = Experiment(data['name'], data['author'])
 
-        if os.path.exists(os.path.join(experiment.workspace,
-                                       experiment.name)):
-            raise Exception('Experiment with same name already exists.')
+    if 'layout' in data.keys() and data['layout'] != 'Infer from data':
+        experiment.layout = data['layout']
+    else:
+        experiment.layout = ''
 
-        experiment.save_experiment_settings()
+    if 'channel_groups' in data.keys() and data['channel_groups'] != 'MNE':
+        experiment.channel_groups = data['channel_groups']
+    else:
+        experiment.channel_groups = {
+            'eeg': {},
+            'meg': {},
+        }
 
-        prefs.previous_experiment_name = os.path.join(
-            experiment.workspace, experiment.name)
+    # if opening old experiment manually
+    if path:
+        experiment.workspace = os.path.dirname(path)
+    # if opening old experiment automatically on open
+    else:
+        experiment.workspace = os.path.dirname(
+            prefs.previous_experiment_name)
 
-        prefs.write_preferences_to_disk()
+    if len(data['subjects']) > 0:
 
-        return experiment
+        for subject_data in data['subjects']:
 
-    def open_existing_experiment(self, prefs, path=None):
-        """
-        """
+            subject_name = subject_data['subject_name']
 
-        if path:
-            exp_file = os.path.join(path, os.path.basename(path) + '.exp')
-        else:
-            if prefs.previous_experiment_name == '':
-                return
+            raw_fname = subject_data.get('raw_fname')
+            # for backwards compatibility
+            if not raw_fname:
+                raw_fname = subject_data.get('working_file_name')
+            if not raw_fname:
+                raise Exception('raw_fname not set in the exp file')
 
-            exp_file = os.path.join(
-                prefs.previous_experiment_name,
-                os.path.basename(prefs.previous_experiment_name) + '.exp'
-            )
+            subject = Subject(experiment,
+                              subject_name,
+                              raw_fname,
+                              subject_data.get('ica_applied', False),
+                              subject_data.get('rereferenced', False)
+                              )
 
-        if not os.path.isfile(exp_file):
-            raise ValueError(
-                'Trying to open experiment without settings file (.exp).')
+            datatypes = []
+            for source in find_all_sources():
+                datatype_path = pkg_resources.resource_filename(
+                    source, 'datatypes')
+                if not os.path.exists(datatype_path):
+                    continue
+                for package in os.listdir(datatype_path):
+                    config_path = os.path.join(
+                        datatype_path, package, 'configuration.json')
+                    if os.path.exists(config_path):
+                        with open(config_path, 'r') as f:
+                            config = json.load(f)
+                            datatype = config['id']
+                            key = config['save_key']
+                            entry = config['entry']
+                            datatypes.append((key, source, package, entry, datatype))
 
-        try:
-            with open(exp_file, 'r') as f:
-                data = json.load(f)
-        except ValueError as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
-            raise ValueError('Experiment from ' + exp_file + ' could not be ' +
-                             'opened. There might be a problem with ' +
-                             'cohesion of the experiment file.')
+            for save_key, source, package, entry, datatype in datatypes:
+                for inst_data in subject_data.get(save_key, []):
+                    module_name, class_name = entry.split('.')
+                    module = importlib.import_module(
+                        '.'.join([source, 'datatypes', package, module_name]))
+                    inst_class = getattr(module, class_name, None)
 
-        prefs = self.parent.preferencesHandler
-        experiment = Experiment(data['name'], data['author'])
+                    name = inst_data.get('name')
+                    # backward compatibility
+                    if not name and 'collection_name' in inst_data:
+                        name = inst_data.get('collection_name')
+                    if not name:
+                        raise Exception('No name attribute found')
 
-        if 'layout' in data.keys() and data['layout'] != 'Infer from data':
-            experiment.layout = data['layout']
-        else:
-            experiment.layout = ''
+                    directory = getattr(subject, datatype + '_directory')
+                    params = inst_data.get('params', {})
 
-        if 'channel_groups' in data.keys() and data['channel_groups'] != 'MNE':
-            experiment.channel_groups = data['channel_groups']
-        else:
-            experiment.channel_groups = {
-                'eeg': {},
-                'meg': {},
-            }
+                    # for backwards compatibility
+                    if datatype == 'evoked':
+                        if not params.get(
+                                'conditions') and 'event_names' in inst_data:
+                            params['conditions'] = inst_data['event_names']
+                        params['bwc_path'] = os.path.join(
+                            subject.path, 'epochs/average')
+                    if datatype == 'spectrum':
+                        if not params.get(
+                                'log_transformed') and 'log_transformed' in inst_data:
+                            params['log_transformed'] = inst_data['log_transformed']
+                    if datatype == 'tfr':
+                        if not params.get(
+                                'decim') and 'decim' in inst_data:
+                            params['decim'] = inst_data['decim']
+                        if not params.get(
+                                'n_cycles') and 'n_cycles' in inst_data:
+                            params['n_cycles'] = inst_data['n_cycles']
+                        if not params.get(
+                                'evoked_subtracted') and 'evoked_subtracted' in inst_data:
+                            params['evoked_subtracted'] = inst_data['evoked_subtracted']
 
-        # if opening old experiment manually
-        if path:
-            experiment.workspace = os.path.dirname(path)
-        # if opening old experiment automatically on open
-        else:
-            experiment.workspace = os.path.dirname(
-                prefs.previous_experiment_name)
+                    if inst_class:
+                        inst = inst_class(
+                            name,
+                            directory,
+                            params,
+                        )
+                        subject.add(inst, datatype)
 
-        if len(data['subjects']) > 0:
+            experiment.add_subject(subject)
 
-            for subject_data in data['subjects']:
+            # ensure that the folder structure exists
+            # (to not crash on updates)
+            subject.ensure_folders()
 
-                subject_name = subject_data['subject_name']
+    prefs.previous_experiment_name = os.path.join(
+        experiment.workspace, experiment.name)
 
-                raw_fname = subject_data.get('raw_fname')
-                # for backwards compatibility
-                if not raw_fname:
-                    raw_fname = subject_data.get('working_file_name')
-                if not raw_fname:
-                    raise Exception('raw_fname not set in the exp file')
-
-                subject = Subject(experiment,
-                                  subject_name,
-                                  raw_fname,
-                                  subject_data.get('ica_applied', False),
-                                  subject_data.get('rereferenced', False)
-                                  )
-
-                datatypes = []
-                for source in find_all_sources():
-                    datatype_path = pkg_resources.resource_filename(
-                        source, 'datatypes')
-                    if not os.path.exists(datatype_path):
-                        continue
-                    for package in os.listdir(datatype_path):
-                        config_path = os.path.join(
-                            datatype_path, package, 'configuration.json')
-                        if os.path.exists(config_path):
-                            with open(config_path, 'r') as f:
-                                config = json.load(f)
-                                datatype = config['id']
-                                key = config['save_key']
-                                entry = config['entry']
-                                datatypes.append((key, source, package, entry, datatype))
-
-                for save_key, source, package, entry, datatype in datatypes:
-                    for inst_data in subject_data.get(save_key, []):
-                        module_name, class_name = entry.split('.')
-                        module = importlib.import_module(
-                            '.'.join([source, 'datatypes', package, module_name]))
-                        inst_class = getattr(module, class_name, None)
-
-                        name = inst_data.get('name')
-                        # backward compatibility
-                        if not name and 'collection_name' in inst_data:
-                            name = inst_data.get('collection_name')
-                        if not name:
-                            raise Exception('No name attribute found')
-
-                        directory = getattr(subject, datatype + '_directory')
-                        params = inst_data.get('params', {})
-
-                        # for backwards compatibility
-                        if datatype == 'evoked':
-                            if not params.get(
-                                    'conditions') and 'event_names' in inst_data:
-                                params['conditions'] = inst_data['event_names']
-                            params['bwc_path'] = os.path.join(
-                                subject.path, 'epochs/average')
-                        if datatype == 'spectrum':
-                            if not params.get(
-                                    'log_transformed') and 'log_transformed' in inst_data:
-                                params['log_transformed'] = inst_data['log_transformed']
-                        if datatype == 'tfr':
-                            if not params.get(
-                                    'decim') and 'decim' in inst_data:
-                                params['decim'] = inst_data['decim']
-                            if not params.get(
-                                    'n_cycles') and 'n_cycles' in inst_data:
-                                params['n_cycles'] = inst_data['n_cycles']
-                            if not params.get(
-                                    'evoked_subtracted') and 'evoked_subtracted' in inst_data:
-                                params['evoked_subtracted'] = inst_data['evoked_subtracted']
-
-                        if inst_class:
-                            inst = inst_class(
-                                name,
-                                directory,
-                                params,
-                            )
-                            subject.add(inst, datatype)
-
-                experiment.add_subject(subject)
-
-                # ensure that the folder structure exists
-                # (to not crash on updates)
-                subject.ensure_folders()
-
-        prefs.previous_experiment_name = os.path.join(
-            experiment.workspace, experiment.name)
-
-        return experiment
+    return experiment
