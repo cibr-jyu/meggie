@@ -32,20 +32,19 @@ class PreferencesDialog(QtWidgets.QDialog):
         self.ui.setupUi(self)
 
         self.parent = parent
-
         self.new_enabled_tabs = None
+        self.prefs = self.parent.prefs
 
         # Prefill previous values to UI and attributes from config file.
-        workDirectory = self.parent.preferencesHandler.working_directory
-        self.ui.LineEditFilePath.setText(workDirectory)
+        self.ui.LineEditFilePath.setText(self.prefs.workspace)
 
-        # freesurfer_home = self.parent.preferencesHandler.freesurfer_home
+        # freesurfer_home = self.prefs.freesurfer_home
         # self.ui.lineEditFreeSurferHome.setText(freesurfer_home)
 
-        if self.parent.preferencesHandler.auto_load_last_open_experiment:
+        if self.prefs.auto_load_last_open_experiment:
             self.ui.checkBoxAutomaticOpenPreviousExperiment.setChecked(True)
 
-        if self.parent.preferencesHandler.confirm_quit:
+        if self.prefs.confirm_quit:
             self.ui.checkBoxConfirmQuit.setChecked(True)
 
         tab_presets = []
@@ -59,8 +58,8 @@ class PreferencesDialog(QtWidgets.QDialog):
                                 str(config_path))
             tab_presets.extend(config['tab_presets'])
 
-        enabled_tabs = self.parent.preferencesHandler.enabled_tabs
-        user_preset = self.parent.preferencesHandler.tab_preset
+        enabled_tabs = self.prefs.enabled_tabs
+        user_preset = self.prefs.tab_preset
 
         # create buttons for presets
         checked = False
@@ -93,26 +92,16 @@ class PreferencesDialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        workFilepath = QtCore.QDir.toNativeSeparators(
+        workspace = QtCore.QDir.toNativeSeparators(
             str(QtWidgets.QFileDialog.getExistingDirectory(
                 self, "Select a workspace directory")))
-        self.ui.LineEditFilePath.setText(workFilepath)
-
-    # def on_pushButtonBrowseFreeSurferHome_clicked(self, checked=None):
-    #     if checked is None:
-    #         return
-
-    #     freesurfer_home = QtCore.QDir.toNativeSeparators(
-    #         str(QtWidgets.QFileDialog.getExistingDirectory(
-    #             self, "Point Meggie to your FreeSurfer home directory")))
-    #     self.ui.lineEditFreeSurferHome.setText(freesurfer_home)
+        self.ui.LineEditFilePath.setText(workspace)
 
     def on_pushButtonCustom_clicked(self, checked=None):
         if checked is None:
             return
 
-        preferencesHandler = self.parent.preferencesHandler
-        enabled_tabs = preferencesHandler.enabled_tabs
+        enabled_tabs = self.prefs.enabled_tabs
 
         customTabsDialog = CustomTabsDialog(enabled_tabs)
         customTabsDialog.exec_()
@@ -126,28 +115,28 @@ class PreferencesDialog(QtWidgets.QDialog):
 
     def accept(self):
 
-        workFilepath = self.ui.LineEditFilePath.text()
-        if not os.path.isdir(workFilepath):
-            message = 'No file path found for working file'
+        workspace = self.ui.LineEditFilePath.text()
+        if not os.path.isdir(workspace):
+            message = 'Workspace must be set to proper path.'
             messagebox(self.parent, message)
             return
-        self.parent.preferencesHandler.working_directory = workFilepath
+        self.prefs.workspace = workspace
 
         # freesurfer_path = self.ui.lineEditFreeSurferHome.text()
-        # self.parent.preferencesHandler.freesurfer_home = freesurfer_path
+        # self.prefs.freesurfer_home = freesurfer_path
         freesurfer_path = ''
 
         if self.ui.checkBoxAutomaticOpenPreviousExperiment.isChecked():
             autoLoadLastOpenExp = True
         else:
             autoLoadLastOpenExp = False
-        self.parent.preferencesHandler.auto_load_last_open_experiment = autoLoadLastOpenExp  # noqa
+        self.prefs.auto_load_last_open_experiment = autoLoadLastOpenExp  # noqa
 
         if self.ui.checkBoxConfirmQuit.isChecked():
             confirmQuit = True
         else:
             confirmQuit = False
-        self.parent.preferencesHandler.confirm_quit = confirmQuit
+        self.prefs.confirm_quit = confirmQuit
 
         tab_presets = []
         for source in find_all_sources():
@@ -168,18 +157,18 @@ class PreferencesDialog(QtWidgets.QDialog):
 
         if selected_preset == 'custom':
             if self.new_enabled_tabs:
-                self.parent.preferencesHandler.tab_preset = 'custom'
-                self.parent.preferencesHandler.enabled_tabs = self.new_enabled_tabs
-            elif (self.parent.preferencesHandler.enabled_tabs or
-                  self.parent.preferencesHandler.tab_preset == 'custom'):
-                self.parent.preferencesHandler.tab_preset = 'custom'
+                self.prefs.tab_preset = 'custom'
+                self.prefs.enabled_tabs = self.new_enabled_tabs
+            elif (self.prefs.enabled_tabs or
+                  self.prefs.tab_preset == 'custom'):
+                self.prefs.tab_preset = 'custom'
             else:
                 logging.getLogger('ui_logger').warning(
                     'Custom tab setting was not set because tabs were not specified')
         else:
-            self.parent.preferencesHandler.tab_preset = selected_preset
+            self.prefs.tab_preset = selected_preset
 
-        self.parent.preferencesHandler.write_preferences_to_disk()
+        self.prefs.write_preferences_to_disk()
 
         self.parent.reconstruct_tabs()
         self.parent.initialize_ui()

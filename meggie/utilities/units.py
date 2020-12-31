@@ -1,4 +1,4 @@
-""" Helpers to handle data units. Data in fiff-files is in standard units, i.e
+""" Helpers to handle data units. Data in memory is in standard units, i.e
     for magnetometers it is T, gradiometers it is T/m, and electrodes it is V.
     However it is customary to convert these into fT, fT/cm and uV respectively
     for human reading. For power densities it follows that the units will be

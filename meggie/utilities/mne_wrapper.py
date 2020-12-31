@@ -128,7 +128,7 @@ def wrap(log_level, original_func):
     return wrapped
 
 
-def wrap_package(root, path):
+def wrap_package(root, path, suffix):
     contents = pkgutil.walk_packages(path)
 
     paths = []
@@ -137,15 +137,27 @@ def wrap_package(root, path):
         if item.name in blacklist:
             continue
 
+        # ensure walk_packages has not walked away from mne directory
+        # see https://bugs.python.org/issue36053
+        if not item.module_finder.path.startswith(suffix):
+            continue
+
         if item.ispkg:
             paths.append((item.name, os.path.join(item.module_finder.path,
                                                   item.name)))
         else:
-            module = importlib.import_module('.'.join([root, item.name]))
-            modules.append((item.name, module))
+            try:
+                module = importlib.import_module('.'.join([root, item.name]))
+                modules.append((item.name, module))
+            except Exception as exc:
+                logging.getLogger('ui_logger').exception(str(exc))
+                continue
 
-    init = importlib.import_module('.'.join([root, '__init__']))
-    modules.append(('__init__', init))
+    try:
+        init = importlib.import_module('.'.join([root, '__init__']))
+        modules.append(('__init__', init))
+    except Exception as exc:
+        logging.getLogger('ui_logger').exception(str(exc))
 
     for module in modules:
         members = inspect.getmembers(module[1])
@@ -163,8 +175,14 @@ def wrap_package(root, path):
             # ...
 
     for path in paths:
-        wrap_package('.'.join([root, path[0]]), [path[1]])
-
+        wrap_package('.'.join([root, path[0]]), [path[1]], suffix)
 
 def wrap_mne():
-    wrap_package('mne', mne.__path__)
+    """ Goes recursively through mne package and wraps non-blacklisted
+    functions so that they will get logged by meggie """
+    try:
+        wrap_package('mne', mne.__path__, mne.__path__[0])
+    except Exception as exc:
+        logging.getLogger('ui_logger').exception(str(exc))
+        logging.getLogger('ui_logger').warning('Could not set up mne logging system')
+

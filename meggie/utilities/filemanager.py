@@ -1,42 +1,28 @@
-# coding: utf-8
-
-"""
-"""
-
 import os
-import pickle
 import shutil
-import glob
 import re
-import sys
 import datetime
 import logging
 import errno
-
-from distutils import dir_util
 
 import numpy as np
 import mne
 
 
 def open_raw(fname, preload=True):
-    """
+    """ reads raw from file
     """
     try:
         logging.getLogger('ui_logger').info('Reading ' + fname)
-        raw = mne.io.read_raw_fif(fname, preload=preload, allow_maxshield=True)
-
+        raw = mne.io.read_raw(fname, preload=preload)
         return raw
-    except IOError as exc:
-        raise IOError(str(exc))
-    except OSError as exc:
-        raise OSError('You do not have permission to read the file. ' + str(exc))
-    except ValueError as exc:
-        raise ValueError('A problem occurred while opening: ' + str(exc))
-
+    except Exception as exc:
+        logging.getLogger('ui_logger').exception(str(exc))
+        raise Exception('Could not read the raw file: ' + str(fname))
 
 def save_raw(raw, path, overwrite=True):
-    """ Makes saving raw more atomic
+    """ Makes saving raw more atomic by saving
+    first to tmp file and then moving with shutil
     """
 
     folder = os.path.dirname(path)
@@ -46,9 +32,12 @@ def save_raw(raw, path, overwrite=True):
     temp_path = os.path.join(folder, '_' + bname)
     raw.save(temp_path, overwrite=True)
 
+    stem, ext = os.path.splitext(bname)
+    ext_len = len(ext)
+
     # assumes filename ends with .fif
-    pat_old = re.compile(bname[:-4] + r'(-[0-9]+)?' + bname[-4:])
-    pat_new = re.compile('_' + bname[:-4] + r'(-[0-9]+)?' + bname[-4:])
+    pat_old = re.compile(bname[:-ext_len] + r'(-[0-9]+)?' + bname[-ext_len:])
+    pat_new = re.compile('_' + bname[:-ext_len] + r'(-[0-9]+)?' + bname[-ext_len:])
 
     contents = os.listdir(folder)
     old_files = [fname_ for fname_ in contents if pat_old.match(fname_)]
@@ -81,7 +70,7 @@ def save_raw(raw, path, overwrite=True):
 
 
 def ensure_folders(paths):
-    """
+    """ Ensures that paths in paths exist.
     """
     for path in paths:
         if not os.path.exists(path):
@@ -89,11 +78,10 @@ def ensure_folders(paths):
 
 
 def create_timestamped_folder(experiment):
-    """
+    """ Creates folder with timestamp inside output folder
     """
     current_time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    path = os.path.join(experiment.workspace,
-                        experiment.name, 'output')
+    path = os.path.join(experiment.path, 'output')
     timestamped_folder = os.path.join(path, current_time_str)
 
     try:
@@ -109,23 +97,29 @@ def copy_subject_raw(subject, path):
     """ Makes copy of the raw file at subject creation
     """
 
-    filename = os.path.basename(path)
-    os.chdir(os.path.dirname(path))
-    files = glob.glob(filename[:-4] + '*.fif')
+    bname = os.path.basename(path)
+    folder = os.path.dirname(path)
+    stem, ext = os.path.splitext(bname)
 
-    p = re.compile(re.escape(filename[:-4]) + r'(.fif|-\d{1,}.fif)')
+    ext_len = len(ext)
 
-    for f in files:
-        if p.match(f):
-            shutil.copyfile(f, os.path.join(subject.path,
-                                            os.path.basename(f)))
+    p = re.compile(bname[:-ext_len] + r'(-[0-9]+)?' + bname[-ext_len:])
 
+    contents = os.listdir(folder)
+    files = [fname_ for fname_ in contents if p.match(fname_)]
+
+    for fname in files:
+        shutil.copyfile(os.path.join(folder, fname), 
+                        os.path.join(subject.path, fname))
 
 def save_csv(path, data, column_names, row_descs):
-    """
+    """ Saves tabular data to csv.
     """
     # gather all the data to list of rows
     all_data = []
+
+    if type(data) == np.ndarray:
+        data = data.tolist()
 
     # freqs data, assume same lengths
     all_data.append(['']*len(row_descs[0]) + column_names)
@@ -140,7 +134,7 @@ def save_csv(path, data, column_names, row_descs):
 
 
 def load_csv(path):
-    """
+    """ Loads tabular data from csv
     """
     all_data = np.loadtxt(path, dtype=np.str, delimiter=', ')
 
@@ -159,7 +153,7 @@ def load_csv(path):
 
 # see https://stackoverflow.com/a/13790289
 def tail(f, lines=1, _buffer=4098):
-    """Tail a file and get X lines from the end"""
+    """ Tail a file and get `lines` lines from the end """
     # place holder for the lines found
     lines_found = []
 
@@ -184,7 +178,7 @@ def tail(f, lines=1, _buffer=4098):
 
 
 def homepath():
-    """ Tries to find correct path for file from user's home folder """
+    """ Tries to find correct path for home folder """
     from os.path import expanduser
     home = expanduser("~")
 

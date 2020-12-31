@@ -1,16 +1,9 @@
-# coding: utf-8
-"""
-"""
-
-import os
-import logging
-
 import numpy as np
 import mne
 
 
 def get_default_channel_groups(info, ch_type):
-    """
+    """ Returns channels grouped by locations (Left-frontal, Right-occipital, etc.)
     """
     from mne.selection import _divide_to_regions
 
@@ -46,7 +39,7 @@ def get_default_channel_groups(info, ch_type):
 
 
 def get_channels_by_type(info):
-    """
+    """ Returns channels organized (in dict) by channel type
     """
     channels = {}
     grad_idxs = mne.pick_types(info, meg='grad', eeg=False)
@@ -68,14 +61,14 @@ def get_channels_by_type(info):
     return channels
 
 
-def get_triplet_from_mag(info, ch_name):
+def get_triplet_from_mag(ch_name):
     """ get the triplet from mag by channel name in a bit hacky way
     """ 
     return [ch_name, ch_name[:-1] + '2', ch_name[:-1] + '3']
 
 
 def clean_names(names):
-    """
+    """ Removes whitespace from channel names
     """
     return [name.replace(' ', '') for name in names]
 

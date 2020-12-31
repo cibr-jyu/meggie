@@ -43,8 +43,7 @@ class LogDialog(QtWidgets.QDialog):
 
     def update_contents(self):
         try:
-            logfile_path = os.path.join(self.parent.experiment.workspace,
-                                        self.parent.experiment.name, 'meggie.log')
+            logfile_path = os.path.join(self.parent.experiment.path, 'meggie.log')
             log_file = open(logfile_path, 'r')
 
             # logging.getLogger('ui_logger').info(

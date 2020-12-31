@@ -15,7 +15,7 @@ from meggie.tabs.preprocessing.dialogs.eventsFromAnnotationsDialogMain import Ev
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.events import find_stim_channel
-from meggie.utilities.events import Events
+from meggie.utilities.events import find_events
 from meggie.utilities.measurement_info import MeasurementInfo
 
 
@@ -53,7 +53,7 @@ def plot(experiment, data, window):
     if not stim_ch:
         events = None
     else:
-        events = Events(raw, stim_ch=stim_ch).events
+        events = find_events(raw, stim_ch=stim_ch)
 
     fig = raw.plot(events=events, show=False)
     fig.canvas.mpl_connect('close_event', handle_close)
@@ -163,7 +163,7 @@ def event_info(experiment, data, window):
         if not stim_ch:
             return ""
 
-        events = Events(raw, stim_ch=stim_ch).events
+        events = find_events(raw, stim_ch=stim_ch)
         if events is None:
             return ""
 

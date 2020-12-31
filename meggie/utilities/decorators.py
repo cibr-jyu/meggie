@@ -1,5 +1,3 @@
-""" This module provides tools for doing tasks in worker threads """
-
 from queue import Queue
 from queue import Empty
 from time import sleep
@@ -40,12 +38,6 @@ def threaded(func):
                 exc = bucket.get(block=False)
                 pool.terminate()
                 QtWidgets.QApplication.restoreOverrideCursor()
-
-                # try:
-                #     msg = exc[1].args[0]
-                # except:
-                #     msg = str(exc[1])
-                # raise BaseException(exc[0], msg, exc[2])
 
                 raise exc[1].with_traceback(exc[2])
 

@@ -1,6 +1,3 @@
-""" This module provides tools to help debugging with pyqt application
-"""
-
 
 def debug_trace():
     """ Helper to allow debugging with pyqt application.

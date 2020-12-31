@@ -2,6 +2,7 @@
 """
 
 import os
+import logging
 
 import mne
 
@@ -10,13 +11,18 @@ class Evoked(object):
     """
     """
 
-    def __init__(self, name, evoked_directory, params, content=None):
+    def __init__(self, name, evoked_directory, params={}, content=None):
         """
         """
         self._name = name.strip('.fif')
-        self._content = content
         self._path = os.path.join(evoked_directory, name + '.fif')
         self._params = params
+
+        # ensure comments are set to match the keys / conditions
+        self._content = content
+        if self._content:
+            for key in self._content.keys():
+                self._content[key].comment = key
 
         # for backwards compatbility,
         # evokeds used to be stored in epochs/average
@@ -44,11 +50,8 @@ class Evoked(object):
             except Exception:
                 raise IOError('Reading evokeds failed.')
 
-        for key in self._params['conditions']:
-            for evoked in evokeds:
-                if key == evoked.comment:
-                    self._content[key] = evoked
-                    break
+        for evoked in evokeds:
+            self._content[evoked.comment] = evoked
 
         return self._content
 
@@ -82,6 +85,7 @@ class Evoked(object):
         try:
             mne.write_evokeds(self._path, list(self.content.values()))
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             raise IOError('Writing evokeds failed')
 
     def delete_content(self):

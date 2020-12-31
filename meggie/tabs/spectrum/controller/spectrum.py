@@ -18,7 +18,7 @@ import meggie.utilities.filemanager as filemanager
 from meggie.datatypes.spectrum.spectrum import Spectrum
 
 from meggie.utilities.events import find_stim_channel
-from meggie.utilities.events import Events
+from meggie.utilities.events import find_events
 
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.formats import format_floats
@@ -36,7 +36,7 @@ def find_event_times(raw, event_id, mask):
     stim_ch = find_stim_channel(raw)
     sfreq = raw.info['sfreq']
 
-    events = Events(raw, stim_ch, mask, event_id).events
+    events = find_events(raw, stim_ch, mask, event_id)
     times = [(event[0] - raw.first_samp) / sfreq for event in events]
     return times
 
@@ -237,7 +237,7 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
     plt.show()
 
 
-def plot_spectrum_topo(experiment, name, log_transformed=True):
+def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
     """
     """
 
@@ -251,7 +251,13 @@ def plot_spectrum_topo(experiment, name, log_transformed=True):
     ch_names = spectrum.ch_names
 
     info = subject.get_raw().info
-    info_names = info['ch_names']
+    if ch_type == 'meg':
+        picked_channels = [ch_name for ch_idx, ch_name in enumerate(info['ch_names'])
+                           if ch_idx in mne.pick_types(info, meg=True, eeg=False)]
+    else:
+        picked_channels = [ch_name for ch_idx, ch_name in enumerate(info['ch_names'])
+                           if ch_idx in mne.pick_types(info, eeg=True, meg=False)]
+    info = info.copy().pick_channels(picked_channels)
 
     colors = color_cycle(len(data))
 
@@ -307,9 +313,8 @@ def plot_spectrum_topo(experiment, name, log_transformed=True):
         return
 
     fig.legend(handles=handles)
-    title = 'spectrum_{0}'.format(name)
+    title = 'spectrum_{0}_{1}'.format(name, ch_type)
     fig.canvas.set_window_title(title)
-    fig.suptitle(title)
     plt.show()
 
 @threaded

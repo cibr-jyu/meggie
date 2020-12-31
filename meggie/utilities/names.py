@@ -2,7 +2,8 @@ import re
 
 
 def next_available_name(old_names, stem):
-    """ 
+    """ Given list of existing names (such as cat_1, cat_2) 
+    and a stem (cat), find next name in order (cat_3)
     """
     suffices = []
     for old_name in old_names:
@@ -18,11 +19,4 @@ def next_available_name(old_names, stem):
         return stem
 
     return stem + '_' + str(max(suffices)+1)
-
-
-if __name__ == '__main__':
-    names = ["kissa", "koira", "kissa_1", "kissa_2", "kissa_11"]
-    assert(next_available_name(names, "kissa") == 'kissa_12')
-    assert(next_available_name(names, "koira") == 'koira_1')
-    assert(next_available_name(names, "kettu") == 'kettu')
 

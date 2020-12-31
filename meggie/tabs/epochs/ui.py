@@ -2,8 +2,6 @@
 """
 import logging
 
-from pprint import pformat
-
 from meggie.utilities.names import next_available_name
 from meggie.utilities.formats import format_float
 

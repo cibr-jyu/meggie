@@ -111,6 +111,8 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
 
             evoked = subject.evoked.get(evoked_name)
             if not evoked:
+                logging.getLogger('ui_logger').warning(
+                    evoked_name + ' not present for ' + subject.name)
                 continue
 
             for evoked_item_key, evoked_item in evoked.content.items():
@@ -129,7 +131,6 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
         else:
             grand_averages[new_key] = mne.grand_average(grand_evoked)
         new_keys.append(new_key)
-        grand_averages[new_key].comment = new_key
 
     subject = experiment.active_subject
 

@@ -1,8 +1,3 @@
-# coding: utf-8
-
-"""
-"""
-
 import datetime
 import re
 
@@ -10,19 +5,14 @@ import mne
 
 
 class MeasurementInfo(object):
-    """
-    A class for collecting information from MEG-measurement raw files.
+    """ A class for collecting information from raw files.
     """
 
     def __init__(self, raw):
-        """
-        """
         self._info = raw.info
 
     @property
     def high_pass(self):
-        """
-        """
         try:
             return round(self._info.get('highpass'), 2)
         except Exception as exc:
@@ -30,8 +20,6 @@ class MeasurementInfo(object):
 
     @property
     def low_pass(self):
-        """
-        """
         try:
             return round(self._info.get('lowpass'), 2)
         except Exception as exc:
@@ -39,8 +27,6 @@ class MeasurementInfo(object):
 
     @property
     def sampling_freq(self):
-        """
-        """
         try:
             return round(self._info.get('sfreq'), 2)
         except Exception as exc:
@@ -48,9 +34,6 @@ class MeasurementInfo(object):
 
     @property
     def date(self):
-        """
-        Returns the date of measurement in form yyyy-mm-dd.
-        """
         try:
             return str(self._info['meas_date'].date())
         except Exception as exc:
@@ -58,8 +41,6 @@ class MeasurementInfo(object):
 
     @property
     def subject_name(self):
-        """
-        """
         subj_info = self._info.get('subject_info')
 
         if not subj_info:

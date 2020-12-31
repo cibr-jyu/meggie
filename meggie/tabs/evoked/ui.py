@@ -96,10 +96,23 @@ def _plot_evoked_averages(experiment, evoked):
     plot_channel_averages(experiment, evoked)
 
 
-def _plot_evoked_topo(experiment, evoked):
+def _plot_evoked_topo(experiment, evoked, ch_type):
+    """
+    """
     evokeds = []
     labels = []
     for key, evok in evoked.content.items():
+
+        info = evok.info
+        if ch_type == 'eeg':
+            dropped_names = [ch_name for ch_idx, ch_name in enumerate(info['ch_names'])
+                             if ch_idx not in mne.pick_types(info, eeg=True, meg=False)]
+        else:
+            dropped_names = [ch_name for ch_idx, ch_name in enumerate(info['ch_names'])
+                             if ch_idx not in mne.pick_types(info, eeg=False, meg=True)]
+
+        evok = evok.copy().drop_channels(dropped_names)
+
         evokeds.append(evok)
         labels.append(key)
 
@@ -128,9 +141,8 @@ def _plot_evoked_topo(experiment, evoked):
 
     fig = mne.viz.plot_evoked_topo(evokeds, color=colors)
     fig.canvas.mpl_connect('button_press_event', onclick)
-    title = "evoked_{0}".format(evoked.name)
+    title = "evoked_{0}_{1}".format(evoked.name, ch_type)
     fig.canvas.set_window_title(title)
-    fig.suptitle(title)
 
 
 def plot_evoked(experiment, data, window):
@@ -149,8 +161,14 @@ def plot_evoked(experiment, data, window):
                 _plot_evoked_averages(
                     experiment, evoked)
             else:
-                _plot_evoked_topo(
-                    experiment, evoked)
+                info = list(evoked.content.values())[0].info
+                chs = list(get_channels_by_type(info).keys())
+                if 'eeg' in chs:
+                    _plot_evoked_topo(
+                        experiment, evoked, ch_type='eeg')
+                if 'grad' in chs or 'mag' in chs:
+                    _plot_evoked_topo(
+                        experiment, evoked, ch_type='meg')
         except Exception as exc:
             exc_messagebox(window, exc)
 

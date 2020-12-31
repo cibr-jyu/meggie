@@ -9,6 +9,11 @@ import logging
 import warnings
 import pkg_resources
 
+from PyQt5.Qt import QApplication
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
+from PyQt5 import QtCore
+
 from meggie.utilities.dynamic import construct_tab
 from meggie.utilities.dynamic import find_all_tab_specs
 
@@ -17,8 +22,7 @@ from meggie.mainWindowUi import Ui_MainWindow
 from meggie.utilities.preferences import PreferencesHandler
 from meggie.utilities.mne_wrapper import wrap_mne
 
-from meggie.experiment import Experiment
-from meggie.experiment import ExperimentHandler
+from meggie.experiment import open_existing_experiment
 
 from meggie.utilities.decorators import threaded
 from meggie.utilities.messaging import messagebox
@@ -33,18 +37,10 @@ from meggie.utilities.dialogs.channelGroupsDialogMain import ChannelGroupsDialog
 from meggie.utilities.dialogs.addSubjectDialogMain import AddSubjectDialog
 from meggie.utilities.dialogs.createExperimentDialogMain import CreateExperimentDialog
 
-from PyQt5.Qt import QApplication
-
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
-from PyQt5 import QtCore
-
 
 class MainWindow(QtWidgets.QMainWindow):
+    """ 
     """
-    Class containing the logic for the MainWindow
-    """
-
     def __init__(self, application):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
@@ -63,37 +59,31 @@ class MainWindow(QtWidgets.QMainWindow):
         if not sys.argv[-1] == 'debug':
             self.directOutput()
 
-        # For storing and handling program wide prefences.
-        self.preferencesHandler = PreferencesHandler()
+        # For storing and handling program wide preferences.
+        self.prefs = PreferencesHandler()
 
-        # For handling initialization and switching of experiments.
-        self.experimentHandler = ExperimentHandler(self)
-
-        # If the user has chosen to open the previous experiment automatically.
-        if self.preferencesHandler.auto_load_last_open_experiment:
-            exp = None
-
+        auto_load = self.prefs.auto_load_last_open_experiment
+        previous_name = self.prefs.previous_experiment_name
+        if auto_load and previous_name:
             try:
-                exp = self.experimentHandler.open_existing_experiment(
-                    self.preferencesHandler)
+                exp = open_existing_experiment(self.prefs)
+                self.experiment = exp
+                self.prefs.previous_experiment_name = exp.path
             except Exception as exc:
+                self.prefs.previous_experiment_name = ''
                 exc_messagebox(self, exc)
 
-            if exp:
-                self.experiment = exp
-            else:
-                self.preferencesHandler.previous_experiment_name = ''
-                self.preferencesHandler.write_preferences_to_disk()
+            self.prefs.write_preferences_to_disk()
 
         self.reconstruct_tabs()
         self.initialize_ui()
 
     def on_actionQuit_triggered(self, checked=None):
-        """Closes the program, possibly after a confirmation by the user."""
+        """ Closes the program, possibly after a confirmation by the user. """
         if checked is None:
             return
 
-        if self.preferencesHandler.confirm_quit:
+        if self.prefs.confirm_quit:
             reply = QtWidgets.QMessageBox.question(self, 'Close Meggie',
                                                    'Are you sure you want to quit Meggie?',
                                                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
@@ -110,21 +100,16 @@ class MainWindow(QtWidgets.QMainWindow):
         if checked is None:
             return
 
-        if not self.preferencesHandler.working_directory:
-            messagebox(
-                self, "Please set up a working directory before creating experiments")
-            self.check_workspace()
+        if not self.prefs.workspace:
+            messagebox(self, 
+                "Please set up a workspace "
+                "(a place where experiments are stored) in preferences "
+                "before creating experiments")
+            dialog = PreferencesDialog(self)
+            dialog.show()
         else:
             dialog = CreateExperimentDialog(self)
-            dialog.experimentCreated.connect(self.set_experiment)
             dialog.show()
-
-    @QtCore.pyqtSlot(Experiment)
-    def set_experiment(self, experiment):
-        """
-        """
-        self.experiment = experiment
-        self.initialize_ui()
 
     def on_actionOpenExperiment_triggered(self, checked=None):
         """
@@ -132,14 +117,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if checked is None:
             return
 
-        if self.experiment is not None:
-            directory = self.experiment.workspace
-        else:
-            directory = ''
-
-        path = QtCore.QDir.toNativeSeparators(str(
-            QtWidgets.QFileDialog.getExistingDirectory(self,
-                                                       "Select experiment directory", directory)))
+        directory = self.prefs.workspace
+        path = QtCore.QDir.toNativeSeparators(
+            str(QtWidgets.QFileDialog.getExistingDirectory(self,
+            "Select experiment directory", directory)))
 
         if path == '':
             return
@@ -147,14 +128,14 @@ class MainWindow(QtWidgets.QMainWindow):
         logging.getLogger('ui_logger').info('Opening experiment ' + path)
 
         try:
-            exp = self.experimentHandler.open_existing_experiment(
-                self.preferencesHandler, path=path)
+            exp = open_existing_experiment(self.prefs, path=path)
             self.experiment = exp
-            self.initialize_ui()
+            self.prefs.previous_experiment_name = exp.path
         except Exception as exc:
             exc_messagebox(self, exc)
 
-        self.preferencesHandler.write_preferences_to_disk()
+        self.prefs.write_preferences_to_disk()
+        self.initialize_ui()
 
     def on_pushButtonAddSubjects_clicked(self, checked=None):
         """
@@ -192,15 +173,14 @@ class MainWindow(QtWidgets.QMainWindow):
         if reply == QtWidgets.QMessageBox.Yes:
             for index in selIndexes:
                 subject_name = index.data()
-
                 try:
                     self.experiment.remove_subject(subject_name)
                 except Exception:
                     failures.append(subject_name)
 
         if failures:
-            msg = ''.join(['Could not remove the contents of the subject ',
-                           'folder for following subjects: ',
+            msg = ''.join(['Could not remove subject folders ',
+                           'for following subjects: ',
                            '\n'.join(failures)])
             messagebox(self, msg)
 
@@ -208,9 +188,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.initialize_ui()
 
     def closeEvent(self, event):
-        """Redefine window close event to allow confirming on quit."""
+        """ Redefine window close event to allow confirming on quit. """
 
-        if self.preferencesHandler.confirm_quit:
+        if self.prefs.confirm_quit:
             reply = QtWidgets.QMessageBox.question(self, 'Close Meggie',
                                                    'Are you sure you want to '
                                                    'quit?', QtWidgets.QMessageBox.Yes |
@@ -307,8 +287,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def reconstruct_tabs(self):
         """
         """
-        self.preferencesHandler = PreferencesHandler()
-
         self.tabs = []
 
         tab_presets = []
@@ -322,13 +300,13 @@ class MainWindow(QtWidgets.QMainWindow):
                                 str(config_path))
             tab_presets.extend(config['tab_presets'])
 
-        enabled_tabs = self.preferencesHandler.enabled_tabs
-        user_preset = self.preferencesHandler.tab_preset
+        enabled_tabs = self.prefs.enabled_tabs
+        user_preset = self.prefs.tab_preset
 
         found = False
         try:
             if user_preset and user_preset == 'custom':
-                enabled_tabs = self.preferencesHandler.enabled_tabs
+                enabled_tabs = self.prefs.enabled_tabs
                 found = True
             elif user_preset:
                 for idx, preset in enumerate(tab_presets):
@@ -422,19 +400,10 @@ class MainWindow(QtWidgets.QMainWindow):
         sys.stdout = stdout_stream
         sys.stderr = stderr_stream
 
-    def check_workspace(self):
-        """
-        Open the preferences dialog, in this case for choosing the workspace.
-        """
-        dialog = PreferencesDialog(self)
-        dialog.exec_()
-
     def normalOutputWritten(self, text):
         """
         Appends text to 'console' at the bottom of the dialog.
         Used for redirecting stdout.
-        Parameters:
-        text - Text to write to the console.
         """
         cursor = self.ui.textEditConsole.textCursor()
         cursor.movePosition(QtGui.QTextCursor.End)
@@ -446,8 +415,6 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Appends text to 'console' at the bottom of the dialog.
         Used for redirecting stderr.
-        Parameters:
-        text - Text to write to the console.
         """
         cursor = self.ui.textEditConsole.textCursor()
         cursor.movePosition(QtGui.QTextCursor.End)
@@ -474,8 +441,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # setup file handler
         if self.experiment:
             logfile = os.path.join(
-                self.experiment.workspace,
-                self.experiment.name,
+                self.experiment.path,
                 'meggie.log')
             file_handler = logging.FileHandler(logfile)
             file_handler.setLevel('DEBUG')
@@ -497,8 +463,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # setup file handler
         if self.experiment:
             logfile = os.path.join(
-                self.experiment.workspace,
-                self.experiment.name,
+                self.experiment.path,
                 'meggie.log')
             file_handler = logging.FileHandler(logfile)
             file_handler.setLevel('DEBUG')
@@ -520,8 +485,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # setup file handler
         if self.experiment:
             logfile = os.path.join(
-                self.experiment.workspace,
-                self.experiment.name,
+                self.experiment.path,
                 'meggie.log')
             file_handler = logging.FileHandler(logfile)
             file_handler.setLevel('DEBUG')

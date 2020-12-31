@@ -11,9 +11,10 @@ import mne
 
 from meggie.utilities.units import get_scaling
 from meggie.utilities.events import find_stim_channel
+from meggie.utilities.events import find_events
 
 from meggie.datatypes.epochs.epochs import Epochs
-from meggie.utilities.events import Events
+
 
 
 def create_epochs_from_events(params, subject):
@@ -51,8 +52,7 @@ def create_epochs_from_events(params, subject):
             category_id = (
                 'id_' + str(event_id) + '_mask_' + str(mask))
 
-            new_events = Events(raw, stim_channel, mask,
-                                event_id).events
+            new_events = find_events(raw, stim_channel, mask, event_id)
 
             if len(new_events) == 0:
                 logging.warning('No events found with setting ' +
@@ -61,11 +61,14 @@ def create_epochs_from_events(params, subject):
 
             category[category_id] = idx + 1
             new_events[:, 2] = idx + 1
-            events.extend([event for event in new_events])
+
+            events.extend([[event[0] + int(round(raw.info['sfreq']*params['delay'])), 
+                            event[1], event[2]] 
+                           for event in new_events])
 
     if len(events) == 0:
         raise ValueError(
-            'No events found.')
+            'No matching events found. Please check rejection limits and other parameters.')
 
     # prepare parameters for pick_types
     if params['mag'] and params['grad']:

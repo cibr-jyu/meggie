@@ -92,8 +92,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>759</width>
-        <height>734</height>
+        <width>745</width>
+        <height>747</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -256,10 +256,13 @@
              <string> s</string>
             </property>
             <property name="decimals">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="minimum">
-             <double>-10.000000000000000</double>
+             <double>-100.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>100.989999999999995</double>
             </property>
             <property name="singleStep">
              <double>0.100000000000000</double>
@@ -282,10 +285,13 @@
              <string> s</string>
             </property>
             <property name="decimals">
-             <number>3</number>
+             <number>4</number>
+            </property>
+            <property name="minimum">
+             <double>-100.000000000000000</double>
             </property>
             <property name="maximum">
-             <double>9.900000000000000</double>
+             <double>100.900000000000006</double>
             </property>
             <property name="singleStep">
              <double>0.100000000000000</double>
@@ -308,10 +314,16 @@
              <string>s</string>
             </property>
             <property name="decimals">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="minimum">
-             <double>-10.000000000000000</double>
+             <double>-100.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>100.989999999999995</double>
+            </property>
+            <property name="singleStep">
+             <double>0.100000000000000</double>
             </property>
             <property name="value">
              <double>-0.200000000000000</double>
@@ -331,13 +343,45 @@
              <string>s</string>
             </property>
             <property name="decimals">
-             <number>3</number>
+             <number>4</number>
             </property>
             <property name="minimum">
-             <double>-10.000000000000000</double>
+             <double>-100.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>100.989999999999995</double>
+            </property>
+            <property name="singleStep">
+             <double>0.100000000000000</double>
             </property>
             <property name="value">
              <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="labelDelay">
+            <property name="text">
+             <string>Delay:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxDelay">
+            <property name="suffix">
+             <string>s</string>
+            </property>
+            <property name="decimals">
+             <number>4</number>
+            </property>
+            <property name="minimum">
+             <double>-100.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>100.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.100000000000000</double>
             </property>
            </widget>
           </item>
@@ -454,12 +498,12 @@
   <tabstop>pushButtonCancel</tabstop>
   <tabstop>pushButtonBatch</tabstop>
   <tabstop>pushButtonApply</tabstop>
-  <tabstop>scrollArea</tabstop>
   <tabstop>lineEditCollectionName</tabstop>
   <tabstop>doubleSpinBoxTmin</tabstop>
   <tabstop>doubleSpinBoxTmax</tabstop>
   <tabstop>doubleSpinBoxBaselineStart</tabstop>
   <tabstop>doubleSpinBoxBaselineEnd</tabstop>
+  <tabstop>doubleSpinBoxDelay</tabstop>
   <tabstop>checkBoxGrad</tabstop>
   <tabstop>doubleSpinBoxGradReject</tabstop>
   <tabstop>checkBoxMag</tabstop>
@@ -473,6 +517,7 @@
   <tabstop>listWidgetEvents</tabstop>
   <tabstop>pushButtonAdd</tabstop>
   <tabstop>pushButtonClear</tabstop>
+  <tabstop>scrollArea</tabstop>
  </tabstops>
  <resources/>
  <connections>
