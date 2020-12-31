@@ -74,8 +74,6 @@ class CreateEvokedDialog(QtWidgets.QDialog):
                 return mne_epochs.average()
 
             mne_evoked = average(do_meanwhile=self.parent.update_ui)
-
-            mne_evoked.comment = name
             evokeds[name] = mne_evoked
 
         evoked_name = validate_name(self.ui.lineEditName.text())

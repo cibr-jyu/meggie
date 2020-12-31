@@ -21,7 +21,6 @@ def test_evoked():
         raw = mne.io.read_raw_fif(sample_fname, preload=True)
         events = find_events(raw, id_=1)
         mne_evoked = mne.Epochs(raw, events).average()
-        mne_evoked.comment = cond_name
 
         # As meggie-style evokeds can be based on multiple mne evoked objects,
         # content is dict-type.

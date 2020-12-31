@@ -15,9 +15,14 @@ class Evoked(object):
         """
         """
         self._name = name.strip('.fif')
-        self._content = content
         self._path = os.path.join(evoked_directory, name + '.fif')
         self._params = params
+
+        # ensure comments are set to match the keys / conditions
+        self._content = content
+        if self._content:
+            for key in self._content.keys():
+                self._content[key].comment = key
 
         # for backwards compatbility,
         # evokeds used to be stored in epochs/average
@@ -44,12 +49,6 @@ class Evoked(object):
                 evokeds = mne.read_evokeds(self._bwc_path)
             except Exception:
                 raise IOError('Reading evokeds failed.')
-
-        # for key in self._params['conditions']:
-        #     for evoked in evokeds:
-        #         if key == evoked.comment:
-        #             self._content[key] = evoked
-        #             break
 
         for evoked in evokeds:
             self._content[evoked.comment] = evoked

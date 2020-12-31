@@ -131,7 +131,6 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
         else:
             grand_averages[new_key] = mne.grand_average(grand_evoked)
         new_keys.append(new_key)
-        grand_averages[new_key].comment = new_key
 
     subject = experiment.active_subject
 

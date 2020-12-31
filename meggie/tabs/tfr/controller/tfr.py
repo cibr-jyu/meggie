@@ -306,7 +306,6 @@ def create_tfr(subject, tfr_name, epochs_names,
                                                 decim=decim, 
                                                 average=True,
                                                 return_itc=False)
-        tfr.comment = epoch_name
         tfrs[epoch_name] = tfr
 
     # convert list-like to list

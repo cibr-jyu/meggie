@@ -28,11 +28,9 @@ def test_tfr():
             freqs, n_cycles,
             return_itc=False)
 
-        mne_tfr.comment = cond_name
-
         # As meggie-style tfrs can be based on multiple mne TFR objects,
-        # content is dict-type. params is needed to avoid accidents
-        # in content loading
+        # content is dict-type. conditions-param is added to avoid accidents
+        # in content loading..
         content = {cond_name: mne_tfr}
         params = {'conditions': [cond_name]}
 

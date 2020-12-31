@@ -18,9 +18,14 @@ class TFR(object):
         """
         """
         self._name = name
-        self._content = content
         self._params = params
         self._tfr_directory = tfr_directory
+
+        # ensure comments are set to match the keys / conditions
+        self._content = content
+        if self._content:
+            for key in self._content.keys():
+                self._content[key].comment = key
 
     def _get_fname(self, tfr_name):
         # for backward compatibility

@@ -23,6 +23,7 @@ def test_spectrum():
         cond_name = '1'
         spectrum_dir = os.path.join(dirpath, 'spectrums')
 
+        # one meggie-Spectrum can hold many spectrums, thus content is dict-like
         content = {cond_name: psds}
         params = {'conditions': [cond_name]}
 
