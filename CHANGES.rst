@@ -1,10 +1,15 @@
 Changelog
 =========
 
-0.17.1 (unreleased)
+0.17.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.17.1 (2020-12-31)
+------------------
+
+- Update mne dependency to >=0.22.0
 
 0.17.0 (2020-12-31)
 ------------------
