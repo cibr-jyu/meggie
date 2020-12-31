@@ -45,4 +45,4 @@ This project is licensed under the BSD license.
 
 ## Acknowledgements
 
-Great thanks to the *excellent* MNE-python.
+Great thanks to the *excellent* MNE-python and all the people who have helped.

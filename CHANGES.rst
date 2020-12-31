@@ -1,10 +1,24 @@
 Changelog
 =========
 
-0.16.2 (unreleased)
+0.17.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.17.0 (2020-12-31)
+------------------
+
+- Remove workspace attribute from experiment and use path instead
+- Do not require comment attribute to be set when creating Evoked
+- Try to get default channel groups from active subject if channel groups not set
+- Add tests for utilities, experiment.py, subject.py and datatypes
+- Remove old stc code to separate branch
+- Add new import possibilities by using read_raw instead of read_raw_fif
+- If both EEG and MEG data present, show both when plotting topography
+- Add event delay for epoch creation
+- Fix mne_wrapper pkgutil bug
+- Improve exception messaging in many places
 
 0.16.1 (2020-11-13)
 ------------------
