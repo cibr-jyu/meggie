@@ -1,5 +1,3 @@
-""" This module provides tools for doing tasks in worker threads """
-
 from queue import Queue
 from queue import Empty
 from time import sleep

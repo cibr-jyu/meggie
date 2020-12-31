@@ -1,6 +1,3 @@
-""" This module provides tools for popping up simple messageboxes
-"""
-
 import logging
 
 import meggie.utilities.dialogs.messageBoxes as messageBoxes

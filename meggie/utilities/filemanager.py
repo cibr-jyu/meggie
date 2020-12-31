@@ -1,25 +1,16 @@
-# coding: utf-8
-
-"""
-"""
-
 import os
-import pickle
 import shutil
 import re
-import sys
 import datetime
 import logging
 import errno
-
-from distutils import dir_util
 
 import numpy as np
 import mne
 
 
 def open_raw(fname, preload=True):
-    """
+    """ reads raw from file
     """
     try:
         logging.getLogger('ui_logger').info('Reading ' + fname)
@@ -30,7 +21,8 @@ def open_raw(fname, preload=True):
         raise Exception('Could not read the raw file: ' + str(fname))
 
 def save_raw(raw, path, overwrite=True):
-    """ Makes saving raw more atomic
+    """ Makes saving raw more atomic by saving
+    first to tmp file and then moving with shutil
     """
 
     folder = os.path.dirname(path)
@@ -78,7 +70,7 @@ def save_raw(raw, path, overwrite=True):
 
 
 def ensure_folders(paths):
-    """
+    """ Ensures that paths in paths exist.
     """
     for path in paths:
         if not os.path.exists(path):
@@ -86,7 +78,7 @@ def ensure_folders(paths):
 
 
 def create_timestamped_folder(experiment):
-    """
+    """ Creates folder with timestamp inside output folder
     """
     current_time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     path = os.path.join(experiment.path, 'output')
@@ -121,7 +113,7 @@ def copy_subject_raw(subject, path):
                         os.path.join(subject.path, fname))
 
 def save_csv(path, data, column_names, row_descs):
-    """
+    """ Saves tabular data to csv.
     """
     # gather all the data to list of rows
     all_data = []
@@ -142,7 +134,7 @@ def save_csv(path, data, column_names, row_descs):
 
 
 def load_csv(path):
-    """
+    """ Loads tabular data from csv
     """
     all_data = np.loadtxt(path, dtype=np.str, delimiter=', ')
 
@@ -161,7 +153,7 @@ def load_csv(path):
 
 # see https://stackoverflow.com/a/13790289
 def tail(f, lines=1, _buffer=4098):
-    """Tail a file and get X lines from the end"""
+    """ Tail a file and get `lines` lines from the end """
     # place holder for the lines found
     lines_found = []
 
@@ -186,7 +178,7 @@ def tail(f, lines=1, _buffer=4098):
 
 
 def homepath():
-    """ Tries to find correct path for file from user's home folder """
+    """ Tries to find correct path for home folder """
     from os.path import expanduser
     home = expanduser("~")
 

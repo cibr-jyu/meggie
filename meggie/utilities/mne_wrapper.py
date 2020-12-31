@@ -178,9 +178,11 @@ def wrap_package(root, path, suffix):
         wrap_package('.'.join([root, path[0]]), [path[1]], suffix)
 
 def wrap_mne():
+    """ Goes recursively through mne package and wraps non-blacklisted
+    functions so that they will get logged by meggie """
     try:
         wrap_package('mne', mne.__path__, mne.__path__[0])
     except Exception as exc:
-        logging.getLogger('ui_logger').warning('Could not set up mne logging system')
         logging.getLogger('ui_logger').exception(str(exc))
+        logging.getLogger('ui_logger').warning('Could not set up mne logging system')
 

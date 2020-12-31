@@ -1,7 +1,3 @@
-# coding: utf-8
-
-"""
-"""
 import logging
 
 import numpy as np
@@ -27,6 +23,8 @@ def _should_take(id_, mask, event):
 
 
 def find_events(raw, stim_ch=None, mask=0, id_=None):
+    """ finds events using mne.find_events, but implements
+    own masking procedure """
 
     events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1,
                              uint_cast=True)
@@ -53,8 +51,7 @@ def find_events(raw, stim_ch=None, mask=0, id_=None):
 
 
 def find_stim_channel(raw):
-    """
-    Finds the appropriate stim channel from raw
+    """ Finds the appropriate stim channel from raw
     """
     channels = raw.info.get('ch_names')
     if 'STI101' in channels:

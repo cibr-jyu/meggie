@@ -3,6 +3,7 @@ import numpy as np
 
 
 def validate_name(name, minlength=1, maxlength=30, fieldname='name'):
+    """ Validates a name with length and regular expression criteria """
 
     name = str(name)
 
@@ -21,6 +22,8 @@ def validate_name(name, minlength=1, maxlength=30, fieldname='name'):
 
 
 def assert_arrays_same(arrays, message='Times do not match'):
+    """ Checks if list of arrays is pairwise equal
+    """
     for i, i_values in enumerate(arrays):
         for j, j_values in enumerate(arrays):
             if i != j:

@@ -1,8 +1,3 @@
-# coding: utf-8
-
-"""
-"""
-
 import os
 import logging
 import configparser
@@ -11,7 +6,7 @@ from meggie.utilities.filemanager import homepath
 
 
 class PreferencesHandler(object):
-    """ Class for storing Meggie preferences and setting them into effect.
+    """ Class for storing and setting preferences
     """
 
     def __init__(self):
@@ -76,7 +71,7 @@ class PreferencesHandler(object):
 
         try:
             self.workspace = config.get('Workspace', 'workspaceDir')
-        except BaseException:
+        except Exception as exc:
             self.workspace = ''
 
         try:
@@ -85,7 +80,7 @@ class PreferencesHandler(object):
                 self.auto_load_last_open_experiment = True
             else:
                 self.auto_load_last_open_experiment = False
-        except BaseException:
+        except Exception as exc:
             self.auto_load_last_open_experiment = False
 
         try:
@@ -93,22 +88,22 @@ class PreferencesHandler(object):
                 self.confirm_quit = True
             else:
                 self.confirm_quit = False
-        except BaseException:
+        except Exception as exc:
             self.confirm_quit = False
 
         try:
             self.previous_experiment_name = config.get(
                 'MiscOptions', 'previousExperimentName')
-        except BaseException:
+        except Exception as exc:
             self.previous_experiment_name = ''
 
         try:
             self.enabled_tabs = config.get('Tabs', 'enabledTabs')
             self.enabled_tabs = self.enabled_tabs.split(',')
-        except BaseException:
+        except Exception as exc:
             self.enabled_tabs = ''
         try:
             self.tab_preset = config.get('Tabs', 'preset')
-        except BaseException:
+        except Exception as exc:
             self.tab_preset = ''
 

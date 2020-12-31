@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import os
 import json
 import pkg_resources
@@ -12,6 +10,8 @@ from meggie.utilities.messaging import exc_messagebox
 
 
 def find_all_plugins():
+    """ Looks for plugins (installed packages with name meggie_*), that
+    can contain tabs or datatypes """
     plugins = []
     package_keys = [dist.key.replace('-', '_') for dist 
                     in pkg_resources.working_set]
@@ -52,9 +52,7 @@ def find_all_tab_specs():
 
 
 def construct_tab(source, package, tab_spec, parent):
-    """ Constructs analysis tab dynamically.
-
-    Constructs analysis tab dynamically from python package
+    """ Constructs analysis tab dynamically from python package
     containing an configuration file and code
     """
 
