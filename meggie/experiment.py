@@ -300,6 +300,9 @@ def open_existing_experiment(prefs, path=None):
                          'opened. There might be a problem with ' +
                          'cohesion of the experiment file.')
 
+    if not path:
+        path = os.path.dirname(exp_file)
+
     experiment = Experiment(data['name'], data['author'], path)
 
     if 'channel_groups' in data.keys() and data['channel_groups'] != 'MNE':
