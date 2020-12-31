@@ -61,9 +61,9 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBoxWorkingDirectory">
+        <widget class="QGroupBox" name="groupBoxWorkspace">
          <property name="title">
-          <string>Working directory:</string>
+          <string>Workspace:</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">

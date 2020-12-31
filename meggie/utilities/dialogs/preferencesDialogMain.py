@@ -36,8 +36,7 @@ class PreferencesDialog(QtWidgets.QDialog):
         self.prefs = self.parent.prefs
 
         # Prefill previous values to UI and attributes from config file.
-        workDirectory = self.prefs.working_directory
-        self.ui.LineEditFilePath.setText(workDirectory)
+        self.ui.LineEditFilePath.setText(self.prefs.workspace)
 
         # freesurfer_home = self.prefs.freesurfer_home
         # self.ui.lineEditFreeSurferHome.setText(freesurfer_home)
@@ -93,19 +92,10 @@ class PreferencesDialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        workFilepath = QtCore.QDir.toNativeSeparators(
+        workspace = QtCore.QDir.toNativeSeparators(
             str(QtWidgets.QFileDialog.getExistingDirectory(
                 self, "Select a workspace directory")))
-        self.ui.LineEditFilePath.setText(workFilepath)
-
-    # def on_pushButtonBrowseFreeSurferHome_clicked(self, checked=None):
-    #     if checked is None:
-    #         return
-
-    #     freesurfer_home = QtCore.QDir.toNativeSeparators(
-    #         str(QtWidgets.QFileDialog.getExistingDirectory(
-    #             self, "Point Meggie to your FreeSurfer home directory")))
-    #     self.ui.lineEditFreeSurferHome.setText(freesurfer_home)
+        self.ui.LineEditFilePath.setText(workspace)
 
     def on_pushButtonCustom_clicked(self, checked=None):
         if checked is None:
@@ -125,12 +115,12 @@ class PreferencesDialog(QtWidgets.QDialog):
 
     def accept(self):
 
-        workFilepath = self.ui.LineEditFilePath.text()
-        if not os.path.isdir(workFilepath):
-            message = 'No file path found for working file'
+        workspace = self.ui.LineEditFilePath.text()
+        if not os.path.isdir(workspace):
+            message = 'Workspace must be set to proper path.'
             messagebox(self.parent, message)
             return
-        self.prefs.working_directory = workFilepath
+        self.prefs.workspace = workspace
 
         # freesurfer_path = self.ui.lineEditFreeSurferHome.text()
         # self.prefs.freesurfer_home = freesurfer_path

@@ -4,12 +4,9 @@
 """
 
 import os
+import logging
 import json
-import shutil
-import glob
 import pkg_resources
-
-import numpy as np
 
 import meggie.utilities.filemanager as filemanager
 
@@ -30,8 +27,7 @@ class Subject:
         self.ica_applied = ica_applied
         self.rereferenced = rereferenced
 
-        self.path = os.path.join(experiment.workspace,
-                                 experiment.name,
+        self.path = os.path.join(experiment.path,
                                  name)
 
         for source in find_all_sources():
@@ -63,7 +59,8 @@ class Subject:
         dataobject = container.pop(name, None)
         try:
             dataobject.delete_content()
-        except Exception:
+        except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             raise IOError('Could not delete ' + str(datatype) +
                           ' from folders')
 
@@ -84,7 +81,6 @@ class Subject:
             except OSError:
                 raise IOError("Could not find the raw file.")
             self._raw = raw
-
             return raw
 
     def save(self):

@@ -12,13 +12,14 @@ from meggie.utilities.filemanager import load_csv
 def test_create_timestamped_folder():
     with tempfile.TemporaryDirectory() as dirpath:
 
-        experiment = Experiment('test_experiment', '')
-        experiment.workspace = dirpath
+        name = 'test_experiment'
+        author = ''
+        path = os.path.join(dirpath, name)
+        experiment = Experiment(name, author, path)
 
         create_timestamped_folder(experiment)
 
-        contents = os.listdir(os.path.join(experiment.workspace, experiment.name, 
-                                           'output'))
+        contents = os.listdir(os.path.join(experiment.path, 'output'))
         assert(len(contents) > 0)
 
 

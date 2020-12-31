@@ -89,8 +89,7 @@ def create_timestamped_folder(experiment):
     """
     """
     current_time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    path = os.path.join(experiment.workspace,
-                        experiment.name, 'output')
+    path = os.path.join(experiment.path, 'output')
     timestamped_folder = os.path.join(path, current_time_str)
 
     try:

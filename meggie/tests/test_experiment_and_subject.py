@@ -18,7 +18,7 @@ def test_experiment_and_subject():
         # Create preferences object to store working directory
         # Also set prefs_path inside tempdir
         prefs = PreferencesHandler()
-        prefs.working_directory = dirpath
+        prefs.workspace = dirpath
         prefs.prefs_path = os.path.join(dirpath, '.meggieprefs')
 
         # create experiment (creates experiment directory inside working directory,
@@ -39,7 +39,7 @@ def test_experiment_and_subject():
         experiment.save_experiment_settings()
 
         loaded_experiment = open_existing_experiment(prefs, 
-            path=os.path.join(experiment.workspace, experiment.name))
+            path=experiment.path)
 
         assert(experiment.name == loaded_experiment.name)
         assert(set(experiment.subjects.keys()) == set(loaded_experiment.subjects.keys()))

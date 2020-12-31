@@ -18,7 +18,7 @@ class PreferencesHandler(object):
         """
         """
         self.prefs_path = ""
-        self.working_directory = ""
+        self.workspace = ""
         self.previous_experiment_name = ""
         self.auto_load_last_open_experiment = False
         self.confirm_quit = False
@@ -38,7 +38,7 @@ class PreferencesHandler(object):
         # Sanity of these values is assumed to be checked by the calling method
         config.set('MiscOptions', 'previousExperimentName',
                    self.previous_experiment_name)
-        config.set('Workspace', 'workspaceDir', self.working_directory)
+        config.set('Workspace', 'workspaceDir', self.workspace)
 
         if self.auto_load_last_open_experiment:
             config.set('MiscOptions', 'autoReloadPreviousExperiment', 'True')
@@ -75,9 +75,9 @@ class PreferencesHandler(object):
             config.read(filename)
 
         try:
-            self.working_directory = config.get('Workspace', 'workspaceDir')
+            self.workspace = config.get('Workspace', 'workspaceDir')
         except BaseException:
-            self.working_directory = ''
+            self.workspace = ''
 
         try:
             if config.get('MiscOptions',
