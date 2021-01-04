@@ -67,7 +67,7 @@ def projections(experiment, data, window):
     subject = experiment.active_subject
     raw = subject.get_raw()
     if not raw.info['projs']:
-        messagebox(window, "Raw contains no projection vectors")
+        messagebox(window, "Data does not contain any projection vectors")
         return
 
     fig = raw.plot_projs_topomap()

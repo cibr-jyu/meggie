@@ -50,12 +50,6 @@ def plot_sources(raw, ica):
     """
     """
     sources = ica.get_sources(raw)
-
-    # alter amplitudes to get better plot, this is heuristic
-    for source in sources._data:
-        for idx, amplitude in enumerate(source):
-            source[idx] = amplitude / 5000.0
-
     sources.plot()
 
 

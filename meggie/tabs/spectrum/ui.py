@@ -8,6 +8,7 @@ from pprint import pformat
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.names import next_available_name
+from meggie.utilities.formats import format_float
 
 import meggie.utilities.filemanager as filemanager
 
@@ -165,8 +166,8 @@ def spectrum_info(experiment, data, window):
         message = ""
 
         if 'fmin' in params and 'fmax' in params:
-            message += 'Frequencies: {0}Hz - {1}Hz\n'.format(params['fmin'], 
-                                                             params['fmax'])
+            message += 'Frequencies: {0}Hz - {1}Hz\n'.format(format_float(params['fmin']), 
+                                                             format_float(params['fmax']))
 
         if 'nfft' in params:
             message += 'Window length (samples): {0}\n'.format(params['nfft'])
@@ -178,7 +179,7 @@ def spectrum_info(experiment, data, window):
             message += '\nIntervals: \n'
             for key, ivals in params['intervals'].items():
                 message += 'Condition ' + str(key) + ': '
-                message += ', '.join(['({0}s - {1}s)'.format(ival[0], ival[1])
+                message += ', '.join(['({0}s - {1}s)'.format(format_float(ival[0]), format_float(ival[1]))
                                       for ival in ivals])
                 message += '\n'
 
