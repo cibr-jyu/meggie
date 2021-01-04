@@ -40,9 +40,9 @@ def messagebox(parent, msg, exec_=False):
     """
     messagebox = messageBoxes.shortMessageBox(msg, parent)
     if exec_:
-        parent.messagebox.exec_()
+        messagebox.exec_()
     else:
-        parent.messagebox.show()
+        messagebox.show()
 
 
 def questionbox(parent, question, handler):
