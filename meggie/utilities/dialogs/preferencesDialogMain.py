@@ -44,9 +44,6 @@ class PreferencesDialog(QtWidgets.QDialog):
         if self.prefs.auto_load_last_open_experiment:
             self.ui.checkBoxAutomaticOpenPreviousExperiment.setChecked(True)
 
-        if self.prefs.confirm_quit:
-            self.ui.checkBoxConfirmQuit.setChecked(True)
-
         tab_presets = []
         for source in find_all_sources():
             config_path = pkg_resources.resource_filename(
@@ -131,12 +128,6 @@ class PreferencesDialog(QtWidgets.QDialog):
         else:
             autoLoadLastOpenExp = False
         self.prefs.auto_load_last_open_experiment = autoLoadLastOpenExp  # noqa
-
-        if self.ui.checkBoxConfirmQuit.isChecked():
-            confirmQuit = True
-        else:
-            confirmQuit = False
-        self.prefs.confirm_quit = confirmQuit
 
         tab_presets = []
         for source in find_all_sources():

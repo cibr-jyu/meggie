@@ -28,18 +28,23 @@ def exc_messagebox(parent, exc, exec_=False):
         'More information can be found from console below.',
     ])
 
-    parent.messagebox = messageBoxes.shortMessageBox(message)
+    messagebox = messageBoxes.shortMessageBox(message, parent)
     if exec_:
-        parent.messagebox.exec_()
+        messagebox.exec_()
     else:
-        parent.messagebox.show()
+        messagebox.show()
 
 
-def messagebox(parent, msg, title='Info', exec_=False):
+def messagebox(parent, msg, exec_=False):
     """ Pops up a messagebox
     """
-    parent.messagebox = messageBoxes.shortMessageBox(msg, title=title)
+    messagebox = messageBoxes.shortMessageBox(msg, parent)
     if exec_:
         parent.messagebox.exec_()
     else:
         parent.messagebox.show()
+
+
+def questionbox(parent, question, handler):
+    questionbox = messageBoxes.shortQuestionBox(question, parent, handler)
+    questionbox.exec_()

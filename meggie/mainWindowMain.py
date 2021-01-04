@@ -25,6 +25,8 @@ from meggie.utilities.mne_wrapper import wrap_mne
 from meggie.experiment import open_existing_experiment
 
 from meggie.utilities.decorators import threaded
+
+from meggie.utilities.messaging import questionbox
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 
@@ -80,19 +82,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def on_actionQuit_triggered(self, checked=None):
         """ Closes the program, possibly after a confirmation by the user. """
+
         if checked is None:
             return
 
-        if self.prefs.confirm_quit:
-            reply = QtWidgets.QMessageBox.question(self, 'Close Meggie',
-                                                   'Are you sure you want to quit Meggie?',
-                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
-                                                   QtWidgets.QMessageBox.No)
-
-            if reply == QtWidgets.QMessageBox.Yes:
-                self.close()
-        else:
-            self.close()
+        self.close()
 
     def on_actionCreateExperiment_triggered(self, checked=None):
         """
@@ -163,14 +157,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if selIndexes == []:
             return
 
-        message = 'Permanently remove the selected subjects and the related files?'
-        reply = QtWidgets.QMessageBox.question(self, 'Delete selected subjects',
-                                               message, QtWidgets.QMessageBox.Yes |
-                                               QtWidgets.QMessageBox.No,
-                                               QtWidgets.QMessageBox.No)
-
-        failures = []
-        if reply == QtWidgets.QMessageBox.Yes:
+        def handler():
+            failures = []
             for index in selIndexes:
                 subject_name = index.data()
                 try:
@@ -178,31 +166,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 except Exception:
                     failures.append(subject_name)
 
-        if failures:
-            msg = ''.join(['Could not remove subject folders ',
-                           'for following subjects: ',
-                           '\n'.join(failures)])
-            messagebox(self, msg)
+            if failures:
+                msg = ''.join(['Could not remove subject folders ',
+                               'for following subjects: ',
+                               '\n'.join(failures)])
+                messagebox(self, msg)
 
-        self.experiment.save_experiment_settings()
-        self.initialize_ui()
+            self.experiment.save_experiment_settings()
+            self.initialize_ui()
 
-    def closeEvent(self, event):
-        """ Redefine window close event to allow confirming on quit. """
+        questionbox(self, 'Permanently remove the selected subjects and the related files?', 
+                    handler)
 
-        if self.prefs.confirm_quit:
-            reply = QtWidgets.QMessageBox.question(self, 'Close Meggie',
-                                                   'Are you sure you want to '
-                                                   'quit?', QtWidgets.QMessageBox.Yes |
-                                                   QtWidgets.QMessageBox.No,
-                                                   QtWidgets.QMessageBox.No)
-
-            if reply == QtWidgets.QMessageBox.Yes:
-                event.accept()
-            else:
-                event.ignore()
-        else:
-            event.accept()
 
     def on_actionShowLog_triggered(self, checked=None):
         if checked is None:
