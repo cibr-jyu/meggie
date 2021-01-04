@@ -68,8 +68,8 @@ class RereferencingDialog(QtWidgets.QDialog):
         try:
             rereference_fun(do_meanwhile=self.parent.update_ui)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self.parent, exc)
-            self.close()
             return
 
         experiment.active_subject.save()
@@ -78,7 +78,7 @@ class RereferencingDialog(QtWidgets.QDialog):
         experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished rereferencing.')
         self.close()
 
     def acceptBatch(self):
@@ -119,6 +119,6 @@ class RereferencingDialog(QtWidgets.QDialog):
         experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished rereferencing.')
         self.close()
 

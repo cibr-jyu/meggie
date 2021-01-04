@@ -18,7 +18,6 @@ from meggie.tabs.preprocessing.controller.ica import plot_sources
 from meggie.tabs.preprocessing.controller.ica import plot_properties
 from meggie.tabs.preprocessing.controller.ica import plot_changes
 from meggie.tabs.preprocessing.controller.ica import compute_ica
-from meggie.tabs.preprocessing.controller.ica import apply_ica
 
 from meggie.utilities.messaging import exc_messagebox
 
@@ -75,6 +74,7 @@ class ICADialog(QtWidgets.QDialog):
         try:
             self.ica = _compute_ica(do_meanwhile=self.parent.update_ui)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 
@@ -84,7 +84,7 @@ class ICADialog(QtWidgets.QDialog):
             self.component_info[label] = idx
             self.not_removed.append(label)
 
-        logging.getLogger('ui_logger').info('ICA finished.')
+        logging.getLogger('ui_logger').info('Computing ICA model finished.')
 
     def on_pushButtonTransfer_clicked(self, checked=None):
         """ Transfers items from list to another. QListWidgets are the necessary evil
@@ -143,12 +143,10 @@ class ICADialog(QtWidgets.QDialog):
 
         raw = self.experiment.active_subject.get_raw()
 
-        meg_channels = mne.pick_types(raw.info, eeg=False, meg=True)
-        eeg_channels = mne.pick_types(raw.info, eeg=True, meg=False)
-
         try:
             plot_topographies(self.ica, len(self.component_info))
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 
@@ -163,6 +161,7 @@ class ICADialog(QtWidgets.QDialog):
         try:
             plot_sources(raw, self.ica)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 
@@ -179,12 +178,10 @@ class ICADialog(QtWidgets.QDialog):
 
         raw = self.experiment.active_subject.get_raw()
 
-        meg_channels = mne.pick_types(raw.info, eeg=False, meg=True)
-        eeg_channels = mne.pick_types(raw.info, eeg=True, meg=False)
-
         try:
             plot_properties(raw, self.ica, picks)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 
@@ -201,6 +198,7 @@ class ICADialog(QtWidgets.QDialog):
         try:
             plot_changes(raw, self.ica, indices)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 
@@ -232,12 +230,18 @@ class ICADialog(QtWidgets.QDialog):
 
         indices = [self.component_info[name] for name in self.removed]
 
-        @threaded
-        def apply_ica_wrapper():
-            apply_ica(raw, self.experiment, self.ica, indices)
+        try:
+            @threaded
+            def apply_ica_wrapper():
+                self.ica.apply(raw, exclude=indices)
 
-        apply_ica_wrapper(do_meanwhile=self.parent.update_ui)
+            apply_ica_wrapper(do_meanwhile=self.parent.update_ui)
+        except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
+            exc_messagebox(self, exc)
+            return
 
+        self.experiment.active_subject.save()
         self.experiment.active_subject.ica_applied = True
         self.experiment.save_experiment_settings()
 

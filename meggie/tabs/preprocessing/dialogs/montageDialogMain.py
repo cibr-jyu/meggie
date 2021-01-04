@@ -120,10 +120,11 @@ class MontageDialog(QtWidgets.QDialog):
             self.set_montage(subject, do_meanwhile=self.parent.update_ui)
             subject.save()
         except Exception as exc:
-            exc_messagebox(self.parent, exc)
+            logging.getLogger('ui_logger').exception(str(exc))
+            exc_messagebox(self, exc)
             return
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished setting montage.')
         self.close()
 
     def acceptBatch(self):
@@ -145,6 +146,6 @@ class MontageDialog(QtWidgets.QDialog):
 
         self.batching_widget.cleanup()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished setting montage.')
         self.close()
 

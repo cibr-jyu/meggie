@@ -82,10 +82,3 @@ def plot_changes(raw, ica, indices):
     ica.apply(raw_removed, exclude=indices)
     compare_raws(raw, raw_removed)
 
-
-def apply_ica(raw, experiment, ica, indices):
-    """
-    """
-    ica.apply(raw, exclude=indices)
-
-    experiment.active_subject.save()

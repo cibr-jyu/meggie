@@ -88,6 +88,7 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
             try:
                 events_from_annotations(subject, self.items)
             except Exception as exc:
+                logging.getLogger('ui_logger').exception(str(exc))
                 exc_messagebox(self, exc)
                 return
 
@@ -96,7 +97,7 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
         evs_from_annots(do_meanwhile=self.parent.update_ui)
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished creating events from annotations.')
         self.close()
 
     def acceptBatch(self):
@@ -124,7 +125,8 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
 
         self.batching_widget.cleanup()
 
+        logging.getLogger('ui_logger').info('Finished creating events from annotations.')
+
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
         self.close()

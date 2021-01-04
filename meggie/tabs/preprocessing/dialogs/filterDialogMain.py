@@ -89,6 +89,8 @@ class FilterDialog(QtWidgets.QDialog):
             exc_messagebox(self.parent, exc)
             logging.getLogger('ui_logger').exception(str(exc))
 
+        logging.getLogger('ui_logger').info('Finished filtering')
+
         self.parent.initialize_ui()
         self.close()
 
@@ -113,6 +115,8 @@ class FilterDialog(QtWidgets.QDialog):
                         (subject, str(exc)))
 
         self.batching_widget.cleanup()
+
+        logging.getLogger('ui_logger').info('Finished filtering')
 
         self.parent.initialize_ui()
         self.close()
