@@ -1,7 +1,5 @@
 """
 """
-import logging
-
 from PyQt5 import QtWidgets
 
 from meggie.tabs.evoked.dialogs.evokedTopomapDialogUi import Ui_evokedTopomapDialog
