@@ -214,9 +214,9 @@ class Experiment:
 
         save_dict = {
             'subjects': subjects,
-            'name': self.name,
-            'author': self.author,
-            'channel_groups': self.channel_groups
+            'name': self._name,
+            'author': self._author,
+            'channel_groups': self._channel_groups
         }
 
         try:
