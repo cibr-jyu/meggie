@@ -7,7 +7,7 @@ def next_available_name(old_names, stem):
     """
     suffices = []
     for old_name in old_names:
-        template = stem + r'([_]?)' + r'([0-9]*)'
+        template = stem + r'([_]?)' + r'([0-9]*)$'
         match = re.match(template, old_name)
         if match:
             suffix = match.group(2)
