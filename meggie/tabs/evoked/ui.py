@@ -101,7 +101,7 @@ def _plot_evoked_topo(experiment, evoked, ch_type):
     """
     evokeds = []
     labels = []
-    for key, evok in evoked.content.items():
+    for key, evok in sorted(evoked.content.items()):
 
         info = evok.info
         if ch_type == 'eeg':
@@ -189,7 +189,7 @@ def plot_topomap(experiment, data, window):
 
     def handler(tmin, tmax, step, radius, evoked):
 
-        for key, evok in evoked.content.items():
+        for key, evok in sorted(evoked.content.items()):
             channels = get_channels_by_type(evok.info)
             for ch_type in channels.keys():
                 title = '{0}_{1}_{2}'.format(selected_name, key, ch_type)
@@ -239,7 +239,7 @@ def plot_single_channel(experiment, data, window):
 
     info = list(content.values())[0].info
 
-    conditions = [key for key in content.keys()]
+    conditions = [key for key in sorted(content.keys())]
 
     title = evokeds.name
 
@@ -281,8 +281,8 @@ def plot_single_channel(experiment, data, window):
             ch_idx = info['ch_names'].index(ch_name)
 
             # create new evoked based on old
-            new_evokeds = {}
-            for key, evoked in content.items():
+            new_evokeds = []
+            for key, evoked in sorted(content.items()):
                 new_evoked = evoked.copy()
                 
                 # smoothen
@@ -294,7 +294,7 @@ def plot_single_channel(experiment, data, window):
                         exc_messagebox(window, exc)
 
                 new_evoked.comment = legend[key]
-                new_evokeds[legend[key]] = new_evoked
+                new_evokeds.append(new_evoked)
 
             ylim = {ch_types[ch_name]: ylim}
 

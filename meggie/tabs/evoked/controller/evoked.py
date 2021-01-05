@@ -32,7 +32,7 @@ def plot_channel_averages(experiment, evoked):
 
     # average and restructure for ease of plotting
     averages = {}
-    for key, mne_evoked in evoked.content.items():
+    for key, mne_evoked in sorted(evoked.content.items()):
         data_labels, averaged_data = create_averages(experiment, mne_evoked)
         for idx in range(len(data_labels)):
             if not data_labels[idx] in averages:

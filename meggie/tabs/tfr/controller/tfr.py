@@ -99,7 +99,7 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
         ax.figure.suptitle(title)
         ax.set_title('')
 
-        for color_idx, (key, tse) in enumerate(tses.items()):
+        for color_idx, (key, tse) in enumerate(sorted(tses.items())):
             ax.plot(times, tse[names_idx], color=colors[color_idx], label=key)
             ax.axhline(0)
             ax.axvline(0)
@@ -119,7 +119,7 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
             fig, info, ch_names, individual_plot):
 
         handles = []
-        for color_idx, (key, tse) in enumerate(tses.items()):
+        for color_idx, (key, tse) in enumerate(sorted(tses.items())):
             handles.append(ax.plot(tse[names_idx], linewidth=0.2, 
                            color=colors[color_idx],
                            label=key)[0])
@@ -148,7 +148,7 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
     logging.getLogger('ui_logger').info('Plotting TSE channel averages..')
 
     averages = {}
-    for idx, (key, tse) in enumerate(tses.items()):
+    for idx, (key, tse) in enumerate(sorted(tses.items())):
 
         data_labels, averaged_data = average_to_channel_groups(
             tse, info, ch_names, channel_groups)
