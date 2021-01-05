@@ -1,8 +1,6 @@
 import logging
 import os
 
-from pprint import pformat
-
 from meggie.utilities.names import next_available_name
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
@@ -57,6 +55,9 @@ def delete(experiment, data, window):
 
     subject.remove(selected_name, 'tfr')
     experiment.save_experiment_settings()
+
+    logging.getLogger('ui_logger').info('Deleted selected TFR')
+
     window.initialize_ui()
 
 
@@ -76,8 +77,11 @@ def delete_from_all(experiment, data, window):
                 logging.getLogger('ui_logger').warning(
                     'Could not remove tfr for ' +
                     subject.name)
-    
+
     experiment.save_experiment_settings()
+
+    logging.getLogger('ui_logger').info('Deleted selected TFR from all subjects')
+
     window.initialize_ui()
 
 
@@ -109,7 +113,10 @@ def plot_tfr(experiment, data, window):
                                   selected_name, condition, blmode, blstart,
                                   blend, tmin, tmax, fmin, fmax)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
+
+        logging.getLogger('ui_logger').info('Plotting TFR')
 
     dialog = TFROutputOptions(window, experiment, selected_name,
                               handler, ask_condition=True)
@@ -142,7 +149,10 @@ def plot_tse(experiment, data, window):
                                   selected_name, blmode, blstart,
                                   blend, tmin, tmax, fmin, fmax)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
+
+        logging.getLogger('ui_logger').info('Plotting TSE')
 
     dialog = TFROutputOptions(window, experiment, selected_name, handler)
     dialog.show()
@@ -179,6 +189,7 @@ def save_tfr(experiment, data, window):
                                           blmode, blstart, blend,
                                           tmin, tmax, fmin, fmax)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
 
     dialog = TFROutputOptions(window, experiment, selected_name, handler)
@@ -217,6 +228,7 @@ def save_tse(experiment, data, window):
                                           blmode, blstart, blend,
                                           tmin, tmax, fmin, fmax)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
 
     dialog = TFROutputOptions(window, experiment, selected_name, handler)
@@ -239,8 +251,10 @@ def group_average(experiment, data, window):
             window.initialize_ui()
 
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
-            return
+
+        logging.getLogger('ui_logger').info('Finished creating group average TFR.')
 
     default_name = next_available_name(
         experiment.active_subject.tfr.keys(),

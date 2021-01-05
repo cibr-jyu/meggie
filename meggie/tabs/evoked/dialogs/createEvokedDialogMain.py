@@ -92,13 +92,14 @@ class CreateEvokedDialog(QtWidgets.QDialog):
         try:
             self.create_evoked(subject, selected_epochs)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished creating evoked.')
 
         self.close()
 
@@ -123,6 +124,6 @@ class CreateEvokedDialog(QtWidgets.QDialog):
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished creating evoked.')
 
         self.close()

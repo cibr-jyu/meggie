@@ -147,13 +147,14 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         try:
             self.calculate_epochs(subject, params)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished creating epochs.')
 
         self.close()
 
@@ -188,7 +189,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished creating epochs.')
 
         self.close()
 

@@ -67,6 +67,9 @@ def delete(experiment, data, window):
 
     subject.remove(selected_name, 'epochs')
     experiment.save_experiment_settings()
+
+    logging.getLogger('ui_logger').info('Deleted selected TFR')
+
     window.initialize_ui()
 
 
@@ -87,6 +90,9 @@ def delete_from_all(experiment, data, window):
                     'Could not remove epochs for ' +
                     subject.name)
     experiment.save_experiment_settings()
+
+    logging.getLogger('ui_logger').info('Deleted selected TFR from all subjects')
+
     window.initialize_ui()
 
 
@@ -101,6 +107,8 @@ def plot_epochs(experiment, data, window):
 
     epochs = subject.epochs.get(selected_name)
     epochs.content.plot()
+
+    logging.getLogger('ui_logger').info('Plotting epochs')
 
 
 def plot_image(experiment, data, window):
@@ -118,4 +126,6 @@ def plot_image(experiment, data, window):
         ch_type = fig.canvas.get_window_title()
         title = '{0}_{1}'.format(selected_name, ch_type)
         fig.canvas.set_window_title(title)
+
+    logging.getLogger('ui_logger').info('Plotting epochs image')
 

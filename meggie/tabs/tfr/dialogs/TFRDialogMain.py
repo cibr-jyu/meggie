@@ -112,13 +112,14 @@ class TFRDialog(QtWidgets.QDialog):
                        do_meanwhile=self.parent.update_ui)
 
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self.parent, exc)
             return
 
         experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished creating TFR.')
 
         self.close()
 
@@ -168,6 +169,6 @@ class TFRDialog(QtWidgets.QDialog):
         experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished')
+        logging.getLogger('ui_logger').info('Finished creating TFR.')
 
         self.close()

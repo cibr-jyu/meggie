@@ -26,8 +26,6 @@ from meggie.utilities.units import get_unit
 
 def plot_channel_averages(experiment, evoked):
     """
-    Draws a topography representation of the evoked potentials.
-
     """
 
     colors = color_cycle(len(list(evoked.content.keys())))
@@ -66,7 +64,7 @@ def plot_channel_averages(experiment, evoked):
             ax.axvline(0, color='black')
 
         fig.legend(handles=handles)
-        title_elems = ['evoked', evoked.name, ch_type]
+        title_elems = [evoked.name, ch_type]
         fig.canvas.set_window_title('_'.join(title_elems))
         fig.suptitle(' '.join(title_elems))
         fig.tight_layout()

@@ -226,7 +226,7 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
                 handles.append(ax.plot(freqs, curve, color=colors[color_idx], label=key)[0])
 
         fig.legend(handles=handles)
-        title_elems = ['spectrum', name, ch_type]
+        title_elems = [name, ch_type]
         fig.canvas.set_window_title('_'.join(title_elems))
         fig.suptitle(' '.join(title_elems))
         fig.tight_layout()
@@ -269,7 +269,7 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
             ax.plot(freqs, curve, color=colors[color_idx],
                     label=key)
 
-        title_elems = ['spectrum', name, ch_name]
+        title_elems = [name, ch_name]
         ax.figure.canvas.set_window_title('_'.join(title_elems))
         ax.figure.suptitle(' '.join(title_elems))
         ax.set_title('')

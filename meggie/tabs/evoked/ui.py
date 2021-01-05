@@ -131,19 +131,19 @@ def _plot_evoked_topo(experiment, evoked, ch_type):
             channel = plt.getp(ax, 'title')
             ax.set_title('')
 
-            title = "evoked_{0}_{1}".format(evoked.name, channel)
+            title_elems = [evoked.name, channel]
 
             ax.legend(handles=lines, loc='upper right')
 
-            ax.figure.canvas.set_window_title(title)
-            ax.figure.suptitle(title)
+            ax.figure.canvas.set_window_title('_'.join(title_elems))
+            ax.figure.suptitle(title, ' '.join(title_elems))
             plt.show()
         except Exception as exc:
             pass
 
     fig = mne.viz.plot_evoked_topo(evokeds, color=colors)
     fig.canvas.mpl_connect('button_press_event', onclick)
-    title = "evoked_{0}_{1}".format(evoked.name, ch_type)
+    title = "{0}_{1}".format(evoked.name, ch_type)
     fig.canvas.set_window_title(title)
 
 
@@ -197,7 +197,7 @@ def plot_topomap(experiment, data, window):
         for key, evok in sorted(evoked.content.items()):
             channels = get_channels_by_type(evok.info)
             for ch_type in channels.keys():
-                title = '{0}_{1}_{2}'.format(selected_name, key, ch_type)
+                title_elems = [selected_name, key, ch_type]
                 times = np.arange(tmin, tmax, step)
 
                 # Use custom figure so that mne does not remove the mpl toolbar
@@ -223,8 +223,8 @@ def plot_topomap(experiment, data, window):
                 try:
                     fig = mne.viz.plot_evoked_topomap(
                         evok, times=times, ch_type=ch_type,
-                        title=title, axes=axes, sphere=sphere)
-                    fig.canvas.set_window_title(title)
+                        title=' '.join(title_elems), axes=axes, sphere=sphere)
+                    fig.canvas.set_window_title('_'.join(title_elems))
                 except Exception as exc:
                     logging.getLogger('ui_logger').exception(str(exc))
                     exc_messagebox(window, exc)
