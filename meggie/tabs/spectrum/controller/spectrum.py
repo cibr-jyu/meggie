@@ -200,7 +200,7 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
         'Plotting spectrum channel averages..')
 
     averages = {}
-    for idx, (key, psd) in enumerate(data.items()):
+    for key, psd in sorted(data.items()):
 
         data_labels, averaged_data = average_to_channel_groups(
             psd, info, ch_names, channel_groups)
@@ -208,31 +208,38 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
         if not data_labels:
             raise Exception('No channel groups matching the data found.')
 
-        averages[key] = data_labels, averaged_data
-        shape = averaged_data.shape
+        for label_idx, label in enumerate(data_labels):
+            if not label in averages:
+                averages[label] = []
 
-    for ii in range(shape[0]):
-        fig, ax = plt.subplots()
-        for color_idx, key in enumerate(averages.keys()):
+            averages[label].append((key, averaged_data[label_idx]))
+
+    ncols = 4
+    ch_groups = [label[1] for label in averages.keys()]
+    nrows = int((len(ch_groups) - 1) / ncols + 1)
+
+    for ch_type in set([label[0] for label in averages.keys()]):
+        fig, axes = plt.subplots(nrows=nrows, ncols=ncols)
+        for ch_group_idx, ch_group in enumerate(ch_groups):
+            ax = axes[ch_group_idx // ncols, ch_group_idx % ncols]
+            ax.set_title(ch_group)
             ax.set_xlabel('Frequency (Hz)')
+            ax.set_ylabel('Power ({})'.format(
+                get_power_unit(ch_type, log_transformed)))
 
-            ax.set_ylabel('Power ({})'.format(get_power_unit(
-                averages[key][0][ii][0],
-                log_transformed
-            )))
+            handles = []
+            for color_idx, (key, curve) in enumerate(averages[(ch_type, ch_group)]):
 
-            if log_transformed:
-                curve = 10 * np.log10(averages[key][1][ii])
-            else:
-                curve = averages[key][1][ii]
+                if log_transformed:
+                    curve = 10 * np.log10(curve)
 
-            ax.plot(freqs, curve, color=colors[color_idx], label=key)
+                handles.append(ax.plot(freqs, curve, color=colors[color_idx], label=key)[0])
 
-        ax.legend()
-        ch_type, ch_group = averages[key][0][ii]
-        title = 'spectrum_{0}_{1}_{2}'.format(name, ch_type, ch_group)
+        title = 'spectrum_{0}_{1}'.format(name, ch_type)
+        fig.legend(handles=handles)
         fig.canvas.set_window_title(title)
         fig.suptitle(title)
+        fig.tight_layout()
 
     plt.show()
 
@@ -268,7 +275,7 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
         """
         """
         ch_name = ch_names[names_idx]
-        for color_idx, (key, psd) in enumerate(data.items()):
+        for color_idx, (key, psd) in enumerate(sorted(data.items())):
 
             if log_transformed:
                 curve = 10 * np.log10(psd[names_idx])
@@ -299,7 +306,7 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
             fig, info, ch_names, individual_plot):
 
         handles = []
-        for color_idx, (key, psd) in enumerate(data.items()):
+        for color_idx, (key, psd) in enumerate(sorted(data.items())):
 
             if log_transformed:
                 curve = 10 * np.log10(psd[names_idx])
