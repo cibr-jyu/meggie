@@ -148,7 +148,7 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
     grand_average_evoked.save_content()
     subject.add(grand_average_evoked, 'evoked')
 
-
+@threaded
 def save_all_channels(experiment, selected_name):
     """
     """
@@ -180,7 +180,7 @@ def save_all_channels(experiment, selected_name):
     filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
-
+@threaded
 def save_channel_averages(experiment, selected_name):
     """
     """

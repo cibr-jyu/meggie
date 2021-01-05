@@ -410,7 +410,7 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
     spectrum.save_content()
     subject.add(spectrum, 'spectrum')
 
-
+@threaded
 def save_all_channels(experiment, selected_name):
     column_names = []
     row_descs = []
@@ -435,7 +435,7 @@ def save_all_channels(experiment, selected_name):
     filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
-
+@threaded
 def save_channel_averages(experiment, selected_name, log_transformed=False):
     column_names = []
     row_descs = []

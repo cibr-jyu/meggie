@@ -369,11 +369,11 @@ def save(experiment, data, window):
     def handler(selected_option):
         try:
             if selected_option == 'channel_averages':
-                save_channel_averages(
-                    experiment, selected_name)
+                save_channel_averages(experiment, selected_name,
+                                      window.update_ui)
             else:
-                save_all_channels(
-                    experiment, selected_name)
+                save_all_channels(experiment, selected_name,
+                                  window.update_ui)
         except Exception as exc:
             logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)

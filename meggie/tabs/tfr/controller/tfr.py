@@ -214,35 +214,52 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
     ch_names = meggie_tfr.ch_names
     channel_groups = experiment.channel_groups
 
-    data_labels, averaged_data = average_to_channel_groups(
-        data, meggie_tfr.info, ch_names, channel_groups)
-
     sfreq = meggie_tfr.info['sfreq']
     times = meggie_tfr.times
     freqs = meggie_tfr.freqs
 
-    for idx in range(len(data_labels)):
-        data = averaged_data[idx]
-        labels = data_labels[idx]
-        info = mne.create_info(ch_names=['grand_average'],
-                               sfreq=sfreq,
-                               ch_types='mag')
-        tfr = mne.time_frequency.tfr.AverageTFR(info, 
-            data[np.newaxis, :], 
-            times, freqs, 1)
+    # compared to spectrums, evoked and tse, tfr is plotted with only one condition.
+    # it makes the plotting a bit simpler. we will also misuse 
+    # AverageTFR object to do the heavy work.
 
+    data_labels, averaged_data = average_to_channel_groups(
+        data, meggie_tfr.info, ch_names, channel_groups)
 
-        # prevent interaction as no topography is involved now
-        def onselect(*args, **kwargs):
-            pass
+    averages = {}
+    for label_idx, label in enumerate(data_labels):
+        averages[label] = averaged_data[label_idx]
 
-        tfr._onselect = onselect
+    ch_groups = sorted(set([label[1] for label in data_labels]))
+    ch_types = sorted(set([label[0] for label in data_labels]))
 
-        title_elems = [labels[1], labels[0]]
-        fig = tfr.plot(baseline=bline, mode=mode, title=' '.join(title_elems), 
-                       fmin=fmin, fmax=fmax, 
-                       tmin=tmin, tmax=tmax)
+    ncols = 4
+    nrows = int((len(ch_groups) - 1) / ncols + 1)
+
+    for ch_type in ch_types:
+        fig, axes = plt.subplots(nrows=nrows, ncols=ncols)
+        fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
+
+        for ch_group_idx, ch_group in enumerate(ch_groups):
+            ax = axes[ch_group_idx // ncols, ch_group_idx % ncols]
+            ax.set_title(ch_group)
+
+            info = mne.create_info(ch_names=['grand_average'], sfreq=sfreq, ch_types='mag')
+            tfr = mne.time_frequency.tfr.AverageTFR(info,
+                averages[(ch_type, ch_group)][np.newaxis, :], times, freqs, 1)
+
+            # prevent interaction as no topography is involved now
+            def onselect(*args, **kwargs):
+                pass
+            tfr._onselect = onselect
+
+            tfr.plot(baseline=bline, mode=mode, title='', 
+                     fmin=fmin, fmax=fmax, 
+                     tmin=tmin, tmax=tmax, axes=ax)
+
+        fig.tight_layout()
+        title_elems = [tfr_name, tfr_condition, ch_type]
         fig.canvas.set_window_title('_'.join(title_elems))
+        fig.suptitle(' '.join(title_elems))
 
 
 def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition, 
@@ -435,6 +452,7 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
     active_subject.add(meggie_tfr, "tfr")
 
 
+@threaded
 def save_tfr_all_channels(experiment, tfr_name,
                           blmode, blstart, blend,
                           tmin, tmax, fmin, fmax):
@@ -480,7 +498,7 @@ def save_tfr_all_channels(experiment, tfr_name,
         filemanager.save_csv(path, csv_data, column_names, row_descs)
         logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
-
+@threaded
 def save_tfr_channel_averages(experiment, tfr_name,
                               blmode, blstart, blend,
                               tmin, tmax, fmin, fmax):
@@ -534,7 +552,7 @@ def save_tfr_channel_averages(experiment, tfr_name,
         filemanager.save_csv(path, csv_data, column_names, row_descs)
         logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
-
+@threaded
 def save_tse_all_channels(experiment, tfr_name, blmode, blstart, 
                           blend, tmin, tmax, fmin, fmax):
     """
@@ -571,6 +589,7 @@ def save_tse_all_channels(experiment, tfr_name, blmode, blstart,
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
 
+@threaded
 def save_tse_channel_averages(experiment, tfr_name, blmode, blstart, 
                               blend, tmin, tmax, fmin, fmax):
     """

@@ -183,11 +183,13 @@ def save_tfr(experiment, data, window):
             if output == 'all_channels':
                 save_tfr_all_channels(experiment, selected_name,
                                       blmode, blstart, blend,
-                                      tmin, tmax, fmin, fmax)
+                                      tmin, tmax, fmin, fmax,
+                                      do_meanwhile=window.update_ui)
             else:
                 save_tfr_channel_averages(experiment, selected_name,
                                           blmode, blstart, blend,
-                                          tmin, tmax, fmin, fmax)
+                                          tmin, tmax, fmin, fmax,
+                                          do_meanwhile=window.update_ui)
         except Exception as exc:
             logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
@@ -222,11 +224,13 @@ def save_tse(experiment, data, window):
             if output == 'all_channels':
                 save_tse_all_channels(experiment, selected_name,
                                       blmode, blstart, blend,
-                                      tmin, tmax, fmin, fmax)
+                                      tmin, tmax, fmin, fmax,
+                                      do_meanwhile=window.update_ui)
             else:
                 save_tse_channel_averages(experiment, selected_name,
                                           blmode, blstart, blend,
-                                          tmin, tmax, fmin, fmax)
+                                          tmin, tmax, fmin, fmax,
+                                          do_meanwhile=window.update_ui)
         except Exception as exc:
             logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
