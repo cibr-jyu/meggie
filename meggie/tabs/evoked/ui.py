@@ -1,9 +1,6 @@
 """
 """
 import logging
-import os
-
-from pprint import pformat
 
 import mne
 import numpy as np
@@ -21,7 +18,7 @@ from meggie.tabs.evoked.controller.evoked import save_channel_averages
 import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.channels import get_channels_by_type
-from meggie.utilities.colors import color_cycle
+from meggie.utilities.plotting import color_cycle
 from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
 from meggie.utilities.smooth import smooth_signal
@@ -32,7 +29,6 @@ from meggie.utilities.names import next_available_name
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 from meggie.utilities.dialogs.singleChannelDialogMain import SingleChannelDialog
-
 from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
 from meggie.tabs.evoked.dialogs.evokedTopomapDialogMain import EvokedTopomapDialog
 
@@ -68,6 +64,9 @@ def delete(experiment, data, window):
 
     subject.remove(selected_name, 'evoked')
     experiment.save_experiment_settings()
+
+    logging.getLogger('ui_logger').info('Deleted selected evoked')
+
     window.initialize_ui()
 
 
@@ -89,6 +88,9 @@ def delete_from_all(experiment, data, window):
                     subject.name)
 
     experiment.save_experiment_settings()
+
+    logging.getLogger('ui_logger').info('Deleted selected evoked from all subjects')
+
     window.initialize_ui()
 
 
@@ -170,7 +172,10 @@ def plot_evoked(experiment, data, window):
                     _plot_evoked_topo(
                         experiment, evoked, ch_type='meg')
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
+
+        logging.getLogger('ui_logger').info('Plotting evoked.')
 
     dialog = OutputOptions(window, handler=handler)
     dialog.show()
@@ -221,7 +226,10 @@ def plot_topomap(experiment, data, window):
                         title=title, axes=axes, sphere=sphere)
                     fig.canvas.set_window_title(title)
                 except Exception as exc:
+                    logging.getLogger('ui_logger').exception(str(exc))
                     exc_messagebox(window, exc)
+
+        logging.getLogger('ui_logger').info('Plotting evoked topomap.')
 
     dialog = EvokedTopomapDialog(window, evoked, handler)
     dialog.show()
@@ -287,11 +295,8 @@ def plot_single_channel(experiment, data, window):
                 
                 # smoothen
                 if window:
-                    try:
-                        new_evoked.data[ch_idx] = smooth_signal(new_evoked.data[ch_idx], 
-                            window_len=window_len, window=window)
-                    except ValueError as exc:
-                        exc_messagebox(window, exc)
+                    new_evoked.data[ch_idx] = smooth_signal(new_evoked.data[ch_idx], 
+                        window_len=window_len, window=window)
 
                 new_evoked.comment = legend[key]
                 new_evokeds.append(new_evoked)
@@ -301,7 +306,10 @@ def plot_single_channel(experiment, data, window):
             mne.viz.plot_compare_evokeds(new_evokeds, title=title, picks=[ch_idx],
                                          colors=colors, ylim=ylim, show_sensors=False)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
+
+        logging.getLogger('ui_logger').info('Plotting single channel evoked.')
 
     dialog = SingleChannelDialog(window, handler, title,
                                  ch_names, scalings, units,
@@ -325,8 +333,11 @@ def group_average(experiment, data, window):
             window.initialize_ui()
 
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
             return
+
+        logging.getLogger('ui_logger').info('Finished creating group average evoked.')
 
     default_name = next_available_name(
         experiment.active_subject.evoked.keys(), 
@@ -364,6 +375,7 @@ def save(experiment, data, window):
                 save_all_channels(
                     experiment, selected_name)
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
 
     dialog = OutputOptions(window, handler=handler)

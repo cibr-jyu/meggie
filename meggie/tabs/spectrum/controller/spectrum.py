@@ -8,10 +8,10 @@ import logging
 from copy import deepcopy
 from collections import OrderedDict
 
+import mne
+
 import numpy as np
 import matplotlib.pyplot as plt
-
-import mne
 
 import meggie.utilities.filemanager as filemanager
 
@@ -19,15 +19,13 @@ from meggie.datatypes.spectrum.spectrum import Spectrum
 
 from meggie.utilities.events import find_stim_channel
 from meggie.utilities.events import find_events
-
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.formats import format_floats
-from meggie.utilities.colors import color_cycle
+from meggie.utilities.plotting import color_cycle
+from meggie.utilities.plotting import get_channel_average_fig_size
 from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import clean_names
-from meggie.utilities.units import get_scaling
-from meggie.utilities.units import get_unit
 from meggie.utilities.units import get_power_unit
 from meggie.utilities.decorators import threaded
 
@@ -189,15 +187,10 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
     data = spectrum.content
     freqs = spectrum.freqs
     ch_names = spectrum.ch_names 
-
     channel_groups = experiment.channel_groups
-
     info = subject.get_raw().info
 
     colors = color_cycle(len(data))
-
-    logging.getLogger('ui_logger').info(
-        'Plotting spectrum channel averages..')
 
     averages = {}
     for key, psd in sorted(data.items()):
@@ -205,21 +198,20 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
         data_labels, averaged_data = average_to_channel_groups(
             psd, info, ch_names, channel_groups)
 
-        if not data_labels:
-            raise Exception('No channel groups matching the data found.')
-
         for label_idx, label in enumerate(data_labels):
             if not label in averages:
                 averages[label] = []
-
             averages[label].append((key, averaged_data[label_idx]))
 
+    ch_groups = sorted(set([label[1] for label in averages.keys()]))
+    ch_types = sorted(set([label[0] for label in averages.keys()]))
+
     ncols = 4
-    ch_groups = [label[1] for label in averages.keys()]
     nrows = int((len(ch_groups) - 1) / ncols + 1)
 
-    for ch_type in set([label[0] for label in averages.keys()]):
+    for ch_type in ch_types:
         fig, axes = plt.subplots(nrows=nrows, ncols=ncols)
+        fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
         for ch_group_idx, ch_group in enumerate(ch_groups):
             ax = axes[ch_group_idx // ncols, ch_group_idx % ncols]
             ax.set_title(ch_group)
@@ -229,16 +221,14 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
 
             handles = []
             for color_idx, (key, curve) in enumerate(averages[(ch_type, ch_group)]):
-
                 if log_transformed:
                     curve = 10 * np.log10(curve)
-
                 handles.append(ax.plot(freqs, curve, color=colors[color_idx], label=key)[0])
 
-        title = 'spectrum_{0}_{1}'.format(name, ch_type)
         fig.legend(handles=handles)
-        fig.canvas.set_window_title(title)
-        fig.suptitle(title)
+        title_elems = ['spectrum', name, ch_type]
+        fig.canvas.set_window_title('_'.join(title_elems))
+        fig.suptitle(' '.join(title_elems))
         fig.tight_layout()
 
     plt.show()
@@ -250,13 +240,10 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
 
     subject = experiment.active_subject
     subject_name = subject.name
-
     spectrum = subject.spectrum.get(name)
-
     data = spectrum.content
     freqs = spectrum.freqs
     ch_names = spectrum.ch_names
-
     info = subject.get_raw().info
     if ch_type == 'meg':
         picked_channels = [ch_name for ch_idx, ch_name in enumerate(info['ch_names'])
@@ -267,9 +254,6 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
     info = info.copy().pick_channels(picked_channels)
 
     colors = color_cycle(len(data))
-
-    logging.getLogger('ui_logger').info(
-        'Plotting spectrum from all channels..')
 
     def individual_plot(ax, info_idx, names_idx):
         """
@@ -285,13 +269,12 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
             ax.plot(freqs, curve, color=colors[color_idx],
                     label=key)
 
-        title = 'spectrum_{0}_{1}'.format(name, ch_name)
-        ax.figure.canvas.set_window_title(title)
-        ax.figure.suptitle(title)
+        title_elems = ['spectrum', name, ch_name]
+        ax.figure.canvas.set_window_title('_'.join(title_elems))
+        ax.figure.suptitle(' '.join(title_elems))
         ax.set_title('')
 
         ax.legend()
-
         ax.set_xlabel('Frequency (Hz)')
         ax.set_ylabel('Power ({})'.format(get_power_unit(
             mne.io.pick.channel_type(info, info_idx),
@@ -475,9 +458,6 @@ def save_channel_averages(experiment, selected_name, log_transformed=False):
 
             data_labels, averaged_data = average_to_channel_groups(
                 psd, info, ch_names, channel_groups)
-
-            if not data_labels:
-                raise Exception('No channel groups matching the data found.')
 
             if log_transformed:
                 csv_data.extend(10 * np.log10(averaged_data.tolist()))

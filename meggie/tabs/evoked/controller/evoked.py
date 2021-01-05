@@ -3,7 +3,6 @@
 """
 """
 
-import copy
 import logging
 import os
 
@@ -16,7 +15,8 @@ import meggie.utilities.filemanager as filemanager
 from meggie.datatypes.evoked.evoked import Evoked
 
 from meggie.utilities.formats import format_floats
-from meggie.utilities.colors import color_cycle
+from meggie.utilities.plotting import color_cycle
+from meggie.utilities.plotting import get_channel_average_fig_size
 from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.validators import assert_arrays_same
 
@@ -30,41 +30,46 @@ def plot_channel_averages(experiment, evoked):
 
     """
 
-    # average and restructure for ease of plotting
+    colors = color_cycle(len(list(evoked.content.keys())))
+    times = list(evoked.content.values())[0].times
+
     averages = {}
     for key, mne_evoked in sorted(evoked.content.items()):
         data_labels, averaged_data = create_averages(experiment, mne_evoked)
-        for idx in range(len(data_labels)):
-            if not data_labels[idx] in averages:
-                averages[data_labels[idx]] = []
-            averages[data_labels[idx]].append(averaged_data[idx])
 
-    if not averages:
-        raise Exception('No channel groups matching the data found')
+        for label_idx, label in enumerate(data_labels):
+            if not label in averages:
+                averages[label] = []
+            averages[label].append((key, averaged_data[label_idx]))
 
-    colors = color_cycle(len(list(averages.values())[0]))
+    ch_groups = sorted(set([label[1] for label in averages.keys()]))
+    ch_types = sorted(set([label[0] for label in averages.keys()]))
 
-    for type_key, item in averages.items():
-        fig, ax = plt.subplots()
-        for evoked_idx, evoked_data in enumerate(item):
-            mne_evoked = list(evoked.content.values())[evoked_idx]
-            evoked_name = mne_evoked.comment
-            times = mne_evoked.times
+    ncols = 4
+    nrows = int((len(ch_groups) - 1) / ncols + 1)
+
+    for ch_type in ch_types:
+        fig, axes = plt.subplots(nrows=nrows, ncols=ncols)
+        fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
+        for ch_group_idx, ch_group in enumerate(ch_groups):
+            ax = axes[ch_group_idx // ncols, ch_group_idx % ncols]
+            ax.set_title(ch_group)
             ax.set_xlabel('Time (s)')
-            ax.set_ylabel('Amplitude ({})'.format(get_unit(
-                type_key[0]
-            )))
-            ax.plot(times, evoked_data,
-                    color=colors[evoked_idx],
-                    label=evoked_name)
+            ax.set_ylabel('Power ({})'.format(
+                get_unit(ch_type)))
 
-            ax.axhline(0)
-            ax.axvline(0)
-            ax.legend()
+            handles = []
+            for color_idx, (key, curve) in enumerate(averages[(ch_type, ch_group)]):
+                handles.append(ax.plot(times, curve, color=colors[color_idx], label=key)[0])
 
-        title = 'evoked_{0}_{1}'.format(type_key[0], type_key[1])
-        fig.canvas.set_window_title(title)
-        fig.suptitle(title)
+            ax.axhline(0, color='black')
+            ax.axvline(0, color='black')
+
+        fig.legend(handles=handles)
+        title_elems = ['evoked', evoked.name, ch_type]
+        fig.canvas.set_window_title('_'.join(title_elems))
+        fig.suptitle(' '.join(title_elems))
+        fig.tight_layout()
 
     plt.show()
 
@@ -195,9 +200,6 @@ def save_channel_averages(experiment, selected_name):
 
             data_labels, averaged_data = create_averages(
                 experiment, mne_evoked)
-
-            if not data_labels:
-                raise Exception('No channel groups matching the data found')
 
             csv_data.extend(averaged_data.tolist())
             column_names = format_floats(mne_evoked.times)

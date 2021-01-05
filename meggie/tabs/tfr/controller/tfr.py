@@ -12,7 +12,7 @@ import mne
 import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.formats import format_floats
-from meggie.utilities.colors import color_cycle
+from meggie.utilities.plotting import color_cycle
 from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import clean_names
@@ -153,9 +153,6 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
         data_labels, averaged_data = average_to_channel_groups(
             tse, info, ch_names, channel_groups)
 
-        if not data_labels:
-            raise Exception('No channel groups matching the data found.')
-
         averages[key] = data_labels, averaged_data
         shape = averaged_data.shape
 
@@ -203,9 +200,6 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
 
     data_labels, averaged_data = average_to_channel_groups(
         data, meggie_tfr.info, ch_names, channel_groups)
-
-    if not data_labels:
-        raise Exception('No channel groups matching the data found')
 
     sfreq = meggie_tfr.info['sfreq']
     times = meggie_tfr.times
@@ -510,9 +504,6 @@ def save_tfr_channel_averages(experiment, tfr_name,
             data_labels, averaged_data = average_to_channel_groups(
                 data, info, ch_names, channel_groups)
 
-            if not data_labels:
-                raise Exception('No channel groups matching the data found')
-
             for ix in range(averaged_data.shape[0]):
                 for iy in range(averaged_data.shape[1]):
                     ch_type, area = data_labels[ix]
@@ -587,9 +578,6 @@ def save_tse_channel_averages(experiment, tfr_name, blmode, blstart,
 
             data_labels, averaged_data = average_to_channel_groups(
                 tse, tfr.info, tfr.ch_names, channel_groups)
-
-            if not data_labels:
-                raise Exception('No channel groups matching the data found.')
 
             csv_data.extend(averaged_data.tolist())
 

@@ -106,7 +106,7 @@
        <item row="1" column="1" rowspan="2">
         <widget class="QGroupBox" name="groupBoxEventsList">
          <property name="title">
-          <string>List of given &lt;event ID&gt;, &lt;event name&gt;</string>
+          <string>List of event specifications</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">

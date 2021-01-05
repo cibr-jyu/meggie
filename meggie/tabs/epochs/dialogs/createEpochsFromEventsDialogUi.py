@@ -240,7 +240,7 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.pushButtonCancel.setText(_translate("CreateEpochsFromEventsDialog", "Cancel"))
         self.pushButtonBatch.setText(_translate("CreateEpochsFromEventsDialog", "Batch"))
         self.pushButtonApply.setText(_translate("CreateEpochsFromEventsDialog", "Apply"))
-        self.groupBoxEventsList.setTitle(_translate("CreateEpochsFromEventsDialog", "List of given <event ID>, <event name>"))
+        self.groupBoxEventsList.setTitle(_translate("CreateEpochsFromEventsDialog", "List of event specifications"))
         self.groupBoxRejection.setTitle(_translate("CreateEpochsFromEventsDialog", "Rejection limits"))
         self.checkBoxGrad.setToolTip(_translate("CreateEpochsFromEventsDialog", "Include or exclude grad channels"))
         self.checkBoxGrad.setText(_translate("CreateEpochsFromEventsDialog", "Grad"))
