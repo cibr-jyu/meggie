@@ -68,7 +68,7 @@ def delete(experiment, data, window):
     subject.remove(selected_name, 'epochs')
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected TFR')
+    logging.getLogger('ui_logger').info('Deleted selected epochs')
 
     window.initialize_ui()
 
@@ -91,7 +91,7 @@ def delete_from_all(experiment, data, window):
                     subject.name)
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected TFR from all subjects')
+    logging.getLogger('ui_logger').info('Deleted selected epochs from all subjects')
 
     window.initialize_ui()
 

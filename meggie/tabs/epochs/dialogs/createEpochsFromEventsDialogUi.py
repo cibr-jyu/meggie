@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'createEpochsFromEventsDialogUi.ui'
+# Form implementation generated from reading ui file 'designer_ui_files/createEpochsFromEventsDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_CreateEpochsFromEventsDialog(object):
     def setupUi(self, CreateEpochsFromEventsDialog):
         CreateEpochsFromEventsDialog.setObjectName("CreateEpochsFromEventsDialog")
-        CreateEpochsFromEventsDialog.setWindowModality(QtCore.Qt.WindowModal)
+        CreateEpochsFromEventsDialog.setWindowModality(QtCore.Qt.NonModal)
         CreateEpochsFromEventsDialog.resize(777, 783)
         self.gridLayout = QtWidgets.QGridLayout(CreateEpochsFromEventsDialog)
         self.gridLayout.setObjectName("gridLayout")

@@ -86,7 +86,7 @@ def create_epochs_from_events(params, subject):
     picks = mne.pick_types(raw.info, meg=meg, eeg=eeg, exclude=[])
 
     if len(picks) == 0:
-        raise ValueError('You should select channel types to go on with')
+        raise ValueError('You should select at least one channel type')
 
     mne_epochs = mne.Epochs(raw, np.array(events),
                             category, params['tmin'], params['tmax'],
@@ -96,6 +96,11 @@ def create_epochs_from_events(params, subject):
     if len(mne_epochs.get_data()) == 0:
         raise ValueError('Could not find any data. Perhaps the ' +
                          'rejection thresholds are too strict...')
+
+    n_dropped = len(events) - len(mne_epochs.get_data())
+
+    if n_dropped > 0:
+        logging.getLogger('ui_logger').info(str(n_dropped) + ' epochs dropped.')
 
     epochs_directory = subject.epochs_directory
     epochs = Epochs(params['collection_name'],

@@ -29,7 +29,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
     """
 
     def __init__(self, experiment, parent, default_name):
-        """Initialize the event selection dialog.
+        """
 
         """
         QtWidgets.QDialog.__init__(self, parent)
@@ -138,11 +138,6 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
             return
 
         subject = self.experiment.active_subject
-
-        if params['collection_name'] in subject.epochs:
-            message = 'Epoch collection with the name exists.'
-            messagebox(self.parent, message)
-            return
 
         try:
             self.calculate_epochs(subject, params)
