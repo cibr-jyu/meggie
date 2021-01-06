@@ -16,12 +16,15 @@ def find_all_plugins():
     package_keys = [dist.key.replace('-', '_') for dist 
                     in pkg_resources.working_set]
     for key in package_keys:
-        if key.startswith('meggie_'):
-            # check that there exists configuration.json
-            if not os.path.exists(
-                    pkg_resources.resource_filename(key, 'configuration.json')):
-                continue
-            plugins.append(key)
+        try:
+            if key.startswith('meggie_'):
+                # check that there exists configuration.json
+                if not os.path.exists(
+                        pkg_resources.resource_filename(key, 'configuration.json')):
+                    continue
+                plugins.append(key)
+        except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
     return plugins
 
 

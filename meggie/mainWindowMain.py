@@ -71,11 +71,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 exp = open_existing_experiment(self.prefs)
                 self.experiment = exp
                 self.prefs.previous_experiment_name = exp.path
+                logging.getLogger('ui_logger').info('Opening experiment ' + exp.path)
             except Exception as exc:
                 self.prefs.previous_experiment_name = ''
+                logging.getLogger('ui_logger').exception(str(exc))
                 exc_messagebox(self, exc)
 
             self.prefs.write_preferences_to_disk()
+
 
         self.reconstruct_tabs()
         self.initialize_ui()
@@ -126,6 +129,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.experiment = exp
             self.prefs.previous_experiment_name = exp.path
         except Exception as exc:
+            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
 
         self.prefs.write_preferences_to_disk()
@@ -270,10 +274,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 source, 'configuration.json')
             with open(config_path, 'r') as f:
                 config = json.load(f)
-            if 'tab_presets' not in config:
-                raise Exception('Invalid configuration file in ' +
-                                str(config_path))
-            tab_presets.extend(config['tab_presets'])
+            if 'tab_presets' in config:
+                tab_presets.extend(config['tab_presets'])
 
         enabled_tabs = self.prefs.enabled_tabs
         user_preset = self.prefs.tab_preset

@@ -50,10 +50,8 @@ class PreferencesDialog(QtWidgets.QDialog):
                 source, 'configuration.json')
             with open(config_path, 'r') as f:
                 config = json.load(f)
-            if 'tab_presets' not in config:
-                raise Exception('Invalid configuration file in ' +
-                                str(config_path))
-            tab_presets.extend(config['tab_presets'])
+            if 'tab_presets' in config:
+                tab_presets.extend(config['tab_presets'])
 
         enabled_tabs = self.prefs.enabled_tabs
         user_preset = self.prefs.tab_preset
@@ -135,10 +133,8 @@ class PreferencesDialog(QtWidgets.QDialog):
                 source, 'configuration.json')
             with open(config_path, 'r') as f:
                 config = json.load(f)
-            if 'tab_presets' not in config:
-                raise Exception('Invalid configuration file in ' +
-                                str(config_path))
-            tab_presets.extend(config['tab_presets'])
+            if 'tab_presets' in config:
+                tab_presets.extend(config['tab_presets'])
 
         selected_preset = 'custom'
         for idx, button in enumerate(self.tabButtons):
