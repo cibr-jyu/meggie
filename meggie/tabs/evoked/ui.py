@@ -62,7 +62,12 @@ def delete(experiment, data, window):
     except IndexError as exc:
         return
 
-    subject.remove(selected_name, 'evoked')
+    try:
+        subject.remove(selected_name, 'evoked')
+    except Exception as exc:
+        logging.getLogger('ui_logger').exception(str(exc))
+        exc_messagebox(window, exc)
+
     experiment.save_experiment_settings()
 
     logging.getLogger('ui_logger').info('Deleted selected evoked')
@@ -83,6 +88,7 @@ def delete_from_all(experiment, data, window):
             try:
                 subject.remove(selected_name, 'evoked')
             except Exception as exc:
+                logging.getLogger('ui_logger').exception(str(exc))
                 logging.getLogger('ui_logger').warning(
                     'Could not remove evoked for ' +
                     subject.name)

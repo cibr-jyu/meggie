@@ -2,6 +2,8 @@
 """
 import logging
 
+from meggie.utilities.messaging import exc_messagebox
+
 from meggie.utilities.names import next_available_name
 from meggie.utilities.formats import format_float
 
@@ -65,7 +67,13 @@ def delete(experiment, data, window):
     except IndexError as exc:
         return
 
-    subject.remove(selected_name, 'epochs')
+    try:
+        subject.remove(selected_name, 'epochs')
+    except Exception as exc:
+        exc_messagebox(window, exc)
+        logging.getLogger('ui_logger').exception(str(exc))
+
+
     experiment.save_experiment_settings()
 
     logging.getLogger('ui_logger').info('Deleted selected epochs')
@@ -86,6 +94,7 @@ def delete_from_all(experiment, data, window):
             try:
                 subject.remove(selected_name, 'epochs')
             except Exception as exc:
+                logging.getLogger('ui_logger').exception(str(exc))
                 logging.getLogger('ui_logger').warning(
                     'Could not remove epochs for ' +
                     subject.name)

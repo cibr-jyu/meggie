@@ -37,7 +37,12 @@ def delete(experiment, data, window):
     except IndexError as exc:
         return
 
-    subject.remove(selected_name, 'spectrum')
+    try:
+        subject.remove(selected_name, 'spectrum')
+    except Exception as exc:
+        exc_messagebox(window, exc)
+        logging.getLogger('ui_logger').exception(str(exc))
+
     experiment.save_experiment_settings()
 
     logging.getLogger('ui_logger').info('Deleted selected spectrum.')

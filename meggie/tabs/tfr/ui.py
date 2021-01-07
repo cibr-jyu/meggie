@@ -53,7 +53,12 @@ def delete(experiment, data, window):
     except IndexError as exc:
         return
 
-    subject.remove(selected_name, 'tfr')
+    try:
+        subject.remove(selected_name, 'tfr')
+    except Exception as exc:
+        exc_messagebox(window, exc)
+        logging.getLogger('ui_logger').exception(str(exc))
+
     experiment.save_experiment_settings()
 
     logging.getLogger('ui_logger').info('Deleted selected TFR')
@@ -74,6 +79,7 @@ def delete_from_all(experiment, data, window):
             try:
                 subject.remove(selected_name, 'tfr')
             except Exception as exc:
+                logging.getLogger('ui_logger').exception(str(exc))
                 logging.getLogger('ui_logger').warning(
                     'Could not remove tfr for ' +
                     subject.name)
