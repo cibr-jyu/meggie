@@ -71,8 +71,6 @@ def delete(experiment, data, window):
         subject.remove(selected_name, 'epochs')
     except Exception as exc:
         exc_messagebox(window, exc)
-        logging.getLogger('ui_logger').exception(str(exc))
-
 
     experiment.save_experiment_settings()
 

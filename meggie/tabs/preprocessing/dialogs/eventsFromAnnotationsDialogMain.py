@@ -88,7 +88,6 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
             try:
                 events_from_annotations(subject, self.items)
             except Exception as exc:
-                logging.getLogger('ui_logger').exception(str(exc))
                 exc_messagebox(self, exc)
                 return
 

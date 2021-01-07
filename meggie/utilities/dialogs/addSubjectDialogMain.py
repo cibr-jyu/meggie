@@ -55,7 +55,6 @@ class AddSubjectDialog(QtWidgets.QDialog):
 
             except Exception as exc:
                 exc_messagebox(self.parent, exc)
-                logging.getLogger('ui_logger').exception(str(exc))
 
         self.parent.experiment.save_experiment_settings()
 

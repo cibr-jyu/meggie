@@ -178,7 +178,6 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
             create_power_spectrum(subject, spectrum_name, params, intervals,
                                   do_meanwhile=update_ui)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 

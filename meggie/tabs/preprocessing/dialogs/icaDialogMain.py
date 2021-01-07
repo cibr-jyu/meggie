@@ -74,7 +74,6 @@ class ICADialog(QtWidgets.QDialog):
         try:
             self.ica = _compute_ica(do_meanwhile=self.parent.update_ui)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 
@@ -146,7 +145,6 @@ class ICADialog(QtWidgets.QDialog):
         try:
             plot_topographies(self.ica, len(self.component_info))
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 
@@ -161,7 +159,6 @@ class ICADialog(QtWidgets.QDialog):
         try:
             plot_sources(raw, self.ica)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 
@@ -181,7 +178,6 @@ class ICADialog(QtWidgets.QDialog):
         try:
             plot_properties(raw, self.ica, picks)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 
@@ -198,7 +194,6 @@ class ICADialog(QtWidgets.QDialog):
         try:
             plot_changes(raw, self.ica, indices)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 
@@ -237,7 +232,6 @@ class ICADialog(QtWidgets.QDialog):
 
             apply_ica_wrapper(do_meanwhile=self.parent.update_ui)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 

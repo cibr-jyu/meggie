@@ -65,7 +65,6 @@ def delete(experiment, data, window):
     try:
         subject.remove(selected_name, 'evoked')
     except Exception as exc:
-        logging.getLogger('ui_logger').exception(str(exc))
         exc_messagebox(window, exc)
 
     experiment.save_experiment_settings()
@@ -178,7 +177,6 @@ def plot_evoked(experiment, data, window):
                     _plot_evoked_topo(
                         experiment, evoked, ch_type='meg')
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
 
         logging.getLogger('ui_logger').info('Plotting evoked.')
@@ -232,7 +230,6 @@ def plot_topomap(experiment, data, window):
                         title=' '.join(title_elems), axes=axes, sphere=sphere)
                     fig.canvas.set_window_title('_'.join(title_elems))
                 except Exception as exc:
-                    logging.getLogger('ui_logger').exception(str(exc))
                     exc_messagebox(window, exc)
 
         logging.getLogger('ui_logger').info('Plotting evoked topomap.')
@@ -312,7 +309,6 @@ def plot_single_channel(experiment, data, window):
             mne.viz.plot_compare_evokeds(new_evokeds, title=title, picks=[ch_idx],
                                          colors=colors, ylim=ylim, show_sensors=False)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
 
         logging.getLogger('ui_logger').info('Plotting single channel evoked.')
@@ -339,7 +335,6 @@ def group_average(experiment, data, window):
             window.initialize_ui()
 
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
             return
 
@@ -381,7 +376,6 @@ def save(experiment, data, window):
                 save_all_channels(experiment, selected_name,
                                   window.update_ui)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
 
     dialog = OutputOptions(window, handler=handler)

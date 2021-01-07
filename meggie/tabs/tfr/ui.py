@@ -57,7 +57,6 @@ def delete(experiment, data, window):
         subject.remove(selected_name, 'tfr')
     except Exception as exc:
         exc_messagebox(window, exc)
-        logging.getLogger('ui_logger').exception(str(exc))
 
     experiment.save_experiment_settings()
 
@@ -119,7 +118,6 @@ def plot_tfr(experiment, data, window):
                                   selected_name, condition, blmode, blstart,
                                   blend, tmin, tmax, fmin, fmax)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
 
         logging.getLogger('ui_logger').info('Plotting TFR')
@@ -155,7 +153,6 @@ def plot_tse(experiment, data, window):
                                   selected_name, blmode, blstart,
                                   blend, tmin, tmax, fmin, fmax)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
 
         logging.getLogger('ui_logger').info('Plotting TSE')
@@ -197,7 +194,6 @@ def save_tfr(experiment, data, window):
                                           tmin, tmax, fmin, fmax,
                                           do_meanwhile=window.update_ui)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
 
     dialog = TFROutputOptions(window, experiment, selected_name, handler)
@@ -238,7 +234,6 @@ def save_tse(experiment, data, window):
                                           tmin, tmax, fmin, fmax,
                                           do_meanwhile=window.update_ui)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
 
     dialog = TFROutputOptions(window, experiment, selected_name, handler)
@@ -261,7 +256,6 @@ def group_average(experiment, data, window):
             window.initialize_ui()
 
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
 
         logging.getLogger('ui_logger').info('Finished creating group average TFR.')

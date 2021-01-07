@@ -54,7 +54,6 @@ class ResamplingDialog(QtWidgets.QDialog):
 
             resample_fun(do_meanwhile=self.parent.update_ui)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 

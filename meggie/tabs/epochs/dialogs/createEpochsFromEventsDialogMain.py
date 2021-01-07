@@ -142,7 +142,6 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         try:
             self.calculate_epochs(subject, params)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 

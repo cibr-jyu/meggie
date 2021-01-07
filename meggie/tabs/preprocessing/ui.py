@@ -13,7 +13,6 @@ from meggie.tabs.preprocessing.dialogs.rereferencingDialogMain import Rereferenc
 from meggie.tabs.preprocessing.dialogs.eventsFromAnnotationsDialogMain import EventsFromAnnotationsDialog
 
 from meggie.utilities.messaging import messagebox
-from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.events import find_stim_channel
 from meggie.utilities.events import find_events
 from meggie.utilities.channels import is_montage_set

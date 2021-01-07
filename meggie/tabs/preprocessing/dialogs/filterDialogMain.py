@@ -87,7 +87,6 @@ class FilterDialog(QtWidgets.QDialog):
             self.filter(subject, params)
         except Exception as exc:
             exc_messagebox(self.parent, exc)
-            logging.getLogger('ui_logger').exception(str(exc))
 
         logging.getLogger('ui_logger').info('Finished filtering')
 

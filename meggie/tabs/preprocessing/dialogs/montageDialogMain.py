@@ -120,7 +120,6 @@ class MontageDialog(QtWidgets.QDialog):
             self.set_montage(subject, do_meanwhile=self.parent.update_ui)
             subject.save()
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 

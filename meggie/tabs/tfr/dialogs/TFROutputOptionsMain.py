@@ -9,8 +9,6 @@ from meggie.tabs.tfr.dialogs.TFROutputOptionsUi import Ui_TFROutputOptions
 from meggie.tabs.tfr.controller.tfr import plot_tfr_topo
 from meggie.tabs.tfr.controller.tfr import plot_tfr_averages
 
-from meggie.utilities.messaging import exc_messagebox
-
 
 class TFROutputOptions(QtWidgets.QDialog):
 

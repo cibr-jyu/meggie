@@ -41,7 +41,6 @@ def delete(experiment, data, window):
         subject.remove(selected_name, 'spectrum')
     except Exception as exc:
         exc_messagebox(window, exc)
-        logging.getLogger('ui_logger').exception(str(exc))
 
     experiment.save_experiment_settings()
 
@@ -95,7 +94,6 @@ def plot_spectrum(experiment, data, window):
                 if 'grad' in chs or 'mag' in chs:
                     plot_spectrum_topo(experiment, selected_name, ch_type='meg')
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
             return
 
@@ -121,7 +119,6 @@ def group_average(experiment, data, window):
             window.initialize_ui()
 
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
             return
 
@@ -162,7 +159,6 @@ def save(experiment, data, window):
                 save_all_channels(experiment, selected_name, 
                                   do_meanwhile=window.update_ui)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(window, exc)
 
     dialog = OutputOptions(window, handler=handler)

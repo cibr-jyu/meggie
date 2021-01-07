@@ -92,7 +92,6 @@ class CreateEvokedDialog(QtWidgets.QDialog):
         try:
             self.create_evoked(subject, selected_epochs)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
             return
 

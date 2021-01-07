@@ -74,7 +74,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 logging.getLogger('ui_logger').info('Opening experiment ' + exp.path)
             except Exception as exc:
                 self.prefs.previous_experiment_name = ''
-                logging.getLogger('ui_logger').exception(str(exc))
                 exc_messagebox(self, exc)
 
             self.prefs.write_preferences_to_disk()
@@ -129,7 +128,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.experiment = exp
             self.prefs.previous_experiment_name = exp.path
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self, exc)
 
         self.prefs.write_preferences_to_disk()

@@ -68,7 +68,6 @@ class RereferencingDialog(QtWidgets.QDialog):
         try:
             rereference_fun(do_meanwhile=self.parent.update_ui)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
             exc_messagebox(self.parent, exc)
             return
 
