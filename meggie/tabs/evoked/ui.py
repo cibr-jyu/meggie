@@ -371,10 +371,10 @@ def save(experiment, data, window):
         try:
             if selected_option == 'channel_averages':
                 save_channel_averages(experiment, selected_name,
-                                      window.update_ui)
+                                      do_meanwhile=window.update_ui)
             else:
                 save_all_channels(experiment, selected_name,
-                                  window.update_ui)
+                                  do_meanwhile=window.update_ui)
         except Exception as exc:
             exc_messagebox(window, exc)
 
