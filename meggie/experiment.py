@@ -140,7 +140,7 @@ class Experiment:
         try:
             shutil.rmtree(subject.path)
         except OSError as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
+            logging.getLogger('ui_logger').exception('')
             raise OSError(
                 'Could not remove the contents of the subject folder.')
 
@@ -246,7 +246,7 @@ class Experiment:
                 shutil.copy(path, backup_path)
 
             except Exception as exc:
-                logging.getLogger('ui_logger').exception(str(exc))
+                logging.getLogger('ui_logger').exception('')
                 logging.getLogger('ui_logger').warning(
                     'Could not backup experiment file. Please check your permissions..')
 
@@ -255,7 +255,7 @@ class Experiment:
             with open(path, 'w') as f:
                 json.dump(save_dict, f, sort_keys=True, indent=4)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
+            logging.getLogger('ui_logger').exception('')
             logging.getLogger('ui_logger').error(
                 'Could not save the experiment file. Please check your permissions..')
 
@@ -295,7 +295,7 @@ def open_existing_experiment(prefs, path=None):
         with open(exp_file, 'r') as f:
             data = json.load(f)
     except ValueError as exc:
-        logging.getLogger('ui_logger').exception(str(exc))
+        logging.getLogger('ui_logger').exception('')
         raise ValueError('Experiment from ' + exp_file + ' could not be ' +
                          'opened. There might be a problem with ' +
                          'cohesion of the experiment file.')

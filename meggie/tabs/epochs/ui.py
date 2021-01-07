@@ -92,7 +92,7 @@ def delete_from_all(experiment, data, window):
             try:
                 subject.remove(selected_name, 'epochs')
             except Exception as exc:
-                logging.getLogger('ui_logger').exception(str(exc))
+                logging.getLogger('ui_logger').exception('')
                 logging.getLogger('ui_logger').warning(
                     'Could not remove epochs for ' +
                     subject.name)

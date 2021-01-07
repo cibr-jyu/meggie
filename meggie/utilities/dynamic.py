@@ -24,7 +24,7 @@ def find_all_plugins():
                     continue
                 plugins.append(key)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
+            logging.getLogger('ui_logger').exception('')
     return plugins
 
 

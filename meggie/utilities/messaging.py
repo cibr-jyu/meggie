@@ -19,7 +19,7 @@ def exc_messagebox(parent, exc, exec_=False):
         error_message = ''
 
     # print traceback to console
-    logging.getLogger('ui_logger').exception(error_message)
+    logging.getLogger('ui_logger').exception('')
 
     # create messagebox for user
     message = '\n\n'.join([

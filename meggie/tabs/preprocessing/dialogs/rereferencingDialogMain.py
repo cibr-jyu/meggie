@@ -111,7 +111,7 @@ class RereferencingDialog(QtWidgets.QDialog):
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append(
                         (subject, str(exc)))
-                    logging.getLogger('ui_logger').exception(str(exc))
+                    logging.getLogger('ui_logger').exception('')
 
         self.batching_widget.cleanup()
 

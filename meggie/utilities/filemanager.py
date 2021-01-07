@@ -17,7 +17,7 @@ def open_raw(fname, preload=True):
         raw = mne.io.read_raw(fname, preload=preload)
         return raw
     except Exception as exc:
-        logging.getLogger('ui_logger').exception(str(exc))
+        logging.getLogger('ui_logger').exception('')
         raise Exception('Could not read the raw file: ' + str(fname))
 
 def save_raw(raw, path, overwrite=True):

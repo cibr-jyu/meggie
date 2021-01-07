@@ -109,7 +109,7 @@ class FilterDialog(QtWidgets.QDialog):
                     self.filter(subject, params)
                     subject.release_memory()
                 except Exception as exc:
-                    logging.getLogger('ui_logger').exception(str(exc))
+                    logging.getLogger('ui_logger').exception('')
                     self.batching_widget.failed_subjects.append(
                         (subject, str(exc)))
 
