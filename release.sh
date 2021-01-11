@@ -4,6 +4,7 @@ echo "Building package for local platform.."
 conda-build -c conda-forge --output-folder conda-bld/ --python 36 .
 conda-build -c conda-forge --output-folder conda-bld/ --python 37 .
 conda-build -c conda-forge --output-folder conda-bld/ --python 38 .
+conda-build -c conda-forge --output-folder conda-bld/ --python 39 .
 
 echo "Converting package to other platforms"
 platforms=( osx-64 linux-32 linux-64 win-32 win-64 )

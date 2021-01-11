@@ -1,43 +1,26 @@
-# Guide to the most basic things in Meggie
+# Meggie
 
 ## Installation
 
-Suggested way to install meggie is to first install MNE-python with all its dependencies to python environment, and then install meggie to that same environment. Here's one way to do this in Unix with the help of anaconda distribution:
-1. Create new python environment: *conda create -n meggie-env python=3*
-1. Activate the environment using: *conda activate meggie-env*
-1. Install mne to environment: *conda install -c conda-forge mne*
-1. Clone or download this repository and go inside.
-1. Install meggie to the environment using: *python setup.py install*
-1. Run Meggie with command: *meggie* 
-
-[//]: # (Hello)
-
-Note that installing MNE-python with "pip install mne" does not install dependencies. If you don't want to use conda-forge channel for MNE-python installation, please consult https://www.martinos.org/mne/stable/install_mne_python.html for official instructions.
-
-[//]: # (Hello)
-
-Meggie can be installed directly using conda too:
-1. Create environment: *conda create -n meggie-env python=3*
+The simplest way to install and run meggie is with anaconda / miniconda:
+1. Have anaconda / miniconda installed
+1. Install meggie inside an environment: *conda create -n meggie-env -c cibr -c conda-forge meggie==1.0*
 1. Activate environment: *conda activate meggie-env*
-1. Install meggie: *conda install -c conda-forge -c cibr meggie*
-1. Run meggie with: *meggie*
+1. Run: *meggie*
 
 [//]: # (Hello)
 
-Given that we routinely release conda packages, meggie can even be installed with no Terminal what so ever if in Windows:
-1. Download Anaconda 3 and install it.
-1. Open Anaconda Navigator from Start menu.
-1. Add channels cibr and conda-forge to channels list.
-1. Go to Environments tab, and create environment called *meggie-env* and initialize it with Python 3.x
-1. Go to Home tab again and select *meggie-env* from the environments list at the top.
-1. Meggie icon should appear in the main view. Click install.
-1. And then launch.
+The general way to install Meggie is:
+1. Install mne and all its dependencies (https://mne.tools/stable/install)
+1. Then install meggie either with conda (conda install -c cibr meggie) or setuptools (python setup.py install)
+
+[//]: # (Hello)
 
 ## Debugging
 
 * If command *meggie* is not found, you should ensure that you are in the correct python environment.
 * If the command is found, but the software crashes during startup to an *ImportError*, you should ensure that you are using *Python 3* and that the dependencies are installed. Individual missing dependencies can often be installed with either *conda install* or *pip install*.
-* If the software crashes during analysis, and the terminal window does not show you the stack trace, you may start meggie using command *meggie debug* and reproduce the crash with stacktrace.
+* If the software crashes during analysis or startup, and the terminal window does not show you the stacktrace, you can start meggie using command *meggie debug* and reproduce the crash with stacktrace.
 
 ## License
 

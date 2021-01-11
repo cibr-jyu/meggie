@@ -1,10 +1,24 @@
 Changelog
 =========
 
-0.17.2 (unreleased)
+1.0.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.0.0 (2020-01-11)
+------------------
+
+- Add 19 tests.
+- Improve exception handling and logging
+- Make plugin loading more robust
+- Fix tab ordering of main window
+- Channel average plots for each channel type are put into single figure
+- Fix tse baselining for channel averages
+- Sorted conditions in topo plot and channel averages
+- Try to use default channel groups if channel groups not set
+- Fix regexp for next_available_name
+- Allow delay in epoch creation
 
 0.17.1 (2020-12-31)
 ------------------
