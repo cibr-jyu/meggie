@@ -16,6 +16,12 @@ The general way to install Meggie is:
 
 [//]: # (Hello)
 
+## Documentation
+
+Documentation is found here: *https://teekuningas.github.io/meggie*
+
+[//]: # (Hello)
+
 ## Debugging
 
 * If command *meggie* is not found, you should ensure that you are in the correct python environment.
