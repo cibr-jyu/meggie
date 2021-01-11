@@ -33,6 +33,7 @@ class AddSubjectDialog(QtWidgets.QDialog):
     
     def accept(self):
         """ Add new subjects. """
+        n_successful = 0
         for i in range(self.ui.listWidgetFileNames.count()):
             item = self.ui.listWidgetFileNames.item(i)
             raw_path = item.text()
@@ -50,14 +51,16 @@ class AddSubjectDialog(QtWidgets.QDialog):
                                               raw_path)
                 
                 _create_subject(do_meanwhile=self.parent.update_ui)
+                n_successful += 1
 
             except Exception as exc:
                 exc_messagebox(self.parent, exc)
-                logging.getLogger('ui_logger').exception(str(exc))
 
         self.parent.experiment.save_experiment_settings()
-        self.parent.initialize_ui()
 
+        logging.getLogger('ui_logger').info(str(n_successful) + " subjects added successfully.")
+
+        self.parent.initialize_ui()
         self.close()
 
     def on_pushButtonBrowse_clicked(self, checked=None):

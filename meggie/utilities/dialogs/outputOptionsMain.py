@@ -5,7 +5,6 @@ import logging
 from PyQt5 import QtWidgets
 
 from meggie.utilities.dialogs.outputOptionsUi import Ui_outputOptions
-from meggie.utilities.messaging import exc_messagebox
 
 
 class OutputOptions(QtWidgets.QDialog):

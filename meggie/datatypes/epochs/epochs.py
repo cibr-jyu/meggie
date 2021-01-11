@@ -80,5 +80,5 @@ class Epochs:
         try:
             self._content.save(self._path, overwrite=True)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
+            logging.getLogger('ui_logger').exception('')
             raise IOError('Writing epochs failed')

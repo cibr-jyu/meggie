@@ -44,19 +44,14 @@ class PreferencesDialog(QtWidgets.QDialog):
         if self.prefs.auto_load_last_open_experiment:
             self.ui.checkBoxAutomaticOpenPreviousExperiment.setChecked(True)
 
-        if self.prefs.confirm_quit:
-            self.ui.checkBoxConfirmQuit.setChecked(True)
-
         tab_presets = []
         for source in find_all_sources():
             config_path = pkg_resources.resource_filename(
                 source, 'configuration.json')
             with open(config_path, 'r') as f:
                 config = json.load(f)
-            if 'tab_presets' not in config:
-                raise Exception('Invalid configuration file in ' +
-                                str(config_path))
-            tab_presets.extend(config['tab_presets'])
+            if 'tab_presets' in config:
+                tab_presets.extend(config['tab_presets'])
 
         enabled_tabs = self.prefs.enabled_tabs
         user_preset = self.prefs.tab_preset
@@ -132,22 +127,14 @@ class PreferencesDialog(QtWidgets.QDialog):
             autoLoadLastOpenExp = False
         self.prefs.auto_load_last_open_experiment = autoLoadLastOpenExp  # noqa
 
-        if self.ui.checkBoxConfirmQuit.isChecked():
-            confirmQuit = True
-        else:
-            confirmQuit = False
-        self.prefs.confirm_quit = confirmQuit
-
         tab_presets = []
         for source in find_all_sources():
             config_path = pkg_resources.resource_filename(
                 source, 'configuration.json')
             with open(config_path, 'r') as f:
                 config = json.load(f)
-            if 'tab_presets' not in config:
-                raise Exception('Invalid configuration file in ' +
-                                str(config_path))
-            tab_presets.extend(config['tab_presets'])
+            if 'tab_presets' in config:
+                tab_presets.extend(config['tab_presets'])
 
         selected_preset = 'custom'
         for idx, button in enumerate(self.tabButtons):

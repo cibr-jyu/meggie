@@ -1,15 +1,9 @@
 import logging
-import os
-
-import numpy as np
-
-from pprint import pformat
 
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.names import next_available_name
-
-import meggie.utilities.filemanager as filemanager
+from meggie.utilities.formats import format_float
 
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
@@ -43,8 +37,15 @@ def delete(experiment, data, window):
     except IndexError as exc:
         return
 
-    subject.remove(selected_name, 'spectrum')
+    try:
+        subject.remove(selected_name, 'spectrum')
+    except Exception as exc:
+        exc_messagebox(window, exc)
+
     experiment.save_experiment_settings()
+
+    logging.getLogger('ui_logger').info('Deleted selected spectrum.')
+
     window.initialize_ui()
 
 
@@ -61,11 +62,15 @@ def delete_from_all(experiment, data, window):
             try:
                 subject.remove(selected_name, 'spectrum')
             except Exception as exc:
+                logging.getLogger('ui_logger').exception('')
                 logging.getLogger('ui_logger').warning(
                     'Could not remove spectrum for ' +
                     subject.name)
 
     experiment.save_experiment_settings()
+
+    logging.getLogger('ui_logger').info('Deleted selected spectrum from all subjects.')
+
     window.initialize_ui()
 
 
@@ -90,6 +95,9 @@ def plot_spectrum(experiment, data, window):
                     plot_spectrum_topo(experiment, selected_name, ch_type='meg')
         except Exception as exc:
             exc_messagebox(window, exc)
+            return
+
+        logging.getLogger('ui_logger').info('Plotting spectrum.')
 
     dialog = OutputOptions(window, handler=handler)
     dialog.show()
@@ -113,6 +121,8 @@ def group_average(experiment, data, window):
         except Exception as exc:
             exc_messagebox(window, exc)
             return
+
+        logging.getLogger('ui_logger').info('Finished creating group average spectrum.')
     
     default_name = next_available_name(
        experiment.active_subject.spectrum.keys(), 
@@ -143,9 +153,11 @@ def save(experiment, data, window):
     def handler(selected_option):
         try:
             if selected_option == 'channel_averages':
-                save_channel_averages(experiment, selected_name)
+                save_channel_averages(experiment, selected_name, 
+                                      do_meanwhile=window.update_ui)
             else:
-                save_all_channels(experiment, selected_name)
+                save_all_channels(experiment, selected_name, 
+                                  do_meanwhile=window.update_ui)
         except Exception as exc:
             exc_messagebox(window, exc)
 
@@ -165,8 +177,8 @@ def spectrum_info(experiment, data, window):
         message = ""
 
         if 'fmin' in params and 'fmax' in params:
-            message += 'Frequencies: {0}Hz - {1}Hz\n'.format(params['fmin'], 
-                                                             params['fmax'])
+            message += 'Frequencies: {0}Hz - {1}Hz\n'.format(format_float(params['fmin']), 
+                                                             format_float(params['fmax']))
 
         if 'nfft' in params:
             message += 'Window length (samples): {0}\n'.format(params['nfft'])
@@ -178,7 +190,7 @@ def spectrum_info(experiment, data, window):
             message += '\nIntervals: \n'
             for key, ivals in params['intervals'].items():
                 message += 'Condition ' + str(key) + ': '
-                message += ', '.join(['({0}s - {1}s)'.format(ival[0], ival[1])
+                message += ', '.join(['({0}s - {1}s)'.format(format_float(ival[0]), format_float(ival[1]))
                                       for ival in ivals])
                 message += '\n'
 

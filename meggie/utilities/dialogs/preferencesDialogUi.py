@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'preferencesDialogUi.ui'
+# Form implementation generated from reading ui file 'designer_ui_files/preferencesDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -64,9 +64,6 @@ class Ui_DialogPreferences(object):
         self.groupBoxMisc.setObjectName("groupBoxMisc")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.groupBoxMisc)
         self.gridLayout_4.setObjectName("gridLayout_4")
-        self.checkBoxConfirmQuit = QtWidgets.QCheckBox(self.groupBoxMisc)
-        self.checkBoxConfirmQuit.setObjectName("checkBoxConfirmQuit")
-        self.gridLayout_4.addWidget(self.checkBoxConfirmQuit, 1, 0, 1, 1)
         self.checkBoxAutomaticOpenPreviousExperiment = QtWidgets.QCheckBox(self.groupBoxMisc)
         self.checkBoxAutomaticOpenPreviousExperiment.setObjectName("checkBoxAutomaticOpenPreviousExperiment")
         self.gridLayout_4.addWidget(self.checkBoxAutomaticOpenPreviousExperiment, 0, 0, 1, 1)
@@ -90,6 +87,5 @@ class Ui_DialogPreferences(object):
         self.radioButtonCustom.setText(_translate("DialogPreferences", "Custom"))
         self.pushButtonCustom.setText(_translate("DialogPreferences", "Specify..."))
         self.groupBoxMisc.setTitle(_translate("DialogPreferences", "Miscellaneous:"))
-        self.checkBoxConfirmQuit.setText(_translate("DialogPreferences", "Show confirmation dialog on Meggie quit"))
         self.checkBoxAutomaticOpenPreviousExperiment.setText(_translate("DialogPreferences", "Automatically open previous experiment upon application startup"))
 

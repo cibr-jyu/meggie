@@ -150,14 +150,14 @@ def wrap_package(root, path, suffix):
                 module = importlib.import_module('.'.join([root, item.name]))
                 modules.append((item.name, module))
             except Exception as exc:
-                logging.getLogger('ui_logger').exception(str(exc))
+                logging.getLogger('ui_logger').exception('')
                 continue
 
     try:
         init = importlib.import_module('.'.join([root, '__init__']))
         modules.append(('__init__', init))
     except Exception as exc:
-        logging.getLogger('ui_logger').exception(str(exc))
+        logging.getLogger('ui_logger').exception('')
 
     for module in modules:
         members = inspect.getmembers(module[1])
@@ -183,6 +183,6 @@ def wrap_mne():
     try:
         wrap_package('mne', mne.__path__, mne.__path__[0])
     except Exception as exc:
-        logging.getLogger('ui_logger').exception(str(exc))
+        logging.getLogger('ui_logger').exception('')
         logging.getLogger('ui_logger').warning('Could not set up mne logging system')
 

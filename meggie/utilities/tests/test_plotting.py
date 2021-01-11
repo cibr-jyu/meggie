@@ -1,4 +1,4 @@
-from meggie.utilities.colors import color_cycle
+from meggie.utilities.plotting import color_cycle
 
 def test_color_cycle():
     colors = color_cycle(30)

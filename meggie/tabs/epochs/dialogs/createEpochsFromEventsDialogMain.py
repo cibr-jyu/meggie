@@ -29,7 +29,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
     """
 
     def __init__(self, experiment, parent, default_name):
-        """Initialize the event selection dialog.
+        """
 
         """
         QtWidgets.QDialog.__init__(self, parent)
@@ -139,11 +139,6 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
 
         subject = self.experiment.active_subject
 
-        if params['collection_name'] in subject.epochs:
-            message = 'Epoch collection with the name exists.'
-            messagebox(self.parent, message)
-            return
-
         try:
             self.calculate_epochs(subject, params)
         except Exception as exc:
@@ -153,7 +148,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished creating epochs.')
 
         self.close()
 
@@ -182,13 +177,13 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append((subject,
                                                                  str(exc)))
-                    logging.getLogger('ui_logger').exception(str(exc))
+                    logging.getLogger('ui_logger').exception('')
 
         self.batching_widget.cleanup()
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished creating epochs.')
 
         self.close()
 

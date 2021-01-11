@@ -2,6 +2,31 @@ import numpy as np
 import mne
 
 
+def is_montage_set(info, ch_type):
+    """ Checks whether montage is set for given ch type
+    """
+    if ch_type == 'meg':
+        picks = mne.pick_types(info, meg=True, eeg=False)
+    else:
+        picks = mne.pick_types(info, meg=False, eeg=True)
+
+    ch_names = [ch_name for idx, ch_name in enumerate(info['ch_names'])
+                if idx in picks]
+
+    if not ch_names:
+        raise Exception('Data does not contain channels of type ' + str(ch_type))
+
+    info_filt = info.copy().pick_channels(ch_names)
+
+    # check if there is no montage set..
+    ch_norms = []
+    for ch in info_filt['chs']:
+        ch_norms.append(np.linalg.norm(ch['loc']))
+    if np.all(np.isclose(ch_norms, ch_norms[0])):
+        return False
+
+    return True
+
 def get_default_channel_groups(info, ch_type):
     """ Returns channels grouped by locations (Left-frontal, Right-occipital, etc.)
     """
@@ -14,18 +39,14 @@ def get_default_channel_groups(info, ch_type):
 
     ch_names = [ch_name for idx, ch_name in enumerate(info['ch_names'])
                 if idx in picks]
-
     if not ch_names:
         return {}
 
     info_filt = info.copy().pick_channels(ch_names)
 
     # check if there is no montage set..
-    ch_norms = []
-    for ch in info_filt['chs']:
-        ch_norms.append(np.linalg.norm(ch['loc']))
-    if np.all(np.isclose(ch_norms, ch_norms[0])):
-        return {}
+    if not is_montage_set(info, ch_type):
+        return ()
 
     regions = _divide_to_regions(info_filt, add_stim=False)
 

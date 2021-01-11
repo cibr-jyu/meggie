@@ -50,12 +50,6 @@ def plot_sources(raw, ica):
     """
     """
     sources = ica.get_sources(raw)
-
-    # alter amplitudes to get better plot, this is heuristic
-    for source in sources._data:
-        for idx, amplitude in enumerate(source):
-            source[idx] = amplitude / 5000.0
-
     sources.plot()
 
 
@@ -82,10 +76,3 @@ def plot_changes(raw, ica, indices):
     ica.apply(raw_removed, exclude=indices)
     compare_raws(raw, raw_removed)
 
-
-def apply_ica(raw, experiment, ica, indices):
-    """
-    """
-    ica.apply(raw, exclude=indices)
-
-    experiment.active_subject.save()

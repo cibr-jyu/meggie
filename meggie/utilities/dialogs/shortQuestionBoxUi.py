@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'shortMessageBoxUi.ui'
+# Form implementation generated from reading ui file 'shortQuestionBoxUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -8,24 +8,27 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_shortMessageBox(object):
-    def setupUi(self, shortMessageBox):
-        shortMessageBox.setObjectName("shortMessageBox")
-        shortMessageBox.resize(582, 117)
+class Ui_shortQuestionBox(object):
+    def setupUi(self, shortQuestionBox):
+        shortQuestionBox.setObjectName("shortQuestionBox")
+        shortQuestionBox.resize(582, 117)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(shortMessageBox.sizePolicy().hasHeightForWidth())
-        shortMessageBox.setSizePolicy(sizePolicy)
-        self.gridLayout = QtWidgets.QGridLayout(shortMessageBox)
+        sizePolicy.setHeightForWidth(shortQuestionBox.sizePolicy().hasHeightForWidth())
+        shortQuestionBox.setSizePolicy(sizePolicy)
+        self.gridLayout = QtWidgets.QGridLayout(shortQuestionBox)
         self.gridLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.gridLayout.setObjectName("gridLayout")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 1, 0, 1, 1)
-        self.pushButtonClose = QtWidgets.QPushButton(shortMessageBox)
-        self.pushButtonClose.setObjectName("pushButtonClose")
-        self.gridLayout.addWidget(self.pushButtonClose, 1, 1, 1, 1)
-        self.scrollArea = QtWidgets.QScrollArea(shortMessageBox)
+        self.pushButtonCancel = QtWidgets.QPushButton(shortQuestionBox)
+        self.pushButtonCancel.setObjectName("pushButtonCancel")
+        self.gridLayout.addWidget(self.pushButtonCancel, 1, 1, 1, 1)
+        self.pushButtonOk = QtWidgets.QPushButton(shortQuestionBox)
+        self.pushButtonOk.setObjectName("pushButtonOk")
+        self.gridLayout.addWidget(self.pushButtonOk, 1, 2, 1, 1)
+        self.scrollArea = QtWidgets.QScrollArea(shortQuestionBox)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
@@ -44,15 +47,17 @@ class Ui_shortMessageBox(object):
         self.labelMessage.setObjectName("labelMessage")
         self.gridLayout_2.addWidget(self.labelMessage, 0, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 2)
+        self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 3)
 
-        self.retranslateUi(shortMessageBox)
-        self.pushButtonClose.clicked.connect(shortMessageBox.close)
-        QtCore.QMetaObject.connectSlotsByName(shortMessageBox)
+        self.retranslateUi(shortQuestionBox)
+        self.pushButtonOk.clicked.connect(shortQuestionBox.accept)
+        self.pushButtonCancel.clicked.connect(shortQuestionBox.reject)
+        QtCore.QMetaObject.connectSlotsByName(shortQuestionBox)
 
-    def retranslateUi(self, shortMessageBox):
+    def retranslateUi(self, shortQuestionBox):
         _translate = QtCore.QCoreApplication.translate
-        shortMessageBox.setWindowTitle(_translate("shortMessageBox", "Meggie"))
-        self.pushButtonClose.setText(_translate("shortMessageBox", "Close"))
-        self.labelMessage.setText(_translate("shortMessageBox", "The was a cat behind the all mighty bird singing hallelujah. Who knew it would be so devastating if not all of us? The cries in the woods, howls of the never ending human culture vanishing into thin q numbers."))
+        shortQuestionBox.setWindowTitle(_translate("shortQuestionBox", "Meggie"))
+        self.pushButtonCancel.setText(_translate("shortQuestionBox", "Cancel"))
+        self.pushButtonOk.setText(_translate("shortQuestionBox", "Ok"))
+        self.labelMessage.setText(_translate("shortQuestionBox", "The was a cat behind the all mighty bird singing hallelujah. Who knew it would be so devastating if not all of us? The cries in the woods, howls of the never ending human culture vanishing into thin q numbers."))
 

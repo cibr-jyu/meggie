@@ -14,20 +14,6 @@
    <string>Meggie - Output options</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="1" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="0" column="0">
     <widget class="QScrollArea" name="scrollArea">
      <property name="frameShape">
@@ -42,7 +28,7 @@
         <x>0</x>
         <y>0</y>
         <width>514</width>
-        <height>547</height>
+        <height>541</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -294,46 +280,57 @@
      </widget>
     </widget>
    </item>
+   <item row="1" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCancel">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonOk">
+       <property name="text">
+        <string>Accept</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <tabstops>
   <tabstop>scrollArea</tabstop>
-  <tabstop>buttonBox</tabstop>
+  <tabstop>checkBoxBaselineCorrection</tabstop>
+  <tabstop>comboBoxBaselineMode</tabstop>
+  <tabstop>doubleSpinBoxBaselineStart</tabstop>
+  <tabstop>doubleSpinBoxBaselineEnd</tabstop>
+  <tabstop>doubleSpinBoxFrequencyMin</tabstop>
+  <tabstop>doubleSpinBoxFrequencyMax</tabstop>
+  <tabstop>doubleSpinBoxTimeStart</tabstop>
+  <tabstop>doubleSpinBoxTimeEnd</tabstop>
+  <tabstop>comboBoxCondition</tabstop>
+  <tabstop>radioButtonAllChannels</tabstop>
+  <tabstop>radioButtonChannelAverages</tabstop>
+  <tabstop>pushButtonCancel</tabstop>
+  <tabstop>pushButtonOk</tabstop>
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>TFROutputOptions</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>288</x>
-     <y>647</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>TFROutputOptions</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>312</x>
-     <y>647</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>checkBoxBaselineCorrection</sender>
    <signal>toggled(bool)</signal>
@@ -341,12 +338,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>519</x>
-     <y>76</y>
+     <x>501</x>
+     <y>62</y>
     </hint>
     <hint type="destinationlabel">
-     <x>403</x>
-     <y>152</y>
+     <x>501</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -357,12 +354,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>519</x>
-     <y>76</y>
+     <x>501</x>
+     <y>62</y>
     </hint>
     <hint type="destinationlabel">
-     <x>403</x>
-     <y>229</y>
+     <x>501</x>
+     <y>121</y>
     </hint>
    </hints>
   </connection>
@@ -373,12 +370,44 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>519</x>
-     <y>76</y>
+     <x>501</x>
+     <y>62</y>
     </hint>
     <hint type="destinationlabel">
-     <x>403</x>
-     <y>305</y>
+     <x>501</x>
+     <y>151</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonCancel</sender>
+   <signal>clicked()</signal>
+   <receiver>TFROutputOptions</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>428</x>
+     <y>551</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>43</x>
+     <y>546</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonOk</sender>
+   <signal>clicked()</signal>
+   <receiver>TFROutputOptions</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>505</x>
+     <y>557</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>147</x>
+     <y>557</y>
     </hint>
    </hints>
   </connection>

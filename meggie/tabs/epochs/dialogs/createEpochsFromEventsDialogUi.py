@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'createEpochsFromEventsDialogUi.ui'
+# Form implementation generated from reading ui file 'designer_ui_files/createEpochsFromEventsDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_CreateEpochsFromEventsDialog(object):
     def setupUi(self, CreateEpochsFromEventsDialog):
         CreateEpochsFromEventsDialog.setObjectName("CreateEpochsFromEventsDialog")
-        CreateEpochsFromEventsDialog.setWindowModality(QtCore.Qt.WindowModal)
+        CreateEpochsFromEventsDialog.setWindowModality(QtCore.Qt.NonModal)
         CreateEpochsFromEventsDialog.resize(777, 783)
         self.gridLayout = QtWidgets.QGridLayout(CreateEpochsFromEventsDialog)
         self.gridLayout.setObjectName("gridLayout")
@@ -240,7 +240,7 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.pushButtonCancel.setText(_translate("CreateEpochsFromEventsDialog", "Cancel"))
         self.pushButtonBatch.setText(_translate("CreateEpochsFromEventsDialog", "Batch"))
         self.pushButtonApply.setText(_translate("CreateEpochsFromEventsDialog", "Apply"))
-        self.groupBoxEventsList.setTitle(_translate("CreateEpochsFromEventsDialog", "List of given <event ID>, <event name>"))
+        self.groupBoxEventsList.setTitle(_translate("CreateEpochsFromEventsDialog", "List of event specifications"))
         self.groupBoxRejection.setTitle(_translate("CreateEpochsFromEventsDialog", "Rejection limits"))
         self.checkBoxGrad.setToolTip(_translate("CreateEpochsFromEventsDialog", "Include or exclude grad channels"))
         self.checkBoxGrad.setText(_translate("CreateEpochsFromEventsDialog", "Grad"))

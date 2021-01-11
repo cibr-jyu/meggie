@@ -87,7 +87,8 @@ class FilterDialog(QtWidgets.QDialog):
             self.filter(subject, params)
         except Exception as exc:
             exc_messagebox(self.parent, exc)
-            logging.getLogger('ui_logger').exception(str(exc))
+
+        logging.getLogger('ui_logger').info('Finished filtering')
 
         self.parent.initialize_ui()
         self.close()
@@ -108,11 +109,13 @@ class FilterDialog(QtWidgets.QDialog):
                     self.filter(subject, params)
                     subject.release_memory()
                 except Exception as exc:
-                    logging.getLogger('ui_logger').exception(str(exc))
+                    logging.getLogger('ui_logger').exception('')
                     self.batching_widget.failed_subjects.append(
                         (subject, str(exc)))
 
         self.batching_widget.cleanup()
+
+        logging.getLogger('ui_logger').info('Finished filtering')
 
         self.parent.initialize_ui()
         self.close()

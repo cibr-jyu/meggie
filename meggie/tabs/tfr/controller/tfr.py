@@ -12,7 +12,8 @@ import mne
 import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.formats import format_floats
-from meggie.utilities.colors import color_cycle
+from meggie.utilities.plotting import color_cycle
+from meggie.utilities.plotting import get_channel_average_fig_size
 from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import clean_names
@@ -26,11 +27,10 @@ from meggie.utilities.decorators import threaded
 from meggie.datatypes.tfr.tfr import TFR
 
 
-def _compute_tse(meggie_tfr, fmin, fmax, tmin, tmax, blmode, blstart, blend):
+def _compute_tse(meggie_tfr, fmin, fmax):
     """
     """
     tfrs = meggie_tfr.content
-    times = meggie_tfr.times
 
     fmin_idx = np.where(meggie_tfr.freqs >= fmin)[0][0]
     fmax_idx = np.where(meggie_tfr.freqs <= fmax)[0][-1]
@@ -38,31 +38,37 @@ def _compute_tse(meggie_tfr, fmin, fmax, tmin, tmax, blmode, blstart, blend):
     if fmax_idx <= fmin_idx:
         raise Exception('Something wrong with the frequencies')
 
+    tses = {}
+    for key, tfr in tfrs.items():
+        tse = np.mean(tfr.data[:, fmin_idx:fmax_idx+1, :], axis=1)
+        tses[key] = tse
+
+    return tses
+
+
+def _crop_and_correct_to_baseline(tse, blmode, blstart, blend, tmin, tmax, times):
+    """
+    """
     tmin_idx = np.where(times >= tmin)[0][0]
     tmax_idx = np.where(times <= tmax)[0][-1]
 
-    tses = {}
-    for key, tfr in tfrs.items():
-        tse = np.mean(tfr.data[:, 
-                               fmin_idx:fmax_idx+1, 
-                               tmin_idx:tmax_idx+1], axis=1)
+    if blmode:
+        if blstart < tmin:
+            raise Exception(
+                'Baseline start should not be earlier than crop start.')
 
-        if blmode:
-            if blstart < tmin:
-                raise Exception(
-                    'Baseline start should not be earlier than crop start.')
+        if blend > tmax:
+            raise Exception(
+                'Baseline end should not be later than crop end.')
 
-            if blend > tmax:
-                raise Exception(
-                    'Baseline end should not be later than crop end.')
+        # correct to baseline
+        tse = mne.baseline.rescale(tse, times, baseline=(blstart, blend), 
+                                   mode=blmode)
 
-            # correct to baseline
-            tse = mne.baseline.rescale(tse, times, baseline=(blstart, blend), 
-                                       mode=blmode)
+        # crop
+        tse = tse[:, tmin_idx:tmax_idx+1]
 
-        tses[key] = tse
-
-    return times[tmin_idx:tmax_idx+1], tses
+    return times[tmin_idx:tmax_idx+1], tse
 
 
 def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend, 
@@ -71,8 +77,7 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
     """
     meggie_tfr = subject.tfr.get(tfr_name)
 
-    times, tses = _compute_tse(meggie_tfr, fmin, fmax, 
-                               tmin, tmax, blmode, blstart, blend)
+    tses = _compute_tse(meggie_tfr, fmin, fmax)
 
     info = meggie_tfr.info
     if ch_type == 'meg':
@@ -86,23 +91,22 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
     ch_names = meggie_tfr.ch_names
     colors = color_cycle(len(tses))
 
-    logging.getLogger('ui_logger').info('Plotting TSE from all channels..')
-
-
     def individual_plot(ax, info_idx, names_idx):
         """
         """
         ch_name = ch_names[names_idx]
 
-        title = 'TSE_{0}_{1}'.format(tfr_name, ch_name)
-        ax.figure.canvas.set_window_title(title)
-        ax.figure.suptitle(title)
+        title_elems = [tfr_name, ch_name]
+        ax.figure.canvas.set_window_title('_'.join(title_elems))
+        ax.figure.suptitle(' '.join(title_elems))
         ax.set_title('')
 
-        for color_idx, (key, tse) in enumerate(tses.items()):
+        for color_idx, (key, tse) in enumerate(sorted(tses.items())):
+            times, tse = _crop_and_correct_to_baseline(
+                tse, blmode, blstart, blend, tmin, tmax, meggie_tfr.times)
             ax.plot(times, tse[names_idx], color=colors[color_idx], label=key)
-            ax.axhline(0)
-            ax.axvline(0)
+            ax.axhline(0, color='black')
+            ax.axvline(0, color='black')
 
         ax.legend()
 
@@ -119,13 +123,15 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
             fig, info, ch_names, individual_plot):
 
         handles = []
-        for color_idx, (key, tse) in enumerate(tses.items()):
-            handles.append(ax.plot(tse[names_idx], linewidth=0.2, 
+        for color_idx, (key, tse) in enumerate(sorted(tses.items())):
+            times, tse = _crop_and_correct_to_baseline(
+                tse, blmode, blstart, blend, tmin, tmax, meggie_tfr.times)
+            handles.append(ax.plot(times, tse[names_idx], linewidth=0.2, 
                            color=colors[color_idx],
                            label=key)[0])
 
     fig.legend(handles=handles)
-    title = 'TSE_{0}_{1}'.format(tfr_name, ch_type)
+    title = '{0}_{1}'.format(tfr_name, ch_type)
     fig.canvas.set_window_title(title)
     plt.show()
 
@@ -136,8 +142,7 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
     """
     meggie_tfr = subject.tfr.get(tfr_name)
 
-    times, tses = _compute_tse(meggie_tfr, fmin, fmax, 
-                               tmin, tmax, blmode, blstart, blend)
+    tses = _compute_tse(meggie_tfr, fmin, fmax)
 
     ch_names = meggie_tfr.ch_names
     info = meggie_tfr.info
@@ -145,37 +150,47 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
 
     channel_groups = experiment.channel_groups
 
-    logging.getLogger('ui_logger').info('Plotting TSE channel averages..')
-
     averages = {}
-    for idx, (key, tse) in enumerate(tses.items()):
-
+    for key, tse in sorted(tses.items()):
         data_labels, averaged_data = average_to_channel_groups(
             tse, info, ch_names, channel_groups)
 
-        if not data_labels:
-            raise Exception('No channel groups matching the data found.')
+        times, averaged_data = _crop_and_correct_to_baseline(
+            averaged_data, blmode, blstart, blend, tmin, tmax, meggie_tfr.times)
 
-        averages[key] = data_labels, averaged_data
-        shape = averaged_data.shape
+        for label_idx, label in enumerate(data_labels):
+            if not label in averages:
+                averages[label] = []
+            averages[label].append((key, times, averaged_data[label_idx]))
 
-    for ii in range(shape[0]):
-        fig, ax = plt.subplots()
-        for color_idx, key in enumerate(averages.keys()):
+    ch_groups = sorted(set([label[1] for label in averages.keys()]))
+    ch_types = sorted(set([label[0] for label in averages.keys()]))
+
+    ncols = 4
+    nrows = int((len(ch_groups) - 1) / ncols + 1)
+
+    for ch_type in ch_types:
+        fig, axes = plt.subplots(nrows=nrows, ncols=ncols)
+        fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
+        for ch_group_idx, ch_group in enumerate(ch_groups):
+            ax = axes[ch_group_idx // ncols, ch_group_idx % ncols]
+            ax.set_title(ch_group)
             ax.set_xlabel('Time (s)')
             ax.set_ylabel('Power ({})'.format(get_power_unit(
-                averages[key][0][ii][0],
-                False
-            )))
+                ch_type, False)))
 
-            ax.plot(times, averages[key][1][ii], color=colors[color_idx],
-                    label=key)
-        ax.axhline(0)
-        ax.legend()
-        ch_type, ch_group = averages[key][0][ii]
-        title = 'TSE_{0}_{1}_{2}'.format(tfr_name, ch_type, ch_group)
-        fig.canvas.set_window_title(title)
-        fig.suptitle(title)
+            handles = []
+            for color_idx, (key, times, curve) in enumerate(averages[(ch_type, ch_group)]):
+                handles.append(ax.plot(times, curve, color=colors[color_idx], label=key)[0])
+
+            ax.axhline(0, color='black')
+            ax.axvline(0, color='black')
+
+        fig.legend(handles=handles)
+        title_elems = [tfr_name, ch_type]
+        fig.canvas.set_window_title('_'.join(title_elems))
+        fig.suptitle(' '.join(title_elems))
+        fig.tight_layout()
 
     plt.show()
 
@@ -195,44 +210,56 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
 
     tfr = meggie_tfr.content.get(tfr_condition)
 
-    logging.getLogger('ui_logger').info("Plotting TFR channel averages...")
-
     data = tfr.data
     ch_names = meggie_tfr.ch_names
     channel_groups = experiment.channel_groups
-
-    data_labels, averaged_data = average_to_channel_groups(
-        data, meggie_tfr.info, ch_names, channel_groups)
-
-    if not data_labels:
-        raise Exception('No channel groups matching the data found')
 
     sfreq = meggie_tfr.info['sfreq']
     times = meggie_tfr.times
     freqs = meggie_tfr.freqs
 
-    for idx in range(len(data_labels)):
-        data = averaged_data[idx]
-        labels = data_labels[idx]
-        info = mne.create_info(ch_names=['grand_average'],
-                               sfreq=sfreq,
-                               ch_types='mag')
-        tfr = mne.time_frequency.tfr.AverageTFR(info, 
-            data[np.newaxis, :], 
-            times, freqs, 1)
+    # compared to spectrums, evoked and tse, tfr is plotted with only one condition.
+    # it makes the plotting a bit simpler. we will also misuse 
+    # AverageTFR object to do the heavy work.
 
-        title = 'TFR_{0}_{1}'.format(labels[1], labels[0])
+    data_labels, averaged_data = average_to_channel_groups(
+        data, meggie_tfr.info, ch_names, channel_groups)
 
-        # prevent interaction as no topography is involved now
-        def onselect(*args, **kwargs):
-            pass
+    averages = {}
+    for label_idx, label in enumerate(data_labels):
+        averages[label] = averaged_data[label_idx]
 
-        tfr._onselect = onselect
+    ch_groups = sorted(set([label[1] for label in data_labels]))
+    ch_types = sorted(set([label[0] for label in data_labels]))
 
-        fig = tfr.plot(baseline=bline, mode=mode, title=title, 
-                       fmin=fmin, fmax=fmax, 
-                       tmin=tmin, tmax=tmax)
-        fig.canvas.set_window_title(title)
+    ncols = 4
+    nrows = int((len(ch_groups) - 1) / ncols + 1)
+
+    for ch_type in ch_types:
+        fig, axes = plt.subplots(nrows=nrows, ncols=ncols)
+        fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
+
+        for ch_group_idx, ch_group in enumerate(ch_groups):
+            ax = axes[ch_group_idx // ncols, ch_group_idx % ncols]
+            ax.set_title(ch_group)
+
+            info = mne.create_info(ch_names=['grand_average'], sfreq=sfreq, ch_types='mag')
+            tfr = mne.time_frequency.tfr.AverageTFR(info,
+                averages[(ch_type, ch_group)][np.newaxis, :], times, freqs, 1)
+
+            # prevent interaction as no topography is involved now
+            def onselect(*args, **kwargs):
+                pass
+            tfr._onselect = onselect
+
+            tfr.plot(baseline=bline, mode=mode, title='', 
+                     fmin=fmin, fmax=fmax, 
+                     tmin=tmin, tmax=tmax, axes=ax)
+
+        fig.tight_layout()
+        title_elems = [tfr_name, tfr_condition, ch_type]
+        fig.canvas.set_window_title('_'.join(title_elems))
+        fig.suptitle(' '.join(title_elems))
 
 
 def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition, 
@@ -259,9 +286,7 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
 
     tfr = tfr.copy().drop_channels(dropped_names)
 
-    logging.getLogger('ui_logger').info("Plotting TFR from all channels...")
-
-    title = 'TFR_{0}_{1}_{2}'.format(tfr_name, tfr_condition, ch_type)
+    title = '{0}_{1}_{2}'.format(tfr_name, tfr_condition, ch_type)
     fig = tfr.plot_topo(show=False,
                         baseline=bline, mode=mode,
                         tmin=tmin, tmax=tmax,
@@ -274,9 +299,9 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
         channel = plt.getp(plt.gca(), 'title')
         plt.gca().set_title('')
 
-        title = 'TFR_{0}_{1}'.format(tfr_name, channel)
-        plt.gcf().canvas.set_window_title(title)
-        plt.gcf().suptitle(title)
+        title_elems = [tfr_name, channel]
+        plt.gcf().canvas.set_window_title('_'.join(title_elems))
+        plt.gcf().suptitle(' '.join(title_elems))
 
         plt.show(block=False)
 
@@ -427,6 +452,7 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
     active_subject.add(meggie_tfr, "tfr")
 
 
+@threaded
 def save_tfr_all_channels(experiment, tfr_name,
                           blmode, blstart, blend,
                           tmin, tmax, fmin, fmax):
@@ -472,7 +498,7 @@ def save_tfr_all_channels(experiment, tfr_name,
         filemanager.save_csv(path, csv_data, column_names, row_descs)
         logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
-
+@threaded
 def save_tfr_channel_averages(experiment, tfr_name,
                               blmode, blstart, blend,
                               tmin, tmax, fmin, fmax):
@@ -510,9 +536,6 @@ def save_tfr_channel_averages(experiment, tfr_name,
             data_labels, averaged_data = average_to_channel_groups(
                 data, info, ch_names, channel_groups)
 
-            if not data_labels:
-                raise Exception('No channel groups matching the data found')
-
             for ix in range(averaged_data.shape[0]):
                 for iy in range(averaged_data.shape[1]):
                     ch_type, area = data_labels[ix]
@@ -529,7 +552,7 @@ def save_tfr_channel_averages(experiment, tfr_name,
         filemanager.save_csv(path, csv_data, column_names, row_descs)
         logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
-
+@threaded
 def save_tse_all_channels(experiment, tfr_name, blmode, blstart, 
                           blend, tmin, tmax, fmin, fmax):
     """
@@ -544,25 +567,29 @@ def save_tse_all_channels(experiment, tfr_name, blmode, blstart,
         if not tfr:
             continue
 
-        times, tses = _compute_tse(tfr, fmin, fmax, 
-                                   tmin, tmax, blmode, blstart, blend)
-        column_names = format_floats(times)
+        tses = _compute_tse(tfr, fmin, fmax)
 
         for key, tse in tses.items():
+            times, tse = _crop_and_correct_to_baseline(
+                tse, blmode, blstart, blend, tmin, tmax, tfr.times)
+
             csv_data.extend(tse.tolist())
 
             for ch_name in tfr.ch_names:
                 row_desc = (subject.name, key, ch_name)
                 row_descs.append(row_desc)
 
+        column_names = format_floats(times)
+
     folder = filemanager.create_timestamped_folder(experiment)
-    fname = tfr_name + '_all_subjects_all_channels_tfr.csv'
+    fname = tfr_name + '_all_subjects_all_channels_tse.csv'
     path = os.path.join(folder, fname)
 
     filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
 
+@threaded
 def save_tse_channel_averages(experiment, tfr_name, blmode, blstart, 
                               blend, tmin, tmax, fmin, fmax):
     """
@@ -579,17 +606,15 @@ def save_tse_channel_averages(experiment, tfr_name, blmode, blstart,
         if not tfr:
             continue
 
-        times, tses = _compute_tse(tfr, fmin, fmax, 
-                                   tmin, tmax, blmode, blstart, blend)
-        column_names = format_floats(times)
+        tses = _compute_tse(tfr, fmin, fmax)
 
         for key, tse in tses.items():
 
             data_labels, averaged_data = average_to_channel_groups(
                 tse, tfr.info, tfr.ch_names, channel_groups)
 
-            if not data_labels:
-                raise Exception('No channel groups matching the data found.')
+            times, averaged_data = _crop_and_correct_to_baseline(
+                averaged_data, blmode, blstart, blend, tmin, tmax, tfr.times)
 
             csv_data.extend(averaged_data.tolist())
 
@@ -597,8 +622,10 @@ def save_tse_channel_averages(experiment, tfr_name, blmode, blstart,
                 row_desc = (subject.name, key, ch_type, area)
                 row_descs.append(row_desc)
 
+        column_names = format_floats(times)
+
     folder = filemanager.create_timestamped_folder(experiment)
-    fname = tfr_name + '_all_subjects_channel_averages_tfr.csv'
+    fname = tfr_name + '_all_subjects_channel_averages_tse.csv'
     path = os.path.join(folder, fname)
 
     filemanager.save_csv(path, csv_data, column_names, row_descs)

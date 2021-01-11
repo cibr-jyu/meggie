@@ -87,7 +87,7 @@ class Spectrum(object):
 
                 filemanager.save_csv(path, data, column_names, row_descs)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
+            logging.getLogger('ui_logger').exception('')
             raise IOError('Writing spectrums failed')
 
     def delete_content(self):

@@ -184,7 +184,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished creating spectrum.')
 
         self.close()
 
@@ -223,12 +223,12 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append((subject,
                                                                  str(exc)))
-                    logging.getLogger('ui_logger').exception(str(exc))
+                    logging.getLogger('ui_logger').exception('')
 
         self.batching_widget.cleanup()
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Finished.')
+        logging.getLogger('ui_logger').info('Finished creating spectrum.')
 
         self.close()

@@ -2,6 +2,8 @@
 """
 import logging
 
+from meggie.utilities.messaging import exc_messagebox
+
 from meggie.utilities.names import next_available_name
 from meggie.utilities.formats import format_float
 
@@ -65,8 +67,15 @@ def delete(experiment, data, window):
     except IndexError as exc:
         return
 
-    subject.remove(selected_name, 'epochs')
+    try:
+        subject.remove(selected_name, 'epochs')
+    except Exception as exc:
+        exc_messagebox(window, exc)
+
     experiment.save_experiment_settings()
+
+    logging.getLogger('ui_logger').info('Deleted selected epochs')
+
     window.initialize_ui()
 
 
@@ -83,10 +92,14 @@ def delete_from_all(experiment, data, window):
             try:
                 subject.remove(selected_name, 'epochs')
             except Exception as exc:
+                logging.getLogger('ui_logger').exception('')
                 logging.getLogger('ui_logger').warning(
                     'Could not remove epochs for ' +
                     subject.name)
     experiment.save_experiment_settings()
+
+    logging.getLogger('ui_logger').info('Deleted selected epochs from all subjects')
+
     window.initialize_ui()
 
 
@@ -101,6 +114,8 @@ def plot_epochs(experiment, data, window):
 
     epochs = subject.epochs.get(selected_name)
     epochs.content.plot()
+
+    logging.getLogger('ui_logger').info('Plotting epochs')
 
 
 def plot_image(experiment, data, window):
@@ -118,4 +133,6 @@ def plot_image(experiment, data, window):
         ch_type = fig.canvas.get_window_title()
         title = '{0}_{1}'.format(selected_name, ch_type)
         fig.canvas.set_window_title(title)
+
+    logging.getLogger('ui_logger').info('Plotting epochs image')
 

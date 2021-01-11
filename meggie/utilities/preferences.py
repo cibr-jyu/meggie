@@ -16,7 +16,6 @@ class PreferencesHandler(object):
         self.workspace = ""
         self.previous_experiment_name = ""
         self.auto_load_last_open_experiment = False
-        self.confirm_quit = False
         self.save_bads = False
         self.read_preferences_from_disk()
 
@@ -39,11 +38,6 @@ class PreferencesHandler(object):
             config.set('MiscOptions', 'autoReloadPreviousExperiment', 'True')
         else:
             config.set('MiscOptions', 'autoReloadPreviousExperiment', 'False')
-
-        if self.confirm_quit:
-            config.set('MiscOptions', 'confirmQuit', 'True')
-        else:
-            config.set('MiscOptions', 'confirmQuit', 'False')
 
         if self.save_bads:
             config.set('MiscOptions', 'saveBads', 'True')
@@ -82,14 +76,6 @@ class PreferencesHandler(object):
                 self.auto_load_last_open_experiment = False
         except Exception as exc:
             self.auto_load_last_open_experiment = False
-
-        try:
-            if config.get('MiscOptions', 'confirmQuit') == 'True':
-                self.confirm_quit = True
-            else:
-                self.confirm_quit = False
-        except Exception as exc:
-            self.confirm_quit = False
 
         try:
             self.previous_experiment_name = config.get(

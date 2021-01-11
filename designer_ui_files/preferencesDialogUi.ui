@@ -125,13 +125,6 @@
           <string>Miscellaneous:</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="checkBoxConfirmQuit">
-            <property name="text">
-             <string>Show confirmation dialog on Meggie quit</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
            <widget class="QCheckBox" name="checkBoxAutomaticOpenPreviousExperiment">
             <property name="text">

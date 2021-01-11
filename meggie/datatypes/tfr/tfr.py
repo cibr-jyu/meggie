@@ -44,7 +44,7 @@ class TFR(object):
                 fname = self._get_fname(tfr_name)
                 tfr.save(fname, overwrite=True)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
+            logging.getLogger('ui_logger').exception('')
             raise IOError('Writing TFRs failed')
 
     def delete_content(self):

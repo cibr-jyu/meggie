@@ -13,9 +13,9 @@ from meggie.tabs.preprocessing.dialogs.rereferencingDialogMain import Rereferenc
 from meggie.tabs.preprocessing.dialogs.eventsFromAnnotationsDialogMain import EventsFromAnnotationsDialog
 
 from meggie.utilities.messaging import messagebox
-from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.events import find_stim_channel
 from meggie.utilities.events import find_events
+from meggie.utilities.channels import is_montage_set
 from meggie.utilities.measurement_info import MeasurementInfo
 
 
@@ -66,7 +66,7 @@ def projections(experiment, data, window):
     subject = experiment.active_subject
     raw = subject.get_raw()
     if not raw.info['projs']:
-        messagebox(window, "Raw contains no projection vectors")
+        messagebox(window, "Data does not contain any projection vectors")
         return
 
     fig = raw.plot_projs_topomap()
@@ -132,6 +132,11 @@ def measurement_info(experiment, data, window):
         ica_applied = subject.ica_applied
         rereferenced = subject.rereferenced
 
+        try:
+            eeg_montage_set = is_montage_set(raw.info, 'eeg')
+        except Exception as exc:
+            eeg_montage_set = False
+
         message += "Subject name: {0}\n".format(mi.subject_name)
         message += "Date: {0}\n".format(mi.date)
         message += "Length: {0:.2f} s\n".format(raw.times[-1])
@@ -143,6 +148,7 @@ def measurement_info(experiment, data, window):
         message += "Maxfilter applied: {0}\n".format(str(maxfilter_applied))
         message += "ICA applied: {0}\n".format(str(ica_applied))
         message += "Rereferenced: {0}\n".format(rereferenced) 
+        message += "EEG montage set: {0}\n".format(eeg_montage_set) 
     except Exception as exc:
         return ""
 

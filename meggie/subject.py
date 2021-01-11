@@ -60,7 +60,7 @@ class Subject:
         try:
             dataobject.delete_content()
         except Exception as exc:
-            logging.getLogger('ui_logger').exception(str(exc))
+            logging.getLogger('ui_logger').exception('')
             raise IOError('Could not delete ' + str(datatype) +
                           ' from folders')
 
