@@ -1,10 +1,15 @@
 Changelog
 =========
 
-1.0.2 (unreleased)
+1.0.3 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.0.2 (2020-03-02)
+------------------
+
+- Fix channel average plots with non-orthodox channel groups
 
 1.0.1 (2020-03-02)
 ------------------
