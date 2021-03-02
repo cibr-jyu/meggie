@@ -176,17 +176,21 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
                 child.set_lw([1])
                 break
 
-        plt.show(block=True)
+        plt.show()
 
-        if self.ui.radioButtonMEG.isChecked(): 
-            if selection:
-                all_megs = []
-                for ch_name in selection:
-                    all_megs.extend(get_triplet_from_mag(ch_name))
-                self.meg_channel_groups[selected_item.text()] = all_megs
-        else:
-            if selection:
-                self.eeg_channel_groups[selected_item.text()] = selection
+        def on_close(event):
+            if self.ui.radioButtonMEG.isChecked():
+                if selection:
+                    all_megs = []
+                    for ch_name in selection:
+                        all_megs.extend(get_triplet_from_mag(ch_name))
+                    self.meg_channel_groups[selected_item.text()] = all_megs
+            else:
+                if selection:
+                    self.eeg_channel_groups[selected_item.text()] = selection
+
+
+        fig.canvas.mpl_connect('close_event', on_close)
 
     def on_radioButtonEEG_toggled(self):
         self.ui.listWidgetChannelGroups.clear()
