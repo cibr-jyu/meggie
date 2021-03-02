@@ -4,7 +4,7 @@
 
 The simplest way to install and run meggie is with anaconda / miniconda:
 1. Have anaconda / miniconda installed
-1. Install meggie inside an environment: *conda create -n meggie-env -c cibr -c conda-forge meggie==1.0*
+1. Install meggie inside an environment: *conda create -n meggie-env -c cibr -c conda-forge meggie*
 1. Activate environment: *conda activate meggie-env*
 1. Run: *meggie*
 
