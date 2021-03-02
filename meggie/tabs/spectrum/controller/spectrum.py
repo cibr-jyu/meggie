@@ -203,17 +203,24 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
                 averages[label] = []
             averages[label].append((key, averaged_data[label_idx]))
 
-    ch_groups = sorted(set([label[1] for label in averages.keys()]))
     ch_types = sorted(set([label[0] for label in averages.keys()]))
-
-    ncols = 4
-    nrows = int((len(ch_groups) - 1) / ncols + 1)
-
     for ch_type in ch_types:
-        fig, axes = plt.subplots(nrows=nrows, ncols=ncols)
+
+        ch_groups = sorted([label[1] for label in averages.keys()
+                            if label[0] == ch_type])
+
+        ncols = min(4, len(ch_groups))
+        nrows = int((len(ch_groups) - 1) / ncols + 1)
+
+        fig, axes = plt.subplots(nrows=nrows, ncols=ncols, squeeze=False)
         fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
-        for ch_group_idx, ch_group in enumerate(ch_groups):
-            ax = axes[ch_group_idx // ncols, ch_group_idx % ncols]
+        for ax_idx in range(ncols*nrows):
+            ax = axes[ax_idx // ncols, ax_idx % ncols]
+            if ax_idx >= len(ch_groups):
+                ax.axis('off')
+                continue
+
+            ch_group = ch_groups[ax_idx]
             ax.set_title(ch_group)
             ax.set_xlabel('Frequency (Hz)')
             ax.set_ylabel('Power ({})'.format(
