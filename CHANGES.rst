@@ -1,10 +1,15 @@
 Changelog
 =========
 
-1.0.1 (unreleased)
+1.0.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.0.1 (2020-03-02)
+------------------
+
+- Fix issue with channel selection saving
 
 1.0.0 (2020-01-11)
 ------------------

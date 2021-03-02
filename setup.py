@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='meggie',
-    version='1.0.0',
+    version='1.0.1',
     description="",
     author='CIBR',
     author_email='erkka.heinila@jyu.fi',
