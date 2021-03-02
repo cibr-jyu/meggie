@@ -10,5 +10,6 @@ def color_cycle(n):
 def get_channel_average_fig_size(nrows, ncols):
     """ Returns fig size in inches, hardcoded until better solution found
     """
-    return 10, 5
+    
+    return int(10), int(10 * (nrows/ncols))
 
