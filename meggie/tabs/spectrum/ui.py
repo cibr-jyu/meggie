@@ -51,7 +51,7 @@ def delete(experiment, data, window):
 
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected spectrum.')
+    logging.getLogger('ui_logger').info('Deleted spectrum: ' + selected_name)
 
     window.initialize_ui()
 
@@ -76,7 +76,7 @@ def delete_from_all(experiment, data, window):
 
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected spectrum from all subjects.')
+    logging.getLogger('ui_logger').info('Deleted spectrum from all subjects: ' + selected_name)
 
     window.initialize_ui()
 
@@ -182,6 +182,8 @@ def spectrum_info(experiment, data, window):
         params = spectrum.params
 
         message = ""
+
+        message += "Name: "+ spectrum.name + "\n\n"
 
         if 'fmin' in params and 'fmax' in params:
             message += 'Frequencies: {0}Hz - {1}Hz\n'.format(format_float(params['fmin']), 

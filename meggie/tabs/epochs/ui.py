@@ -74,7 +74,7 @@ def delete(experiment, data, window):
 
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected epochs')
+    logging.getLogger('ui_logger').info('Deleted epochs: ' + selected_name)
 
     window.initialize_ui()
 
@@ -98,7 +98,7 @@ def delete_from_all(experiment, data, window):
                     subject.name)
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected epochs from all subjects')
+    logging.getLogger('ui_logger').info('Deleted epochs from all subjects: ' + selected_name)
 
     window.initialize_ui()
 

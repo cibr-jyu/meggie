@@ -69,7 +69,7 @@ def delete(experiment, data, window):
 
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected evoked')
+    logging.getLogger('ui_logger').info('Deleted evoked: ' + selected_name)
 
     window.initialize_ui()
 
@@ -94,7 +94,7 @@ def delete_from_all(experiment, data, window):
 
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected evoked from all subjects')
+    logging.getLogger('ui_logger').info('Deleted evoked from all subjects: ' + selected_name)
 
     window.initialize_ui()
 
