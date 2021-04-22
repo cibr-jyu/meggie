@@ -7,13 +7,14 @@ from meggie.utilities.formats import format_float
 
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
-from meggie.tabs.spectrum.dialogs.powerSpectrumDialogMain import PowerSpectrumDialog
+from meggie.utilities.dialogs.powerSpectrumDialogMain import PowerSpectrumDialog
 
 from meggie.tabs.spectrum.controller.spectrum import plot_spectrum_topo
 from meggie.tabs.spectrum.controller.spectrum import plot_spectrum_averages
 from meggie.tabs.spectrum.controller.spectrum import group_average_spectrum
 from meggie.tabs.spectrum.controller.spectrum import save_channel_averages
 from meggie.tabs.spectrum.controller.spectrum import save_all_channels
+from meggie.tabs.spectrum.controller.spectrum import create_power_spectrum
 
 from meggie.utilities.channels import get_channels_by_type
 
@@ -24,7 +25,13 @@ def create(experiment, data, window):
     default_name = next_available_name(
         experiment.active_subject.spectrum.keys(), 'Spectrum')
 
-    dialog = PowerSpectrumDialog(experiment, window, default_name)
+    def handler(subject, spectrum_name, params, intervals):
+        """ Handles spectrum creation, initiated by the dialog
+        """
+        create_power_spectrum(subject, spectrum_name, params, intervals,
+                              do_meanwhile=window.update_ui)
+
+    dialog = PowerSpectrumDialog(experiment, window, default_name, handler)
     dialog.show()
 
 

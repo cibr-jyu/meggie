@@ -4,7 +4,7 @@ import logging
 
 from PyQt5 import QtWidgets
 
-from meggie.tabs.spectrum.dialogs.powerSpectrumAddAdvancedDialogUi import Ui_PowerSpectrumAddAdvancedDialog
+from meggie.utilities.dialogs.powerSpectrumAddAdvancedDialogUi import Ui_PowerSpectrumAddAdvancedDialog
 from meggie.utilities.dialogs.bitSelectionDialogMain import BitSelectionDialog
 
 from meggie.utilities.messaging import messagebox

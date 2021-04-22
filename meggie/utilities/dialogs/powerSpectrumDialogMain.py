@@ -9,12 +9,10 @@ from PyQt5 import QtWidgets
 
 import numpy as np
 
-from meggie.tabs.spectrum.dialogs.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
-from meggie.tabs.spectrum.dialogs.powerSpectrumAddAdvancedDialogMain import PowerSpectrumAddAdvancedDialog
+from meggie.utilities.dialogs.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
+from meggie.utilities.dialogs.powerSpectrumAddAdvancedDialogMain import PowerSpectrumAddAdvancedDialog
 
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
-
-from meggie.tabs.spectrum.controller.spectrum import create_power_spectrum
 
 from meggie.utilities.validators import validate_name
 from meggie.utilities.messaging import exc_messagebox
@@ -23,7 +21,7 @@ from meggie.utilities.messaging import messagebox
 
 class PowerSpectrumDialog(QtWidgets.QDialog):
 
-    def __init__(self, experiment, parent, default_name):
+    def __init__(self, experiment, parent, default_name, handler=None):
         """
         """
         QtWidgets.QDialog.__init__(self, parent)
@@ -32,6 +30,8 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
 
         self.parent = parent
         self.experiment = experiment
+
+        self.handler = handler
 
         self.intervals = []
 
@@ -166,8 +166,6 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
 
         subject = self.experiment.active_subject
 
-        update_ui = self.parent.update_ui
-
         params = dict()
         params['fmin'] = fmin
         params['fmax'] = fmax
@@ -175,8 +173,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['overlap'] = self.ui.spinBoxOverlap.value()
 
         try:
-            create_power_spectrum(subject, spectrum_name, params, intervals,
-                                  do_meanwhile=update_ui)
+            self.handler(subject, spectrum_name, params, intervals)
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -211,14 +208,11 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['nfft'] = self.ui.spinBoxNfft.value()
         params['overlap'] = self.ui.spinBoxOverlap.value()
 
-        update_ui = self.parent.update_ui
-
         selected_subject_names = self.batching_widget.selected_subjects
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    create_power_spectrum(subject, spectrum_name, params, intervals,
-                                          do_meanwhile=update_ui)
+                    self.handler(subject, spectrum_name, params, intervals)
                     subject.release_memory()
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append((subject,

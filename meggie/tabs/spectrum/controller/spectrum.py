@@ -17,8 +17,6 @@ import meggie.utilities.filemanager as filemanager
 
 from meggie.datatypes.spectrum.spectrum import Spectrum
 
-from meggie.utilities.events import find_stim_channel
-from meggie.utilities.events import find_events
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.formats import format_floats
 from meggie.utilities.plotting import color_cycle
@@ -29,76 +27,7 @@ from meggie.utilities.channels import clean_names
 from meggie.utilities.units import get_power_unit
 from meggie.utilities.decorators import threaded
 
-
-def find_event_times(raw, event_id, mask):
-    stim_ch = find_stim_channel(raw)
-    sfreq = raw.info['sfreq']
-
-    events = find_events(raw, stim_ch, mask, event_id)
-    times = [(event[0] - raw.first_samp) / sfreq for event in events]
-    return times
-
-
-def get_raw_blocks_from_intervals(subject, intervals):
-    """
-    """
-    raw = subject.get_raw()
-
-    raw_times = raw.times.copy()
-
-    raw_blocks = OrderedDict()
-    times = {}
-    for ival_type, (avg_group, start, end) in intervals:
-        if avg_group not in raw_blocks:
-            raw_blocks[avg_group] = []
-            times[avg_group] = []
-
-        if ival_type == 'fixed':
-            block = raw.copy().crop(tmin=start, tmax=end)
-            raw_blocks[avg_group].append(block)
-            times[avg_group].append((start, end))
-        else:
-            # the following code finds all start points of intervals by events or
-            # start of recording. then matching end point is found by
-            # (can be same) other events or end of recording.
-            if start[0] == 'events':
-                start_times = find_event_times(raw, start[1], start[2])
-            elif start[0] == 'start':
-                start_times = [raw_times[0]]
-            elif start[0] == 'end':
-                start_times = [raw_times[-1]]
-
-            for start_time in start_times:
-                if end[0] == 'events':
-                    end_times = find_event_times(raw, end[1], end[2])
-                    found = False
-                    for end_time in end_times:
-                        # use equality so that one can also specify same trigger for
-                        # start and end (with different offsets)
-                        if end_time >= start_time:
-                            found = True
-                            break
-                    if not found:
-                        logging.getLogger('ui_logger').info(
-                            'Found start event with no matching end event')
-                        continue
-                elif end[0] == 'start':
-                    end_time = raw_times[0]
-                elif end[0] == 'end':
-                    end_time = raw_times[-1]
-
-                # crop with offsets
-                times[avg_group].append((start_time + start[3],
-                                         end_time + end[3]))
-                block = raw.copy().crop(tmin=(start_time + start[3]),
-                                        tmax=(end_time + end[3]))
-                raw_blocks[avg_group].append(block)
-
-    for key in raw_blocks:
-        if len(raw_blocks[key]) == 0:
-            raise Exception('Was not able to find raw segments for all groups')
-     
-    return times, raw_blocks
+from meggie.utilities.events import get_raw_blocks_from_intervals
 
 
 @threaded
