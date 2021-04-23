@@ -101,7 +101,8 @@ blacklist = ['tests',
              'write_double',
              'make_dig_montage',
              'write_hdf5',
-             'write_tfrs']
+             'write_tfrs',
+             'transform_to_head']
 
 blacklist.extend(['pick_types',
                   'pick_channels',

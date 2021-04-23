@@ -170,6 +170,13 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
     plt.show()
 
 
+def run_permutation_test(experiment, groups, selected_name):
+    """
+    """
+    from meggie.utilities.debug import debug_trace;
+    debug_trace()
+
+
 def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
     """
     """

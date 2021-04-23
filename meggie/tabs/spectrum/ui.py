@@ -8,6 +8,7 @@ from meggie.utilities.formats import format_float
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDialog
 from meggie.utilities.dialogs.powerSpectrumDialogMain import PowerSpectrumDialog
+from meggie.utilities.dialogs.permutationTestDialogMain import PermutationTestDialog
 
 from meggie.tabs.spectrum.controller.spectrum import plot_spectrum_topo
 from meggie.tabs.spectrum.controller.spectrum import plot_spectrum_averages
@@ -15,6 +16,7 @@ from meggie.tabs.spectrum.controller.spectrum import group_average_spectrum
 from meggie.tabs.spectrum.controller.spectrum import save_channel_averages
 from meggie.tabs.spectrum.controller.spectrum import save_all_channels
 from meggie.tabs.spectrum.controller.spectrum import create_power_spectrum
+from meggie.tabs.spectrum.controller.spectrum import run_permutation_test
 
 from meggie.utilities.channels import get_channels_by_type
 
@@ -169,6 +171,24 @@ def save(experiment, data, window):
             exc_messagebox(window, exc)
 
     dialog = OutputOptions(window, handler=handler)
+    dialog.show()
+
+
+def permutation_test(experiment, data, window):
+    """
+    """
+    try:
+        selected_name = data['outputs']['spectrum'][0]
+    except IndexError as exc:
+        return
+
+    def handler(groups):
+        """
+        """
+        run_permutation_test(experiment, groups, selected_name)
+        logging.getLogger('ui_logger').info('Running tests')
+
+    dialog = PermutationTestDialog(experiment, window, handler)
     dialog.show()
 
 
