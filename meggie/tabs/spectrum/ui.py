@@ -6,7 +6,7 @@ from meggie.utilities.names import next_available_name
 from meggie.utilities.formats import format_float
 
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
-from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
+from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDialog
 from meggie.utilities.dialogs.powerSpectrumDialogMain import PowerSpectrumDialog
 
 from meggie.tabs.spectrum.controller.spectrum import plot_spectrum_topo
@@ -118,7 +118,11 @@ def group_average(experiment, data, window):
     except IndexError as exc:
         return
 
-    def handler(name, groups):
+    name = next_available_name(
+        experiment.active_subject.spectrum.keys(), 
+        'group_' + selected_name)
+
+    def handler(groups):
         try:
             group_average_spectrum(experiment, selected_name, groups, name,
                                    do_meanwhile=window.update_ui)
@@ -131,11 +135,7 @@ def group_average(experiment, data, window):
 
         logging.getLogger('ui_logger').info('Finished creating group average spectrum.')
     
-    default_name = next_available_name(
-       experiment.active_subject.spectrum.keys(), 
-       'group_' + selected_name)
-    dialog = GroupAverageDialog(experiment, window, handler,
-                                default_name)
+    dialog = GroupSelectionDialog(experiment, window, handler)
     dialog.show()
 
 

@@ -5,18 +5,19 @@ import logging
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
-from meggie.utilities.dialogs.groupAverageDialogUi import Ui_groupAverageDialog
+from meggie.utilities.dialogs.groupSelectionDialogUi import Ui_groupSelectionDialog
+
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.validators import validate_name
 
 
-class GroupAverageDialog(QtWidgets.QDialog):
+class GroupSelectionDialog(QtWidgets.QDialog):
 
-    def __init__(self, experiment, parent, handler, default_name):
+    def __init__(self, experiment, parent, handler):
         """
         """
         QtWidgets.QDialog.__init__(self, parent)
-        self.ui = Ui_groupAverageDialog()
+        self.ui = Ui_groupSelectionDialog()
         self.ui.setupUi(self)
 
         self.handler = handler
@@ -30,8 +31,6 @@ class GroupAverageDialog(QtWidgets.QDialog):
 
         self.subjects = subjects
 
-        self.ui.lineEditName.setText(default_name)
-
     def add_item(self, idx, name):
         """ creates label-spinbox item and adds it to screen """
         setattr(self.ui, 'horizontalLayoutGroup_' +
@@ -40,7 +39,7 @@ class GroupAverageDialog(QtWidgets.QDialog):
             'horizontalLayoutGroup_' + str(idx))
 
         setattr(self.ui, 'checkBoxGroup_' + str(idx),
-                QtWidgets.QCheckBox(self.ui.groupBoxAverageGroups))
+                QtWidgets.QCheckBox(self.ui.groupBoxGroups))
         getattr(self.ui, 'checkBoxGroup_' + str(idx)
                 ).setObjectName('checkBoxGroup_' + str(idx))
         getattr(self.ui, 'checkBoxGroup_' + str(idx)).setText('')
@@ -51,7 +50,7 @@ class GroupAverageDialog(QtWidgets.QDialog):
             getattr(self.ui, 'checkBoxGroup_' + str(idx)))
 
         setattr(self.ui, 'labelGroup_' + str(idx),
-                QtWidgets.QLabel(self.ui.groupBoxAverageGroups))
+                QtWidgets.QLabel(self.ui.groupBoxGroups))
         getattr(self.ui, 'labelGroup_' + str(idx)
                 ).setObjectName('labelGroup_' + str(idx))
         getattr(self.ui, 'labelGroup_' + str(idx)).setText(name)
@@ -59,7 +58,7 @@ class GroupAverageDialog(QtWidgets.QDialog):
             getattr(self.ui, 'labelGroup_' + str(idx)))
 
         setattr(self.ui, 'spinBoxGroup_' + str(idx),
-                QtWidgets.QSpinBox(self.ui.groupBoxAverageGroups))
+                QtWidgets.QSpinBox(self.ui.groupBoxGroups))
         getattr(self.ui, 'spinBoxGroup_' + str(idx)).setMinimum(1)
         getattr(self.ui, 'spinBoxGroup_' + str(idx)).setMaximumSize(40, 1000)
         getattr(self.ui, 'spinBoxGroup_' + str(idx)
@@ -83,12 +82,6 @@ class GroupAverageDialog(QtWidgets.QDialog):
             else:
                 groups[group_id] = [subject]
 
-        try:
-            name = validate_name(self.ui.lineEditName.text())
-        except Exception as exc:
-            exc_messagebox(self, exc)
-            return
-
-        self.handler(name, groups)
+        self.handler(groups)
 
         self.close()

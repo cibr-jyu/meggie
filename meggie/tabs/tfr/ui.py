@@ -19,7 +19,7 @@ from meggie.utilities.formats import format_float
 from meggie.utilities.formats import format_floats
 from meggie.utilities.channels import get_channels_by_type
 
-from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
+from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDialog
 
 from meggie.tabs.tfr.dialogs.TFROutputOptionsMain import TFROutputOptions
 from meggie.tabs.tfr.dialogs.TFRDialogMain import TFRDialog
@@ -248,7 +248,11 @@ def group_average(experiment, data, window):
     except IndexError as exc:
         return
 
-    def handler(name, groups):
+    name = next_available_name(
+        experiment.active_subject.tfr.keys(),
+        'group_' + selected_name)
+
+    def handler(groups):
         try:
             group_average_tfr(experiment, selected_name, groups, name,
                               do_meanwhile=window.update_ui)
@@ -260,10 +264,7 @@ def group_average(experiment, data, window):
 
         logging.getLogger('ui_logger').info('Finished creating group average TFR.')
 
-    default_name = next_available_name(
-        experiment.active_subject.tfr.keys(),
-        'group_' + selected_name)
-    dialog = GroupAverageDialog(experiment, window, handler, default_name)
+    dialog = GroupSelectionDialog(experiment, window, handler)
     dialog.show()
 
 
