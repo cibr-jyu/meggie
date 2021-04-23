@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>groupAverageDialog</class>
- <widget class="QDialog" name="groupAverageDialog">
+ <class>groupSelectionDialog</class>
+ <widget class="QDialog" name="groupSelectionDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Meggie - Group average</string>
+   <string>Meggie - Group selection</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -50,8 +50,8 @@
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBoxAverageGroups">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBoxGroups">
          <property name="minimumSize">
           <size>
            <width>350</width>
@@ -59,12 +59,12 @@
           </size>
          </property>
          <property name="title">
-          <string>Average groups:</string>
+          <string>Groups:</string>
          </property>
          <layout class="QGridLayout" name="gridLayout"/>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="1" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -76,25 +76,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBoxGeneral">
-         <property name="title">
-          <string>General</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelName">
-            <property name="text">
-             <string>Name:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="lineEditName"/>
-          </item>
-         </layout>
-        </widget>
        </item>
       </layout>
      </widget>
@@ -138,7 +119,7 @@
   <connection>
    <sender>pushButtonCancel</sender>
    <signal>clicked()</signal>
-   <receiver>groupAverageDialog</receiver>
+   <receiver>groupSelectionDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -154,7 +135,7 @@
   <connection>
    <sender>pushButtonCompute</sender>
    <signal>clicked()</signal>
-   <receiver>groupAverageDialog</receiver>
+   <receiver>groupSelectionDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
