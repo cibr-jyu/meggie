@@ -5,7 +5,7 @@ import tempfile
 import mne
 
 from meggie.subject import Subject
-from meggie.utilities.preferences import PreferencesHandler
+from meggie.mainwindow.preferences import PreferencesHandler
 
 from meggie.experiment import initialize_new_experiment
 from meggie.experiment import open_existing_experiment

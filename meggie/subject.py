@@ -10,7 +10,7 @@ import pkg_resources
 
 import meggie.utilities.filemanager as filemanager
 
-from meggie.utilities.dynamic import find_all_sources
+from meggie.mainwindow.dynamic import find_all_sources
 
 
 class Subject:

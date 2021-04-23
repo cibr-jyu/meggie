@@ -8,9 +8,9 @@ import logging
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
-from meggie.utilities.dynamic import find_all_tab_specs
+from meggie.mainwindow.dynamic import find_all_tab_specs
 
-from meggie.utilities.dialogs.customTabsDialogUi import Ui_customTabsDialog
+from meggie.mainwindow.dialogs.customTabsDialogUi import Ui_customTabsDialog
 
 
 class CustomTabsDialog(QtWidgets.QDialog):

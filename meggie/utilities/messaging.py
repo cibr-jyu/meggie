@@ -1,6 +1,7 @@
 import logging
 
-import meggie.utilities.dialogs.messageBoxes as messageBoxes
+from meggie.utilities.dialogs.shortMessageBoxMain import shortMessageBox
+from meggie.utilities.dialogs.shortQuestionBoxMain import shortQuestionBox
 
 
 def exc_messagebox(parent, exc, exec_=False):
@@ -28,7 +29,7 @@ def exc_messagebox(parent, exc, exec_=False):
         'More information can be found from console below.',
     ])
 
-    messagebox = messageBoxes.shortMessageBox(message, parent)
+    messagebox = shortMessageBox(message, parent)
     if exec_:
         messagebox.exec_()
     else:
@@ -38,7 +39,7 @@ def exc_messagebox(parent, exc, exec_=False):
 def messagebox(parent, msg, exec_=False):
     """ Pops up a messagebox
     """
-    messagebox = messageBoxes.shortMessageBox(msg, parent)
+    messagebox = shortMessageBox(msg, parent)
     if exec_:
         messagebox.exec_()
     else:
@@ -46,5 +47,5 @@ def messagebox(parent, msg, exec_=False):
 
 
 def questionbox(parent, question, handler):
-    questionbox = messageBoxes.shortQuestionBox(question, parent, handler)
+    questionbox = shortQuestionBox(question, parent, handler)
     questionbox.exec_()

@@ -151,9 +151,9 @@ def load_csv(path):
     return column_names, row_descs, data
 
 
-# see https://stackoverflow.com/a/13790289
 def tail(f, lines=1, _buffer=4098):
-    """ Tail a file and get `lines` lines from the end """
+    """ Tail a file and get `lines` lines from the end,
+    see https://stackoverflow.com/a/13790289 """
     # place holder for the lines found
     lines_found = []
 

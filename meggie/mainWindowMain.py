@@ -14,13 +14,15 @@ from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
-from meggie.utilities.dynamic import construct_tab
-from meggie.utilities.dynamic import find_all_tab_specs
+from meggie.mainwindow.dynamic import construct_tab
+from meggie.mainwindow.dynamic import find_all_tab_specs
+from meggie.mainwindow.dynamic import find_all_sources
+
+from meggie.mainwindow.mne_wrapper import wrap_mne
 
 from meggie.mainWindowUi import Ui_MainWindow
 
-from meggie.utilities.preferences import PreferencesHandler
-from meggie.utilities.mne_wrapper import wrap_mne
+from meggie.mainwindow.preferences import PreferencesHandler
 
 from meggie.experiment import open_existing_experiment
 
@@ -30,14 +32,13 @@ from meggie.utilities.messaging import questionbox
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 
-from meggie.utilities.dynamic import find_all_sources
 
-from meggie.utilities.dialogs.logDialogMain import LogDialog
-from meggie.utilities.dialogs.aboutDialogMain import AboutDialog
-from meggie.utilities.dialogs.preferencesDialogMain import PreferencesDialog
-from meggie.utilities.dialogs.channelGroupsDialogMain import ChannelGroupsDialog
-from meggie.utilities.dialogs.addSubjectDialogMain import AddSubjectDialog
-from meggie.utilities.dialogs.createExperimentDialogMain import CreateExperimentDialog
+from meggie.mainwindow.dialogs.logDialogMain import LogDialog
+from meggie.mainwindow.dialogs.aboutDialogMain import AboutDialog
+from meggie.mainwindow.dialogs.preferencesDialogMain import PreferencesDialog
+from meggie.mainwindow.dialogs.channelGroupsDialogMain import ChannelGroupsDialog
+from meggie.mainwindow.dialogs.addSubjectDialogMain import AddSubjectDialog
+from meggie.mainwindow.dialogs.createExperimentDialogMain import CreateExperimentDialog
 
 
 class MainWindow(QtWidgets.QMainWindow):

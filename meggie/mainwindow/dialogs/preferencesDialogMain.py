@@ -12,10 +12,10 @@ from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSignal
 
-from meggie.utilities.dynamic import find_all_sources
+from meggie.mainwindow.dynamic import find_all_sources
 
-from meggie.utilities.dialogs.preferencesDialogUi import Ui_DialogPreferences
-from meggie.utilities.dialogs.customTabsDialogMain import CustomTabsDialog
+from meggie.mainwindow.dialogs.preferencesDialogUi import Ui_DialogPreferences
+from meggie.mainwindow.dialogs.customTabsDialogMain import CustomTabsDialog
 
 from meggie.utilities.messaging import messagebox
 

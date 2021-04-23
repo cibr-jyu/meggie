@@ -13,10 +13,11 @@ import pkg_resources
 from meggie.subject import Subject
 
 from meggie.utilities.filemanager import copy_subject_raw
-from meggie.utilities.dynamic import find_all_sources
 from meggie.utilities.channels import get_default_channel_groups
 from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
+
+from meggie.mainwindow.dynamic import find_all_sources
 
 
 class Experiment:

@@ -9,7 +9,7 @@ from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
-from meggie.utilities.dialogs.createExperimentDialogUi import Ui_CreateExperimentDialog
+from meggie.mainwindow.dialogs.createExperimentDialogUi import Ui_CreateExperimentDialog
 
 from meggie.experiment import initialize_new_experiment
 

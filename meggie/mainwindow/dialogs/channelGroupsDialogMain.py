@@ -19,7 +19,7 @@ from meggie.utilities.messaging import messagebox
 from meggie.utilities.channels import get_default_channel_groups
 from meggie.utilities.channels import get_triplet_from_mag
 
-from meggie.utilities.dialogs.channelGroupsDialogUi import Ui_channelGroupsDialog
+from meggie.mainwindow.dialogs.channelGroupsDialogUi import Ui_channelGroupsDialog
 
 
 class ChannelGroupsDialog(QtWidgets.QDialog):

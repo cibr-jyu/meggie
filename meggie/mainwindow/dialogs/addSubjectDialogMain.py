@@ -11,7 +11,7 @@ import mne
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
-from meggie.utilities.dialogs.addSubjectDialogUi import Ui_AddSubject
+from meggie.mainwindow.dialogs.addSubjectDialogUi import Ui_AddSubject
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox

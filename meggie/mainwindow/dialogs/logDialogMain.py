@@ -9,7 +9,7 @@ from PyQt5 import QtCore
 import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.dialogs.logDialogUi import Ui_LogDialog
+from meggie.mainwindow.dialogs.logDialogUi import Ui_LogDialog
 
 
 class LogDialog(QtWidgets.QDialog):

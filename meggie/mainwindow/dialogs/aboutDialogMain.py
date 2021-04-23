@@ -6,7 +6,7 @@
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
-from meggie.utilities.dialogs.aboutDialogUi import Ui_Dialog
+from meggie.mainwindow.dialogs.aboutDialogUi import Ui_Dialog
 
 
 class AboutDialog(QtWidgets.QDialog):
