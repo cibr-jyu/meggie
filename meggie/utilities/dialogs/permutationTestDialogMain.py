@@ -4,13 +4,17 @@ import logging
 
 from PyQt5 import QtWidgets
 
+from meggie.utilities.messaging import exc_messagebox
+from meggie.utilities.messaging import messagebox
+
 from meggie.utilities.dialogs.permutationTestDialogUi import Ui_permutationTestDialog
 from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDialog
 
 
 class PermutationTestDialog(QtWidgets.QDialog):
 
-    def __init__(self, experiment, parent, handler):
+    def __init__(self, experiment, parent, handler, meggie_item,
+                 limit_frequency=False, limit_time=False, limit_location=True, limit_location_vals=[]):
         """
         """
         QtWidgets.QDialog.__init__(self, parent)
@@ -19,6 +23,28 @@ class PermutationTestDialog(QtWidgets.QDialog):
 
         self.handler = handler
         self.experiment = experiment
+
+        self.limit_frequency = limit_frequency
+        self.limit_time = limit_time
+        self.limit_location = limit_location
+
+        if not limit_location:
+            self.ui.groupBoxLocation.hide()
+        else:
+            for loc in limit_location_vals:
+                self.ui.comboBoxLocation.addItem(loc)
+
+        if not limit_time:
+            self.ui.groupBoxTime.hide()
+        else:
+            self.ui.doubleSpinBoxFrequencyTmin.setValue(meggie_item.times[0])
+            self.ui.doubleSpinBoxFrequencyTmax.setValue(meggie_item.times[-1])
+
+        if not limit_frequency:
+            self.ui.groupBoxFrequency.hide()
+        else:
+            self.ui.doubleSpinBoxFrequencyFmin.setValue(meggie_item.freqs[0])
+            self.ui.doubleSpinBoxFrequencyFmax.setValue(meggie_item.freqs[-1])
 
         self.groups = {}
 
@@ -47,8 +73,24 @@ class PermutationTestDialog(QtWidgets.QDialog):
             messagebox(self, "You should select some groups first")
             return
 
-        if not len(self.groups.keys()) > 1:
-            messagebox(self, "You should selected at least two groups")
+        time_limits = None
+        frequency_limits = None
+        location_limits = None
 
-        self.handler(self.groups)
+        if self.limit_time and self.ui.radioButtonTimeEnabled.isChecked():
+            tmin = self.ui.doubleSpinBoxTimeTmin.value()
+            tmax = self.ui.doubleSpinBoxTimeTmax.value()
+            time_limits = tmin, tmax
+
+        if self.limit_frequency and self.ui.radioButtonFrequencyEnabled.isChecked():
+            fmin = self.ui.doubleSpinBoxFrequencyFmin.value()
+            fmax = self.ui.doubleSpinBoxFrequencyFmax.value()
+            frequency_limits = fmin, fmax
+
+        if self.limit_location and self.ui.radioButtonLocationEnabled.isChecked():
+            location_limits = self.ui.comboBoxLocation.currentText()
+
+        threshold = self.ui.doubleSpinBoxClusterThreshold.value()
+
+        self.handler(self.groups, time_limits, frequency_limits, location_limits, threshold)
         self.close()

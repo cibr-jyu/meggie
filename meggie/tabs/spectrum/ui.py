@@ -182,13 +182,17 @@ def permutation_test(experiment, data, window):
     except IndexError as exc:
         return
 
-    def handler(groups):
-        """
-        """
-        run_permutation_test(experiment, groups, selected_name)
-        logging.getLogger('ui_logger').info('Running tests')
+    meggie_item = experiment.active_subject.spectrum[selected_name]
+    ch_names = meggie_item.ch_names
 
-    dialog = PermutationTestDialog(experiment, window, handler)
+    def handler(groups, time_limits, frequency_limits, location_limits, threshold):
+        """
+        """
+        run_permutation_test(experiment, selected_name, groups, time_limits, 
+                             frequency_limits, location_limits, threshold)
+
+    dialog = PermutationTestDialog(experiment, window, handler, meggie_item, 
+                                   limit_frequency=True, limit_location_vals=ch_names)
     dialog.show()
 
 
