@@ -46,6 +46,8 @@ class PermutationTestDialog(QtWidgets.QDialog):
             self.ui.doubleSpinBoxFrequencyFmin.setValue(meggie_item.freqs[0])
             self.ui.doubleSpinBoxFrequencyFmax.setValue(meggie_item.freqs[-1])
 
+        self.meggie_item = meggie_item
+
         self.groups = {}
 
     def on_pushButtonGroups_clicked(self, checked=None):
@@ -73,6 +75,21 @@ class PermutationTestDialog(QtWidgets.QDialog):
             messagebox(self, "You should select some groups first")
             return
 
+        if self.ui.radioButtonWithinSubjects.isChecked():
+            design = 'within-subjects'
+        else:
+            design = 'between-subjects'
+
+        if design == 'between-subjects' and len(self.groups) <= 1:
+            messagebox(self, "At least two groups are needed for between-subjects design")
+            return
+
+        if design == 'within-subjects':
+            conditions = self.meggie_item.content.keys()
+            if len(conditions) <= 1:
+                messagebox(self, "At least two conditions are needed for within-subjects design")
+                return
+
         time_limits = None
         frequency_limits = None
         location_limits = None
@@ -91,6 +108,8 @@ class PermutationTestDialog(QtWidgets.QDialog):
             location_limits = self.ui.comboBoxLocation.currentText()
 
         threshold = self.ui.doubleSpinBoxClusterThreshold.value()
+        n_permutations = self.ui.spinBoxNPermutations.value()
 
-        self.handler(self.groups, time_limits, frequency_limits, location_limits, threshold)
+        self.handler(self.groups, time_limits, frequency_limits, location_limits, threshold,
+                     n_permutations, design)
         self.close()

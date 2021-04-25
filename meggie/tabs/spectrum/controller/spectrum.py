@@ -12,6 +12,9 @@ import mne
 
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy
+
+import pandas as pd
 
 import meggie.utilities.filemanager as filemanager
 
@@ -26,6 +29,7 @@ from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import clean_names
 from meggie.utilities.units import get_power_unit
 from meggie.utilities.decorators import threaded
+from meggie.utilities.channels import create_combined_adjacency
 
 from meggie.utilities.events import get_raw_blocks_from_intervals
 
@@ -171,12 +175,53 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
 
 
 def run_permutation_test(experiment, selected_name, groups, time_limits,
-                         frequency_limits, location_limits, threshold):
+                         frequency_limits, location_limits, threshold,
+                         n_permutations, design):
     """
     """
-    from meggie.utilities.debug import debug_trace;
-    debug_trace()
-    print("hurraa")
+
+    spectrum_item = experiment.active_subject.spectrum[selected_name]
+    conditions = spectrum_item.content.keys()
+    if design == 'between-subjects':
+        # as we dont allow mixed designs, compute anova for each condition separately
+        for condition in conditions:
+            data_in_groups = {}
+            for key, group in groups.items():
+                for subject_name in group:
+                    subject = experiment.subjects[subject_name]
+
+                    subject_spectrum = subject.spectrum.get(selected_name)
+                    if not subject_spectrum:
+                        message = "Skipping " + subject_name + " (no spectrum)"
+                        logging.getLogger('ui_logger').warning(message) 
+
+                    if not key in data_in_groups:
+                        data_in_groups[key] = []
+
+                    data_in_groups[key].append(subject_spectrum.content[condition].T)
+                data_in_groups[key] = np.array(data_in_groups[key])
+
+            X = list(data_in_groups.values())
+
+            raw = experiment.active_subject.get_raw(preload=False)
+            ch_names = clean_names(spectrum_item.ch_names)
+            adjacency = create_combined_adjacency(raw, ch_names)
+
+            results = mne.stats.permutation_cluster_test(
+                X=X,
+                threshold=threshold,
+                n_permutations=n_permutations,
+                adjacency=adjacency
+            )
+
+            # so still is needed:
+            # - plots
+            # - limits
+            # - within-subjects
+            # in this order..
+
+            from meggie.utilities.debug import debug_trace;
+            debug_trace()
 
 
 def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):

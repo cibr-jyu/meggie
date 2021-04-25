@@ -185,11 +185,13 @@ def permutation_test(experiment, data, window):
     meggie_item = experiment.active_subject.spectrum[selected_name]
     ch_names = meggie_item.ch_names
 
-    def handler(groups, time_limits, frequency_limits, location_limits, threshold):
+    def handler(groups, time_limits, frequency_limits, location_limits, threshold,
+                n_permutations, design):
         """
         """
         run_permutation_test(experiment, selected_name, groups, time_limits, 
-                             frequency_limits, location_limits, threshold)
+                             frequency_limits, location_limits, threshold,
+                             n_permutations, design)
 
     dialog = PermutationTestDialog(experiment, window, handler, meggie_item, 
                                    limit_frequency=True, limit_location_vals=ch_names)
