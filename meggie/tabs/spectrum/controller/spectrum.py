@@ -13,6 +13,7 @@ import mne
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy
+import scipy.stats
 
 import pandas as pd
 
@@ -30,6 +31,7 @@ from meggie.utilities.channels import clean_names
 from meggie.utilities.units import get_power_unit
 from meggie.utilities.decorators import threaded
 from meggie.utilities.channels import create_combined_adjacency
+from meggie.utilities.stats import prepare_data_for_permutation
 
 from meggie.utilities.events import get_raw_blocks_from_intervals
 
@@ -176,52 +178,130 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
 
 def run_permutation_test(experiment, selected_name, groups, time_limits,
                          frequency_limits, location_limits, threshold,
-                         n_permutations, design):
+                         significance, n_permutations, design):
     """
     """
+    if location_limits is not None and frequency_limits is not None:
+        raise Exception('Cannot run permutation tests with both location and frequency limits')
 
     spectrum_item = experiment.active_subject.spectrum[selected_name]
-    conditions = spectrum_item.content.keys()
+    conditions = list(spectrum_item.content.keys())
+    groups = OrderedDict(sorted(groups.items()))
+    raw = experiment.active_subject.get_raw(preload=False)
+    ch_names = clean_names(spectrum_item.ch_names)
+    freqs = spectrum_item.freqs
+
+    if location_limits is None:
+        adjacency = create_combined_adjacency(raw, ch_names)
+    else:
+        adjacency = scipy.sparse.csr_matrix([1])
+
+    data = prepare_data_for_permutation(experiment, design, groups, conditions,
+                                        'spectrum', selected_name,
+                                        location_limits, time_limits, frequency_limits,
+                                        data_format=('locations', 'freqs'))
+
+    results = {}
     if design == 'between-subjects':
-        # as we dont allow mixed designs, compute anova for each condition separately
         for condition in conditions:
-            data_in_groups = {}
-            for key, group in groups.items():
-                for subject_name in group:
-                    subject = experiment.subjects[subject_name]
+            X = data[condition]
 
-                    subject_spectrum = subject.spectrum.get(selected_name)
-                    if not subject_spectrum:
-                        message = "Skipping " + subject_name + " (no spectrum)"
-                        logging.getLogger('ui_logger').warning(message) 
+            # Have to implement F-from-p computation here.
+            num_df = len(groups.keys()) - 1
+            denom_df = sum([len(lst) for lst in groups.values()]) - len(groups.keys())
+            crit_val = scipy.stats.f.ppf(q=1-threshold, dfn=num_df, dfd=denom_df)
 
-                    if not key in data_in_groups:
-                        data_in_groups[key] = []
-
-                    data_in_groups[key].append(subject_spectrum.content[condition].T)
-                data_in_groups[key] = np.array(data_in_groups[key])
-
-            X = list(data_in_groups.values())
-
-            raw = experiment.active_subject.get_raw(preload=False)
-            ch_names = clean_names(spectrum_item.ch_names)
-            adjacency = create_combined_adjacency(raw, ch_names)
-
-            results = mne.stats.permutation_cluster_test(
+            res = mne.stats.permutation_cluster_test(
                 X=X,
                 threshold=threshold,
                 n_permutations=n_permutations,
-                adjacency=adjacency
+                adjacency=adjacency,
+                verbose='warning',
+                out_type='indices'
+            )
+            results[condition] = res
+    else:
+        for group_key, group in groups.items():
+            X = data[group_key]
+            factor_levels, effects = [2], 'A'
+            f_thresh = mne.stats.f_threshold_mway_rm(len(group), factor_levels, effects, threshold)
+
+            def stat_fun(*args):
+                return mne.stats.f_mway_rm(np.swapaxes(args, 1, 0), factor_levels=factor_levels,
+                                           effects=effects, return_pvals=False)[0]
+
+            res = mne.stats.permutation_cluster_test(
+                X=X, 
+                adjacency=adjacency,
+                threshold=f_thresh, 
+                stat_fun=stat_fun,
+                n_permutations=n_permutations,
+                verbose='warning',
+                out_type='indices'
             )
 
-            # so still is needed:
-            # - plots
-            # - limits
-            # - within-subjects
-            # in this order..
+            results[group_key] = res
 
-            from meggie.utilities.debug import debug_trace;
-            debug_trace()
+    logger = logging.getLogger('ui_logger')
+    logger.info('Permutation tests for ' + str(selected_name) + ' completed.')
+    if location_limits:
+        logger.info('Location limits: ' + str(location_limits))
+    if frequency_limits:
+        logger.info('Frequency limits: ' + str(frequency_limits))
+    if time_limits:
+        logger.info('Time limits: ' + str(time_limits))
+           
+    for key, res in results.items():
+
+        n_clusters = len(res[2])
+        sign_mask = np.where(res[2] < significance)[0]
+        n_sign_clusters = len(sign_mask)
+
+        logger.info('Found ' + str(n_clusters) + 
+                    ' clusters (' + str(n_sign_clusters) + 
+                    ' significant) for ' + str(key))
+
+        for sign_idx in range(n_sign_clusters):
+            cluster = res[1][sign_mask[sign_idx]]
+            pvalue = res[2][sign_mask[sign_idx]]
+
+            if frequency_limits is None:
+                fig, ax = plt.subplots()
+                fig.suptitle(str(key) + ': cluster ' + str(sign_idx+1) + ' (p ' + str(pvalue) + ')')
+
+                if design == 'within-subjects':
+                    for cond_idx, condition in enumerate(conditions):
+                        spectrum = np.mean(data[key][cond_idx][:, :, np.unique(cluster[-1])], 
+                                           axis=(0, -1))
+                        ax.plot(freqs, spectrum, label=condition)
+                else:
+                    for group_key, group in enumerate(groups):
+                        spectrum = np.mean(data[key][group_key][:, :, np.unique(cluster[-1])], 
+                                           axis=(0, -1))
+                        ax.plot(freqs, spectrum, label=group_key)
+                
+                ax.legend()
+
+                ax.set_xlabel('Frequency (Hz)')
+                ax.set_ylabel('Power')
+
+                fmin = np.min(freqs[cluster[0]])
+                fmax = np.max(freqs[cluster[0]])
+                ax.axvspan(fmin, fmax, alpha=0.5, color='blue')
+
+                plt.show()
+
+            if location_limits is None:
+                # spectrum object does not contain locations but may have less channels 
+                # so filter the info to contain only channels that the spectrum object has
+                picks = [ch_idx for ch_idx, ch_name in enumerate(raw.info['ch_names']) 
+                         if ch_name in ch_names]
+                pos = mne.pick_info(raw.info, picks)
+                fig, ax = plt.subplots()
+                fig.suptitle(str(key) + ': cluster ' + str(sign_idx+1) + ' (p ' + str(pvalue) + ')')
+                map_ = [1 if idx in cluster[-1] else 0 for idx in range(len(ch_names))]
+                mne.viz.plot_topomap(map_, pos, vmin=0, vmax=1, 
+                                     cmap='Reds', sensors='r+', axes=ax)
 
 
 def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):

@@ -108,8 +108,9 @@ class PermutationTestDialog(QtWidgets.QDialog):
             location_limits = self.ui.comboBoxLocation.currentText()
 
         threshold = self.ui.doubleSpinBoxClusterThreshold.value()
+        significance = self.ui.doubleSpinBoxClusterSignificance.value()
         n_permutations = self.ui.spinBoxNPermutations.value()
 
         self.handler(self.groups, time_limits, frequency_limits, location_limits, threshold,
-                     n_permutations, design)
+                     significance, n_permutations, design)
         self.close()
