@@ -190,7 +190,7 @@ def permutation_test(experiment, data, window):
         """
         """
         try:
-            run_permutation_test(experiment, selected_name, groups, time_limits, 
+            run_permutation_test(experiment, window, selected_name, groups, time_limits, 
                                  frequency_limits, location_limits, threshold,
                                  significance, n_permutations, design)
         except Exception as exc:

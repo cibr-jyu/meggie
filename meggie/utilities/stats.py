@@ -3,13 +3,15 @@
 """
 """
 
-import os
 import logging
 
 import mne
 
 import numpy as np
-import scipy
+import matplotlib.pyplot as plt
+import scipy.stats
+
+from meggie.utilities.decorators import threaded
 
 
 def prepare_data_for_permutation(experiment, design, groups, conditions,
@@ -112,4 +114,95 @@ def prepare_data_for_permutation(experiment, design, groups, conditions,
             return final_data
     else:
         raise Exception("Only within and between subjects designs are supported")
+
+
+@threaded
+def permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations):
+    results = {}
+    if design == 'between-subjects':
+        for condition in conditions:
+            X = data[condition]
+
+            # Have to implement F-from-p computation here.
+            num_df = len(groups.keys()) - 1
+            denom_df = sum([len(lst) for lst in groups.values()]) - len(groups.keys())
+            crit_val = scipy.stats.f.ppf(q=1-threshold, dfn=num_df, dfd=denom_df)
+
+            res = mne.stats.permutation_cluster_test(
+                X=X,
+                threshold=threshold,
+                n_permutations=n_permutations,
+                adjacency=adjacency,
+                verbose='warning',
+                out_type='indices'
+            )
+            results[condition] = res
+    else:
+        for group_key, group in groups.items():
+            X = data[group_key]
+            factor_levels, effects = [2], 'A'
+            f_thresh = mne.stats.f_threshold_mway_rm(len(group), factor_levels, effects, threshold)
+
+            def stat_fun(*args):
+                return mne.stats.f_mway_rm(np.swapaxes(args, 1, 0), factor_levels=factor_levels,
+                                           effects=effects, return_pvals=False)[0]
+
+            res = mne.stats.permutation_cluster_test(
+                X=X,
+                adjacency=adjacency,
+                threshold=f_thresh,
+                stat_fun=stat_fun,
+                n_permutations=n_permutations,
+                verbose='warning',
+                out_type='indices'
+            )
+            results[group_key] = res
+        return results
+
+
+def report_permutation_results(results, selected_name, significance, location_limits=None, frequency_limits=None, time_limits=None):
+    """
+    """
+    logger = logging.getLogger('ui_logger')
+    logger.info('Permutation tests for ' + str(selected_name) + ' completed.')
+    if location_limits:
+        logger.info('Location limits: ' + str(location_limits))
+    if frequency_limits:
+        logger.info('Frequency limits: ' + str(frequency_limits))
+    if time_limits:
+        logger.info('Time limits: ' + str(time_limits))
+
+    for key, res in results.items():
+        n_clusters = len(res[2])
+        sign_mask = np.where(res[2] < significance)[0]
+        n_sign_clusters = len(sign_mask)
+
+        logger.info('Found ' + str(n_clusters) +
+                    ' clusters (' + str(n_sign_clusters) +
+                    ' significant) for ' + str(key))
+    
+def plot_permutation_results(results, significance, 
+                             location_limits=None, frequency_limits=None, time_limits=None,
+                             frequency_fun=None, time_fun=None, location_fun=None):
+    """
+    """
+    for key, res in results.items():
+        sign_mask = np.where(res[2] < significance)[0]
+        n_sign_clusters = len(sign_mask)
+        for sign_idx in range(n_sign_clusters):
+            cluster = res[1][sign_mask[sign_idx]]
+            pvalue = res[2][sign_mask[sign_idx]]
+            if frequency_limits is None:
+                fig, ax = plt.subplots()
+                fig.suptitle(str(key) + ': cluster ' + str(sign_idx+1) + ' (p ' + str(pvalue) + ')')
+                if frequency_fun:
+                    frequency_fun(cluster, ax, key)
+            if location_limits is None:
+                # spectrum object does not contain locations but may have less channels
+                # so filter the info to contain only channels that the spectrum object has
+                fig, ax = plt.subplots()
+                fig.suptitle(str(key) + ': cluster ' + str(sign_idx+1) + ' (p ' + str(pvalue) + ')')
+                if location_fun:
+                    location_fun(cluster, ax, key)
+            plt.show()
 
