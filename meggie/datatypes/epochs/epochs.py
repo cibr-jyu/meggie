@@ -7,12 +7,14 @@ import logging
 
 import mne
 
+from meggie.utilities.datatype import Datatype
 
-class Epochs:
+
+class Epochs(Datatype):
     """
     """
 
-    def __init__(self, name, epochs_directory, params={}, content=None):
+    def __init__(self, name, epochs_directory, params, content=None):
         """
         """
         self._name = name
@@ -33,12 +35,6 @@ class Epochs:
             except IOError:
                 raise Exception('Reading epochs failed.')
 
-    @content.setter
-    def content(self, content):
-        """
-        """
-        self._content = content
-
     @property
     def name(self):
         """
@@ -51,23 +47,11 @@ class Epochs:
         """
         return len(self.content.events)
 
-    @name.setter
-    def name(self, name):
-        """
-        """
-        self._name = name
-
     @property
     def params(self):
         """
         """
         return self._params
-
-    @params.setter
-    def params(self, params):
-        """
-        """
-        self._params = params
 
     @property
     def path(self):

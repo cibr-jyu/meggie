@@ -6,12 +6,14 @@ import logging
 
 import mne
 
+from meggie.utilities.datatype import Datatype
 
-class Evoked(object):
+
+class Evoked(Datatype):
     """
     """
 
-    def __init__(self, name, evoked_directory, params={}, content=None):
+    def __init__(self, name, evoked_directory, params, content=None):
         """
         """
         self._name = name.strip('.fif')
@@ -61,23 +63,32 @@ class Evoked(object):
         """
         return self._name
 
-    @name.setter
-    def name(self, name):
-        """
-        """
-        self._name = name
-
     @property
     def params(self):
         """
         """
         return self._params
 
-    @params.setter
-    def params(self, params):
+    @property
+    def ch_names(self):
         """
         """
-        self._params = params
+        return list(self.content.values())[0].info['ch_names']
+
+    @property
+    def times(self):
+        """
+        """
+        return list(self.content.values())[0].times
+
+    @property
+    def data(self):
+        """ Convenient wrapper for getting data
+        """
+        data = {}
+        for key in self.content.keys():
+            data[key] = self.content[key].data
+        return data
 
     def save_content(self):
         """

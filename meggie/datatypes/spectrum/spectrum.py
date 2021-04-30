@@ -11,8 +11,10 @@ import numpy as np
 
 import meggie.utilities.filemanager as filemanager
 
+from meggie.utilities.datatype import Datatype
 
-class Spectrum(object):
+
+class Spectrum(Datatype):
     """
     """
     def __init__(self, name, spectrum_directory, params,
@@ -112,6 +114,12 @@ class Spectrum(object):
                 os.remove(os.path.join(self._spectrum_directory, fname))
 
     @property
+    def data(self):
+        """ Convenient wrapper for getting data
+        """
+        return self.content
+
+    @property
     def content(self):
         if not self._content:
             self._load_content()
@@ -137,6 +145,3 @@ class Spectrum(object):
     def params(self):
         return self._params
 
-    @params.setter
-    def params(self):
-        self._params = params

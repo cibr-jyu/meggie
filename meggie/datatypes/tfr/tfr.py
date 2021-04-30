@@ -9,8 +9,10 @@ import logging
 
 import mne
 
+from meggie.utilities.datatype import Datatype
 
-class TFR(object):
+
+class TFR(Datatype):
     """
     """
 
@@ -115,10 +117,6 @@ class TFR(object):
     @property
     def params(self):
         return self._params
-
-    @params.setter
-    def params(self, params):
-        self._params = params
 
     @property
     def name(self):

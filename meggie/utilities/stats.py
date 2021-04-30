@@ -33,7 +33,7 @@ def prepare_data_for_permutation(experiment, design, groups, conditions,
                         message = "Skipping " + subject_name + " (no " + str(item_type) + ")"
                         logging.getLogger('ui_logger').warning(message) 
 
-                    data = subject_item.content[condition]
+                    data = subject_item.data[condition]
                     if frequency_limits is not None:
                         # average over the selected frequency range
                         freqs = subject_item.freqs
@@ -79,7 +79,7 @@ def prepare_data_for_permutation(experiment, design, groups, conditions,
 
                 cond_data = []
                 for condition_idx, condition in enumerate(conditions):
-                    data = subject_item.content[condition]
+                    data = subject_item.data[condition]
                     if frequency_limits is not None:
                         # average over the selected frequency range
                         freqs = subject_item.freqs

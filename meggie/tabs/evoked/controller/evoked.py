@@ -6,7 +6,10 @@
 import logging
 import os
 
+from collections import OrderedDict
+
 import mne
+import scipy
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -15,10 +18,15 @@ import meggie.utilities.filemanager as filemanager
 from meggie.datatypes.evoked.evoked import Evoked
 
 from meggie.utilities.formats import format_floats
+from meggie.utilities.channels import create_combined_adjacency
 from meggie.utilities.plotting import color_cycle
 from meggie.utilities.plotting import get_channel_average_fig_size
 from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.validators import assert_arrays_same
+from meggie.utilities.stats import prepare_data_for_permutation
+from meggie.utilities.stats import permutation_analysis
+from meggie.utilities.stats import report_permutation_results
+from meggie.utilities.stats import plot_permutation_results
 
 from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_unit
@@ -77,6 +85,56 @@ def plot_channel_averages(experiment, evoked):
         fig.tight_layout()
 
     plt.show()
+
+def run_permutation_test(experiment, window, selected_name, groups, time_limits,
+                         frequency_limits, location_limits, threshold,
+                         significance, n_permutations, design):
+    """
+    """
+    if location_limits is not None and time_limits is not None:
+        raise Exception('Cannot run permutation tests with both location and time limits')
+
+    evoked_item = experiment.active_subject.evoked[selected_name]
+    conditions = list(evoked_item.content.keys())
+    groups = OrderedDict(sorted(groups.items()))
+    raw = experiment.active_subject.get_raw(preload=True)
+    ch_names = evoked_item.ch_names
+    times = evoked_item.times
+
+    if location_limits is None:
+        adjacency = create_combined_adjacency(raw, ch_names)
+    else:
+        adjacency = scipy.sparse.csr_matrix
+
+    data = prepare_data_for_permutation(experiment, design, groups, conditions,
+                                        'evoked', selected_name,
+                                        location_limits, time_limits, frequency_limits,
+                                        data_format=('locations', 'times'))
+
+    results = permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations,
+                                   do_meanwhile=window.update_ui)
+
+    report_permutation_results(results, selected_name, significance,
+                               location_limits=location_limits,
+                               time_limits=time_limits)
+
+    def time_fun(cluster, ax, res_key):
+        """
+        """
+
+    def location_fun(cluster, ax, res_key):
+        """
+        """
+
+    plot_permutation_results(results, significance,
+                             location_limits=location_limits,
+                             frequency_limits=frequency_limits,
+                             location_fun=location_fun,
+                             time_fun=time_fun)
+
+    from meggie.utilities.debug import debug_trace;
+    debug_trace()
+    print("miau")
 
 
 def create_averages(experiment, mne_evoked):

@@ -14,6 +14,7 @@ from meggie.tabs.evoked.controller.evoked import plot_channel_averages
 from meggie.tabs.evoked.controller.evoked import group_average_evoked
 from meggie.tabs.evoked.controller.evoked import save_all_channels
 from meggie.tabs.evoked.controller.evoked import save_channel_averages
+from meggie.tabs.evoked.controller.evoked import run_permutation_test
 
 import meggie.utilities.filemanager as filemanager
 
@@ -29,6 +30,7 @@ from meggie.utilities.names import next_available_name
 from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDialog
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 from meggie.utilities.dialogs.singleChannelDialogMain import SingleChannelDialog
+from meggie.utilities.dialogs.permutationTestDialogMain import PermutationTestDialog
 from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
 from meggie.tabs.evoked.dialogs.evokedTopomapDialogMain import EvokedTopomapDialog
 
@@ -97,6 +99,34 @@ def delete_from_all(experiment, data, window):
     logging.getLogger('ui_logger').info('Deleted evoked from all subjects: ' + selected_name)
 
     window.initialize_ui()
+
+
+def permutation_test(experiment, data, window):
+    """
+    """
+    try:
+        selected_name = data['outputs']['evoked'][0]
+    except IndexError as exc:
+        return
+
+    meggie_item = experiment.active_subject.evoked[selected_name]
+    ch_names = meggie_item.ch_names
+
+    def handler(groups, time_limits, frequency_limits, location_limits, threshold,
+                significance, n_permutations, design):
+        """
+        """
+        try:
+            run_permutation_test(experiment, window, selected_name, groups, time_limits,
+                                 frequency_limits, location_limits, threshold,
+                                 significance, n_permutations, design)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+            return
+
+    dialog = PermutationTestDialog(experiment, window, handler, meggie_item,
+                                   limit_time=True, limit_location_vals=ch_names)
+    dialog.show()
 
 
 def _plot_evoked_averages(experiment, evoked):

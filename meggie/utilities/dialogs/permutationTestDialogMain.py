@@ -37,8 +37,8 @@ class PermutationTestDialog(QtWidgets.QDialog):
         if not limit_time:
             self.ui.groupBoxTime.hide()
         else:
-            self.ui.doubleSpinBoxFrequencyTmin.setValue(meggie_item.times[0])
-            self.ui.doubleSpinBoxFrequencyTmax.setValue(meggie_item.times[-1])
+            self.ui.doubleSpinBoxTimeTmin.setValue(meggie_item.times[0])
+            self.ui.doubleSpinBoxTimeTmax.setValue(meggie_item.times[-1])
 
         if not limit_frequency:
             self.ui.groupBoxFrequency.hide()
