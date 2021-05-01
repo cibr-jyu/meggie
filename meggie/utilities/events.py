@@ -132,6 +132,11 @@ def get_raw_blocks_from_intervals(subject, intervals):
                     for end_time in end_times:
                         # use equality so that one can also specify same trigger for
                         # start and end (with different offsets)
+
+                        # sanity check
+                        if np.isclose((end_time + end[3]) - (start_time + start[3]), 0):
+                            continue
+
                         if end_time >= start_time:
                             found = True
                             break
