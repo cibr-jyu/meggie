@@ -180,6 +180,7 @@ def report_permutation_results(results, selected_name, significance, location_li
         logger.info('Found ' + str(n_clusters) +
                     ' clusters (' + str(n_sign_clusters) +
                     ' significant) for ' + str(key))
+
     
 def plot_permutation_results(results, significance, 
                              location_limits=None, frequency_limits=None, time_limits=None,

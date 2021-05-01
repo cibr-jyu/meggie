@@ -70,14 +70,15 @@ class Subject:
                             self.raw_fname)
         return path
 
-    def get_raw(self, preload=True):
+    def get_raw(self, preload=True, verbose='info'):
         if self._raw is not None:
             if preload:
                 self._raw.load_data()
             return self._raw
         else:
             try:
-                raw = filemanager.open_raw(self.raw_path, preload=preload)
+                raw = filemanager.open_raw(self.raw_path, preload=preload, 
+                                           verbose=verbose)
             except OSError:
                 raise IOError("Could not find the raw file.")
             self._raw = raw

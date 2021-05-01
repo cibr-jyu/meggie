@@ -48,9 +48,7 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
                                                                  intervals)
 
     raw = subject.get_raw()
-    info = raw.info
-
-    picks = mne.pick_types(info, meg=True, eeg=True,
+    picks = mne.pick_types(raw.info, meg=True, eeg=True,
                            exclude='bads')
 
     # remove zero channels from picks
@@ -59,6 +57,7 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
         if np.all(row == 0):
             zero_idxs.append(idx)
     picks = [pick for pick in picks if pick not in zero_idxs]
+
 
     fmin = params['fmin']
     fmax = params['fmax']
@@ -94,12 +93,7 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
                          weights=weights, axis=0)
         psds.append(psd)
 
-    # find all channel names this way because earlier
-    # the dimension of channels was reduced with picks
-    picked_ch_names = [ch_name for ch_idx, ch_name in
-                       enumerate(info['ch_names']) if
-                       ch_idx in picks]
-
+    info = mne.pick_info(raw.info, sel=picks)
     psd_data = dict(zip(psd_groups.keys(), psds))
 
     params = deepcopy(params)
@@ -107,7 +101,7 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     params['intervals'] = ival_times
 
     spectrum = Spectrum(spectrum_name, subject.spectrum_directory,
-                        params, psd_data, freqs, picked_ch_names)
+                        params, psd_data, freqs, info)
 
     spectrum.save_content()
     subject.add(spectrum, 'spectrum')
@@ -126,7 +120,7 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
     freqs = spectrum.freqs
     ch_names = spectrum.ch_names 
     channel_groups = experiment.channel_groups
-    info = subject.get_raw().info
+    info = spectrum.info
 
     colors = color_cycle(len(data))
 
@@ -256,7 +250,7 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
     data = spectrum.content
     freqs = spectrum.freqs
     ch_names = spectrum.ch_names
-    info = subject.get_raw().info
+    info = spectrum.info
     if ch_type == 'meg':
         picked_channels = [ch_name for ch_idx, ch_name in enumerate(info['ch_names'])
                            if ch_idx in mne.pick_types(info, meg=True, eeg=False)]
@@ -404,8 +398,12 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
 
     spectrum_directory = subject.spectrum_directory
 
+    info = spectrum.info
+    common_idxs = [ch_idx for ch_idx, ch_name in info['ch_names']
+                   if ch_name in common_ch_names]
+    info = mne.pick_info(info, sel=common_idxs)
+
     freqs = spectrum.freqs
-    ch_names = common_ch_names
     data = grand_averages
 
     params = deepcopy(spectrum.params)
@@ -417,7 +415,7 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
     params['conditions'] = [elem for elem in grand_averages.keys()]
 
     spectrum = Spectrum(new_name, subject.spectrum_directory,
-                        params, data, freqs, ch_names)
+                        params, data, freqs, info)
 
     spectrum.save_content()
     subject.add(spectrum, 'spectrum')
@@ -463,8 +461,7 @@ def save_channel_averages(experiment, selected_name, log_transformed=False):
 
         ch_names = spectrum.ch_names
         freqs = spectrum.freqs
-
-        info = subject.get_raw().info
+        info = spectrum.info
 
         for key, psd in spectrum.content.items():
 

@@ -1,5 +1,6 @@
 # coding: utf-8
 
+
 """
 """
 
@@ -395,9 +396,14 @@ def open_existing_experiment(prefs, path=None):
                     inst = inst_class(
                         name,
                         directory,
-                        params,
+                        params.copy(),
                     )
                     subject.add(inst, datatype)
+
+                    # for backwards compatibility,
+                    # ensure spectrum objects contain info
+                    if datatype == 'spectrum' and not params.get('info_set'):
+                        inst.set_info(subject)
 
         experiment.add_subject(subject)
 

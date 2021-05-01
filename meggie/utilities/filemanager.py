@@ -9,12 +9,15 @@ import numpy as np
 import mne
 
 
-def open_raw(fname, preload=True):
+def open_raw(fname, preload=True, verbose='info'):
     """ reads raw from file
     """
     try:
-        logging.getLogger('ui_logger').info('Reading ' + fname)
-        raw = mne.io.read_raw(fname, preload=preload)
+        if verbose == 'info' or verbose == 'debug':
+            logging.getLogger('ui_logger').info('Reading ' + fname)
+            raw = mne.io.read_raw(fname, preload=preload)
+        else:
+            raw = mne.io.read_raw(fname, preload=preload, verbose=verbose)
         return raw
     except Exception as exc:
         logging.getLogger('ui_logger').exception('')
