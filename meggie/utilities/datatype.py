@@ -28,6 +28,11 @@ class Datatype:
         raise NotImplementedError('')
 
     @property
+    def info(self):
+        """ return mne info object """
+        raise NotImplementedError('')
+
+    @property
     def params(self):
         """ returns related information about the item,
         stored in the experiment file """

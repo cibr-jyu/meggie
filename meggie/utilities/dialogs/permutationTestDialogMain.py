@@ -4,6 +4,9 @@ import logging
 
 from PyQt5 import QtWidgets
 
+
+from meggie.utilities.channels import get_channels_by_type
+
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
 
@@ -14,7 +17,8 @@ from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDial
 class PermutationTestDialog(QtWidgets.QDialog):
 
     def __init__(self, experiment, parent, handler, meggie_item,
-                 limit_frequency=False, limit_time=False, limit_location=True, limit_location_vals=[]):
+                 limit_frequency=False, limit_time=False, 
+                 limit_channel=True):
         """
         """
         QtWidgets.QDialog.__init__(self, parent)
@@ -26,13 +30,7 @@ class PermutationTestDialog(QtWidgets.QDialog):
 
         self.limit_frequency = limit_frequency
         self.limit_time = limit_time
-        self.limit_location = limit_location
-
-        if not limit_location:
-            self.ui.groupBoxLocation.hide()
-        else:
-            for loc in limit_location_vals:
-                self.ui.comboBoxLocation.addItem(loc)
+        self.limit_channel = limit_channel
 
         if not limit_time:
             self.ui.groupBoxTime.hide()
@@ -45,6 +43,15 @@ class PermutationTestDialog(QtWidgets.QDialog):
         else:
             self.ui.doubleSpinBoxFrequencyFmin.setValue(meggie_item.freqs[0])
             self.ui.doubleSpinBoxFrequencyFmax.setValue(meggie_item.freqs[-1])
+
+        if not limit_channel:
+            self.ui.groupBoxChannel.hide()
+        else:
+            ch_types = get_channels_by_type(meggie_item.info).keys()
+            for ch_type in ch_types:
+                self.ui.comboBoxChannelType.addItem(ch_type)
+            for ch_name in meggie_item.info['ch_names']:
+                self.ui.comboBoxChannelName.addItem(ch_name)
 
         self.meggie_item = meggie_item
 
@@ -104,8 +111,10 @@ class PermutationTestDialog(QtWidgets.QDialog):
             fmax = self.ui.doubleSpinBoxFrequencyFmax.value()
             frequency_limits = fmin, fmax
 
-        if self.limit_location and self.ui.radioButtonLocationEnabled.isChecked():
-            location_limits = self.ui.comboBoxLocation.currentText()
+        if self.limit_channel and self.ui.radioButtonChannelType.isChecked():
+            location_limits = ('ch_type', self.ui.comboBoxChannelType.currentText())
+        if self.limit_channel and self.ui.radioButtonChannelName.isChecked():
+            location_limits = ('ch_name', self.ui.comboBoxChannelName.currentText())
 
         threshold = self.ui.doubleSpinBoxClusterThreshold.value()
         significance = self.ui.doubleSpinBoxClusterSignificance.value()

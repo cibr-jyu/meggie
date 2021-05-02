@@ -26,15 +26,16 @@ from meggie.utilities.formats import format_floats
 from meggie.utilities.plotting import color_cycle
 from meggie.utilities.plotting import get_channel_average_fig_size
 from meggie.utilities.channels import average_to_channel_groups
+from meggie.utilities.channels import pairless_grads
 from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import clean_names
 from meggie.utilities.units import get_power_unit
 from meggie.utilities.decorators import threaded
-from meggie.utilities.channels import create_combined_adjacency
 from meggie.utilities.stats import prepare_data_for_permutation
 from meggie.utilities.stats import permutation_analysis
 from meggie.utilities.stats import report_permutation_results
 from meggie.utilities.stats import plot_permutation_results
+from meggie.utilities.channels import get_channels_by_type
 
 from meggie.utilities.events import get_raw_blocks_from_intervals
 
@@ -184,19 +185,12 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
     spectrum_item = experiment.active_subject.spectrum[selected_name]
     conditions = list(spectrum_item.content.keys())
     groups = OrderedDict(sorted(groups.items()))
-    raw = experiment.active_subject.get_raw(preload=False)
-    ch_names = clean_names(spectrum_item.ch_names)
     freqs = spectrum_item.freqs
 
-    if location_limits is None:
-        adjacency = create_combined_adjacency(raw, ch_names)
-    else:
-        adjacency = scipy.sparse.csr_matrix([1])
-
-    data = prepare_data_for_permutation(experiment, design, groups, conditions,
-                                        'spectrum', selected_name,
-                                        location_limits, time_limits, frequency_limits,
-                                        data_format=('locations', 'freqs'))
+    info, data, adjacency = prepare_data_for_permutation(
+        experiment, design, groups, 'spectrum', selected_name,
+        location_limits, time_limits, frequency_limits,
+        data_format=('locations', 'freqs'))
 
     results = permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations,
                                    do_meanwhile=window.update_ui)
@@ -205,33 +199,42 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                                location_limits=location_limits, 
                                frequency_limits=frequency_limits)
 
-    def frequency_fun(cluster, ax, res_key):
+    def frequency_fun(cluster_idx, cluster, pvalue, res_key):
         """
         """
+        fig, ax = plt.subplots()
         if design == 'within-subjects':
+            colors = color_cycle(len(conditions))
             for cond_idx, condition in enumerate(conditions):
                 spectrum = np.mean(data[res_key][cond_idx][:, :, np.unique(cluster[-1])],
                                    axis=(0, -1))
-                ax.plot(freqs, spectrum, label=condition)
+                ax.plot(freqs, spectrum, label=condition, color=colors[cond_idx])
         else:
-            for group_key, group in enumerate(groups):
+            colors = color_cycle(len(groups))
+            for group_idx, (group_key, group) in enumerate(groups.items()):
                 spectrum = np.mean(data[res_key][group_key][:, :, np.unique(cluster[-1])],
                                    axis=(0, -1))
-                ax.plot(freqs, spectrum, label=group_key)
+                ax.plot(freqs, spectrum, label=group_key, color=colors[group_idx])
         ax.legend()
         ax.set_xlabel('Frequency (Hz)')
         ax.set_ylabel('Power')
         fmin = np.min(freqs[cluster[0]])
         fmax = np.max(freqs[cluster[0]])
         ax.axvspan(fmin, fmax, alpha=0.5, color='blue')
+        fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for ' + 
+                     str(res_key) + ' (' + str(pvalue) + ')')
 
-    def location_fun(cluster, ax, res_key):
-        picks = [ch_idx for ch_idx, ch_name in enumerate(raw.info['ch_names'])
-                 if ch_name in ch_names]
-        pos = mne.pick_info(raw.info, picks) 
-        map_ = [1 if idx in cluster[-1] else 0 for idx in range(len(ch_names))]
-        mne.viz.plot_topomap(map_, pos, vmin=0, vmax=1,
-                             cmap='Reds', sensors='r+', axes=ax)
+    def location_fun(cluster_idx, cluster, pvalue, res_key):
+        map_ = [1 if idx in cluster[-1] else 0 for idx in 
+                range(len(info['ch_names']))]
+
+        fig, ax = plt.subplots()
+        ch_type = location_limits[1]
+        mne.viz.plot_topomap(np.array(map_), info, vmin=0, vmax=1,
+                             cmap='Reds', sensors='r+', axes=ax, ch_type=ch_type)
+
+        fig.suptitle(ch_type + ' cluster of ' + str(cluster_idx+1) + ' for ' + 
+                     str(res_key) + ' (' + str(pvalue) + ')')
 
     plot_permutation_results(results, significance, 
                              location_limits=location_limits, 
@@ -399,7 +402,7 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
     spectrum_directory = subject.spectrum_directory
 
     info = spectrum.info
-    common_idxs = [ch_idx for ch_idx, ch_name in info['ch_names']
+    common_idxs = [ch_idx for ch_idx, ch_name in enumerate(clean_names(info['ch_names']))
                    if ch_name in common_ch_names]
     info = mne.pick_info(info, sel=common_idxs)
 

@@ -89,6 +89,13 @@ def get_triplet_from_mag(ch_name):
     return [ch_name, ch_name[:-1] + '2', ch_name[:-1] + '3']
 
 
+def pairless_grads(ch_names):
+    stems = [name[:-1] for name in ch_names]
+    only_once = [stem for stem in stems if stems.count(stem) == 1]
+    ch_idxs = [name_idx for name_idx, name in enumerate(ch_names) if name[:-1] in only_once]
+    return ch_idxs
+
+
 def clean_names(names):
     """ Removes whitespace from channel names
     """
@@ -162,46 +169,4 @@ def average_to_channel_groups(data, info, ch_names, channel_groups):
     averaged_data = np.array(averaged_data)
 
     return data_labels, averaged_data
-
-
-def create_combined_adjacency(raw, ch_names):
-    """
-    """
-
-    n_channels = len(ch_names)
-
-    adjacency_by_type = {}
-    if len(mne.pick_types(raw.info, meg='grad', eeg=False)) > 0:
-        adjacency = mne.channels.find_ch_adjacency(raw.info, 'grad')
-        adjacency_by_type['grad'] = adjacency[0], clean_names(adjacency[1])
-
-    if len(mne.pick_types(raw.info, meg='mag', eeg=False)) > 0:
-        adjacency = mne.channels.find_ch_adjacency(raw.info, 'mag')
-        adjacency_by_type['mag'] = adjacency[0], clean_names(adjacency[1])
-
-    if len(mne.pick_types(raw.info, meg=False, eeg=True)) > 0:
-        adjacency = mne.channels.find_ch_adjacency(raw.info, 'eeg')
-        adjacency_by_type['eeg'] = adjacency[0], clean_names(adjacency[1])
-
-    adjacency = np.zeros((n_channels, n_channels))
-
-    for ch_idx_orig, ch_name in enumerate(ch_names):
-        for ch_type in ['mag', 'grad', 'eeg']:
-            if ch_type not in adjacency_by_type:
-                continue
-            if ch_name in adjacency_by_type[ch_type][1]:
-                ch_idx = adjacency_by_type[ch_type][1].index(ch_name)
-                ch_adjacency = adjacency_by_type[ch_type][0].toarray().astype(int)[ch_idx]
-                for ch_adj_idx, ch_adj_value in enumerate(ch_adjacency):
-                    ch_adj_name = adjacency_by_type[ch_type][1][ch_adj_idx]
-                    try:
-                        ch_adj_idx_orig = ch_names.index(ch_adj_name)
-                    except Exception as exc:
-                        continue
-
-                    adjacency[ch_idx_orig, ch_adj_idx_orig] = ch_adj_value
-                    adjacency[ch_adj_idx_orig, ch_idx_orig] = ch_adj_value
-
-    adjacency = scipy.sparse.csr_matrix(adjacency)
-    return adjacency
 

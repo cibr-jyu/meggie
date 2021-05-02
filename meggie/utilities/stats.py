@@ -5,21 +5,74 @@
 
 import logging
 
+from collections import OrderedDict
+
 import mne
 
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats
+import scipy
+
 
 from meggie.utilities.decorators import threaded
+from meggie.utilities.channels import get_channels_by_type
+from meggie.utilities.channels import pairless_grads
+from meggie.utilities.channels import clean_names
 
 
-def prepare_data_for_permutation(experiment, design, groups, conditions,
+def prepare_data_for_permutation(experiment, design, groups,
                                  item_type, item_name, 
                                  location_limits, time_limits, frequency_limits,
                                  data_format=('locations', 'freqs', 'times')):
     """
     """
+
+    meggie_item = getattr(experiment.active_subject, item_type)[item_name]
+    conditions = list(meggie_item.content.keys())
+    groups = OrderedDict(sorted(groups.items()))
+
+    if location_limits[0] == 'ch_type':
+        # find channels shared by all subjects
+        ch_names = []
+        for group_key, group_subjects in groups.items():
+            for subject_name in group_subjects:
+                subject = experiment.subjects.get(subject_name)
+                meggie_item = getattr(subject, item_type).get(item_name)
+                if meggie_item:
+                    ch_names.append(tuple(meggie_item.ch_names))
+        common_ch_names = list(set.intersection(*map(set, ch_names)))
+
+        # filter to selected channel type
+        ch_type = location_limits[1]
+        chs_by_type = get_channels_by_type(meggie_item.info)
+        common_ch_names = [ch_name for ch_name in common_ch_names
+                           if ch_name in chs_by_type[ch_type]]
+
+        # remove pairless grads
+        if ch_type == 'grad':
+            pairless_idxs = pairless_grads(common_ch_names)
+            common_ch_names = [ch_name for ch_idx, ch_name in enumerate(common_ch_names)
+                               if ch_idx not in pairless_idxs]
+
+        # update info to match valid channels
+        info_ch_names = meggie_item.info['ch_names']
+        picks = [ch_idx for ch_idx, ch_name in enumerate(info_ch_names)
+                 if ch_name in common_ch_names]
+        info = mne.pick_info(meggie_item.info.copy(), sel=picks) 
+
+        # find adjacency matching adjacency
+        adjacency, adjacency_ch_names = mne.channels.find_ch_adjacency(info, ch_type)
+        cleaned_common = clean_names(common_ch_names)
+        kept_idxs = [idx for idx in range(adjacency.shape[0]) if
+                     adjacency_ch_names[idx] in cleaned_common]
+
+        adjacency_arr = adjacency.toarray()[kept_idxs][:, kept_idxs]
+        adjacency = scipy.sparse.csr_matrix(adjacency_arr)
+    else:
+        adjacency = scipy.sparse.csr_matrix([1])
+        info = meggie_item.info
+
     final_data = {}
     if design == 'between-subjects':
         for condition in conditions:
@@ -42,12 +95,19 @@ def prepare_data_for_permutation(experiment, design, groups, conditions,
                         swapped = np.swapaxes(data, data_format.index('freqs'), 0)
                         averaged = np.mean(swapped[fmin_idx:fmax_idx], axis=0)[np.newaxis, :]
                         data = np.swapaxes(averaged, data_format.index('freqs'), 0)
-                    if location_limits is not None:
+                    if location_limits[0] == 'ch_name':
                         # take the seleted location
                         ch_names = subject_item.ch_names
-                        ch_idx = ch_names.index(location_limits)
+                        ch_idx = ch_names.index(location_limits[1])
                         swapped = np.swapaxes(data, data_format.index('locations'), 0)
                         selected = data[ch_idx][np.newaxis, :]
+                        data = np.swapaxes(selected, data_format.index('locations'), 0)
+                    elif location_limits[0] == 'ch_type':
+                        # filter to channel type
+                        ch_idxs = np.array([ch_idx for ch_idx, ch_name in enumerate(subject_item.info['ch_names'])
+                                            if ch_name in common_ch_names])
+                        swapped = np.swapaxes(data, data_format.index('locations'), 0)
+                        selected = data[ch_idxs]
                         data = np.swapaxes(selected, data_format.index('locations'), 0)
                     if time_limits is not None:
                         # average over the selected temporal range
@@ -64,9 +124,7 @@ def prepare_data_for_permutation(experiment, design, groups, conditions,
                     group_data.append(data)
                 cond_data.append(np.array(group_data))
             final_data[condition] = cond_data
-        return final_data
     elif design == 'within-subjects':
-        final_data = {}
         for group_key, group in groups.items():
 
             group_data = []
@@ -88,12 +146,19 @@ def prepare_data_for_permutation(experiment, design, groups, conditions,
                         swapped = np.swapaxes(data, data_format.index('freqs'), 0)
                         averaged = np.mean(swapped[fmin_idx:fmax_idx], axis=0)[np.newaxis, :]
                         data = np.swapaxes(averaged, data_format.index('freqs'), 0)
-                    if location_limits is not None:
+                    if location_limits[0] == 'ch_name':
                         # take the seleted location
                         ch_names = subject_item.ch_names
-                        ch_idx = ch_names.index(location_limits)
+                        ch_idx = ch_names.index(location_limits[1])
                         swapped = np.swapaxes(data, data_format.index('locations'), 0)
                         selected = data[ch_idx][np.newaxis, :]
+                        data = np.swapaxes(selected, data_format.index('locations'), 0)
+                    elif location_limits[0] == 'ch_type':
+                        # filter to channel type
+                        ch_idxs = np.array([ch_idx for ch_idx, ch_name in enumerate(subject_item.ch_names)
+                                            if ch_name in common_ch_names])
+                        swapped = np.swapaxes(data, data_format.index('locations'), 0)
+                        selected = data[ch_idxs]
                         data = np.swapaxes(selected, data_format.index('locations'), 0)
                     if time_limits is not None:
                         # average over the selected temporal range
@@ -111,9 +176,7 @@ def prepare_data_for_permutation(experiment, design, groups, conditions,
             swapped = np.swapaxes(np.array(group_data), 0, 1)
             rolled = np.rollaxis(swapped, 2 + data_format.index('locations'), swapped.ndim)
             final_data[group_key] = rolled
-            return final_data
-    else:
-        raise Exception("Only within and between subjects designs are supported")
+    return info, final_data, adjacency
 
 
 @threaded
@@ -194,16 +257,13 @@ def plot_permutation_results(results, significance,
             cluster = res[1][sign_mask[sign_idx]]
             pvalue = res[2][sign_mask[sign_idx]]
             if frequency_limits is None:
-                fig, ax = plt.subplots()
-                fig.suptitle(str(key) + ': cluster ' + str(sign_idx+1) + ' (p ' + str(pvalue) + ')')
                 if frequency_fun:
-                    frequency_fun(cluster, ax, key)
-            if location_limits is None:
-                # spectrum object does not contain locations but may have less channels
-                # so filter the info to contain only channels that the spectrum object has
-                fig, ax = plt.subplots()
-                fig.suptitle(str(key) + ': cluster ' + str(sign_idx+1) + ' (p ' + str(pvalue) + ')')
+                    fig = frequency_fun(sign_idx, cluster, pvalue, key)
+            if time_limits is None:
+                if time_fun:
+                    fig = time_fun(sign_idx, cluster, pvalue, key)
+            if location_limits is None or location_limits[0] == 'ch_type':
                 if location_fun:
-                    location_fun(cluster, ax, key)
+                    location_fun(sign_idx, cluster, pvalue, key)
             plt.show()
 

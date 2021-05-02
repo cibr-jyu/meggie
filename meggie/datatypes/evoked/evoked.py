@@ -82,6 +82,12 @@ class Evoked(Datatype):
         return list(self.content.values())[0].times
 
     @property
+    def info(self):
+        """
+        """
+        return list(self.content.values())[0].info
+
+    @property
     def data(self):
         """ Convenient wrapper for getting data
         """

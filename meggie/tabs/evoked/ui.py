@@ -125,7 +125,7 @@ def permutation_test(experiment, data, window):
             return
 
     dialog = PermutationTestDialog(experiment, window, handler, meggie_item,
-                                   limit_time=True, limit_location_vals=ch_names)
+                                   limit_time=True)
     dialog.show()
 
 
