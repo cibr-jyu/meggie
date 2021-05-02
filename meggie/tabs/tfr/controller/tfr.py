@@ -5,6 +5,8 @@
 import os
 import logging
 
+from collections import OrderedDict
+
 import numpy as np
 import matplotlib.pyplot as plt
 import mne
@@ -17,10 +19,15 @@ from meggie.utilities.plotting import get_channel_average_fig_size
 from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import clean_names
+from meggie.utilities.channels import pairless_grads
 from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
 from meggie.utilities.units import get_power_unit
+from meggie.utilities.stats import prepare_data_for_permutation
+from meggie.utilities.stats import permutation_analysis
+from meggie.utilities.stats import report_permutation_results
+from meggie.utilities.stats import plot_permutation_results
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.decorators import threaded
 
@@ -321,6 +328,105 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
 
     fig.canvas.mpl_connect('button_press_event', onclick)
     fig.show()
+
+
+def run_permutation_test(experiment, window, selected_name, groups, time_limits,
+                         frequency_limits, location_limits, threshold,
+                         significance, n_permutations, design):
+    """
+    """
+    if location_limits[0] == "ch_name" and frequency_limits is not None and time_limits is not None:
+        raise Exception("Cannot run permutation tests with all location, frequency and time limits")
+
+    tfr_item = experiment.active_subject.tfr[selected_name]
+    conditions = list(tfr_item.content.keys())
+    groups = OrderedDict(sorted(groups.items()))
+    times = tfr_item.times
+    freqs = tfr_item.freqs
+
+    info, data, adjacency = prepare_data_for_permutation(
+        experiment, design, groups, 'tfr', selected_name,
+        location_limits, time_limits, frequency_limits,
+        data_format=('locations', 'freqs', 'times'),
+        do_meanwhile=window.update_ui)
+
+    results = permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations,
+                                   do_meanwhile=window.update_ui)
+
+    report_permutation_results(results, selected_name, significance,
+                               location_limits=location_limits,
+                               time_limits=time_limits,
+                               frequency_limits=frequency_limits)
+
+    def time_fun(cluster_idx, cluster, pvalue, res_key):
+        fig, ax = plt.subplots()
+        if design == 'within-subjects':
+            colors = color_cycle(len(conditions))
+            for cond_idx, condition in enumerate(conditions):
+                Y = np.mean(data[res_key][cond_idx], axis=0)
+                Y = np.mean(Y[np.unique(cluster[0])], axis=0)
+                Y = np.mean(Y[:, np.unique(cluster[-1])], axis=1)
+                ax.plot(times, Y, label=condition, color=colors[cond_idx])
+        else:
+            colors = color_cycle(len(groups))
+            for group_idx, (group_key, group) in enumerate(groups.items()):
+                Y = np.mean(data[res_key][group_key], axis=0)
+                Y = np.mean(Y[np.unique(cluster[0])], axis=0)
+                Y = np.mean(Y[:, np.unique(cluster[-1])], axis=1)
+                ax.plot(times, Y, label=condition, color=colors[group_idx])
+        ax.legend()
+        ax.set_xlabel('Time (s)')
+        ax.set_ylabel('Power')
+        tmin = np.min(times[cluster[1]])
+        tmax = np.max(times[cluster[1]])
+        ax.axvspan(tmin, tmax, alpha=0.5, color='blue')
+        fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for ' +
+                     str(res_key) + ' ( ' + str(pvalue) + ')')
+
+    def frequency_fun(cluster_idx, cluster, pvalue, res_key):
+        fig, ax = plt.subplots()
+        if design == 'within-subjects':
+            colors = color_cycle(len(conditions))
+            for cond_idx, condition in enumerate(conditions):
+                Y = np.mean(data[res_key][cond_idx], axis=0)
+                Y = np.mean(Y[:, np.unique(cluster[1]), :], axis=1)
+                Y = np.mean(Y[:, np.unique(cluster[-1])], axis=1)
+                ax.plot(freqs, Y, label=condition, color=colors[cond_idx])
+        else:
+            colors = color_cycle(len(groups))
+            for group_idx, (group_key, group) in enumerate(groups.items()):
+                Y = np.mean(data[res_key][group_key], axis=0)
+                Y = np.mean(Y[:, np.unique(cluster[1]), :], axis=1)
+                Y = np.mean(Y[:, np.unique(cluster[-1])], axis=1)
+                ax.plot(freqs, Y, label=condition, color=colors[group_idx])
+        ax.legend()
+        ax.set_xlabel('Frequency (Hz)')
+        ax.set_ylabel('Power')
+        fmin = np.min(freqs[cluster[0]])
+        fmax = np.max(freqs[cluster[0]])
+        ax.axvspan(fmin, fmax, alpha=0.5, color='blue')
+        fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for ' +
+                     str(res_key) + ' (' + str(pvalue) + ')')
+
+    def location_fun(cluster_idx, cluster, pvalue, res_key):
+        map_ = [1 if idx in cluster[-1] else 0 for idx in
+                range(len(info['ch_names']))]
+        
+        fig, ax = plt.subplots()
+        ch_type = location_limits[1]
+        mne.viz.plot_topomap(np.array(map_), info, vmin=0, vmax=1,
+                             cmap='Reds', sensors='r+', axes=ax, ch_type=ch_type)
+        fig.suptitle(ch_type + ' cluster of ' + str(cluster_idx+1) + ' for ' +
+                     str(res_key) + ' (' + str(pvalue) + ')')
+
+    plot_permutation_results(results, significance,
+                             location_limits=location_limits,
+                             frequency_limits=frequency_limits,
+                             time_limits=time_limits,
+                             location_fun=location_fun,
+                             frequency_fun=frequency_fun,
+                             time_fun=time_fun)
+
 
 @threaded
 def create_tfr(subject, tfr_name, epochs_names,

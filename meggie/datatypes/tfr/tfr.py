@@ -119,6 +119,13 @@ class TFR(Datatype):
         return self._params
 
     @property
+    def data(self):
+        data = {}
+        for key in self.content.keys():
+            data[key] = self.content[key].data
+        return data
+
+    @property
     def name(self):
         return self._name
 

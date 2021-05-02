@@ -21,13 +21,14 @@ from meggie.utilities.channels import pairless_grads
 from meggie.utilities.channels import clean_names
 
 
+@threaded
 def prepare_data_for_permutation(experiment, design, groups,
                                  item_type, item_name, 
                                  location_limits, time_limits, frequency_limits,
                                  data_format=('locations', 'freqs', 'times')):
     """
     """
-
+    logging.getLogger('ui_logger').info('Preparing data for permutations..')
     meggie_item = getattr(experiment.active_subject, item_type)[item_name]
     conditions = list(meggie_item.content.keys())
     groups = OrderedDict(sorted(groups.items()))
@@ -181,6 +182,17 @@ def prepare_data_for_permutation(experiment, design, groups,
 
 @threaded
 def permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations):
+
+    # if 3d (or higher) clusters, create combined for adjacency
+    # as mne flattens all but the first dimension
+    sample_shape = list(data.values())[0][0][0].shape
+    if len(sample_shape) > 2:
+        combined_adjacency = mne.stats.combine_adjacency(
+            *sample_shape[1:-1], adjacency)
+    else:
+        combined_adjacency = adjacency
+
+    logging.getLogger('ui_logger').info('Running permutation tests..')
     results = {}
     if design == 'between-subjects':
         for condition in conditions:
@@ -195,7 +207,7 @@ def permutation_analysis(data, design, conditions, groups, threshold, adjacency,
                 X=X,
                 threshold=threshold,
                 n_permutations=n_permutations,
-                adjacency=adjacency,
+                adjacency=combined_adjacency,
                 verbose='warning',
                 out_type='indices'
             )
@@ -212,7 +224,7 @@ def permutation_analysis(data, design, conditions, groups, threshold, adjacency,
 
             res = mne.stats.permutation_cluster_test(
                 X=X,
-                adjacency=adjacency,
+                adjacency=combined_adjacency,
                 threshold=f_thresh,
                 stat_fun=stat_fun,
                 n_permutations=n_permutations,
@@ -220,7 +232,7 @@ def permutation_analysis(data, design, conditions, groups, threshold, adjacency,
                 out_type='indices'
             )
             results[group_key] = res
-        return results
+    return results
 
 
 def report_permutation_results(results, selected_name, significance, location_limits=None, frequency_limits=None, time_limits=None):

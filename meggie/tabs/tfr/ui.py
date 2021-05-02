@@ -14,12 +14,14 @@ from meggie.tabs.tfr.controller.tfr import save_tfr_all_channels
 from meggie.tabs.tfr.controller.tfr import save_tse_channel_averages
 from meggie.tabs.tfr.controller.tfr import save_tse_all_channels
 from meggie.tabs.tfr.controller.tfr import group_average_tfr
+from meggie.tabs.tfr.controller.tfr import run_permutation_test
 
 from meggie.utilities.formats import format_float
 from meggie.utilities.formats import format_floats
 from meggie.utilities.channels import get_channels_by_type
 
 from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDialog
+from meggie.utilities.dialogs.permutationTestDialogMain import PermutationTestDialog
 
 from meggie.tabs.tfr.dialogs.TFROutputOptionsMain import TFROutputOptions
 from meggie.tabs.tfr.dialogs.TFRDialogMain import TFRDialog
@@ -88,6 +90,33 @@ def delete_from_all(experiment, data, window):
     logging.getLogger('ui_logger').info('Deleted TFR from all subjects: ' + selected_name)
 
     window.initialize_ui()
+
+
+def permutation_test(experiment, data, window):
+    """
+    """
+    try:
+        selected_name = data['outputs']['tfr'][0]
+    except IndexError as exc:
+        return
+
+    meggie_item = experiment.active_subject.tfr[selected_name]
+    
+    def handler(groups, time_limits, frequency_limits, location_limits, threshold,
+                significance, n_permutations, design):
+        """
+        """
+        try:
+            run_permutation_test(experiment, window, selected_name, groups, time_limits,
+                                 frequency_limits, location_limits, threshold,
+                                 significance, n_permutations, design)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+            return
+
+    dialog = PermutationTestDialog(experiment, window, handler, meggie_item,
+                                   limit_frequency=True, limit_time=True)
+    dialog.show()
 
 
 def plot_tfr(experiment, data, window):

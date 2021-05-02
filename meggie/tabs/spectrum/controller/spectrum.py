@@ -12,8 +12,6 @@ import mne
 
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy
-import scipy.stats
 
 import pandas as pd
 
@@ -35,7 +33,6 @@ from meggie.utilities.stats import prepare_data_for_permutation
 from meggie.utilities.stats import permutation_analysis
 from meggie.utilities.stats import report_permutation_results
 from meggie.utilities.stats import plot_permutation_results
-from meggie.utilities.channels import get_channels_by_type
 
 from meggie.utilities.events import get_raw_blocks_from_intervals
 
@@ -179,7 +176,7 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                          significance, n_permutations, design):
     """
     """
-    if location_limits is not None and frequency_limits is not None:
+    if location_limits[0] == "ch_name" and frequency_limits is not None:
         raise Exception('Cannot run permutation tests with both location and frequency limits')
 
     spectrum_item = experiment.active_subject.spectrum[selected_name]
@@ -190,7 +187,8 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
     info, data, adjacency = prepare_data_for_permutation(
         experiment, design, groups, 'spectrum', selected_name,
         location_limits, time_limits, frequency_limits,
-        data_format=('locations', 'freqs'))
+        data_format=('locations', 'freqs'),
+        do_meanwhile=window.update_ui)
 
     results = permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations,
                                    do_meanwhile=window.update_ui)

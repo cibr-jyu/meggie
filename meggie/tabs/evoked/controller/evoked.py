@@ -92,7 +92,7 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                          significance, n_permutations, design):
     """
     """
-    if location_limits is not None and time_limits is not None:
+    if location_limits[0] == "ch_name" and time_limits is not None:
         raise Exception('Cannot run permutation tests with both location and time limits')
 
     evoked_item = experiment.active_subject.evoked[selected_name]
@@ -103,7 +103,8 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
     info, data, adjacency = prepare_data_for_permutation(
         experiment, design, groups, 'evoked', selected_name,
         location_limits, time_limits, frequency_limits, 
-        data_format=('locations', 'times'))
+        data_format=('locations', 'times'),
+        do_meanwhile=window.update_ui)
 
     results = permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations,
                                    do_meanwhile=window.update_ui)
@@ -129,8 +130,8 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                                  axis=(0, -1))
                 ax.plot(times, evoked, label=group_key, color=colors[group_idx])
         ax.legend()
-        ax.set_xlabel('Times (s)')
-        ax.set_ylabel('')
+        ax.set_xlabel('Time (s)')
+        ax.set_ylabel('Amplitude')
         tmin = np.min(times[cluster[0]])
         tmax = np.max(times[cluster[0]])
         ax.axvspan(tmin, tmax, alpha=0.5, color='blue')
@@ -151,7 +152,7 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
 
     plot_permutation_results(results, significance,
                              location_limits=location_limits,
-                             frequency_limits=frequency_limits,
+                             time_limits=time_limits,
                              location_fun=location_fun,
                              time_fun=time_fun)
 

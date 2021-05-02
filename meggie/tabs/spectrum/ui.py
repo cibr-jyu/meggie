@@ -183,7 +183,6 @@ def permutation_test(experiment, data, window):
         return
 
     meggie_item = experiment.active_subject.spectrum[selected_name]
-    ch_names = meggie_item.ch_names
 
     def handler(groups, time_limits, frequency_limits, location_limits, threshold,
                 significance, n_permutations, design):
