@@ -261,7 +261,7 @@ class Experiment:
             logging.getLogger('ui_logger').error(
                 'Could not save the experiment file. Please check your permissions..')
 
-def initialize_new_experiment(name, author, prefs):
+def initialize_new_experiment(name, author, prefs, set_previous_experiment=True):
     """
     Initializes new experiment object with given data.
     """
@@ -272,8 +272,9 @@ def initialize_new_experiment(name, author, prefs):
     experiment = Experiment(name, author, path)
     experiment.save_experiment_settings()
 
-    prefs.previous_experiment_name = experiment.path
-    prefs.write_preferences_to_disk()
+    if set_previous_experiment:
+        prefs.previous_experiment_name = experiment.path
+        prefs.write_preferences_to_disk()
     return experiment
 
 

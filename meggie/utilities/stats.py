@@ -181,7 +181,8 @@ def prepare_data_for_permutation(experiment, design, groups,
 
 
 @threaded
-def permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations):
+def permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations, 
+                         random_state=None):
 
     # if 3d (or higher) clusters, create combined for adjacency
     # as mne flattens all but the first dimension
@@ -209,7 +210,8 @@ def permutation_analysis(data, design, conditions, groups, threshold, adjacency,
                 n_permutations=n_permutations,
                 adjacency=combined_adjacency,
                 verbose='warning',
-                out_type='indices'
+                out_type='indices',
+                seed=random_state
             )
             results[condition] = res
     else:
@@ -218,18 +220,27 @@ def permutation_analysis(data, design, conditions, groups, threshold, adjacency,
             factor_levels, effects = [2], 'A'
             f_thresh = mne.stats.f_threshold_mway_rm(len(group), factor_levels, effects, threshold)
 
+            # data before: (n_conditions, n_subjects, ..., n_locations)
+            # give to permutation_cluster test as: (n_conditions * n_subjects, ..., n_locations)
+            # and format again properly at stat_fun for f_mway_rm: (n_subjects, n_conditions, n_others)
+            # np.allclose(np.array(np.split(np.concatenate(X, axis=0), X.shape[0])), X) == True
+
+            n_conditions = X.shape[0]
             def stat_fun(*args):
-                return mne.stats.f_mway_rm(np.swapaxes(args, 1, 0), factor_levels=factor_levels,
+                sample = args[0]
+                formatted = np.swapaxes(np.array(np.split(sample, n_conditions)), 0, 1)
+                return mne.stats.f_mway_rm(formatted, factor_levels=factor_levels,
                                            effects=effects, return_pvals=False)[0]
 
             res = mne.stats.permutation_cluster_test(
-                X=X,
+                X=[np.concatenate(X, axis=0)],
                 adjacency=combined_adjacency,
                 threshold=f_thresh,
                 stat_fun=stat_fun,
                 n_permutations=n_permutations,
                 verbose='warning',
-                out_type='indices'
+                out_type='indices',
+                seed=random_state
             )
             results[group_key] = res
     return results

@@ -29,7 +29,7 @@ def create_experiment(experiment_folder, experiment_name, subjects_raw, overwrit
     # create experiment (creates experiment directory inside working directory)
     name = experiment_name
     author = 'Test'
-    experiment = initialize_new_experiment(name, author, prefs)
+    experiment = initialize_new_experiment(name, author, prefs, set_previous_experiment=False)
 
     for subject_idx, raw in enumerate(subjects_raw):
         with tempfile.TemporaryDirectory() as sample_folder:
@@ -45,9 +45,10 @@ def create_experiment(experiment_folder, experiment_name, subjects_raw, overwrit
                                       raw_path)
 
     experiment.save_experiment_settings()
+    return experiment
 
 
-def create_evoked_conditions_experiment(experiment_folder, experiment_name, overwrite=False):
+def create_evoked_conditions_experiment(experiment_folder, experiment_name, overwrite=False, n_subjects=35):
     """ generate multisubject dataset and experiment based on sample audvis raw
     """
     sample_folder = mne.datasets.sample.data_path()
@@ -62,7 +63,6 @@ def create_evoked_conditions_experiment(experiment_folder, experiment_name, over
     la_events = [ev for ev in events if ev[2] == 1]
     ra_events = [ev for ev in events if ev[2] == 2]
 
-    n_subjects = 35
     for subject_idx in range(n_subjects):
         data = []
         combined_events = la_events[subject_idx*2:subject_idx*2+2]
@@ -95,7 +95,7 @@ def create_evoked_conditions_experiment(experiment_folder, experiment_name, over
 
         subjects_raw.append(subject_raw)
 
-    create_experiment(experiment_folder, experiment_name, subjects_raw, overwrite=overwrite)
+    return create_experiment(experiment_folder, experiment_name, subjects_raw, overwrite=overwrite)
 
 
 if __name__ == '__main__':
