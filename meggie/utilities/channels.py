@@ -2,6 +2,8 @@ import scipy
 import numpy as np
 import mne
 
+from mne.channels import _divide_to_regions
+
 
 def is_montage_set(info, ch_type):
     """ Checks whether montage is set for given ch type
@@ -31,7 +33,6 @@ def is_montage_set(info, ch_type):
 def get_default_channel_groups(info, ch_type):
     """ Returns channels grouped by locations (Left-frontal, Right-occipital, etc.)
     """
-    from mne.selection import _divide_to_regions
 
     if ch_type == 'meg':
         picks = mne.pick_types(info, meg=True, eeg=False)
