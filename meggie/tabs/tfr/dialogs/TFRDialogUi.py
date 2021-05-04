@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'TFRDialogUi.ui'
+# Form implementation generated from reading ui file 'designer_ui_files/tabs/tfr/TFRDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_TFRDialog(object):
     def setupUi(self, TFRDialog):
@@ -143,7 +145,7 @@ class Ui_TFRDialog(object):
         self.doubleSpinBoxCycleFactor = QtWidgets.QDoubleSpinBox(self.groupBoxFrequencies)
         self.doubleSpinBoxCycleFactor.setEnabled(True)
         self.doubleSpinBoxCycleFactor.setToolTip("")
-        self.doubleSpinBoxCycleFactor.setMinimum(1.0)
+        self.doubleSpinBoxCycleFactor.setMinimum(0.0)
         self.doubleSpinBoxCycleFactor.setMaximum(10.0)
         self.doubleSpinBoxCycleFactor.setSingleStep(1.0)
         self.doubleSpinBoxCycleFactor.setProperty("value", 2.0)
@@ -216,4 +218,3 @@ class Ui_TFRDialog(object):
         self.labelEpochName.setText(_translate("TFRDialog", "Epoch name: "))
         self.labelTFRName.setText(_translate("TFRDialog", "TFR name:"))
         self.groupBoxBatching.setTitle(_translate("TFRDialog", "Batching"))
-

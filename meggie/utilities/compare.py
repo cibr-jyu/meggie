@@ -19,8 +19,8 @@ def _prepare_raw_for_changes(raw_from, raw_to):
 
     ch_names = []
     for ch_name in raw_from.info['ch_names']:
-        ch_names.append(ch_name + ' (old)')
-        ch_names.append(ch_name + ' (new)')
+        ch_names.append(ch_name.strip())
+        ch_names.append(ch_name.strip() + '*')
     new_info['ch_names'] = ch_names
 
     chs = []
@@ -55,4 +55,4 @@ def compare_raws(raw_from, raw_to):
     interleaved
     """
     changes_raw = _prepare_raw_for_changes(raw_from, raw_to)
-    changes_raw.plot(color='red', bad_color='blue')
+    changes_raw.plot(color='red', bad_color='blue', title='Comparison plot')

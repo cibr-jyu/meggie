@@ -123,20 +123,27 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                 evoked = np.mean(data[res_key][cond_idx][:, :, np.unique(cluster[-1])],
                                  axis=(0, -1))
                 ax.plot(times, evoked, label=condition, color=colors[cond_idx])
+            fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for  group ' +
+                         str(res_key) + ' (p ' + str(pvalue) + ')')
+
         else:
             colors = color_cycle(len(groups))
             for group_idx, (group_key, group) in enumerate(groups.items()):
                 evoked = np.mean(data[res_key][group_key][:, :, np.unique(cluster[-1])],
                                  axis=(0, -1))
                 ax.plot(times, evoked, label=group_key, color=colors[group_idx])
+
+            fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for  condition ' +
+                         str(res_key) + ' (p ' + str(pvalue) + ')')
+
+        fig.canvas.set_window_title('Cluster time course')
+
         ax.legend()
         ax.set_xlabel('Time (s)')
         ax.set_ylabel('Amplitude')
         tmin = np.min(times[cluster[0]])
         tmax = np.max(times[cluster[0]])
         ax.axvspan(tmin, tmax, alpha=0.5, color='blue')
-        fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for ' +
-                     str(res_key) + ' (' + str(pvalue) + ')')
 
     def location_fun(cluster_idx, cluster, pvalue, res_key):
         map_ = [1 if idx in cluster[-1] else 0 for idx in
@@ -145,10 +152,11 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
         fig, ax = plt.subplots()
         ch_type = location_limits[1]
         mne.viz.plot_topomap(np.array(map_), info, vmin=0, vmax=1,
-                             cmap='Reds', sensors='r+', axes=ax, ch_type=ch_type)
+                             cmap='Reds', axes=ax, ch_type=ch_type)
 
-        fig.suptitle(ch_type + ' cluster of ' + str(cluster_idx+1) + ' for ' +
-                     str(res_key) + ' (' + str(pvalue) + ')')
+        fig.suptitle(ch_type + ' cluster ' + str(cluster_idx+1) + ' for ' +
+                     str(res_key) + ' (p ' + str(pvalue) + ')')
+        fig.canvas.set_window_title('Cluster topomap')
 
     plot_permutation_results(results, significance,
                              location_limits=location_limits,
