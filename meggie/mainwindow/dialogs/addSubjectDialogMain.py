@@ -39,6 +39,7 @@ class AddSubjectDialog(QtWidgets.QDialog):
             raw_path = item.text()
             basename = os.path.basename(raw_path)
             subject_name = basename.split('.')[0]
+
             experiment = self.parent.experiment
             old_names = experiment.subjects.keys()
 
@@ -47,18 +48,19 @@ class AddSubjectDialog(QtWidgets.QDialog):
 
                 @threaded
                 def _create_subject():
-                    experiment.create_subject(subject_name, basename,
-                                              raw_path)
+                    experiment.create_subject(subject_name, raw_path)
                 
                 _create_subject(do_meanwhile=self.parent.update_ui)
                 n_successful += 1
 
             except Exception as exc:
-                exc_messagebox(self.parent, exc)
+                logging.getLogger('ui_logger').exception('')
 
         self.parent.experiment.save_experiment_settings()
 
-        logging.getLogger('ui_logger').info(str(n_successful) + " subjects added successfully.")
+        message = (str(n_successful) + '/' + str(self.ui.listWidgetFileNames.count()) + 
+                   ' subjects added successfully')
+        logging.getLogger('ui_logger').info(message)
 
         self.parent.initialize_ui()
         self.close()

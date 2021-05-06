@@ -31,6 +31,12 @@ def save_raw(raw, path, overwrite=True):
     folder = os.path.dirname(path)
     bname = os.path.basename(path)
 
+    exists = False
+    if os.path.exists(path):
+        if not overwrite:
+            raise IOError('File already exists.')
+        exists = True
+
     # be protective and save with other name first and move afterwards
     temp_path = os.path.join(folder, '_' + bname)
     raw.save(temp_path, overwrite=True)
@@ -48,7 +54,8 @@ def save_raw(raw, path, overwrite=True):
 
     if len(old_files) != len(new_files):
         logger = logging.getLogger('ui_logger')
-        logger.warning("Be warned, amount of parts has changed!")
+        if exists:
+            logger.warning("Be warned, amount of parts has changed!")
         logger.debug("Old parts: ")
         for part in old_files:
             logger.debug(part)
@@ -95,25 +102,6 @@ def create_timestamped_folder(experiment):
 
     return timestamped_folder
 
-
-def copy_subject_raw(subject, path):
-    """ Makes copy of the raw file at subject creation
-    """
-
-    bname = os.path.basename(path)
-    folder = os.path.dirname(path)
-    stem, ext = os.path.splitext(bname)
-
-    ext_len = len(ext)
-
-    p = re.compile(bname[:-ext_len] + r'(-[0-9]+)?' + bname[-ext_len:])
-
-    contents = os.listdir(folder)
-    files = [fname_ for fname_ in contents if p.match(fname_)]
-
-    for fname in files:
-        shutil.copyfile(os.path.join(folder, fname), 
-                        os.path.join(subject.path, fname))
 
 def save_csv(path, data, column_names, row_descs):
     """ Saves tabular data to csv.

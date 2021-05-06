@@ -41,7 +41,6 @@ def create_experiment(experiment_folder, experiment_name, subjects_raw, overwrit
 
             subject_name = fname.split('.fif')[0]
             experiment.create_subject(subject_name, 
-                                      fname, 
                                       raw_path)
 
     experiment.save_experiment_settings()

@@ -13,7 +13,8 @@ import pkg_resources
 
 from meggie.subject import Subject
 
-from meggie.utilities.filemanager import copy_subject_raw
+from meggie.utilities.filemanager import open_raw
+from meggie.utilities.filemanager import save_raw
 from meggie.utilities.channels import get_default_channel_groups
 from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
@@ -160,13 +161,21 @@ class Experiment:
 
         return self.active_subject
 
-    def create_subject(self, subject_name, raw_fname, raw_path):
-        """ Creates and adds subject object based on raw path
-        """
-        subject = Subject(self, subject_name, raw_fname)
+    def create_subject(self, subject_name, raw_path):
+        """ Creates a subject object and copies the raw file
+        inside it (by reading and saving) """
+        bname = os.path.basename(raw_path)
+        stem, ext = os.path.splitext(bname)
+        new_fname = stem + '.fif'
+
+        subject = Subject(self, subject_name, new_fname)
         subject.ensure_folders()
 
-        copy_subject_raw(subject, raw_path)
+        raw = open_raw(raw_path)
+
+        new_path = os.path.join(subject.path, new_fname)
+        save_raw(raw, new_path)
+
         self.add_subject(subject)
 
     def save_experiment_settings(self):
