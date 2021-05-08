@@ -160,7 +160,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if selIndexes == []:
             return
 
-        def handler():
+        def handler(accepted):
+            if not accepted:
+                return
             failures = []
             for index in selIndexes:
                 subject_name = index.data()

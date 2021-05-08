@@ -24,6 +24,9 @@ class shortQuestionBox(QtWidgets.QDialog):
         self.handler = handler
 
     def accept(self):
-        self.handler()
-        self.close()
+        self.handler(True)
+        super(shortQuestionBox, self).accept()
 
+    def reject(self):
+        self.handler(False)
+        super(shortQuestionBox, self).reject()

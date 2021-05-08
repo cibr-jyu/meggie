@@ -19,6 +19,7 @@ from meggie.utilities.decorators import threaded
 from meggie.utilities.channels import get_channels_by_type
 from meggie.utilities.channels import pairless_grads
 from meggie.utilities.channels import clean_names
+from meggie.utilities.messaging import questionbox
 
 
 @threaded
@@ -268,7 +269,7 @@ def report_permutation_results(results, selected_name, significance, location_li
                     ' significant) for ' + str(key))
 
     
-def plot_permutation_results(results, significance, 
+def plot_permutation_results(results, significance, window,
                              location_limits=None, frequency_limits=None, time_limits=None,
                              frequency_fun=None, time_fun=None, location_fun=None):
     """
@@ -276,17 +277,29 @@ def plot_permutation_results(results, significance,
     for key, res in results.items():
         sign_mask = np.where(res[2] < significance)[0]
         n_sign_clusters = len(sign_mask)
-        for sign_idx in range(n_sign_clusters):
-            cluster = res[1][sign_mask[sign_idx]]
-            pvalue = res[2][sign_mask[sign_idx]]
-            if frequency_limits is None:
-                if frequency_fun:
-                    fig = frequency_fun(sign_idx, cluster, pvalue, key)
-            if time_limits is None:
-                if time_fun:
-                    fig = time_fun(sign_idx, cluster, pvalue, key)
-            if location_limits is None or location_limits[0] == 'ch_type':
-                if location_fun:
-                    location_fun(sign_idx, cluster, pvalue, key)
-            plt.show()
+
+        def plot():
+            for sign_idx in range(n_sign_clusters):
+                cluster = res[1][sign_mask[sign_idx]]
+                pvalue = res[2][sign_mask[sign_idx]]
+                if frequency_limits is None:
+                    if frequency_fun:
+                        frequency_fun(sign_idx, cluster, pvalue, key)
+                if time_limits is None:
+                    if time_fun:
+                        time_fun(sign_idx, cluster, pvalue, key)
+                if location_limits is None or location_limits[0] == 'ch_type':
+                    if location_fun:
+                        location_fun(sign_idx, cluster, pvalue, key)
+                plt.show()
+
+        if n_sign_clusters > 10:
+            def handler(accepted):
+                if accepted:
+                    plot()
+            message = (str(n_sign_clusters) + ' significant clusters were found for ' +
+                       str(key) + '. Do you want to plot all of them?')
+            questionbox(window, message, handler)
+        else:
+            plot()
 

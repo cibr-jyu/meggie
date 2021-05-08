@@ -22,11 +22,11 @@ from meggie.datatypes.spectrum.spectrum import Spectrum
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.formats import format_floats
 from meggie.utilities.plotting import color_cycle
-from meggie.utilities.plotting import get_channel_average_fig_size
+from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
-from meggie.utilities.channels import pairless_grads
 from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import clean_names
+from meggie.utilities.channels import get_channels_by_type
 from meggie.utilities.units import get_power_unit
 from meggie.utilities.decorators import threaded
 from meggie.utilities.stats import prepare_data_for_permutation
@@ -121,6 +121,7 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
     info = spectrum.info
 
     colors = color_cycle(len(data))
+    conditions = spectrum.content.keys()
 
     averages = {}
     for key, psd in sorted(data.items()):
@@ -139,34 +140,21 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
         ch_groups = sorted([label[1] for label in averages.keys()
                             if label[0] == ch_type])
 
-        ncols = min(4, len(ch_groups))
-        nrows = int((len(ch_groups) - 1) / ncols + 1)
-
-        fig, axes = plt.subplots(nrows=nrows, ncols=ncols, squeeze=False)
-        fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
-        for ax_idx in range(ncols*nrows):
-            ax = axes[ax_idx // ncols, ax_idx % ncols]
-            if ax_idx >= len(ch_groups):
-                ax.axis('off')
-                continue
-
+        def plot_fun(ax_idx, ax):
             ch_group = ch_groups[ax_idx]
             ax.set_title(ch_group)
             ax.set_xlabel('Frequency (Hz)')
             ax.set_ylabel('Power ({})'.format(
                 get_power_unit(ch_type, log_transformed)))
 
-            handles = []
             for color_idx, (key, curve) in enumerate(averages[(ch_type, ch_group)]):
                 if log_transformed:
                     curve = 10 * np.log10(curve)
-                handles.append(ax.plot(freqs, curve, color=colors[color_idx], label=key)[0])
+                ax.plot(freqs, curve, color=colors[color_idx])
 
-        fig.legend(handles=handles)
         title_elems = [name, ch_type]
-        fig.canvas.set_window_title('_'.join(title_elems))
-        fig.suptitle(' '.join(title_elems))
-        fig.tight_layout()
+        legend = list(zip(conditions, colors))
+        create_channel_average_plot(len(ch_groups), plot_fun, title_elems, legend)
 
     plt.show()
 
@@ -183,6 +171,14 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
     conditions = list(spectrum_item.content.keys())
     groups = OrderedDict(sorted(groups.items()))
     freqs = spectrum_item.freqs
+
+    chs_by_type = get_channels_by_type(spectrum_item.info)
+    if location_limits[0] == 'ch_type':
+        ch_type = location_limits[1]
+    else:
+        ch_type = [key for key, vals in chs_by_type.items() if location_limits[1] in vals][0]
+
+    log_transformed = False
 
     info, data, adjacency = prepare_data_for_permutation(
         experiment, design, groups, 'spectrum', selected_name,
@@ -210,7 +206,6 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
             fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for group ' + 
                          str(res_key) + ' (p ' + str(pvalue) + ')')
 
-
         else:
             colors = color_cycle(len(groups))
             for group_idx, (group_key, group) in enumerate(groups.items()):
@@ -224,7 +219,8 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
 
         ax.legend()
         ax.set_xlabel('Frequency (Hz)')
-        ax.set_ylabel('Power')
+        ax.set_ylabel('Power ({})'.format(
+            get_power_unit(ch_type, log_transformed)))
         fmin = np.min(freqs[cluster[0]])
         fmax = np.max(freqs[cluster[0]])
         ax.axvspan(fmin, fmax, alpha=0.5, color='blue')
@@ -234,7 +230,6 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                 range(len(info['ch_names']))]
 
         fig, ax = plt.subplots()
-        ch_type = location_limits[1]
         mne.viz.plot_topomap(np.array(map_), info, vmin=0, vmax=1,
                              cmap='Reds', axes=ax, ch_type=ch_type)
 
@@ -242,7 +237,7 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                      str(res_key) + ' (p ' + str(pvalue) + ')')
         fig.canvas.set_window_title('Cluster topomap')
 
-    plot_permutation_results(results, significance, 
+    plot_permutation_results(results, significance, window,
                              location_limits=location_limits, 
                              frequency_limits=frequency_limits, 
                              location_fun=location_fun,

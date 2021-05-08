@@ -15,7 +15,7 @@ import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.formats import format_floats
 from meggie.utilities.plotting import color_cycle
-from meggie.utilities.plotting import get_channel_average_fig_size
+from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import clean_names
@@ -154,6 +154,7 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
     ch_names = meggie_tfr.ch_names
     info = meggie_tfr.info
     colors = color_cycle(len(tses))
+    conditions = meggie_tfr.content.keys()
 
     channel_groups = experiment.channel_groups
 
@@ -176,35 +177,23 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
         ch_groups = sorted([label[1] for label in averages.keys()
                             if label[0] == ch_type])
 
-        ncols = min(4, len(ch_groups))
-        nrows = int((len(ch_groups) - 1) / ncols + 1)
-
-        fig, axes = plt.subplots(nrows=nrows, ncols=ncols, squeeze=False)
-        fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
-        for ax_idx in range(ncols*nrows):
-            ax = axes[ax_idx // ncols, ax_idx % ncols]
-            if ax_idx >= len(ch_groups):
-                ax.axis('off')
-                continue
-
+        def plot_fun(ax_idx, ax):
             ch_group = ch_groups[ax_idx]
             ax.set_title(ch_group)
             ax.set_xlabel('Time (s)')
             ax.set_ylabel('Power ({})'.format(get_power_unit(
                 ch_type, False)))
 
-            handles = []
             for color_idx, (key, times, curve) in enumerate(averages[(ch_type, ch_group)]):
-                handles.append(ax.plot(times, curve, color=colors[color_idx], label=key)[0])
+                ax.plot(times, curve, color=colors[color_idx], label=key)
 
             ax.axhline(0, color='black')
             ax.axvline(0, color='black')
 
-        fig.legend(handles=handles)
         title_elems = [tfr_name, ch_type]
-        fig.canvas.set_window_title('_'.join(title_elems))
-        fig.suptitle(' '.join(title_elems))
-        fig.tight_layout()
+        legend = list(zip(conditions, colors))
+        create_channel_average_plot(len(ch_groups), plot_fun, title_elems, 
+                                    legend)
 
     plt.show()
 
@@ -249,18 +238,7 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
         ch_groups = sorted([label[1] for label in data_labels
                             if label[0] == ch_type])
 
-        ncols = min(4, len(ch_groups))
-        nrows = int((len(ch_groups) - 1) / ncols + 1)
-
-        fig, axes = plt.subplots(nrows=nrows, ncols=ncols, squeeze=False)
-        fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
-
-        for ax_idx in range(ncols*nrows):
-            ax = axes[ax_idx // ncols, ax_idx % ncols]
-            if ax_idx >= len(ch_groups):
-                ax.axis('off')
-                continue
-
+        def plot_fun(ax_idx, ax):
             ch_group = ch_groups[ax_idx]
             ax.set_title(ch_group)
 
@@ -277,10 +255,8 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
                      fmin=fmin, fmax=fmax, 
                      tmin=tmin, tmax=tmax, axes=ax)
 
-        fig.tight_layout()
         title_elems = [tfr_name, tfr_condition, ch_type]
-        fig.canvas.set_window_title('_'.join(title_elems))
-        fig.suptitle(' '.join(title_elems))
+        create_channel_average_plot(len(ch_groups), plot_fun, title_elems)
 
 
 def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition, 
@@ -344,6 +320,12 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
     times = tfr_item.times
     freqs = tfr_item.freqs
 
+    chs_by_type = get_channels_by_type(tfr_item.info)
+    if location_limits[0] == 'ch_type':
+        ch_type = location_limits[1]
+    else:
+        ch_type = [key for key, vals in chs_by_type.items() if location_limits[1] in vals][0]
+
     info, data, adjacency = prepare_data_for_permutation(
         experiment, design, groups, 'tfr', selected_name,
         location_limits, time_limits, frequency_limits,
@@ -376,7 +358,8 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                 ax.plot(times, Y, label=condition, color=colors[group_idx])
         ax.legend()
         ax.set_xlabel('Time (s)')
-        ax.set_ylabel('Power')
+        ax.set_ylabel('Power ({})'.format(
+            get_power_unit(ch_type, log_transformed=False)))
         tmin = np.min(times[cluster[1]])
         tmax = np.max(times[cluster[1]])
         ax.axvspan(tmin, tmax, alpha=0.5, color='blue')
@@ -401,7 +384,8 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                 ax.plot(freqs, Y, label=condition, color=colors[group_idx])
         ax.legend()
         ax.set_xlabel('Frequency (Hz)')
-        ax.set_ylabel('Power')
+        ax.set_ylabel('Power ({})'.format
+            (get_power_unit(ch_type, log_transformed=False)))
         fmin = np.min(freqs[cluster[0]])
         fmax = np.max(freqs[cluster[0]])
         ax.axvspan(fmin, fmax, alpha=0.5, color='blue')
