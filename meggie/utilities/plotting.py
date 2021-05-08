@@ -10,10 +10,6 @@ def color_cycle(n):
     return list(itertools.islice(cycler, n))
 
 
-def get_channel_average_fig_size():
-    pass
-
-
 def create_channel_average_plot(n_plots, plot_fun, title_elems, legend=None):
     """
     """
