@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import numpy as np
 
 from meggie.utilities.events import update_stim_channel

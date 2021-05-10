@@ -13,11 +13,13 @@ class Datatype:
         Absolute path to the folder where the data is expected to be stored.
     params : dict
         Contains additional information about the data object.
-    content : dict, optional
-        Stores the actual data as a dictionary where conditions act as keys.
+    content : dict or instance, optional
+        Stores the actual numerical data.
+        If not provided, it is assumed that the content is already stored 
+        in the file system.
     """
     def __init__(self, name, directory, params, content=None):
-        """Constructs the object.
+        """ Constructs the object.
         """
  
     def save_content(self):
