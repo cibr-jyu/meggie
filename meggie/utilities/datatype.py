@@ -1,54 +1,67 @@
+"""Defines an abstract class to derive from when creating datatypes."""
+
 
 class Datatype:
-    """ Shows the methods that can be expected to 
-    be present in datatypes 
+    """Abstract class that shows the methods that can be expected to 
+    be present in the actual datatypes.
+
+    Parameters
+    ----------
+    name : str
+        Name of the data object, used in the UI lists and in the .exp file.
+    directory : str
+        Absolute path to the folder where the data is expected to be stored.
+    params : dict
+        Contains additional information about the data object.
+    content : dict, optional
+        Stores the actual data as a dictionary where conditions act as keys.
     """
     def __init__(self, name, directory, params, content=None):
-        """ 
+        """Constructs the object.
         """
  
     def save_content(self):
-        """ saves the main data object to file system """
+        """Saves the data object contents to the file system."""
         raise NotImplementedError('')
 
     def delete_content(self):
-        """ deletes the main data object from file system """
+        """Deletes the data object contents from the file system."""
         raise NotImplementedError('')
 
     @property
     def content(self):
-        """ returns the main data object. is expected to read
-        it from the file system if needed """
+        """Returns the actual stored contents. Is expected to load
+        it from the file system if not loaded already."""
         raise NotImplementedError('')
 
     @property
     def data(self):
-        """ return numpy array of the data. may or may not be
-        different from content """
+        """In contrast to returning contents, that can be for example mne.Epochs,
+        return actual numpy arrays """
         raise NotImplementedError('')
 
     @property
     def info(self):
-        """ return mne info object """
+        """Returns info, usually needed for sensor locations."""
         raise NotImplementedError('')
 
     @property
     def params(self):
-        """ returns related information about the item,
-        stored in the experiment file """
+        """Returns related information about the data object,
+        stored in the experiment file."""
         raise NotImplementedError('')
 
     @property
     def times(self):
-        """ if time-based object, should return the times """
+        """If time-based object, should return the times."""
         raise NotImplementedError('')
 
     @property
     def freqs(self):
-        """ if freqs-based object, should return the freqs """
+        """If freqs-based object, should return the freqs."""
         raise NotImplementedError('')
 
     @property
     def ch_names(self):
-        """ if contains channels, should return the ch_names """
+        """If contains channels, should return the ch_names."""
         raise NotImplementedError('')
