@@ -11,13 +11,15 @@ def color_cycle(n):
 
 
 def create_channel_average_plot(n_plots, plot_fun, title_elems, legend=None):
-    """
+    """ creates a figure with proper subplot layout, and calls plot_fun
+    to fill each of the axes
     """
     ncols = min(4, n_plots)
     nrows = int((n_plots - 1) / ncols + 1)
 
-    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, squeeze=False)
-    fig.set_size_inches(10, int(10*(nrows/ncols)))
+    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, squeeze=False,
+                             constrained_layout=True)
+    fig.set_size_inches(15, int(10*(nrows/ncols)))
 
     for ax_idx in range(ncols*nrows):
         ax = axes[ax_idx // ncols, ax_idx % ncols]
@@ -36,7 +38,6 @@ def create_channel_average_plot(n_plots, plot_fun, title_elems, legend=None):
 
     fig.canvas.set_window_title('_'.join(title_elems))
     fig.suptitle(' '.join(title_elems))
-    fig.tight_layout()
 
     return fig
 

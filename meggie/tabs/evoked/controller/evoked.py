@@ -95,7 +95,6 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
     else:
         ch_type = [key for key, vals in chs_by_type.items() if location_limits[1] in vals][0]
 
-
     info, data, adjacency = prepare_data_for_permutation(
         experiment, design, groups, 'evoked', selected_name,
         location_limits, time_limits, frequency_limits, 
@@ -105,9 +104,14 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
     results = permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations,
                                    do_meanwhile=window.update_ui)
 
-    report_permutation_results(results, selected_name, significance,
+    report_permutation_results(results, design, selected_name, significance,
                                location_limits=location_limits,
                                time_limits=time_limits)
+
+    if design == 'within-subjects':
+        title_template = 'Cluster {0} for group {1} (p {2})'
+    else:
+        title_template = 'Cluster {0} for condition {1} (p {2})'
 
     def time_fun(cluster_idx, cluster, pvalue, res_key):
         """
@@ -119,25 +123,23 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                 evoked = np.mean(data[res_key][cond_idx][:, :, np.unique(cluster[-1])],
                                  axis=(0, -1))
                 ax.plot(times, evoked, label=condition, color=colors[cond_idx])
-            fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for  group ' +
-                         str(res_key) + ' (p ' + str(pvalue) + ')')
-
         else:
             colors = color_cycle(len(groups))
             for group_idx, (group_key, group) in enumerate(groups.items()):
-                evoked = np.mean(data[res_key][group_key][:, :, np.unique(cluster[-1])],
+                evoked = np.mean(data[res_key][group_idx][:, :, np.unique(cluster[-1])],
                                  axis=(0, -1))
                 ax.plot(times, evoked, label=group_key, color=colors[group_idx])
 
-            fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for  condition ' +
-                         str(res_key) + ' (p ' + str(pvalue) + ')')
-
         fig.canvas.set_window_title('Cluster time course')
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
 
         ax.legend()
         ax.set_xlabel('Time (s)')
         ax.set_ylabel('Amplitude ({})'.format(
             get_unit(ch_type)))
+
+        ax.axhline(0, color='black')
+        ax.axvline(0, color='black')
 
         tmin = np.min(times[cluster[0]])
         tmax = np.max(times[cluster[0]])
@@ -150,10 +152,10 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
         fig, ax = plt.subplots()
         ch_type = location_limits[1]
         mne.viz.plot_topomap(np.array(map_), info, vmin=0, vmax=1,
-                             cmap='Reds', axes=ax, ch_type=ch_type)
+                             cmap='Reds', axes=ax, ch_type=ch_type, 
+                             contours=0)
 
-        fig.suptitle(ch_type + ' cluster ' + str(cluster_idx+1) + ' for ' +
-                     str(res_key) + ' (p ' + str(pvalue) + ')')
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
         fig.canvas.set_window_title('Cluster topomap')
 
     plot_permutation_results(results, significance, window,

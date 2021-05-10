@@ -165,12 +165,11 @@ def _plot_evoked_topo(experiment, evoked, ch_type):
             channel = plt.getp(ax, 'title')
             ax.set_title('')
 
-            title_elems = [evoked.name, channel]
-
             ax.legend(handles=lines, loc='upper right')
 
-            ax.figure.canvas.set_window_title('_'.join(title_elems))
-            ax.figure.suptitle(title, ' '.join(title_elems))
+            title = ' '.join([evoked.name, channel])
+            ax.figure.suptitle(title)
+            ax.figure.canvas.set_window_title(title.replace(' ', '_'))
             plt.show()
         except Exception as exc:
             pass
@@ -335,8 +334,9 @@ def plot_single_channel(experiment, data, window):
 
             ylim = {ch_types[ch_name]: ylim}
 
-            mne.viz.plot_compare_evokeds(new_evokeds, title=title, picks=[ch_idx],
-                                         colors=colors, ylim=ylim, show_sensors=False)
+            fig = mne.viz.plot_compare_evokeds(new_evokeds, title=title, picks=[ch_idx],
+                                               colors=colors, ylim=ylim, show_sensors=False)
+            fig[0].canvas.set_window_title(title.replace(' ', '_'))
         except Exception as exc:
             exc_messagebox(window, exc)
 
@@ -420,6 +420,9 @@ def evoked_info(experiment, data, window):
         params = evoked.params
 
         message = ""
+
+        message += "Name: {}\n\n".format(evoked.name)
+
         if 'conditions' in params:
             message += 'Conditions: ' + ', '.join(params['conditions']) + '\n'
 

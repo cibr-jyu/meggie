@@ -247,7 +247,7 @@ def permutation_analysis(data, design, conditions, groups, threshold, adjacency,
     return results
 
 
-def report_permutation_results(results, selected_name, significance, location_limits=None, frequency_limits=None, time_limits=None):
+def report_permutation_results(results, design, selected_name, significance, location_limits=None, frequency_limits=None, time_limits=None):
     """
     """
     logger = logging.getLogger('ui_logger')
@@ -264,9 +264,17 @@ def report_permutation_results(results, selected_name, significance, location_li
         sign_mask = np.where(res[2] < significance)[0]
         n_sign_clusters = len(sign_mask)
 
-        logger.info('Found ' + str(n_clusters) +
-                    ' clusters (' + str(n_sign_clusters) +
-                    ' significant) for ' + str(key))
+        if design == 'within-subjects':
+            message = 'Found {0} clusters ({1} significant) for group {2}.'
+        else:
+            message = 'Found {0} clusters ({1} significant) for condition {2}.'
+        logger.info(message.format(n_clusters, n_sign_clusters, key))
+
+        for cluster_idx in range(n_sign_clusters):
+            pvalue = res[2][sign_mask][cluster_idx]
+            message = 'Cluster {0} has p value: {1}.'
+            logger.info(message.format(cluster_idx + 1, pvalue))
+
 
     
 def plot_permutation_results(results, significance, window,

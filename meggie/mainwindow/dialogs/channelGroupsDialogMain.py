@@ -146,7 +146,8 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
 
             try:
                 fig, selection = mne.viz.plot_sensors(info, kind='select', ch_type='eeg',
-                                                      ch_groups=ch_groups, show=False)
+                                                      ch_groups=ch_groups, show=False,
+                                                      title='Group channels')
             except RuntimeError:
                 messagebox(self.parent, 'Could not plot sensors. Is the montage set?')
                 return
@@ -167,7 +168,8 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
             ch_groups = [[], ch_idxs]
 
             fig, selection = mne.viz.plot_sensors(info, kind='select', ch_type='mag',
-                                                  ch_groups=ch_groups, show=False)
+                                                  ch_groups=ch_groups, show=False,
+                                                  title='Group channels')
 
         # make markers bigger
         for child in fig.axes[0].get_children():

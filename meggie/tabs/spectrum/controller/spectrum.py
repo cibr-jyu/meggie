@@ -189,9 +189,14 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
     results = permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations,
                                    do_meanwhile=window.update_ui)
 
-    report_permutation_results(results, selected_name, significance,
+    report_permutation_results(results, design, selected_name, significance,
                                location_limits=location_limits, 
                                frequency_limits=frequency_limits)
+
+    if design == 'within-subjects':
+        title_template = 'Cluster {0} for group {1} (p {2})'
+    else:
+        title_template = 'Cluster {0} for condition {1} (p {2})'
 
     def frequency_fun(cluster_idx, cluster, pvalue, res_key):
         """
@@ -203,18 +208,15 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                 spectrum = np.mean(data[res_key][cond_idx][:, :, np.unique(cluster[-1])],
                                    axis=(0, -1))
                 ax.plot(freqs, spectrum, label=condition, color=colors[cond_idx])
-            fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for group ' + 
-                         str(res_key) + ' (p ' + str(pvalue) + ')')
 
         else:
             colors = color_cycle(len(groups))
             for group_idx, (group_key, group) in enumerate(groups.items()):
-                spectrum = np.mean(data[res_key][group_key][:, :, np.unique(cluster[-1])],
+                spectrum = np.mean(data[res_key][group_idx][:, :, np.unique(cluster[-1])],
                                    axis=(0, -1))
                 ax.plot(freqs, spectrum, label=group_key, color=colors[group_idx])
-            fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for condition ' + 
-                         str(res_key) + ' (p ' + str(pvalue) + ')')
 
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
         fig.canvas.set_window_title('Cluster spectrum')
 
         ax.legend()
@@ -231,10 +233,10 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
 
         fig, ax = plt.subplots()
         mne.viz.plot_topomap(np.array(map_), info, vmin=0, vmax=1,
-                             cmap='Reds', axes=ax, ch_type=ch_type)
+                             cmap='Reds', axes=ax, ch_type=ch_type,
+                             contours=0)
 
-        fig.suptitle(ch_type + ' cluster ' + str(cluster_idx+1) + ' for ' + 
-                     str(res_key) + ' (p ' + str(pvalue) + ')')
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
         fig.canvas.set_window_title('Cluster topomap')
 
     plot_permutation_results(results, significance, window,
@@ -279,9 +281,9 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
             ax.plot(freqs, curve, color=colors[color_idx],
                     label=key)
 
-        title_elems = [name, ch_name]
-        ax.figure.canvas.set_window_title('_'.join(title_elems))
-        ax.figure.suptitle(' '.join(title_elems))
+        title = ' '.join([name, ch_name])
+        ax.figure.canvas.set_window_title(title.replace(' ', '_'))
+        ax.figure.suptitle(title)
         ax.set_title('')
 
         ax.legend()
@@ -313,7 +315,7 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
         return
 
     fig.legend(handles=handles)
-    title = 'spectrum_{0}_{1}'.format(name, ch_type)
+    title = '{0}_{1}'.format(name, ch_type)
     fig.canvas.set_window_title(title)
     plt.show()
 

@@ -20,6 +20,7 @@ from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import clean_names
 from meggie.utilities.channels import pairless_grads
+from meggie.utilities.channels import get_channels_by_type
 from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
@@ -103,9 +104,9 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
         """
         ch_name = ch_names[names_idx]
 
-        title_elems = [tfr_name, ch_name]
-        ax.figure.canvas.set_window_title('_'.join(title_elems))
-        ax.figure.suptitle(' '.join(title_elems))
+        title = ' '.join([tfr_name, ch_name])
+        ax.figure.canvas.set_window_title(title.replace(' ', '_'))
+        ax.figure.suptitle(title)
         ax.set_title('')
 
         for color_idx, (key, tse) in enumerate(sorted(tses.items())):
@@ -293,12 +294,19 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
     fig.canvas.set_window_title(title)
 
     def onclick(event):
-        channel = plt.getp(plt.gca(), 'title')
-        plt.gca().set_title('')
+        """ hacky way to change title and add colorbar after creation """
+        ax = plt.gca()
+        fig = plt.gcf()
 
-        title_elems = [tfr_name, channel]
-        plt.gcf().canvas.set_window_title('_'.join(title_elems))
-        plt.gcf().suptitle(' '.join(title_elems))
+        channel = plt.getp(ax, 'title')
+        ax.set_title('')
+
+        title = ' '.join([tfr_name, channel])
+        fig.canvas.set_window_title(title.replace(' ', '_'))
+        fig.suptitle(title)
+
+        img = ax.get_images()[0]
+        plt.colorbar(mappable=img, ax=ax)
 
         plt.show(block=False)
 
@@ -335,10 +343,15 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
     results = permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations,
                                    do_meanwhile=window.update_ui)
 
-    report_permutation_results(results, selected_name, significance,
+    report_permutation_results(results, design, selected_name, significance,
                                location_limits=location_limits,
                                time_limits=time_limits,
                                frequency_limits=frequency_limits)
+
+    if design == 'within-subjects':
+        title_template = 'Cluster {0} for group {1} (p {2})'
+    else:
+        title_template = 'Cluster {0} for condition {1} (p {2})'
 
     def time_fun(cluster_idx, cluster, pvalue, res_key):
         fig, ax = plt.subplots()
@@ -352,19 +365,25 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
         else:
             colors = color_cycle(len(groups))
             for group_idx, (group_key, group) in enumerate(groups.items()):
-                Y = np.mean(data[res_key][group_key], axis=0)
+                Y = np.mean(data[res_key][group_idx], axis=0)
                 Y = np.mean(Y[np.unique(cluster[0])], axis=0)
                 Y = np.mean(Y[:, np.unique(cluster[-1])], axis=1)
                 ax.plot(times, Y, label=condition, color=colors[group_idx])
+
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
+        fig.canvas.set_window_title('Cluster time course')
+
         ax.legend()
         ax.set_xlabel('Time (s)')
         ax.set_ylabel('Power ({})'.format(
-            get_power_unit(ch_type, log_transformed=False)))
+            get_power_unit(ch_type, log=False)))
+
+        ax.axhline(0, color='black')
+        ax.axvline(0, color='black')
+
         tmin = np.min(times[cluster[1]])
         tmax = np.max(times[cluster[1]])
         ax.axvspan(tmin, tmax, alpha=0.5, color='blue')
-        fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for ' +
-                     str(res_key) + ' ( ' + str(pvalue) + ')')
 
     def frequency_fun(cluster_idx, cluster, pvalue, res_key):
         fig, ax = plt.subplots()
@@ -378,19 +397,21 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
         else:
             colors = color_cycle(len(groups))
             for group_idx, (group_key, group) in enumerate(groups.items()):
-                Y = np.mean(data[res_key][group_key], axis=0)
+                Y = np.mean(data[res_key][group_idx], axis=0)
                 Y = np.mean(Y[:, np.unique(cluster[1]), :], axis=1)
                 Y = np.mean(Y[:, np.unique(cluster[-1])], axis=1)
                 ax.plot(freqs, Y, label=condition, color=colors[group_idx])
+
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
+        fig.canvas.set_window_title('Cluster spectrum')
+
         ax.legend()
         ax.set_xlabel('Frequency (Hz)')
         ax.set_ylabel('Power ({})'.format
-            (get_power_unit(ch_type, log_transformed=False)))
+            (get_power_unit(ch_type, log=False)))
         fmin = np.min(freqs[cluster[0]])
         fmax = np.max(freqs[cluster[0]])
         ax.axvspan(fmin, fmax, alpha=0.5, color='blue')
-        fig.suptitle('Cluster ' + str(cluster_idx+1) + ' for ' +
-                     str(res_key) + ' (' + str(pvalue) + ')')
 
     def location_fun(cluster_idx, cluster, pvalue, res_key):
         map_ = [1 if idx in cluster[-1] else 0 for idx in
@@ -399,11 +420,13 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
         fig, ax = plt.subplots()
         ch_type = location_limits[1]
         mne.viz.plot_topomap(np.array(map_), info, vmin=0, vmax=1,
-                             cmap='Reds', sensors='r+', axes=ax, ch_type=ch_type)
-        fig.suptitle(ch_type + ' cluster of ' + str(cluster_idx+1) + ' for ' +
-                     str(res_key) + ' (' + str(pvalue) + ')')
+                             cmap='Reds', axes=ax, ch_type=ch_type,
+                             contours=0)
 
-    plot_permutation_results(results, significance,
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
+        fig.canvas.set_window_title('Cluster topomap')
+
+    plot_permutation_results(results, significance, window,
                              location_limits=location_limits,
                              frequency_limits=frequency_limits,
                              time_limits=time_limits,
