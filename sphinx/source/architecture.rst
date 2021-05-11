@@ -38,19 +38,21 @@ Simplest possible plugin
 ************************
 To create a plugin, start by bootstrapping a package with this structure:
 
-* meggie_simpleplugin
+.. container:: codelisting
 
-   * MANIFEST.in
-   * setup.py
-   * meggie_simplelugin
+   * meggie_simpleplugin
 
-      * configuration.json
-      * tabs
+      * MANIFEST.in
+      * setup.py
+      * meggie_simplelugin
 
-         * simpleplugin
+         * configuration.json
+         * tabs
 
-            * configuration.json
-            * ui.py
+            * simpleplugin
+
+               * configuration.json
+               * ui.py
 
 MANIFEST.in and setup.py are standard files in python packaging. MANIFEST.in lists
 what files inside the subdirectories should be included and what should be excluded when
@@ -107,5 +109,5 @@ The tab introduces an action that needs implementation in ui.py:
       * message = 'Hello {}!'.format(experiment.active_subject.name)
       * messagebox(window, message)
 
-That's it! The code is available in `here. <https://github.com/Teekuningas/meggie_simpleplugin>`_. 
-To see it in use, see `this. <https://meggie.teekuningas.net>`_.
+That's it! The code is available in `here <https://github.com/Teekuningas/meggie_simpleplugin>`_. 
+To see it in use, see `this <http://meggie.teekuningas.net>`_.
