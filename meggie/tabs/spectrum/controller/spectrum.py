@@ -151,9 +151,9 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
                     curve = 10 * np.log10(curve)
                 ax.plot(freqs, curve, color=colors[color_idx])
 
-        title_elems = [name, ch_type]
+        title = ' '.join([name, ch_type])
         legend = list(zip(conditions, colors))
-        create_channel_average_plot(len(ch_groups), plot_fun, title_elems, legend)
+        create_channel_average_plot(len(ch_groups), plot_fun, title, legend)
 
     plt.show()
 

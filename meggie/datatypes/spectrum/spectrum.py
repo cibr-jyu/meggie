@@ -16,6 +16,10 @@ from meggie.utilities.datatype import Datatype
 class Spectrum(Datatype):
     """ Wraps numpy arrays of PSDs.
 
+    MNE-python does not have a dedicated class for storing PSDs. However, for
+    our purposes it is good to have similar interface as the evokeds, TFRs,
+    etc. Data is stored in csv files.
+
     Parameters
     ----------
     name : str
@@ -34,12 +38,6 @@ class Spectrum(Datatype):
         The info structure from the raw data. Is stored because contains
         channel names and locations. If not provided, is assumed 
         to be saved to file system earlier.
-
-    Notes
-    -----
-    MNE-python does not have a dedicated class for storing PSDs. However, for
-    our purposes it is good to have similar interface as the evokeds, TFRs,
-    etc. Data is stored in csv files.
 
     """
     def __init__(self, name, directory, params,

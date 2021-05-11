@@ -1,8 +1,7 @@
-"""
+""" Contains generic functions for permutation test computations.
 """
 
 import logging
-
 from collections import OrderedDict
 
 import mne
@@ -11,7 +10,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats
 import scipy
-
 
 from meggie.utilities.decorators import threaded
 from meggie.utilities.channels import get_channels_by_type
@@ -25,7 +23,47 @@ def prepare_data_for_permutation(experiment, design, groups,
                                  item_type, item_name, 
                                  location_limits, time_limits, frequency_limits,
                                  data_format=('locations', 'freqs', 'times')):
-    """
+    """Prepares data for a permutation test that is run with subjects as samples.
+
+    Basically, 
+    1) reorders axes, 
+    2) averages and selects data according to limits, 
+    3) and updates info to contain correct set of channels.
+
+    Returns dict with conditions as keys if between-subjects design is used. Each condition
+    is thus handled separately. If within-subjects design is used, returns dict with groups as keys. 
+    Is supposed to be as general as possible to allow usage for different kinds of datatypes.
+
+    Parameters
+    ----------
+    experiment : meggie.experiment.Experiment
+        The experiment to collect the data from.
+    design : str
+        ANOVA design, either 'within-subjects' or 'between-subjects'.
+    groups : dict
+        Contains subjects organized to groups.
+    item_type : str
+        The datatype that is collected from subjects, e.g. "evoked".
+    item_name : str
+        Name of the data dataobjects to be collected, e.g. "Auditory'.
+    location_limits : tuple
+        Can be ('ch_name': ch_name) or ('ch_type': ch_type) for some ch_name
+        or ch_type.
+    time_limits : tuple
+        Should be (tmin, tmax) in seconds, e.g (0, 0.3).
+    frequency_limits : tuple
+        Should be (fmin, fmax) in Hz, e.g. (8, 13).
+    data_formats : tuple
+        Specifies how the data is organizes, i.e the order of axes.
+
+    Returns
+    -------
+    mne.Info
+        The modified info structure.
+    dict
+        The prepared data organized by condition or group depending on the design.
+    scipy.sparse.csr_matrix
+        The adjacency matrix, properly modified to match the info and the data.
     """
     logging.getLogger('ui_logger').info('Preparing data for permutations..')
     meggie_item = getattr(experiment.active_subject, item_type)[item_name]
@@ -182,6 +220,38 @@ def prepare_data_for_permutation(experiment, design, groups,
 @threaded
 def permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations, 
                          random_state=None):
+    """Run permutation tests with properly prepared data. 
+
+    Uses either between-subjects or within-subjects ANOVA 
+    for mass univariate tests.
+
+    Parameters
+    ----------
+    data : dict
+        Data formatted as in prepare_data_for_permutation.
+    design : str
+        The ANOVA design, can be either within-subjects or between-subjects.
+    conditions : list
+        The conditions present in the data.
+    groups : list
+        The groups present in the data.
+    threshold : float
+        A probability threshold (e.g 0.01) used to find the critical value
+        for univariate F-tests.
+    adjacency : scipy.sparse.csr_matrix
+        Adjacency matrix for correcting for multiple comparisons.
+    n_permutations : int
+        The number of permutations used.
+    random_state : None, int or np.RandomState
+        A seed to be passed to the permutation test procedure.
+
+    Returns
+    -------
+    dict
+        The permutation test results as in mne.stats.permutation_cluster_test
+        organized as dict with conditions or groups as keys depending on the
+        design.
+    """
 
     # if 3d (or higher) clusters, create combined for adjacency
     # as mne flattens all but the first dimension
@@ -246,7 +316,26 @@ def permutation_analysis(data, design, conditions, groups, threshold, adjacency,
 
 
 def report_permutation_results(results, design, selected_name, significance, location_limits=None, frequency_limits=None, time_limits=None):
-    """
+    """Logs a text report on the permutation results.
+
+    Parameters
+    ----------
+    results : dict
+        Results as in the permutation_analysis.
+    design : str
+        The ANOVA design, can be 'within-subjects' or 'between-subjects'.
+    selected_name : str
+        Name of the data object.
+    significance : float
+        Print info only on the clusters that have p values smaller than this.
+    location_limits : tuple
+        Can be ('ch_name': ch_name) or ('ch_type': ch_type) for some ch_name
+        or ch_type.
+    time_limits : tuple
+        Should be (tmin, tmax) in seconds, e.g (0, 0.3).
+    frequency_limits : tuple
+        Should be (fmin, fmax) in Hz, e.g. (8, 13).
+
     """
     logger = logging.getLogger('ui_logger')
     logger.info('Permutation tests for ' + str(selected_name) + ' completed.')
@@ -273,12 +362,31 @@ def report_permutation_results(results, design, selected_name, significance, loc
             message = 'Cluster {0} has p value: {1}.'
             logger.info(message.format(cluster_idx + 1, pvalue))
 
-
     
 def plot_permutation_results(results, significance, window,
-                             location_limits=None, frequency_limits=None, time_limits=None,
-                             frequency_fun=None, time_fun=None, location_fun=None):
-    """
+                             location_limits=None, time_limits=None, frequency_limits=None,
+                             location_fun=None, time_fun=None, frequency_fun=None):
+    """ Plots permutation results on figures.
+
+    results : dict
+        Results as in the permutation_analysis.
+    significance : float
+        Print info only on the clusters that have p values smaller than this.
+    window : QMainWindow or QDialog
+        Window to use as a parent for a questionbox.
+    location_limits : tuple
+        Can be ('ch_name': ch_name) or ('ch_type': ch_type) for some ch_name
+        or ch_type.
+    time_limits : tuple
+        Should be (tmin, tmax) in seconds, e.g (0, 0.3).
+    frequency_limits : tuple
+        Should be (fmin, fmax) in Hz, e.g. (8, 13).
+    location_fun : function
+        Function that is called to do actually plot the cluster in the location space.
+    time_fun : function
+        Function that is called to actually plot the cluster in the time space.
+    frequency_fun  function
+        Function that is called to actually plot the cluster in the frequency space.
     """
     for key, res in results.items():
         sign_mask = np.where(res[2] < significance)[0]

@@ -190,9 +190,9 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
             ax.axhline(0, color='black')
             ax.axvline(0, color='black')
 
-        title_elems = [tfr_name, ch_type]
+        title = ' '.join([tfr_name, ch_type])
         legend = list(zip(conditions, colors))
-        create_channel_average_plot(len(ch_groups), plot_fun, title_elems, 
+        create_channel_average_plot(len(ch_groups), plot_fun, title, 
                                     legend)
 
     plt.show()
@@ -255,8 +255,8 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
                      fmin=fmin, fmax=fmax, 
                      tmin=tmin, tmax=tmax, axes=ax)
 
-        title_elems = [tfr_name, tfr_condition, ch_type]
-        create_channel_average_plot(len(ch_groups), plot_fun, title_elems)
+        title = ' '.join([tfr_name, tfr_condition, ch_type])
+        create_channel_average_plot(len(ch_groups), plot_fun, title)
 
 
 def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition, 

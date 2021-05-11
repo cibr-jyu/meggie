@@ -1,3 +1,6 @@
+"""Functions for plotting purposes.
+"""
+
 import itertools
 
 import matplotlib.pyplot as plt
@@ -5,14 +8,42 @@ from matplotlib.lines import Line2D
 
 
 def color_cycle(n):
-    """ Returns n color strings by cycling """
+    """Returns n color strings by cycling
+
+    Parameters
+    ----------
+    n : int
+        Length of the color list.
+
+    Returns
+    -------
+    list 
+        The colors.
+
+    """
     cycler = itertools.cycle(['b', 'r', 'g', 'y', 'm', 'c', 'k', 'pink'])
     return list(itertools.islice(cycler, n))
 
 
-def create_channel_average_plot(n_plots, plot_fun, title_elems, legend=None):
-    """ creates a figure with proper subplot layout, and calls plot_fun
-    to fill each of the axes
+def create_channel_average_plot(n_plots, plot_fun, title, legend=None):
+    """Creates a figure with proper subplot layout for channel averages, 
+    and calls plot_fun to fill each of the axes.
+
+    Parameters
+    ----------
+    n_plots : int
+        The number of subplots.
+    plot_fun : function
+        The function that is called for each subplot.
+    title : str
+        The title for the figure and the window.
+    legend : list, optional
+        A list of condition-color tuples. If None, no legend is drawn.
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+        The figure.
     """
     ncols = min(4, n_plots)
     nrows = int((n_plots - 1) / ncols + 1)
@@ -36,8 +67,8 @@ def create_channel_average_plot(n_plots, plot_fun, title_elems, legend=None):
             texts.append(condition)
         fig.legend(lines, texts)
 
-    fig.canvas.set_window_title('_'.join(title_elems))
-    fig.suptitle(' '.join(title_elems))
+    fig.suptitle(title)
+    fig.canvas.set_window_title(title.replace(' ', '_'))
 
     return fig
 

@@ -1,3 +1,7 @@
+"""Contains functions that are used in the dynamic location and creation 
+of tabs and datatypes. Can be used both internally and externally.
+"""
+
 import os
 import json
 import pkg_resources
@@ -10,8 +14,8 @@ from meggie.utilities.messaging import exc_messagebox
 
 
 def find_all_plugins():
-    """ Looks for plugins (installed packages with name meggie_*), that
-    can contain tabs or datatypes """
+    """Looks for plugins (installed packages with name meggie_*), that
+    can contain tabs or datatypes"""
     plugins = []
     package_keys = [dist.key.replace('-', '_') for dist 
                     in pkg_resources.working_set]
@@ -29,13 +33,13 @@ def find_all_plugins():
 
 
 def find_all_sources():
-    """ Returns all packages where to look for tabs / datatypes.
+    """Returns all packages where to look for tabs / datatypes.
     """
     return ['meggie'] + find_all_plugins()
 
 
 def find_all_tab_specs():
-    """ Finds all valid tab packages under tabs-folder.
+    """Finds all valid tabs from the core and plugins.
     """
     tab_specs = {}
 
@@ -55,18 +59,44 @@ def find_all_tab_specs():
 
 
 def construct_tab(source, package, tab_spec, parent):
-    """ Constructs analysis tab dynamically from python package
-    containing an configuration file and code
+    """Constructs analysis tab dynamically from python package
+    containing an configuration file and code. Returns a QDialog
+    that can be used within a QTabDialog of the main window.
+
+    Parameters
+    ----------
+    source : str
+        Name of the module, should be meggie or meggie_*.
+    package : str
+        Name of the tab, e.g. evoked or preprocessing.
+    tab_spec : dict
+        The configuration.json of the tab read to a dict.
+    parent : instance of main window
+        The main window, is passed to the handlers in the ui.py.
+
+    Returns
+    -------
+    instance of QDialog
+        The constructed tab than can be added to
+        main window.
     """
 
     class DynamicTab(QtWidgets.QDialog):
+        """ Class defining a tab.
+        
+        Parameters
+        ----------
+        parent : instance of main window
+            The main window, is passed to the handlers in the ui.py.
+        """
         def __init__(self, parent):
+            """Constructs the object.
+            """
             QtWidgets.QDialog.__init__(self)
             self.parent = parent
             self.tab_spec = tab_spec
 
             # first create basic layout
-
             self.gridLayoutContainer = QtWidgets.QGridLayout(self)
 
             self.gridLayoutRoot = QtWidgets.QGridLayout()
@@ -339,7 +369,7 @@ def construct_tab(source, package, tab_spec, parent):
                 connect_to_handler(transform_element, transform_name)
 
         def _get_data(self):
-            """ Returns data from input and output lists
+            """Returns data from input and output lists.
             """
             data = {'inputs': {},
                     'outputs': {}}
@@ -369,7 +399,7 @@ def construct_tab(source, package, tab_spec, parent):
             return data
 
         def initialize_ui(self):
-            """ Updates (empties and refills) ui contents when called
+            """Updates (empties and refills) ui contents when called.
             """
 
             experiment = self.parent.experiment
@@ -428,6 +458,7 @@ def construct_tab(source, package, tab_spec, parent):
 
         @property
         def name(self):
+            """Returns name of the tab."""
             return self.tab_spec['name']
 
     DynamicTab.__name__ = 'MainWindowTab' + tab_spec['id'].capitalize()

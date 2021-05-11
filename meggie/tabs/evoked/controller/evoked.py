@@ -67,9 +67,9 @@ def plot_channel_averages(experiment, evoked):
             ax.axhline(0, color='black')
             ax.axvline(0, color='black')
 
-        title_elems = [evoked.name, ch_type]
+        title = ' '.join([evoked.name, ch_type])
         legend = list(zip(conditions, colors))
-        create_channel_average_plot(len(ch_groups), plot_fun, title_elems, 
+        create_channel_average_plot(len(ch_groups), plot_fun, title, 
                                     legend)
 
     plt.show()

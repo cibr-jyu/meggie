@@ -1,3 +1,6 @@
+"""Wraps mne functions to log calls and parameters whenever called.
+"""
+
 import os
 import logging
 import inspect
@@ -10,6 +13,8 @@ from types import FunctionType
 import mne
 
 
+# Some (many) of the uninteresting calls are blacklisted here.
+# Not very elegant.
 blacklist = ['tests',
              'conftest',
              'externals',
@@ -103,16 +108,30 @@ blacklist = ['tests',
              'write_hdf5',
              'write_tfrs',
              'transform_to_head',
-             '_notebook']
-
-blacklist.extend(['pick_types',
-                  'pick_channels',
-                  'rescale',
-                  'make_projector',
-                  'plot_topomap'])
+             '_notebook',
+             'pick_types',
+             'pick_channels',
+             'rescale',
+             'make_projector',
+             'plot_topomap']
 
 
 def wrap(log_level, original_func):
+    """Wraps a given function to log that the call is gonna happen
+    before the call is made. Wrapping is done with a specific log level.
+
+    Parameters
+    ----------
+    log_level : str
+        Should be debug, info, warning, error, etc.
+    original_func : function
+        The function to be wrapped.
+
+    Returns
+    -------
+    function
+        The wrapped function.
+    """
     def wrapped(*args, **kwargs):
         logger = logging.getLogger("mne_wrapper_logger")
         numeric_level = getattr(logging, log_level.upper())
@@ -130,7 +149,21 @@ def wrap(log_level, original_func):
     return wrapped
 
 
-def wrap_package(root, path, suffix):
+def wrap_package(root, path, prefix):
+    """A package wrapping function that can be
+    called recursively.
+
+    Parameters
+    ----------
+    root : str
+        Root of the package, e.g mne.preprocessing.
+    path : list 
+        A list containing the path to the package, e.g. ["/path_to_mne/preprocessing"].
+    prefix : str
+        Path to the original root, e.g. "/path_to_mne". This ensures that walk_packages does not
+        walk out of the folder of interest due to a bug.
+
+    """
     contents = pkgutil.walk_packages(path)
 
     paths = []
@@ -141,7 +174,7 @@ def wrap_package(root, path, suffix):
 
         # ensure walk_packages has not walked away from mne directory
         # see https://bugs.python.org/issue36053
-        if not item.module_finder.path.startswith(suffix):
+        if not item.module_finder.path.startswith(prefix):
             continue
 
         if item.ispkg:
@@ -177,11 +210,11 @@ def wrap_package(root, path, suffix):
             # ...
 
     for path in paths:
-        wrap_package('.'.join([root, path[0]]), [path[1]], suffix)
+        wrap_package('.'.join([root, path[0]]), [path[1]], prefix)
 
 def wrap_mne():
-    """ Goes recursively through mne package and wraps non-blacklisted
-    functions so that they will get logged by meggie """
+    """Goes recursively through mne package and wraps non-blacklisted
+    functions so that they will get logged by meggie."""
     try:
         wrap_package('mne', mne.__path__, mne.__path__[0])
     except Exception as exc:

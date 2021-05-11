@@ -1,3 +1,6 @@
+"""Contains functions for tasks related to file system.
+"""
+
 import os
 import shutil
 import re
@@ -10,7 +13,21 @@ import mne
 
 
 def open_raw(fname, preload=True, verbose='info'):
-    """ reads raw from file
+    """Reads a raw from file.
+
+    Parameters
+    ----------
+    fname : str
+        Path to the raw file.
+    preload : bool
+        Should the data be loaded as well or just the metadata.
+    verbose : str
+        Verbose level for the read_raw call.
+
+    Returns
+    -------
+    mne.io.Raw
+        The raw object read from the file.
     """
     try:
         if verbose == 'info' or verbose == 'debug':
@@ -24,8 +41,20 @@ def open_raw(fname, preload=True, verbose='info'):
         raise Exception('Could not read the raw file: ' + str(fname))
 
 def save_raw(raw, path, overwrite=True):
-    """ Makes saving raw more atomic by saving
-    first to tmp file and then moving with shutil
+    """Saves a raw to file(s).
+
+    After witnessing several corruptions along the way, 
+    this was made more atomic by saving the raw first to a tmp file 
+    and then moving with shutil.
+
+    Parameters
+    ----------
+    raw : mne.io.Raw
+        The raw file to be saved.
+    path : str
+        The path where to save.
+    overwrite : bool
+        Whether to overwrite.
     """
 
     folder = os.path.dirname(path)
@@ -80,7 +109,12 @@ def save_raw(raw, path, overwrite=True):
 
 
 def ensure_folders(paths):
-    """ Ensures that paths in paths exist.
+    """Ensures that paths in specified in the paths param exist.
+
+    Parameters
+    ----------
+    paths : list
+        List of folder paths.
     """
     for path in paths:
         if not os.path.exists(path):
@@ -88,7 +122,18 @@ def ensure_folders(paths):
 
 
 def create_timestamped_folder(experiment):
-    """ Creates folder with timestamp inside output folder
+    """Creates folder with a timestamp inside the output folder in the
+    experiment folder.
+
+    Parameters
+    ----------
+    experiment : meggie.experiment.Experiment
+        The experiment where to create the folder.
+
+    Returns
+    -------
+    str
+        The path to the folder.
     """
     current_time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     path = os.path.join(experiment.path, 'output')
@@ -105,6 +150,19 @@ def create_timestamped_folder(experiment):
 
 def save_csv(path, data, column_names, row_descs):
     """ Saves tabular data to csv.
+
+    Parameters
+    ----------
+    path : str
+        Where to save.
+    data : a numpy array of shape (n_rows, n_cols)
+        Data to save.
+    column_names : list
+        List of column names.
+    row_descs : list
+        List of row descriptions that can be tuples like
+        ('EEG', 'Left-frontal'), which are then put to the 
+        csv as multiple columns.
     """
     # gather all the data to list of rows
     all_data = []
@@ -125,7 +183,21 @@ def save_csv(path, data, column_names, row_descs):
 
 
 def load_csv(path):
-    """ Loads tabular data from csv
+    """Loads tabular data from csv.
+
+    Parameters
+    ----------
+    path : str
+        Path to the csv file.
+
+    Returns
+    -------
+    list
+        Column names.
+    list
+        Row descriptions.
+    np.array
+        The data.
     """
     all_data = np.loadtxt(path, dtype=np.str, delimiter=', ')
 
@@ -143,8 +215,24 @@ def load_csv(path):
 
 
 def tail(f, lines=1, _buffer=4098):
-    """ Tail a file and get `lines` lines from the end,
-    see https://stackoverflow.com/a/13790289 """
+    """Tail a file and get `lines` lines from the end,
+
+    See https://stackoverflow.com/a/13790289
+
+    Parameters
+    ----------
+    f : file descriptor
+        The file descriptor already opened.
+    lines : int
+        How many lines to read from the end.
+    _buffer : int
+        What buffer size to use.
+
+    Returns
+    -------
+    list
+        Lines from the end.
+    """
     # place holder for the lines found
     lines_found = []
 
@@ -169,7 +257,14 @@ def tail(f, lines=1, _buffer=4098):
 
 
 def homepath():
-    """ Tries to find correct path for home folder """
+    """Tries to find correct path for home folder.
+
+    Returns
+    -------
+    str
+        Path to home directory.
+
+    """
     from os.path import expanduser
     home = expanduser("~")
 

@@ -10,7 +10,7 @@ from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.decorators import threaded
 
-from meggie.tabs.preprocessing.controller.events import events_from_annotations
+from meggie.utilities.events import events_from_annotations
 
 
 class EventsFromAnnotationsDialog(QtWidgets.QDialog):

@@ -1,3 +1,6 @@
+""" Contains useful decorators.
+"""
+
 from queue import Queue
 from queue import Empty
 from time import sleep
@@ -10,7 +13,23 @@ from PyQt5 import QtWidgets
 
 
 def threaded(func):
-    """ Outer function for threaded-decoration """
+    """Allows decorating functions so that they will be run in a separate thread. 
+
+    This is not meant for parallelization but to keep the Qt window 
+    responsive while doing a resource intensive task.
+
+    Carefully pipes the exceptions out of the thread to the main thread.
+
+    Parameters
+    ----------
+    func : function
+        The function to be wrapped.
+
+    Returns
+    -------
+    function 
+        The wrapped function.
+    """
     def decorated(*args, **kwargs):
         """ Inner function for threaded-decoration """
 
@@ -61,3 +80,4 @@ def threaded(func):
 
         return result
     return decorated
+

@@ -1,17 +1,20 @@
+"""Contains a class for handling reading and storing of 
+global preferences such as the previous experiment and 
+the tab settings. Normally saved to ~/.meggieprefs.
+"""
+
 import os
-import logging
 import configparser
 
 from meggie.utilities.filemanager import homepath
 
 
 class PreferencesHandler(object):
-    """ Class for storing and setting preferences
+    """ Class for storing and setting preferences.
     """
 
     def __init__(self):
-        """
-        """
+        """Constructs the object."""
         self.prefs_path = ""
         self.workspace = ""
         self.previous_experiment_name = ""
@@ -20,8 +23,7 @@ class PreferencesHandler(object):
         self.read_preferences_from_disk()
 
     def write_preferences_to_disk(self):
-        """
-        Writes the preferences to disk, in an easily readable form.
+        """Writes the preferences to file system, in INI style.
         """
         config = configparser.RawConfigParser()
         config.add_section('MiscOptions')
@@ -55,8 +57,7 @@ class PreferencesHandler(object):
             config.write(configfile)
 
     def read_preferences_from_disk(self):
-        """
-        Reads the preferences from disk into class attributes.
+        """Reads the preferences from file system into attributes.
         """
         filename = os.path.join(homepath(), '.meggieprefs')
         if os.path.isfile(filename):

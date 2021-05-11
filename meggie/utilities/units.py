@@ -39,21 +39,56 @@ UNITS = {
 
 
 def get_scaling(type_):
-    """ Returns standard scaling factor for certain type of sensors """
+    """Returns standard scaling factor for a sensor type.
+
+    Parameters
+    ----------
+    type_ : str
+        The sensor type.
+
+    Returns
+    -------
+    float
+        The scaling factor.
+    """
     if type_ not in UNITS:
         raise Exception('Unknown data type')
     return UNITS[type_]['scaling']
 
 
 def get_unit(type_):
-    """ Returns unit of signal for certain type of sensors """
+    """Returns unit of signal for a sensor type.
+
+    Parameters
+    ----------
+    type_ : str
+        The sensor type.
+
+    Returns
+    -------
+    str
+        The unit.
+    """
     if type_ not in UNITS:
         raise Exception('Unknown data type')
     return UNITS[type_]['unit']
 
 
 def get_power_unit(type_, log=False):
-    """ Returns unit of power for certain type of sensors """
+    """Returns unit of power for a sensor type.
+
+    Parameters
+    ----------
+    type_ : str
+        The sensor type.
+    log : bool
+        Whether the unit is for log transformed data.
+
+    Returns
+    -------
+    str
+        The unit.
+    """
     if type_ not in UNITS:
         raise Exception('Unknown data type')
     if log:

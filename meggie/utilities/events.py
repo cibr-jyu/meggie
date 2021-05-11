@@ -1,3 +1,6 @@
+""" Contains useful functions for handling events.
+"""
+
 import logging
 
 import numpy as np
@@ -7,7 +10,7 @@ from collections import OrderedDict
 
 
 def _should_take(id_, mask, event):
-    """ check if event has same non-masked bits as id_
+    """Check if event has same non-masked bits as id_.
     """
     id_bin = '{0:016b}'.format(id_)
     mask_bin = '{0:016b}'.format(mask)
@@ -25,8 +28,30 @@ def _should_take(id_, mask, event):
 
 
 def find_events(raw, stim_ch=None, mask=0, id_=None):
-    """ finds events using mne.find_events, but implements
-    own masking procedure """
+    """Finds events using mne.find_events, but implements
+    own masking procedure.
+
+    The masking procedure is simple. Event is ok if it has the same
+    bits as the id everywhere where the mask is zero. Thus mask 
+    specifies bits that are not cared about.
+
+    Parameters
+    ----------
+    raw : mne.io.Raw
+        The raw object.
+    stim_ch : str
+        Name of the stimulus channel.
+    mask : int
+        The mask as integer, is converted to binary representation.
+    id_ : int
+        The id as integer, is converted to binary representation.
+
+    Returns
+    -------
+    np.array
+        MNE-style events array, i.e. np.array of shape (n_events, 3).
+
+    """
 
     events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1,
                              uint_cast=True)
@@ -53,7 +78,19 @@ def find_events(raw, stim_ch=None, mask=0, id_=None):
 
 
 def find_stim_channel(raw):
-    """ Finds the appropriate stim channel from raw
+    """ Finds the appropriate stim channel from raw.
+
+    Heuristically just looks for STI101 or STI014.
+
+    Parameters
+    ----------
+    raw : mne.io.Raw
+        The raw object
+
+    Returns
+    -------
+    str
+        Channel name of the stimulus channel.
     """
     channels = raw.info.get('ch_names')
     if 'STI101' in channels:
@@ -67,7 +104,16 @@ def find_stim_channel(raw):
 
 
 def update_stim_channel(raw, events):
-    """ Writes events to stim channel
+    """Writes events to the stimulus channel.
+
+    If no stimulus channel, create one, and then write.
+
+    Parameters
+    ----------
+    raw : mne.io.Raw
+        The raw object.
+    events : np.array
+        MNE-style events array.
     """
     # time on in samples
     length = 5
@@ -87,7 +133,44 @@ def update_stim_channel(raw, events):
         raw._data[ch_idx][start:start+length] = event[2]
 
 
+def events_from_annotations(subject, conversion_info):
+    """Convert annotations to events and merge them with the stim channel.
+
+    Parameters
+    ----------
+    subject : meggie.subject.Subject
+        The subject to do the conversion.
+    conversion_info : list
+        List of tuples like (annotation_name, event_id, use_start),
+        where use_start is a boolean and False means end of the annotation.
+    """
+
+    raw = subject.get_raw()
+
+    events = []
+    for annotation_name, event_id, use_start in conversion_info:
+        for idx, annot_desc in enumerate(raw.annotations.description):
+            if annot_desc != annotation_name:
+                continue
+
+            if use_start:
+                onset_time = raw.annotations.onset[idx]
+            else:
+                onset_time = (raw.annotations.onset[idx] + 
+                              raw.annotations.duration[idx])
+
+            tidx = int(onset_time*raw.info['sfreq'])
+
+            events.append([tidx, 0, event_id])
+
+    events = np.array(sorted(events, key=lambda x: x[0]))
+
+    update_stim_channel(raw, events)
+
+
 def _find_event_times(raw, event_id, mask):
+    """Given the event_id and mask, find the event times.
+    """
     stim_ch = find_stim_channel(raw)
     sfreq = raw.info['sfreq']
 
@@ -97,14 +180,30 @@ def _find_event_times(raw, event_id, mask):
 
 
 def get_raw_blocks_from_intervals(subject, intervals):
-    """
+    """ Creates RawAarrays from time interval specifications.
+
+    Parameters
+    ----------
+    subject : meggie.subject.Subject
+        The subject whose raw data is used.
+    intervals : list
+        List of time interval specifications like (type, (group, tmin, tmax)),
+        where type can be 'dynamic' or 'fixed' and group is a str.
+
+    Returns
+    -------
+    OrderedDict
+        Times of the intervals organized by average groups.
+    OrderedDict
+        RawArrays organized by average groups.
+
     """
     raw = subject.get_raw()
 
     raw_times = raw.times.copy()
 
     raw_blocks = OrderedDict()
-    times = {}
+    times = OrderedDict()
     for ival_type, (avg_group, start, end) in intervals:
         if avg_group not in raw_blocks:
             raw_blocks[avg_group] = []
@@ -161,4 +260,6 @@ def get_raw_blocks_from_intervals(subject, intervals):
             raise Exception('Was not able to find raw segments for all groups')
      
     return times, raw_blocks
+
+
 

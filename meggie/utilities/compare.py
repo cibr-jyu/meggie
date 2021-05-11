@@ -1,12 +1,14 @@
-import logging
+"""Contains functions to compare two raws."""
+
 from copy import deepcopy
 
 import numpy as np
 
 
 def _prepare_raw_for_changes(raw_from, raw_to):
-    """ Modifies first raw object in place so that the second raw object is
-    interleaved to first one
+    """Modifies first raw object in place so that the second raw object is
+    interleaved to first one.
+
     """
     raw_to = raw_to.copy()
     raw_from = raw_from.copy()
@@ -51,8 +53,17 @@ def _prepare_raw_for_changes(raw_from, raw_to):
     return raw_to
 
 def compare_raws(raw_from, raw_to):
-    """ Creates and plots a new raw object with channels from two raws
-    interleaved
+    """Creates and plots a new raw object with channels from two raws
+    interleaved. Can be used to analyse how some action changes
+    the raw data.
+
+    Parameters
+    ----------
+    raw_from : mne.io.Raw
+        The original raw.
+    raw_to : mne.io.Raw
+        The changed raw.
+
     """
     changes_raw = _prepare_raw_for_changes(raw_from, raw_to)
     changes_raw.plot(color='red', bad_color='blue', title='Comparison plot')
