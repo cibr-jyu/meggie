@@ -1,19 +1,23 @@
-.. Meggie documentation master file, created by
-   sphinx-quickstart on Mon May 10 17:27:29 2021.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Developer wiki
+==============
 
-Meggie API reference
-==================================
+Welcome to the Meggie developer wiki.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   architecture
+   modules
 
+Other sources
+-------------
+
+* `Documentation <http://meggie.teekuningas.net>`_
 
 Indices and tables
-==================
-
+-------------------
 * :ref:`modindex`
-* :ref:`search`
+
+
+
