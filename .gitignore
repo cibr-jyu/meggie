@@ -1,5 +1,5 @@
-docs/build
-docs/source/*meggie*
+sphinx/build
+sphinx/source/*meggie*
 meggie/.coverage
 .coverage
 *.swm
