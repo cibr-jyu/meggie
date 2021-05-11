@@ -27,7 +27,6 @@ class TFR(Datatype):
     """
 
     def __init__(self, name, directory, params, content=None):
-        """Constructs the object."""
         self._name = name
         self._params = params
         self._directory = directory

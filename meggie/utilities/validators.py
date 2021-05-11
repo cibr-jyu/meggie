@@ -53,7 +53,9 @@ def assert_arrays_same(arrays, message='Times do not match'):
     """
     for idx in range(len(arrays)-1):
         try:
-            np.testing.assert_array_almost_equal(arrays[0], arrays[idx+1])
+            first = np.array(arrays[0]).astype(np.float)
+            second = np.array(arrays[idx+1]).astype(np.float)
+            np.testing.assert_array_almost_equal(first, second)
         except Exception as exc:
             raise Exception(message)
 

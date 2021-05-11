@@ -1,4 +1,4 @@
-"""
+""" Contains controlling logic for the spectrum implementation.
 """
 
 import os
@@ -38,7 +38,7 @@ from meggie.utilities.events import get_raw_blocks_from_intervals
 
 @threaded
 def create_power_spectrum(subject, spectrum_name, params, intervals):
-    """
+    """ Creates a power spectrum item.
     """
     # get raw objects organized with average groups as keys
     ival_times, raw_block_groups = get_raw_blocks_from_intervals(subject,
@@ -105,7 +105,7 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
 
 
 def plot_spectrum_averages(experiment, name, log_transformed=True):
-    """
+    """ Plots spectrum averages.
     """
 
     subject = experiment.active_subject
@@ -161,7 +161,7 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
 def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                          frequency_limits, location_limits, threshold,
                          significance, n_permutations, design):
-    """
+    """ Runs permutation test computation and reports the results.
     """
     if location_limits[0] == "ch_name" and frequency_limits is not None:
         raise Exception('Cannot run permutation tests with both location and frequency limits')
@@ -198,8 +198,6 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
         title_template = 'Cluster {0} for condition {1} (p {2})'
 
     def frequency_fun(cluster_idx, cluster, pvalue, res_key):
-        """
-        """
         fig, ax = plt.subplots()
         if design == 'within-subjects':
             colors = color_cycle(len(conditions))
@@ -246,7 +244,7 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
 
 
 def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
-    """
+    """ Plots spectrum topography.
     """
 
     subject = experiment.active_subject
@@ -320,7 +318,8 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
 
 @threaded
 def group_average_spectrum(experiment, spectrum_name, groups, new_name):
-
+    """ Computes a group average spectrum item.
+    """
     # check data cohesion
     keys = []
     freq_arrays = []
@@ -427,6 +426,7 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
 
 @threaded
 def save_all_channels(experiment, selected_name):
+    """ Saves all channesl of a spectrum item to a csv file. """
     column_names = []
     row_descs = []
     csv_data = []
@@ -452,6 +452,7 @@ def save_all_channels(experiment, selected_name):
 
 @threaded
 def save_channel_averages(experiment, selected_name, log_transformed=False):
+    """ Saves channel averages of a spectrum item to a csv file. """
     column_names = []
     row_descs = []
     csv_data = []

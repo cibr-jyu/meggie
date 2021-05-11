@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the bit selection dialog.
 """
 from PyQt5 import QtWidgets
 from PyQt5.Qt import QPushButton, pyqtSlot
@@ -7,13 +7,10 @@ from meggie.utilities.dialogs.bitSelectionDialogUi import Ui_Dialog
 
 
 class BitSelectionDialog(QtWidgets.QDialog):
+    """ Contains the logic for bit selection dialog.
+    """
 
     def __init__(self, parent, target_mask, target_id):
-        """
-        Init method for the dialog.
-        Parameters:
-        parent     - The parent window for this dialog.
-        """
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)

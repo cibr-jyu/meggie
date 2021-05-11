@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the output options dialog.
 """
 import logging
 
@@ -8,11 +8,11 @@ from meggie.utilities.dialogs.outputOptionsUi import Ui_outputOptions
 
 
 class OutputOptions(QtWidgets.QDialog):
+    """ Contains logic for the output options dialog.
+    """
 
     def __init__(self, parent, handler=None,
                  selected_option=None):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_outputOptions()
         self.ui.setupUi(self)
@@ -23,8 +23,6 @@ class OutputOptions(QtWidgets.QDialog):
             self.ui.radioButtonChannelAverages.setChecked(True)
 
     def accept(self):
-        """
-        """
         if self.ui.radioButtonChannelAverages.isChecked():
             selected_option = 'channel_averages'
         else:

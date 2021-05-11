@@ -1,4 +1,4 @@
-"""
+""" Contains controlling logic for the epochs implemenation.
 """
 
 import copy
@@ -14,9 +14,8 @@ from meggie.utilities.events import find_events
 from meggie.datatypes.epochs.epochs import Epochs
 
 
-
 def create_epochs_from_events(params, subject):
-    """
+    """ Creates epochs based on events.
     """
     raw = subject.get_raw()
 

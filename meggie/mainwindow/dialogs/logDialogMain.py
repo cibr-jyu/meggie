@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of log dialog.
 """
 import os
 import logging
@@ -13,12 +13,10 @@ from meggie.mainwindow.dialogs.logDialogUi import Ui_LogDialog
 
 
 class LogDialog(QtWidgets.QDialog):
-    """
+    """ Contains logic for log dialog.
     """
 
     def __init__(self, parent):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.parent = parent
         self.ui = Ui_LogDialog()
@@ -39,9 +37,9 @@ class LogDialog(QtWidgets.QDialog):
         if self.ui.checkBoxShowMNEcall.checkState() == QtCore.Qt.Checked:
             self.show_mne_call = True
 
-        self.update_contents()
+        self._update_contents()
 
-    def update_contents(self):
+    def _update_contents(self):
         try:
             logfile_path = os.path.join(self.parent.experiment.path, 'meggie.log')
             log_file = open(logfile_path, 'r')
@@ -101,24 +99,24 @@ class LogDialog(QtWidgets.QDialog):
             self.show_meggie = True
         else:
             self.show_meggie = False
-        self.update_contents()
+        self._update_contents()
 
     def on_checkBoxShowMNE_stateChanged(self, state):
         if state == QtCore.Qt.Checked:
             self.show_mne = True
         else:
             self.show_mne = False
-        self.update_contents()
+        self._update_contents()
 
     def on_checkBoxShowMNEcall_stateChanged(self, state):
         if state == QtCore.Qt.Checked:
             self.show_mne_call = True
         else:
             self.show_mne_call = False
-        self.update_contents()
+        self._update_contents()
 
     def on_pushButtonBufferSize_clicked(self, checked=None):
         if checked is None:
             return
         self.lines = int(str(self.ui.spinBoxBufferSize.value()))
-        self.update_contents()
+        self._update_contents()

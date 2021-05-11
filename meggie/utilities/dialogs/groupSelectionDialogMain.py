@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the group selection dialog.
 """
 import logging
 
@@ -12,10 +12,10 @@ from meggie.utilities.validators import validate_name
 
 
 class GroupSelectionDialog(QtWidgets.QDialog):
+    """ Contains the logic for group selection dialog.
+    """
 
     def __init__(self, experiment, parent, handler):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_groupSelectionDialog()
         self.ui.setupUi(self)
@@ -27,12 +27,11 @@ class GroupSelectionDialog(QtWidgets.QDialog):
 
         # fill the dialog with subjects
         for idx, subject_name in enumerate(subjects):
-            self.add_item(idx, subject_name)
+            self._add_item(idx, subject_name)
 
         self.subjects = subjects
 
-    def add_item(self, idx, name):
-        """ creates label-spinbox item and adds it to screen """
+    def _add_item(self, idx, name):
         setattr(self.ui, 'horizontalLayoutGroup_' +
                 str(idx), QtWidgets.QHBoxLayout())
         getattr(self.ui, 'horizontalLayoutGroup_' + str(idx)).setObjectName(

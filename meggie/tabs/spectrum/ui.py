@@ -1,3 +1,5 @@
+""" Contains the python implementation of the spectrum tab.
+"""
 import logging
 
 from meggie.utilities.validators import assert_arrays_same
@@ -22,7 +24,7 @@ from meggie.utilities.channels import get_channels_by_type
 
 
 def create(experiment, data, window):
-    """ Opens spectrum creation dialog
+    """ Opens spectrum creation dialog.
     """
     default_name = next_available_name(
         experiment.active_subject.spectrum.keys(), 'Spectrum')
@@ -38,7 +40,7 @@ def create(experiment, data, window):
 
 
 def delete(experiment, data, window):
-    """ Deletes selected spectrum item for active subject
+    """ Deletes selected spectrum item for active subject.
     """
     subject = experiment.active_subject
     try:
@@ -59,7 +61,7 @@ def delete(experiment, data, window):
 
 
 def delete_from_all(experiment, data, window):
-    """ Deletes selected spectrum item from all subjects
+    """ Deletes selected spectrum item from all subjects.
     """
     try:
         selected_name = data['outputs']['spectrum'][0]
@@ -84,7 +86,7 @@ def delete_from_all(experiment, data, window):
 
 
 def plot_spectrum(experiment, data, window):
-    """ Plots spectrum topography or averages of selected item
+    """ Plots spectrum topography or averages of selected item.
     """
     try:
         selected_name = data['outputs']['spectrum'][0]
@@ -113,7 +115,7 @@ def plot_spectrum(experiment, data, window):
 
 
 def group_average(experiment, data, window):
-    """ Handles group average item creation
+    """ Handles group average item creation.
     """
     try:
         selected_name = data['outputs']['spectrum'][0]
@@ -143,7 +145,7 @@ def group_average(experiment, data, window):
 
 def save(experiment, data, window):
     """ Saves all channels or averages to csv from selected item from all 
-    subjects
+    subjects.
     """
     try:
         selected_name = data['outputs']['spectrum'][0]
@@ -175,7 +177,7 @@ def save(experiment, data, window):
 
 
 def permutation_test(experiment, data, window):
-    """
+    """ Opens up a permutation test dialog.
     """
     try:
         selected_name = data['outputs']['spectrum'][0]
@@ -202,7 +204,7 @@ def permutation_test(experiment, data, window):
 
 
 def spectrum_info(experiment, data, window):
-    """
+    """ Fills up spectrum info box.
     """
     try:
         selected_name = data['outputs']['spectrum'][0]

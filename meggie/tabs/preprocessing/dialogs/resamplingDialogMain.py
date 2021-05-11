@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the resampling dialog.
 """
 import logging
 
@@ -12,10 +12,9 @@ from meggie.utilities.decorators import threaded
 
 
 class ResamplingDialog(QtWidgets.QDialog):
-
+    """ Contains logic for the resampling dialog.
+    """
     def __init__(self, parent, experiment):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_resamplingDialog()
         self.ui.setupUi(self)
@@ -30,13 +29,13 @@ class ResamplingDialog(QtWidgets.QDialog):
         self.ui.labelCurrentRateValue.setText(str(sfreq))
 
         self.batching_widget = BatchingWidget(
-            experiment_getter=self.experiment_getter,
+            experiment_getter=self._experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
-    def experiment_getter(self):
+    def _experiment_getter(self):
         return self.experiment
 
     def accept(self):
@@ -64,7 +63,6 @@ class ResamplingDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-
         experiment = self.experiment
 
         selected_subject_names = self.batching_widget.selected_subjects

@@ -12,8 +12,6 @@ from meggie.utilities.generate_experiments import create_evoked_conditions_exper
 
 
 def test_permutation_analysis():
-    """
-    """
     with tempfile.TemporaryDirectory() as dirpath:
         # generate dataset with generate_datasets to tmp folder (n=10)
         experiment = create_evoked_conditions_experiment(
@@ -66,5 +64,4 @@ def test_permutation_analysis():
 
         # Correct cluster shape
         assert(results['1'][0].shape == (71, 202))
-
 

@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the power spectrum creation dialog.
 """
 
 import logging
@@ -20,10 +20,9 @@ from meggie.utilities.messaging import messagebox
 
 
 class PowerSpectrumDialog(QtWidgets.QDialog):
-
+    """ Contains logic for the power spectrum creation dialog.
+    """
     def __init__(self, experiment, parent, default_name, handler=None):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_PowerSpectrumDialog()
         self.ui.setupUi(self)
@@ -63,7 +62,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
                 self.ui.spinBoxFmax.setValue(int(raw.info['lowpass']))
 
         self.batching_widget = BatchingWidget(
-            experiment_getter=self.experiment_getter,
+            experiment_getter=self._experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
@@ -71,7 +70,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
 
         self.ui.lineEditName.setText(default_name)
 
-    def experiment_getter(self):
+    def _experiment_getter(self):
         return self.experiment
 
     def on_pushButtonAdd_clicked(self, checked=None):
@@ -88,6 +87,8 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         self.add_intervals([('fixed', (group, tmin, tmax))])
 
     def add_intervals(self, intervals):
+        """ Add intervals to the interval list.
+        """
         for ival_type, interval in intervals:
             self.intervals.append((ival_type, interval))
             if ival_type == 'fixed':
@@ -148,9 +149,6 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         dialog.show()
 
     def accept(self, *args, **kwargs):
-        """ Starts the computation.
-        """
-
         try:
             spectrum_name = validate_name(self.ui.lineEditName.text())
         except Exception as exc:
@@ -186,7 +184,6 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self, *args):
-
         try:
             spectrum_name = validate_name(self.ui.lineEditName.text())
         except Exception as exc:

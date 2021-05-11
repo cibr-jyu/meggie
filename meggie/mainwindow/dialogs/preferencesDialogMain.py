@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of preferences dialog.
 """
 
 import os
@@ -19,12 +19,10 @@ from meggie.utilities.messaging import messagebox
 
 
 class PreferencesDialog(QtWidgets.QDialog):
-    """
+    """ Contains logic for preferences dialog.
     """
 
     def __init__(self, parent):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_DialogPreferences()
         self.ui.setupUi(self)
@@ -79,9 +77,6 @@ class PreferencesDialog(QtWidgets.QDialog):
             self.tabButtons[0].setChecked(True)
 
     def on_ButtonBrowseWorkingDir_clicked(self, checked=None):
-        """
-        Opens a filebrowser to select the workspace.
-        """
         if checked is None:
             return
 
@@ -107,7 +102,6 @@ class PreferencesDialog(QtWidgets.QDialog):
             pass
 
     def accept(self):
-
         workspace = self.ui.LineEditFilePath.text()
         if not os.path.isdir(workspace):
             message = 'Workspace must be set to proper path.'

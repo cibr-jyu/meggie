@@ -19,8 +19,7 @@ class Datatype:
         in the file system.
     """
     def __init__(self, name, directory, params, content=None):
-        """ Constructs the object.
-        """
+        pass
  
     def save_content(self):
         """Saves the data object contents to the file system."""

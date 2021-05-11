@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the rereferencing dialog.
 """
 import logging
 
@@ -15,10 +15,9 @@ from meggie.utilities.decorators import threaded
 
 
 class RereferencingDialog(QtWidgets.QDialog):
-
+    """ Contains logic for the rereferencing dialog.
+    """
     def __init__(self, parent, experiment):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_rereferencingDialog()
         self.ui.setupUi(self)
@@ -39,18 +38,16 @@ class RereferencingDialog(QtWidgets.QDialog):
             self.ui.comboBoxChannel.addItem(ch_name)
 
         self.batching_widget = BatchingWidget(
-            experiment_getter=self.experiment_getter,
+            experiment_getter=self._experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
-    def experiment_getter(self):
+    def _experiment_getter(self):
         return self.experiment
 
     def accept(self):
-        """
-        """
         experiment = self.experiment
 
         raw = experiment.active_subject.get_raw()
@@ -81,8 +78,6 @@ class RereferencingDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        """
-        """
         experiment = self.experiment
         selection = self.ui.comboBoxChannel.currentText()
 

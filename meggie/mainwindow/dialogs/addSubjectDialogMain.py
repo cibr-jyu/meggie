@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of add subject dialog.
 """
 import os
 import traceback
@@ -18,7 +18,7 @@ from meggie.utilities.names import next_available_name
 
 
 class AddSubjectDialog(QtWidgets.QDialog):
-    """
+    """ Contains the logic for add subject dialog.
     """
 
     def __init__(self, parent):
@@ -30,7 +30,6 @@ class AddSubjectDialog(QtWidgets.QDialog):
 
     
     def accept(self):
-        """ Add new subjects. """
         n_successful = 0
         for i in range(self.ui.listWidgetFileNames.count()):
             item = self.ui.listWidgetFileNames.item(i)
@@ -64,7 +63,6 @@ class AddSubjectDialog(QtWidgets.QDialog):
         self.close()
 
     def on_pushButtonBrowse_clicked(self, checked=None):
-        """Open file browser for raw data files."""
         if checked is None:
             return
 
@@ -98,7 +96,6 @@ class AddSubjectDialog(QtWidgets.QDialog):
                 self.ui.listWidgetFileNames.addItem(item)
 
     def on_pushButtonRemove_clicked(self, checked=None):
-        """Removes selected filenames on the listWidgetFileNames."""
         if checked is None:
             return
         for item in self.ui.listWidgetFileNames.selectedItems():

@@ -1,4 +1,4 @@
-"""
+""" Contains controlling logic for the tfr implementation
 """
 
 import os
@@ -35,8 +35,6 @@ from meggie.datatypes.tfr.tfr import TFR
 
 
 def _compute_tse(meggie_tfr, fmin, fmax):
-    """
-    """
     tfrs = meggie_tfr.content
 
     fmin_idx = np.where(meggie_tfr.freqs >= fmin)[0][0]
@@ -54,8 +52,6 @@ def _compute_tse(meggie_tfr, fmin, fmax):
 
 
 def _crop_and_correct_to_baseline(tse, blmode, blstart, blend, tmin, tmax, times):
-    """
-    """
     tmin_idx = np.where(times >= tmin)[0][0]
     tmax_idx = np.where(times <= tmax)[0][-1]
 
@@ -80,7 +76,7 @@ def _crop_and_correct_to_baseline(tse, blmode, blstart, blend, tmin, tmax, times
 
 def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend, 
                   tmin, tmax, fmin, fmax, ch_type):
-    """
+    """ Plots a tse topography.
     """
     meggie_tfr = subject.tfr.get(tfr_name)
 
@@ -145,7 +141,7 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
 
 def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
                       tmin, tmax, fmin, fmax):
-    """
+    """ Plots tse averages.
     """
     meggie_tfr = subject.tfr.get(tfr_name)
 
@@ -201,6 +197,8 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
 def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition, 
                       blmode, blstart, blend,
                       tmin, tmax, fmin, fmax):
+    """ Plots tfr averages.
+    """
 
     meggie_tfr = subject.tfr[tfr_name]
 
@@ -262,6 +260,8 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
 def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition, 
                   blmode, blstart, blend,
                   tmin, tmax, fmin, fmax, ch_type):
+    """ Plots tfr topography.
+    """
 
     meggie_tfr = subject.tfr[tfr_name]
 
@@ -316,7 +316,7 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
 def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                          frequency_limits, location_limits, threshold,
                          significance, n_permutations, design):
-    """
+    """ Runs permutation test computation and reports the results.
     """
     if location_limits[0] == "ch_name" and frequency_limits is not None and time_limits is not None:
         raise Exception("Cannot run permutation tests with all location, frequency and time limits")
@@ -437,6 +437,8 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
 @threaded
 def create_tfr(subject, tfr_name, epochs_names,
                freqs, decim, n_cycles, subtract_evoked):
+    """ Handles tfr item creation.
+    """
 
     time_arrays = []
     for name in epochs_names:
@@ -478,6 +480,7 @@ def create_tfr(subject, tfr_name, epochs_names,
 
 @threaded
 def group_average_tfr(experiment, tfr_name, groups, new_name):
+    """ Computes a group average item."""
 
     # check data cohesion
     keys = []
@@ -582,7 +585,7 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
 def save_tfr_all_channels(experiment, tfr_name,
                           blmode, blstart, blend,
                           tmin, tmax, fmin, fmax):
-    """
+    """ Saves all channels of tfr item to a csv file.
     """
     column_names = []
     row_descs = []
@@ -628,7 +631,7 @@ def save_tfr_all_channels(experiment, tfr_name,
 def save_tfr_channel_averages(experiment, tfr_name,
                               blmode, blstart, blend,
                               tmin, tmax, fmin, fmax):
-    """
+    """ Saves channel averages of tfr item to a csv file.
     """
     column_names = []
     row_descs = []
@@ -681,7 +684,7 @@ def save_tfr_channel_averages(experiment, tfr_name,
 @threaded
 def save_tse_all_channels(experiment, tfr_name, blmode, blstart, 
                           blend, tmin, tmax, fmin, fmax):
-    """
+    """ Saves all channels of a tse to a csv file.
     """
     column_names = []
     row_descs = []
@@ -718,7 +721,7 @@ def save_tse_all_channels(experiment, tfr_name, blmode, blstart,
 @threaded
 def save_tse_channel_averages(experiment, tfr_name, blmode, blstart, 
                               blend, tmin, tmax, fmin, fmax):
-    """
+    """ Saves channel averages of tse to a csv file.
     """
     column_names = []
     row_descs = []
@@ -756,5 +759,4 @@ def save_tse_channel_averages(experiment, tfr_name, blmode, blstart,
 
     filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
-
 

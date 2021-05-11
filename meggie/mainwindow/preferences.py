@@ -14,7 +14,6 @@ class PreferencesHandler(object):
     """
 
     def __init__(self):
-        """Constructs the object."""
         self.prefs_path = ""
         self.workspace = ""
         self.previous_experiment_name = ""

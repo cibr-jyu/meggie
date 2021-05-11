@@ -90,8 +90,6 @@ def construct_tab(source, package, tab_spec, parent):
             The main window, is passed to the handlers in the ui.py.
         """
         def __init__(self, parent):
-            """Constructs the object.
-            """
             QtWidgets.QDialog.__init__(self)
             self.parent = parent
             self.tab_spec = tab_spec
@@ -401,7 +399,6 @@ def construct_tab(source, package, tab_spec, parent):
         def initialize_ui(self):
             """Updates (empties and refills) ui contents when called.
             """
-
             experiment = self.parent.experiment
             if not experiment:
                 return

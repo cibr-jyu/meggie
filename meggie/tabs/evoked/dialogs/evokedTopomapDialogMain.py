@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the evoked topomap dialog.
 """
 from PyQt5 import QtWidgets
 
@@ -6,10 +6,9 @@ from meggie.tabs.evoked.dialogs.evokedTopomapDialogUi import Ui_evokedTopomapDia
 
 
 class EvokedTopomapDialog(QtWidgets.QDialog):
-
+    """ Contains logic for the evoked topomap dialog.
+    """
     def __init__(self, parent, evoked, handler):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_evokedTopomapDialog()
         self.ui.setupUi(self)
@@ -27,9 +26,6 @@ class EvokedTopomapDialog(QtWidgets.QDialog):
         self.ui.doubleSpinBoxEnd.setValue(tmax)
 
     def accept(self):
-        """
-        """
-
         tmin = self.ui.doubleSpinBoxStart.value()
         tmax = self.ui.doubleSpinBoxEnd.value()
         step = self.ui.doubleSpinBoxStep.value()

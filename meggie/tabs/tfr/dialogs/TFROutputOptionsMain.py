@@ -1,4 +1,4 @@
-"""
+""" Contains a class for the tfr output options dialog.
 """
 import logging
 
@@ -11,10 +11,10 @@ from meggie.tabs.tfr.controller.tfr import plot_tfr_averages
 
 
 class TFROutputOptions(QtWidgets.QDialog):
+    """ Contains logic for the tfr output options dialog.
+    """
 
     def __init__(self, parent, experiment, tfr_name, handler, ask_condition=False):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_TFROutputOptions()
         self.ui.setupUi(self)
@@ -63,7 +63,6 @@ class TFROutputOptions(QtWidgets.QDialog):
             self.ui.comboBoxCondition.setEnabled(False)
 
     def accept(self):
-
         subject = self.experiment.active_subject
 
         if self.ask_condition:

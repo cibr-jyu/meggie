@@ -26,7 +26,6 @@ class Epochs(Datatype):
     """
 
     def __init__(self, name, directory, params, content=None):
-        """Constructs the object."""
         self._name = name
         self._content = content
         self._params = params

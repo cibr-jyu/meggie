@@ -42,8 +42,6 @@ class Spectrum(Datatype):
     """
     def __init__(self, name, directory, params,
                  content=None, freqs=None, info=None):
-        """Constructs the object.
-        """
         # name has no group number and no '.fif'
         self._name = name
         self._directory = directory

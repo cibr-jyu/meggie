@@ -1,4 +1,4 @@
-"""
+""" Contains logic for the epoch creation dialog.
 """
 
 import logging
@@ -23,13 +23,10 @@ from meggie.utilities.messaging import messagebox
 
 
 class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
-    """
+    """Dialog responsible for collecting parameters for epoch creation.
     """
 
     def __init__(self, experiment, parent, default_name):
-        """
-
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_CreateEpochsFromEventsDialog()
         self.ui.setupUi(self)
@@ -40,7 +37,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         self.events = []
 
         self.batching_widget = BatchingWidget(
-            experiment_getter=self.experiment_getter,
+            experiment_getter=self._experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
@@ -48,12 +45,10 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
 
         self.ui.lineEditCollectionName.setText(default_name)
 
-    def experiment_getter(self):
+    def _experiment_getter(self):
         return self.experiment
 
-    def update_events(self):
-        """ update event list on UI based on self.events
-        """
+    def _update_events(self):
         self.ui.listWidgetEvents.clear()
 
         events = self.events
@@ -66,9 +61,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
                 ))
             self.ui.listWidgetEvents.addItem(item)
 
-    def collect_parameter_values(self):
-        """Collect the parameter values for epoch creation from the ui.
-        """
+    def _collect_parameter_values(self):
         tmin = float(self.ui.doubleSpinBoxTmin.value())
         tmax = float(self.ui.doubleSpinBoxTmax.value())
         bstart = float(self.ui.doubleSpinBoxBaselineStart.value())
@@ -99,38 +92,23 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
                   'events': self.events}
         return params
 
-    def on_pushButtonAdd_clicked(self, checked=None):
-        """
-        """
-        if checked is None:
-            return
+    def _calculate_epochs(self, subject, params):
+        experiment = self.experiment
 
-        event_params = {
-            'mask': self.ui.spinBoxMask.value(),
-            'event_id': self.ui.spinBoxEventID.value(),
-        }
+        @threaded
+        def create(*args, **kwargs):
+            create_epochs_from_events(params, subject)
 
-        if event_params not in self.events:
-            self.events.append(event_params)
-            self.update_events()
-
-    def on_pushButtonClear_clicked(self, checked=None):
-        if checked is None:
-            return
-
-        self.events = []
-        self.update_events()
+        create(do_meanwhile=self.parent.update_ui)
 
     def accept(self):
-        """
-        """
         if self.ui.listWidgetEvents.count() == 0:
             message = 'Cannot create epochs from empty list.'
             messagebox(self.parent, message)
             return
 
         try:
-            params = self.collect_parameter_values()
+            params = self._collect_parameter_values()
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -138,7 +116,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         subject = self.experiment.active_subject
 
         try:
-            self.calculate_epochs(subject, params)
+            self._calculate_epochs(subject, params)
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -151,8 +129,6 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        """
-        """
         experiment = self.experiment
 
         if self.ui.listWidgetEvents.count() == 0:
@@ -161,7 +137,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
             return
 
         try:
-            params = self.collect_parameter_values()
+            params = self._collect_parameter_values()
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -170,7 +146,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    self.calculate_epochs(subject, params)
+                    self._calculate_epochs(subject, params)
                     subject.release_memory()
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append((subject,
@@ -216,11 +192,23 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
 
         messagebox(self.parent, help_message, 'Mask help')
 
-    def calculate_epochs(self, subject, params):
-        experiment = self.experiment
+    def on_pushButtonAdd_clicked(self, checked=None):
+        if checked is None:
+            return
 
-        @threaded
-        def create(*args, **kwargs):
-            create_epochs_from_events(params, subject)
+        event_params = {
+            'mask': self.ui.spinBoxMask.value(),
+            'event_id': self.ui.spinBoxEventID.value(),
+        }
 
-        create(do_meanwhile=self.parent.update_ui)
+        if event_params not in self.events:
+            self.events.append(event_params)
+            self._update_events()
+
+    def on_pushButtonClear_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        self.events = []
+        self._update_events()
+

@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of channel groups dialog.
 """
 
 import os
@@ -23,6 +23,8 @@ from meggie.mainwindow.dialogs.channelGroupsDialogUi import Ui_channelGroupsDial
 
 
 class ChannelGroupsDialog(QtWidgets.QDialog):
+    """ Contains the the logic for channel groups dialog.
+    """
 
     def __init__(self, parent):
         QtWidgets.QDialog.__init__(self, parent)
@@ -41,8 +43,6 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
             self.ui.listWidgetChannelGroups.addItem(ch_name)
 
     def on_pushButtonAdd_clicked(self, checked=None):
-        """
-        """
         if checked is None:
             return
 
@@ -66,8 +66,6 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
                 self.ui.listWidgetChannelGroups.addItem(ch_name)
 
     def on_pushButtonRemove_clicked(self, checked=None):
-        """
-        """
         if checked is None:
             return
 
@@ -205,8 +203,6 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
             self.ui.listWidgetChannelGroups.addItem(ch_name)
 
     def accept(self):
-        """
-        """
         channel_groups = {
             'eeg': self.eeg_channel_groups,
             'meg': self.meg_channel_groups

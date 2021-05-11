@@ -1,4 +1,4 @@
-"""
+""" Contains controlling logic for the evoked implementation.
 """
 
 import logging
@@ -32,7 +32,7 @@ from meggie.utilities.units import get_unit
 
 
 def plot_channel_averages(experiment, evoked):
-    """
+    """ Plots channel averages.
     """
     conditions = evoked.content.keys()
     colors = color_cycle(len(conditions))
@@ -40,7 +40,7 @@ def plot_channel_averages(experiment, evoked):
 
     averages = {}
     for key, mne_evoked in sorted(evoked.content.items()):
-        data_labels, averaged_data = create_averages(experiment, mne_evoked)
+        data_labels, averaged_data = _create_averages(experiment, mne_evoked)
 
         for label_idx, label in enumerate(data_labels):
             if not label in averages:
@@ -77,7 +77,7 @@ def plot_channel_averages(experiment, evoked):
 def run_permutation_test(experiment, window, selected_name, groups, time_limits,
                          frequency_limits, location_limits, threshold,
                          significance, n_permutations, design):
-    """
+    """ Does permutation test computation and reporting.
     """
     if location_limits[0] == "ch_name" and time_limits is not None:
         raise Exception('Cannot run permutation tests with both location and time limits')
@@ -164,9 +164,7 @@ def run_permutation_test(experiment, window, selected_name, groups, time_limits,
 
 
 
-def create_averages(experiment, mne_evoked):
-    """
-    """
+def _create_averages(experiment, mne_evoked):
     channel_groups = experiment.channel_groups
 
     mne_evoked = mne_evoked.copy().drop_channels(mne_evoked.info['bads'])
@@ -180,7 +178,7 @@ def create_averages(experiment, mne_evoked):
 
 @threaded
 def group_average_evoked(experiment, evoked_name, groups, new_name):
-    """
+    """ Computes group average item.
     """
     keys = []
     time_arrays = []
@@ -242,7 +240,7 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
 
 @threaded
 def save_all_channels(experiment, selected_name):
-    """
+    """ Saves all channels of evoked item to a csv file.
     """
     column_names = []
     row_descs = []
@@ -274,7 +272,7 @@ def save_all_channels(experiment, selected_name):
 
 @threaded
 def save_channel_averages(experiment, selected_name):
-    """
+    """ Saves channel averages to a csv file.
     """
     column_names = []
     row_descs = []
@@ -288,7 +286,7 @@ def save_channel_averages(experiment, selected_name):
 
         for key, mne_evoked in evoked.content.items():
 
-            data_labels, averaged_data = create_averages(
+            data_labels, averaged_data = _create_averages(
                 experiment, mne_evoked)
 
             csv_data.extend(averaged_data.tolist())

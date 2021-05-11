@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the add advanced dialog.
 """
 import logging
 
@@ -11,10 +11,10 @@ from meggie.utilities.messaging import messagebox
 
 
 class PowerSpectrumAddAdvancedDialog(QtWidgets.QDialog):
+    """ Contains logic of the add advanced dialog.
+    """
 
     def __init__(self, parent):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.intervals = []
         self.ui = Ui_PowerSpectrumAddAdvancedDialog()

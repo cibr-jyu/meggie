@@ -1,3 +1,5 @@
+"""Contains the python implementation of the tfr tab.
+"""
 import logging
 import os
 
@@ -28,7 +30,7 @@ from meggie.tabs.tfr.dialogs.TFRDialogMain import TFRDialog
 
 
 def create(experiment, data, window):
-    """ Opens tfr creation dialog
+    """ Opens tfr creation dialog.
     """
     selected_names = data['inputs']['epochs']
 
@@ -47,7 +49,7 @@ def create(experiment, data, window):
 
 
 def delete(experiment, data, window):
-    """ Deletes selected tfr item for active subject
+    """ Deletes selected tfr item for active subject.
     """
     subject = experiment.active_subject
     try:
@@ -68,7 +70,7 @@ def delete(experiment, data, window):
 
 
 def delete_from_all(experiment, data, window):
-    """ Deletes selected spetrum item from all subjects
+    """ Deletes selected spetrum item from all subjects.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
@@ -93,7 +95,7 @@ def delete_from_all(experiment, data, window):
 
 
 def permutation_test(experiment, data, window):
-    """
+    """ Opens up a permutation test dialog.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
@@ -120,7 +122,7 @@ def permutation_test(experiment, data, window):
 
 
 def plot_tfr(experiment, data, window):
-    """ Plot TFR topography or averages from selected item
+    """ Plot TFR topography or averages from selected item.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
@@ -156,7 +158,7 @@ def plot_tfr(experiment, data, window):
     dialog.show()
 
 def plot_tse(experiment, data, window):
-    """ Plot TSE topography or averages from selected item
+    """ Plot TSE topography or averages from selected item.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
@@ -191,7 +193,7 @@ def plot_tse(experiment, data, window):
 
 
 def save_tfr(experiment, data, window):
-    """ Saves averages or channels to csv from selected item from all subjects
+    """ Saves averages or channels to csv from selected item from all subjects.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
@@ -231,7 +233,7 @@ def save_tfr(experiment, data, window):
 
 def save_tse(experiment, data, window):
     """ Computes TSE and saves averages or channels 
-    to csv from selected item from all subjects
+    to csv from selected item from all subjects.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
@@ -270,7 +272,7 @@ def save_tse(experiment, data, window):
 
 
 def group_average(experiment, data, window):
-    """ Handles group average item creation
+    """ Handles group average item creation.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
@@ -298,7 +300,7 @@ def group_average(experiment, data, window):
 
 
 def tfr_info(experiment, data, window):
-    """ Fills info element
+    """ Fills info element.
     """
     try:
         selected_name = data['outputs']['tfr'][0]

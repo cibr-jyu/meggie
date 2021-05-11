@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of experiment creation dialog.
 """
 
 import os
@@ -16,7 +16,7 @@ from meggie.utilities.messaging import messagebox
 
 
 class CreateExperimentDialog(QtWidgets.QDialog):
-    """
+    """ Contains logic for experiment creation dialog.
     """
 
     def __init__(self, parent):
@@ -30,8 +30,6 @@ class CreateExperimentDialog(QtWidgets.QDialog):
         self.ui.setupUi(self)
 
     def accept(self):
-        """ Send parameters to initialize_new_experiment. """
-
         if self.ui.lineEditExperimentName.text() == '':
             message = 'Give experiment a name.'
             messagebox(self.parent, message)

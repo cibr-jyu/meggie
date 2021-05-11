@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the evoked creation dialog.
 """
 
 import logging
@@ -21,12 +21,10 @@ from meggie.utilities.messaging import messagebox
 
 
 class CreateEvokedDialog(QtWidgets.QDialog):
-    """
+    """ Contains logic for the evoked creation dialog.
     """
 
     def __init__(self, experiment, parent, selected_epochs, default_name):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_CreateEvokedDialog()
         self.ui.setupUi(self)
@@ -37,7 +35,7 @@ class CreateEvokedDialog(QtWidgets.QDialog):
         self.selected_epochs = selected_epochs
 
         self.batching_widget = BatchingWidget(
-            experiment_getter=self.experiment_getter,
+            experiment_getter=self._experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
@@ -45,11 +43,10 @@ class CreateEvokedDialog(QtWidgets.QDialog):
 
         self.ui.lineEditName.setText(default_name)
 
-    def experiment_getter(self):
+    def _experiment_getter(self):
         return self.experiment
 
-    def create_evoked(self, subject, selected_epochs):
-
+    def _create_evoked(self, subject, selected_epochs):
         time_arrays = []
         for name in selected_epochs:
             epochs = subject.epochs.get(name)
@@ -88,7 +85,7 @@ class CreateEvokedDialog(QtWidgets.QDialog):
         selected_epochs = self.selected_epochs
 
         try:
-            self.create_evoked(subject, selected_epochs)
+            self._create_evoked(subject, selected_epochs)
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -110,7 +107,7 @@ class CreateEvokedDialog(QtWidgets.QDialog):
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    self.create_evoked(subject, selected_epochs)
+                    self._create_evoked(subject, selected_epochs)
                     subject.release_memory()
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append(

@@ -26,7 +26,6 @@ class Evoked(Datatype):
     """
 
     def __init__(self, name, directory, params, content=None):
-        """Constructs the object."""
         self._name = name.strip('.fif')
         self._path = os.path.join(directory, name + '.fif')
         self._params = params

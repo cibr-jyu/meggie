@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of custom tabs dialog.
 """
 
 import logging
@@ -12,12 +12,10 @@ from meggie.mainwindow.dialogs.customTabsDialogUi import Ui_customTabsDialog
 
 
 class CustomTabsDialog(QtWidgets.QDialog):
-    """
+    """ Contains logic for custom tabs dialog.
     """
 
     def __init__(self, enabled_tabs):
-        """
-        """
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_customTabsDialog()
         self.ui.setupUi(self)

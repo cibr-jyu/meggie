@@ -1,4 +1,4 @@
-"""
+""" Contains controlling logic for the preprocessing implementation.
 """
 import logging 
 
@@ -20,7 +20,7 @@ from meggie.utilities.measurement_info import MeasurementInfo
 
 
 def plot(experiment, data, window):
-    """
+    """ Opens a raw plot.
     """
     subject = experiment.active_subject
     raw = subject.get_raw()
@@ -61,7 +61,7 @@ def plot(experiment, data, window):
 
 
 def projections(experiment, data, window):
-    """
+    """ Plots projections contained in the raw.
     """
     subject = experiment.active_subject
     raw = subject.get_raw()
@@ -77,51 +77,50 @@ def projections(experiment, data, window):
 
 
 def ica(experiment, data, window):
-    """
+    """ Opens up the ica dialog.
     """
     ica_dialog = ICADialog(window, experiment)
     ica_dialog.show()
 
 
 def filter(experiment, data, window):
-    """
+    """ Opens up the filter dialog.
     """
     filter_dialog = FilterDialog(window, experiment)
     filter_dialog.show()
 
 
 def resample(experiment, data, window):
-    """
+    """ Opens up the resampling dialog.
     """
     resampling_dialog = ResamplingDialog(window, experiment)
     resampling_dialog.show()
 
 
 def montage(experiment, data, window):
-    """
+    """ Opens up the montage dialog.
     """
     montage_dialog = MontageDialog(window, experiment)
     montage_dialog.show()
 
 
 def rereference(experiment, data, window):
-    """
+    """ Opens up the rereferencing dialog.
     """
     rereferencing_dialog = RereferencingDialog(window, experiment)
     rereferencing_dialog.show()
 
 
 def events_from_annotations(experiment, data, window):
-    """
+    """ Opens up the events from annotations dialog.
     """
     dialog = EventsFromAnnotationsDialog(window, experiment)
     dialog.show()
 
 
 def measurement_info(experiment, data, window):
+    """ Fills up measurement info box.
     """
-    """
-
     message = ""
     try:
         subject = experiment.active_subject
@@ -156,7 +155,7 @@ def measurement_info(experiment, data, window):
 
 
 def event_info(experiment, data, window):
-    """
+    """ Fills up event info box.
     """
     try:
         subject = experiment.active_subject

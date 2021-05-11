@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of events from annotations dialog.
 """
 import logging
 
@@ -14,10 +14,10 @@ from meggie.utilities.events import events_from_annotations
 
 
 class EventsFromAnnotationsDialog(QtWidgets.QDialog):
+    """ Contains logic for events from annotations dialog.
+    """
 
     def __init__(self, parent, experiment):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_EventsFromAnnotationsDialog()
         self.ui.setupUi(self)
@@ -34,13 +34,13 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
             self.ui.comboBoxAnnotation.addItem(annotation_name)
 
         self.batching_widget = BatchingWidget(
-            experiment_getter=self.experiment_getter,
+            experiment_getter=self._experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
-    def experiment_getter(self):
+    def _experiment_getter(self):
         return self.experiment
 
 
@@ -53,18 +53,16 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
         use_start = True if self.ui.radioButtonStart.isChecked() else False
 
         self.items.append((annotation_name, event_id, use_start))
-        self.update_list()
+        self._update_list()
 
     def on_pushButtonClear_clicked(self, checked=None):
         if checked is None:
             return
 
         self.items = []
-        self.update_list()
+        self._update_list()
 
-    def update_list(self):
-        """
-        """
+    def _update_list(self):
         self.ui.listWidgetItems.clear()
 
         for item in self.items:
@@ -78,9 +76,6 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
             self.ui.listWidgetItems.addItem(item)
 
     def accept(self):
-        """
-        """
-
         subject = self.experiment.active_subject
 
         @threaded
@@ -100,9 +95,6 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        """
-        """
-
         experiment = self.experiment
 
         selected_subject_names = self.batching_widget.selected_subjects

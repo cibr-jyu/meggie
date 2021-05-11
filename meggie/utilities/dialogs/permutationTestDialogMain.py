@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the permutation test dialog.
 """
 import logging
 
@@ -15,12 +15,12 @@ from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDial
 
 
 class PermutationTestDialog(QtWidgets.QDialog):
+    """ Contains logic for the permutation test dialog.
+    """
 
     def __init__(self, experiment, parent, handler, meggie_item,
                  limit_frequency=False, limit_time=False, 
                  limit_channel=True):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_permutationTestDialog()
         self.ui.setupUi(self)
@@ -76,8 +76,6 @@ class PermutationTestDialog(QtWidgets.QDialog):
         dialog.show()
 
     def accept(self):
-        """
-        """
         if not self.groups:
             messagebox(self, "You should select some groups first")
             return

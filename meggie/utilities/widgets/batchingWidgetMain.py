@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the batching widget.
 """
 
 from PyQt5 import QtCore
@@ -9,7 +9,7 @@ from meggie.utilities.messaging import messagebox
 
 
 class BatchingWidget(QtWidgets.QWidget):
-    """
+    """ Contains logic for batching widget.
     """
 
     def __init__(self, experiment_getter, parent, geometry,
@@ -43,7 +43,7 @@ class BatchingWidget(QtWidgets.QWidget):
 
         self.failed_subjects = []
 
-    def update(self, enabled):
+    def _update(self, enabled):
 
         if not self.experiment:
             return
@@ -85,7 +85,7 @@ class BatchingWidget(QtWidgets.QWidget):
         self.experiment = self.experiment_getter()
 
         if self.experiment:
-            self.update(enabled)
+            self._update(enabled)
 
     def on_pushButtonApplyAll_clicked(self, checked=None):
         """
@@ -99,6 +99,8 @@ class BatchingWidget(QtWidgets.QWidget):
 
     @property
     def selected_subjects(self):
+        """ Returns the subjects that are selected in the UI.
+        """
         subject_names = []
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
@@ -107,7 +109,9 @@ class BatchingWidget(QtWidgets.QWidget):
 
         return subject_names
 
-    def cleanup(self, parent=None):
+    def cleanup(self):
+        """ Cleans the batching widget after use.
+        """
         if len(self.failed_subjects) > 0:
             rows = []
             rows.append('Failed calculation for subjects:')
@@ -115,11 +119,11 @@ class BatchingWidget(QtWidgets.QWidget):
             for subject, message in self.failed_subjects:
                 rows.append(subject.name + ' (' + message + ')')
 
-            if not parent:
-                parent = self.parent.parent
+            parent = self.parent.parent
 
             messagebox(parent, '\n'.join(rows))
 
         self.failed_subjects = []
         self.ui.checkBoxBatch.setChecked(False)
         self.ui.functionalityWidget.hide()
+
