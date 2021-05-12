@@ -347,10 +347,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _direct_output(self):
         stdout_stream = EmittingStream(
-            textWritten=self._normalOutputWritten)
+            textWritten=self._normal_output_written)
         stdout_stream.orig_stream = sys.__stdout__
         stderr_stream = EmittingStream(
-            textWritten=self._errorOutputWritten)
+            textWritten=self._error_output_written)
         stderr_stream.orig_stream = sys.__stderr__
 
         sys.stdout = stdout_stream
