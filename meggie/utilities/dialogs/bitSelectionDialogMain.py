@@ -29,11 +29,11 @@ class BitSelectionDialog(QtWidgets.QDialog):
         for i in range(1, self.button_count + 1):
             getattr(self.ui, "pushButton" + str(i)).setText(" ")
             (lambda x: getattr(self.ui, "pushButton" + str(x)).clicked.connect(
-                lambda: self.bit_clicked(getattr(self.ui,
+                lambda: self._bit_clicked(getattr(self.ui,
                                                  "pushButton" + str(x)))))(i)
 
     @pyqtSlot(QPushButton)
-    def bit_clicked(self, button):
+    def _bit_clicked(self, button):
         id_operation, mask_operation = None, None
 
         if button.text() == ' ':

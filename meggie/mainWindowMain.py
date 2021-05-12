@@ -1,4 +1,4 @@
-"""
+""" Contains the class for main window logic.
 """
 import os
 import sys
@@ -40,7 +40,7 @@ from meggie.mainwindow.dialogs.createExperimentDialogMain import CreateExperimen
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    """ 
+    """ Contains the main window logic and stores the experiment.
     """
     def __init__(self, application):
         QtWidgets.QMainWindow.__init__(self)
@@ -53,12 +53,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.experiment = None
 
-        self.setup_loggers()
+        self._setup_loggers()
         wrap_mne()
 
         # Direct output to console
         if not sys.argv[-1] == 'debug':
-            self.directOutput()
+            self._direct_output()
 
         # For storing and handling program wide preferences.
         self.prefs = PreferencesHandler()
@@ -82,16 +82,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.initialize_ui()
 
     def on_actionQuit_triggered(self, checked=None):
-        """ Closes the program, possibly after a confirmation by the user. """
-
         if checked is None:
             return
-
         self.close()
 
     def on_actionCreateExperiment_triggered(self, checked=None):
-        """
-        """
         if checked is None:
             return
 
@@ -107,8 +102,6 @@ class MainWindow(QtWidgets.QMainWindow):
             dialog.show()
 
     def on_actionOpenExperiment_triggered(self, checked=None):
-        """
-        """
         if checked is None:
             return
 
@@ -133,8 +126,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.initialize_ui()
 
     def on_pushButtonAddSubjects_clicked(self, checked=None):
-        """
-        """
         if checked is None:
             return
 
@@ -149,7 +140,6 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog.show()
 
     def on_pushButtonRemoveSubject_clicked(self, checked=None):
-        """ Completely removes selected subjects from the experiment """
         if checked is None:
             return
 
@@ -195,7 +185,6 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog.show()
 
     def on_actionPreferences_triggered(self, checked=None):
-        """Open the preferences-dialog."""
         if checked is None:
             return
 
@@ -203,7 +192,6 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog.show()
 
     def on_actionAbout_triggered(self, checked=None):
-        """Open the About-dialog."""
         if checked is None:
             return
 
@@ -221,9 +209,6 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog.show()
 
     def on_pushButtonActivateSubject_clicked(self, checked=None):
-        """
-        Activates a subject.
-        """
         if checked is None:
             return
 
@@ -257,13 +242,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.initialize_ui()
 
     def update_ui(self):
-        """
-        Used for keeping the ui responsive when threading.
+        """Used for keeping the ui responsive when threading.
         """
         QApplication.processEvents()
 
     def reconstruct_tabs(self):
-        """
+        """Reconstructs the tabs.
         """
         self.tabs = []
 
@@ -307,10 +291,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tabs.append(tab)
 
     def initialize_ui(self):
+        """Initializes the main window UI view. 
+
+        Often used if the underlying experiment changes.
         """
-        """
-        self.update_tabs()
-        self.setup_loggers()
+        self._update_tabs()
+        self._setup_loggers()
 
         self.ui.listWidgetSubjects.clear()
 
@@ -328,11 +314,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setWindowTitle('Meggie - ' + self.experiment.name)
 
-        self.populate_subject_list()
+        self._populate_subject_list()
 
 
-    def populate_subject_list(self):
-        """ """
+    def _populate_subject_list(self):
         active_subject_name = None
         if self.experiment and self.experiment.active_subject:
             active_subject_name = self.experiment.active_subject.name
@@ -346,9 +331,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 item.setFont(font)
             self.ui.listWidgetSubjects.addItem(item)
 
-    def update_tabs(self):
-        """ method for initializing the tabs. """
-
+    def _update_tabs(self):
         current_tab = self.ui.tabWidget.currentIndex()
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
@@ -362,44 +345,32 @@ class MainWindow(QtWidgets.QMainWindow):
         for tab in self.tabs:
             tab.initialize_ui()
 
-    def directOutput(self):
-        """
-        Method for directing stdout to the console and back.
-        """
+    def _direct_output(self):
         stdout_stream = EmittingStream(
-            textWritten=self.normalOutputWritten)
+            textWritten=self._normalOutputWritten)
         stdout_stream.orig_stream = sys.__stdout__
         stderr_stream = EmittingStream(
-            textWritten=self.errorOutputWritten)
+            textWritten=self._errorOutputWritten)
         stderr_stream.orig_stream = sys.__stderr__
 
         sys.stdout = stdout_stream
         sys.stderr = stderr_stream
 
-    def normalOutputWritten(self, text):
-        """
-        Appends text to 'console' at the bottom of the dialog.
-        Used for redirecting stdout.
-        """
+    def _normal_output_written(self, text):
         cursor = self.ui.textEditConsole.textCursor()
         cursor.movePosition(QtGui.QTextCursor.End)
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
 
-    def errorOutputWritten(self, text):
-        """
-        Appends text to 'console' at the bottom of the dialog.
-        Used for redirecting stderr.
-        """
+    def _error_output_written(self, text):
         cursor = self.ui.textEditConsole.textCursor()
         cursor.movePosition(QtGui.QTextCursor.End)
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
 
-    def setup_loggers(self):
-
+    def _setup_loggers(self):
         # hide warnings-module warnings,
         # most of these are still contained
         # in mne-level logging
@@ -477,6 +448,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 class EmittingStream(QtCore.QObject):
+    """ Helper class for console.
+    """
     textWritten = QtCore.pyqtSignal(str)
 
     def write(self, text):
@@ -491,10 +464,8 @@ class EmittingStream(QtCore.QObject):
 
 
 def main():
-
+    # Create the window.
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow(app)
-
     window.showMaximized()
-
     sys.exit(app.exec_())
