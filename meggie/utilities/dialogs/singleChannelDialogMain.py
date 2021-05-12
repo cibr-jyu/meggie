@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the single channel plot dialog.
 """
 import logging
 
@@ -8,11 +8,10 @@ from meggie.utilities.dialogs.singleChannelDialogUi import Ui_singleChannelDialo
 
 
 class SingleChannelDialog(QtWidgets.QDialog):
-
+    """ Contains logic for the single channel plot dialog.
+    """
     def __init__(self, parent, handler, title, ch_names,
                  scalings, units, ylims, default_legend_names):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_singleChannelDialog()
         self.ui.setupUi(self)
@@ -45,8 +44,6 @@ class SingleChannelDialog(QtWidgets.QDialog):
                 QtWidgets.QFormLayout.FieldRole, line_edit_item)
 
     def on_comboBoxChannel_currentTextChanged(self, item):
-        """
-        """
         self.ui.doubleSpinBoxMin.setSuffix(' ' + self.units[item])
         self.ui.doubleSpinBoxMax.setSuffix(' ' + self.units[item])
 
@@ -57,9 +54,6 @@ class SingleChannelDialog(QtWidgets.QDialog):
 
 
     def accept(self):
-        """
-        """
-
         ymax = self.ui.doubleSpinBoxMax.value()
         ymin = self.ui.doubleSpinBoxMin.value()
         ylim = (ymin, ymax)

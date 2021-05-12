@@ -30,7 +30,7 @@ def test_spectrum():
         # Create meggie-Spectrum object with spectrum array stored within
         # and save it to spectrum directory
         spectrum = Spectrum(name, spectrum_dir, params, 
-                            content=content, freqs=freqs, ch_names=ch_names)
+                            content=content, freqs=freqs, info=raw.info)
         ensure_folders([spectrum_dir])
         spectrum.save_content()
 

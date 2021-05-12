@@ -21,14 +21,16 @@ def test_epochs():
         name = 'TestEpochs'
         epochs_dir = os.path.join(dirpath, 'epochs')
 
+        params = {}
+
         # Create meggie-Epochs object with mne-Epochs stored within
         # and save it to epochs directory
-        epochs = Epochs(name, epochs_dir, content=mne_epochs)
+        epochs = Epochs(name, epochs_dir, params, content=mne_epochs)
         ensure_folders([epochs_dir])
         epochs.save_content()
 
         # Creating meggie-Epochs object with same name and folder should allow
         # accessing the saved content
-        loaded_epochs = Epochs(name, epochs_dir)
+        loaded_epochs = Epochs(name, epochs_dir, params)
 
         assert(epochs.count == loaded_epochs.count == 72)

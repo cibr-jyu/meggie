@@ -18,7 +18,7 @@ install:
   - source "$HOME"/miniconda/etc/profile.d/conda.sh
   - conda config --set always_yes yes --set changeps1 no --set auto_update_conda false
   # update conda, install dependencies, and install nose
-  - conda install -q -y -c conda-forge conda mne nose
+  - travis_wait 30 conda install -q -y -c conda-forge conda mne==0.23.0 nose
   - conda info -a
   - export LANG=en_US.UTF-8
   - printenv | sort

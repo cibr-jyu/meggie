@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of the bit selection dialog.
 """
 from PyQt5 import QtWidgets
 from PyQt5.Qt import QPushButton, pyqtSlot
@@ -7,13 +7,10 @@ from meggie.utilities.dialogs.bitSelectionDialogUi import Ui_Dialog
 
 
 class BitSelectionDialog(QtWidgets.QDialog):
+    """ Contains the logic for bit selection dialog.
+    """
 
     def __init__(self, parent, target_mask, target_id):
-        """
-        Init method for the dialog.
-        Parameters:
-        parent     - The parent window for this dialog.
-        """
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
@@ -32,11 +29,11 @@ class BitSelectionDialog(QtWidgets.QDialog):
         for i in range(1, self.button_count + 1):
             getattr(self.ui, "pushButton" + str(i)).setText(" ")
             (lambda x: getattr(self.ui, "pushButton" + str(x)).clicked.connect(
-                lambda: self.bit_clicked(getattr(self.ui,
+                lambda: self._bit_clicked(getattr(self.ui,
                                                  "pushButton" + str(x)))))(i)
 
     @pyqtSlot(QPushButton)
-    def bit_clicked(self, button):
+    def _bit_clicked(self, button):
         id_operation, mask_operation = None, None
 
         if button.text() == ' ':

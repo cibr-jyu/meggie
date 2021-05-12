@@ -1,12 +1,13 @@
-# coding: utf-8
-
-"""
+""" Contains controlling logic for the evoked implementation.
 """
 
 import logging
 import os
 
+from collections import OrderedDict
+
 import mne
+import scipy
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -16,24 +17,30 @@ from meggie.datatypes.evoked.evoked import Evoked
 
 from meggie.utilities.formats import format_floats
 from meggie.utilities.plotting import color_cycle
-from meggie.utilities.plotting import get_channel_average_fig_size
+from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
+from meggie.utilities.channels import get_channels_by_type
+from meggie.utilities.channels import pairless_grads
 from meggie.utilities.validators import assert_arrays_same
+from meggie.utilities.stats import prepare_data_for_permutation
+from meggie.utilities.stats import permutation_analysis
+from meggie.utilities.stats import report_permutation_results
+from meggie.utilities.stats import plot_permutation_results
 
 from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_unit
 
 
 def plot_channel_averages(experiment, evoked):
+    """ Plots channel averages.
     """
-    """
-
-    colors = color_cycle(len(list(evoked.content.keys())))
-    times = list(evoked.content.values())[0].times
+    conditions = evoked.content.keys()
+    colors = color_cycle(len(conditions))
+    times = evoked.times
 
     averages = {}
     for key, mne_evoked in sorted(evoked.content.items()):
-        data_labels, averaged_data = create_averages(experiment, mne_evoked)
+        data_labels, averaged_data = _create_averages(experiment, mne_evoked)
 
         for label_idx, label in enumerate(data_labels):
             if not label in averages:
@@ -46,42 +53,118 @@ def plot_channel_averages(experiment, evoked):
         ch_groups = sorted([label[1] for label in averages.keys() 
                             if label[0] == ch_type])
 
-        ncols = min(4, len(ch_groups))
-        nrows = int((len(ch_groups) - 1) / ncols + 1)
-
-        fig, axes = plt.subplots(nrows=nrows, ncols=ncols, squeeze=False)
-        fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
-        for ax_idx in range(ncols*nrows):
-            ax = axes[ax_idx // ncols, ax_idx % ncols]
-            if ax_idx >= len(ch_groups):
-                ax.axis('off')
-                continue
-
+        def plot_fun(ax_idx, ax):
             ch_group = ch_groups[ax_idx]
             ax.set_title(ch_group)
+
             ax.set_xlabel('Time (s)')
-            ax.set_ylabel('Power ({})'.format(
+            ax.set_ylabel('Amplitude ({})'.format(
                 get_unit(ch_type)))
 
-            handles = []
             for color_idx, (key, curve) in enumerate(averages[(ch_type, ch_group)]):
-                handles.append(ax.plot(times, curve, color=colors[color_idx], label=key)[0])
+                ax.plot(times, curve, color=colors[color_idx])
 
             ax.axhline(0, color='black')
             ax.axvline(0, color='black')
 
-        fig.legend(handles=handles)
-        title_elems = [evoked.name, ch_type]
-        fig.canvas.set_window_title('_'.join(title_elems))
-        fig.suptitle(' '.join(title_elems))
-        fig.tight_layout()
+        title = ' '.join([evoked.name, ch_type])
+        legend = list(zip(conditions, colors))
+        create_channel_average_plot(len(ch_groups), plot_fun, title, 
+                                    legend)
 
     plt.show()
 
+def run_permutation_test(experiment, window, selected_name, groups, time_limits,
+                         frequency_limits, location_limits, threshold,
+                         significance, n_permutations, design):
+    """ Does permutation test computation and reporting.
+    """
+    if location_limits[0] == "ch_name" and time_limits is not None:
+        raise Exception('Cannot run permutation tests with both location and time limits')
 
-def create_averages(experiment, mne_evoked):
-    """
-    """
+    evoked_item = experiment.active_subject.evoked[selected_name]
+    conditions = list(evoked_item.content.keys())
+    groups = OrderedDict(sorted(groups.items()))
+    times = evoked_item.times
+
+    chs_by_type = get_channels_by_type(evoked_item.info)
+    if location_limits[0] == 'ch_type':
+        ch_type = location_limits[1]
+    else:
+        ch_type = [key for key, vals in chs_by_type.items() if location_limits[1] in vals][0]
+
+    info, data, adjacency = prepare_data_for_permutation(
+        experiment, design, groups, 'evoked', selected_name,
+        location_limits, time_limits, frequency_limits, 
+        data_format=('locations', 'times'),
+        do_meanwhile=window.update_ui)
+
+    results = permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations,
+                                   do_meanwhile=window.update_ui)
+
+    report_permutation_results(results, design, selected_name, significance,
+                               location_limits=location_limits,
+                               time_limits=time_limits)
+
+    if design == 'within-subjects':
+        title_template = 'Cluster {0} for group {1} (p {2})'
+    else:
+        title_template = 'Cluster {0} for condition {1} (p {2})'
+
+    def time_fun(cluster_idx, cluster, pvalue, res_key):
+        """
+        """
+        fig, ax = plt.subplots()
+        if design == 'within-subjects':
+            colors = color_cycle(len(conditions))
+            for cond_idx, condition in enumerate(conditions):
+                evoked = np.mean(data[res_key][cond_idx][:, :, np.unique(cluster[-1])],
+                                 axis=(0, -1))
+                ax.plot(times, evoked, label=condition, color=colors[cond_idx])
+        else:
+            colors = color_cycle(len(groups))
+            for group_idx, (group_key, group) in enumerate(groups.items()):
+                evoked = np.mean(data[res_key][group_idx][:, :, np.unique(cluster[-1])],
+                                 axis=(0, -1))
+                ax.plot(times, evoked, label=group_key, color=colors[group_idx])
+
+        fig.canvas.set_window_title('Cluster time course')
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
+
+        ax.legend()
+        ax.set_xlabel('Time (s)')
+        ax.set_ylabel('Amplitude ({})'.format(
+            get_unit(ch_type)))
+
+        ax.axhline(0, color='black')
+        ax.axvline(0, color='black')
+
+        tmin = np.min(times[cluster[0]])
+        tmax = np.max(times[cluster[0]])
+        ax.axvspan(tmin, tmax, alpha=0.5, color='blue')
+
+    def location_fun(cluster_idx, cluster, pvalue, res_key):
+        map_ = [1 if idx in cluster[-1] else 0 for idx in
+                range(len(info['ch_names']))]
+
+        fig, ax = plt.subplots()
+        ch_type = location_limits[1]
+        mne.viz.plot_topomap(np.array(map_), info, vmin=0, vmax=1,
+                             cmap='Reds', axes=ax, ch_type=ch_type, 
+                             contours=0)
+
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
+        fig.canvas.set_window_title('Cluster topomap')
+
+    plot_permutation_results(results, significance, window,
+                             location_limits=location_limits,
+                             time_limits=time_limits,
+                             location_fun=location_fun,
+                             time_fun=time_fun)
+
+
+
+def _create_averages(experiment, mne_evoked):
     channel_groups = experiment.channel_groups
 
     mne_evoked = mne_evoked.copy().drop_channels(mne_evoked.info['bads'])
@@ -95,7 +178,7 @@ def create_averages(experiment, mne_evoked):
 
 @threaded
 def group_average_evoked(experiment, evoked_name, groups, new_name):
-    """
+    """ Computes group average item.
     """
     keys = []
     time_arrays = []
@@ -157,7 +240,7 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
 
 @threaded
 def save_all_channels(experiment, selected_name):
-    """
+    """ Saves all channels of evoked item to a csv file.
     """
     column_names = []
     row_descs = []
@@ -189,7 +272,7 @@ def save_all_channels(experiment, selected_name):
 
 @threaded
 def save_channel_averages(experiment, selected_name):
-    """
+    """ Saves channel averages to a csv file.
     """
     column_names = []
     row_descs = []
@@ -203,7 +286,7 @@ def save_channel_averages(experiment, selected_name):
 
         for key, mne_evoked in evoked.content.items():
 
-            data_labels, averaged_data = create_averages(
+            data_labels, averaged_data = _create_averages(
                 experiment, mne_evoked)
 
             csv_data.extend(averaged_data.tolist())

@@ -1,3 +1,5 @@
+""" Contains the python implementation of the spectrum tab.
+"""
 import logging
 
 from meggie.utilities.validators import assert_arrays_same
@@ -6,30 +8,39 @@ from meggie.utilities.names import next_available_name
 from meggie.utilities.formats import format_float
 
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
-from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
-from meggie.tabs.spectrum.dialogs.powerSpectrumDialogMain import PowerSpectrumDialog
+from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDialog
+from meggie.utilities.dialogs.powerSpectrumDialogMain import PowerSpectrumDialog
+from meggie.utilities.dialogs.permutationTestDialogMain import PermutationTestDialog
 
 from meggie.tabs.spectrum.controller.spectrum import plot_spectrum_topo
 from meggie.tabs.spectrum.controller.spectrum import plot_spectrum_averages
 from meggie.tabs.spectrum.controller.spectrum import group_average_spectrum
 from meggie.tabs.spectrum.controller.spectrum import save_channel_averages
 from meggie.tabs.spectrum.controller.spectrum import save_all_channels
+from meggie.tabs.spectrum.controller.spectrum import create_power_spectrum
+from meggie.tabs.spectrum.controller.spectrum import run_permutation_test
 
 from meggie.utilities.channels import get_channels_by_type
 
 
 def create(experiment, data, window):
-    """ Opens spectrum creation dialog
+    """ Opens spectrum creation dialog.
     """
     default_name = next_available_name(
         experiment.active_subject.spectrum.keys(), 'Spectrum')
 
-    dialog = PowerSpectrumDialog(experiment, window, default_name)
+    def handler(subject, spectrum_name, params, intervals):
+        """ Handles spectrum creation, initiated by the dialog
+        """
+        create_power_spectrum(subject, spectrum_name, params, intervals,
+                              do_meanwhile=window.update_ui)
+
+    dialog = PowerSpectrumDialog(experiment, window, default_name, handler)
     dialog.show()
 
 
 def delete(experiment, data, window):
-    """ Deletes selected spectrum item for active subject
+    """ Deletes selected spectrum item for active subject.
     """
     subject = experiment.active_subject
     try:
@@ -44,13 +55,13 @@ def delete(experiment, data, window):
 
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected spectrum.')
+    logging.getLogger('ui_logger').info('Deleted spectrum: ' + selected_name)
 
     window.initialize_ui()
 
 
 def delete_from_all(experiment, data, window):
-    """ Deletes selected spectrum item from all subjects
+    """ Deletes selected spectrum item from all subjects.
     """
     try:
         selected_name = data['outputs']['spectrum'][0]
@@ -69,13 +80,13 @@ def delete_from_all(experiment, data, window):
 
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected spectrum from all subjects.')
+    logging.getLogger('ui_logger').info('Deleted spectrum from all subjects: ' + selected_name)
 
     window.initialize_ui()
 
 
 def plot_spectrum(experiment, data, window):
-    """ Plots spectrum topography or averages of selected item
+    """ Plots spectrum topography or averages of selected item.
     """
     try:
         selected_name = data['outputs']['spectrum'][0]
@@ -104,14 +115,18 @@ def plot_spectrum(experiment, data, window):
 
 
 def group_average(experiment, data, window):
-    """ Handles group average item creation
+    """ Handles group average item creation.
     """
     try:
         selected_name = data['outputs']['spectrum'][0]
     except IndexError as exc:
         return
 
-    def handler(name, groups):
+    name = next_available_name(
+        experiment.active_subject.spectrum.keys(), 
+        'group_' + selected_name)
+
+    def handler(groups):
         try:
             group_average_spectrum(experiment, selected_name, groups, name,
                                    do_meanwhile=window.update_ui)
@@ -124,17 +139,13 @@ def group_average(experiment, data, window):
 
         logging.getLogger('ui_logger').info('Finished creating group average spectrum.')
     
-    default_name = next_available_name(
-       experiment.active_subject.spectrum.keys(), 
-       'group_' + selected_name)
-    dialog = GroupAverageDialog(experiment, window, handler,
-                                default_name)
+    dialog = GroupSelectionDialog(experiment, window, handler)
     dialog.show()
 
 
 def save(experiment, data, window):
     """ Saves all channels or averages to csv from selected item from all 
-    subjects
+    subjects.
     """
     try:
         selected_name = data['outputs']['spectrum'][0]
@@ -165,8 +176,35 @@ def save(experiment, data, window):
     dialog.show()
 
 
-def spectrum_info(experiment, data, window):
+def permutation_test(experiment, data, window):
+    """ Opens up a permutation test dialog.
     """
+    try:
+        selected_name = data['outputs']['spectrum'][0]
+    except IndexError as exc:
+        return
+
+    meggie_item = experiment.active_subject.spectrum[selected_name]
+
+    def handler(groups, time_limits, frequency_limits, location_limits, threshold,
+                significance, n_permutations, design):
+        """
+        """
+        try:
+            run_permutation_test(experiment, window, selected_name, groups, time_limits, 
+                                 frequency_limits, location_limits, threshold,
+                                 significance, n_permutations, design)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+            return
+
+    dialog = PermutationTestDialog(experiment, window, handler, meggie_item, 
+                                   limit_frequency=True)
+    dialog.show()
+
+
+def spectrum_info(experiment, data, window):
+    """ Fills up spectrum info box.
     """
     try:
         selected_name = data['outputs']['spectrum'][0]
@@ -175,6 +213,8 @@ def spectrum_info(experiment, data, window):
         params = spectrum.params
 
         message = ""
+
+        message += "Name: "+ spectrum.name + "\n\n"
 
         if 'fmin' in params and 'fmax' in params:
             message += 'Frequencies: {0}Hz - {1}Hz\n'.format(format_float(params['fmin']), 

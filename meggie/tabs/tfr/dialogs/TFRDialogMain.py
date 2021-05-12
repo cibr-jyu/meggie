@@ -1,6 +1,4 @@
-# coding: utf-8
-
-"""
+""" Contains a class for logic of TFR creation dialog.
 """
 import logging
 
@@ -21,12 +19,10 @@ from meggie.utilities.messaging import exc_messagebox
 
 
 class TFRDialog(QtWidgets.QDialog):
-    """
+    """ Contains logic for the TFR creation dialog.
     """
 
     def __init__(self, experiment, parent, epoch_names, default_name):
-        """
-        """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_TFRDialog()
         self.ui.setupUi(self)
@@ -66,7 +62,7 @@ class TFRDialog(QtWidgets.QDialog):
         self.ui.doubleSpinBoxCycleFactor.setValue(factor)
 
         self.batching_widget = BatchingWidget(
-            experiment_getter=self.experiment_getter,
+            experiment_getter=self._experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
@@ -74,13 +70,10 @@ class TFRDialog(QtWidgets.QDialog):
 
         self.ui.lineEditTFRName.setText(default_name)
 
-    def experiment_getter(self):
+    def _experiment_getter(self):
         return self.experiment
 
     def accept(self):
-        """
-        """
-
         tfr_name = self.ui.lineEditTFRName.text()
 
         try:
@@ -123,9 +116,6 @@ class TFRDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        """
-        """
-
         tfr_name = self.ui.lineEditTFRName.text()
 
         try:

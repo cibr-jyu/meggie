@@ -5,3 +5,4 @@ def test_color_cycle():
     assert(type(colors) == list)
     assert(len(colors) == 30)
     assert(len(set(colors)) == 8)
+

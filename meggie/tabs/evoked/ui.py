@@ -1,4 +1,4 @@
-"""
+""" Contains the python implementation of the evoked tab.
 """
 import logging
 
@@ -9,11 +9,11 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from matplotlib.lines import Line2D
 
-from meggie.tabs.evoked.controller.evoked import create_averages
 from meggie.tabs.evoked.controller.evoked import plot_channel_averages
 from meggie.tabs.evoked.controller.evoked import group_average_evoked
 from meggie.tabs.evoked.controller.evoked import save_all_channels
 from meggie.tabs.evoked.controller.evoked import save_channel_averages
+from meggie.tabs.evoked.controller.evoked import run_permutation_test
 
 import meggie.utilities.filemanager as filemanager
 
@@ -26,15 +26,16 @@ from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.names import next_available_name
 
-from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
+from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDialog
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 from meggie.utilities.dialogs.singleChannelDialogMain import SingleChannelDialog
+from meggie.utilities.dialogs.permutationTestDialogMain import PermutationTestDialog
 from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
 from meggie.tabs.evoked.dialogs.evokedTopomapDialogMain import EvokedTopomapDialog
 
 
 def create(experiment, data, window):
-    """ Opens evoked creation dialog
+    """ Opens evoked creation dialog.
     """
     selected_names = data['inputs']['epochs']
 
@@ -54,7 +55,7 @@ def create(experiment, data, window):
 
 
 def delete(experiment, data, window):
-    """ Deletes selected evoked item for active subject
+    """ Deletes selected evoked item for active subject.
     """
     subject = experiment.active_subject
     try:
@@ -69,13 +70,13 @@ def delete(experiment, data, window):
 
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected evoked')
+    logging.getLogger('ui_logger').info('Deleted evoked: ' + selected_name)
 
     window.initialize_ui()
 
 
 def delete_from_all(experiment, data, window):
-    """ Deletes selected evoked item from all subjects
+    """ Deletes selected evoked item from all subjects.
     """
     try:
         selected_name = data['outputs']['evoked'][0]
@@ -94,9 +95,34 @@ def delete_from_all(experiment, data, window):
 
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected evoked from all subjects')
+    logging.getLogger('ui_logger').info('Deleted evoked from all subjects: ' + selected_name)
 
     window.initialize_ui()
+
+
+def permutation_test(experiment, data, window):
+    """ Opens a permutation test dialog.
+    """
+    try:
+        selected_name = data['outputs']['evoked'][0]
+    except IndexError as exc:
+        return
+
+    meggie_item = experiment.active_subject.evoked[selected_name]
+
+    def handler(groups, time_limits, frequency_limits, location_limits, threshold,
+                significance, n_permutations, design):
+        try:
+            run_permutation_test(experiment, window, selected_name, groups, time_limits,
+                                 frequency_limits, location_limits, threshold,
+                                 significance, n_permutations, design)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+            return
+
+    dialog = PermutationTestDialog(experiment, window, handler, meggie_item,
+                                   limit_time=True)
+    dialog.show()
 
 
 def _plot_evoked_averages(experiment, evoked):
@@ -104,8 +130,6 @@ def _plot_evoked_averages(experiment, evoked):
 
 
 def _plot_evoked_topo(experiment, evoked, ch_type):
-    """
-    """
     evokeds = []
     labels = []
     for key, evok in sorted(evoked.content.items()):
@@ -136,12 +160,11 @@ def _plot_evoked_topo(experiment, evoked, ch_type):
             channel = plt.getp(ax, 'title')
             ax.set_title('')
 
-            title_elems = [evoked.name, channel]
-
             ax.legend(handles=lines, loc='upper right')
 
-            ax.figure.canvas.set_window_title('_'.join(title_elems))
-            ax.figure.suptitle(title, ' '.join(title_elems))
+            title = ' '.join([evoked.name, channel])
+            ax.figure.suptitle(title)
+            ax.figure.canvas.set_window_title(title.replace(' ', '_'))
             plt.show()
         except Exception as exc:
             pass
@@ -153,7 +176,7 @@ def _plot_evoked_topo(experiment, evoked, ch_type):
 
 
 def plot_evoked(experiment, data, window):
-    """ Plots topo or averages of selected item
+    """ Plots topo or averages of selected item.
     """
     try:
         selected_name = data['outputs']['evoked'][0]
@@ -186,7 +209,7 @@ def plot_evoked(experiment, data, window):
 
 
 def plot_topomap(experiment, data, window):
-    """ Plots topomaps of selected item
+    """ Plots topomaps of selected item.
     """
     subject = experiment.active_subject
     try:
@@ -238,7 +261,7 @@ def plot_topomap(experiment, data, window):
     dialog.show()
 
 def plot_single_channel(experiment, data, window):
-    """ Plots a single channel from selected evoked
+    """ Plots a single channel from selected evoked.
     """
     try:
         selected_name = data['outputs']['evoked'][0]
@@ -306,8 +329,9 @@ def plot_single_channel(experiment, data, window):
 
             ylim = {ch_types[ch_name]: ylim}
 
-            mne.viz.plot_compare_evokeds(new_evokeds, title=title, picks=[ch_idx],
-                                         colors=colors, ylim=ylim, show_sensors=False)
+            fig = mne.viz.plot_compare_evokeds(new_evokeds, title=title, picks=[ch_idx],
+                                               colors=colors, ylim=ylim, show_sensors=False)
+            fig[0].canvas.set_window_title(title.replace(' ', '_'))
         except Exception as exc:
             exc_messagebox(window, exc)
 
@@ -320,14 +344,18 @@ def plot_single_channel(experiment, data, window):
 
 
 def group_average(experiment, data, window):
-    """ Handles group average item creation
+    """ Handles group average item creation.
     """
     try:
         selected_name = data['outputs']['evoked'][0]
     except IndexError as exc:
         return
 
-    def handler(name, groups):
+    name = next_available_name(
+        experiment.active_subject.evoked.keys(), 
+        'group_' + selected_name)
+
+    def handler(groups):
         try:
             group_average_evoked(experiment, selected_name, groups, name,
                                  do_meanwhile=window.update_ui)
@@ -340,16 +368,12 @@ def group_average(experiment, data, window):
 
         logging.getLogger('ui_logger').info('Finished creating group average evoked.')
 
-    default_name = next_available_name(
-        experiment.active_subject.evoked.keys(), 
-        'group_' + selected_name)
-    dialog = GroupAverageDialog(experiment, window, handler,
-                                default_name)
+    dialog = GroupSelectionDialog(experiment, window, handler)
     dialog.show()
 
 
 def save(experiment, data, window):
-    """ Saves averages or channels to csv from selected item from all subjects
+    """ Saves averages or channels to csv from selected item from all subjects.
     """
     try:
         selected_name = data['outputs']['evoked'][0]
@@ -383,7 +407,7 @@ def save(experiment, data, window):
 
 
 def evoked_info(experiment, data, window):
-    """ Fills info element
+    """ Fills info element.
     """
     try:
         selected_name = data['outputs']['evoked'][0]
@@ -391,6 +415,9 @@ def evoked_info(experiment, data, window):
         params = evoked.params
 
         message = ""
+
+        message += "Name: {}\n\n".format(evoked.name)
+
         if 'conditions' in params:
             message += 'Conditions: ' + ', '.join(params['conditions']) + '\n'
 

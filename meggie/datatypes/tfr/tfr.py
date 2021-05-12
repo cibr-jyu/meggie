@@ -1,6 +1,4 @@
-# coding: utf-8
-
-"""
+""" Defines TFR class, wraps mne.AverageTFR objects.
 """
 
 import os
@@ -9,17 +7,29 @@ import logging
 
 import mne
 
+from meggie.utilities.datatype import Datatype
 
-class TFR(object):
-    """
+
+class TFR(Datatype):
+    """ A wrapper for mne.AverageTFR objects.
+
+    Parameters
+    ----------
+    name : str
+        Name of the tfr, used in the UI lists and in the .exp file.
+    directory : str
+        Absolute path to the data folder, usually workspace/experiment/subject/tfrs.
+    params : dict
+        Contains additional information about the tfr.
+    content : dict of mne.AverageTFR, optional
+        Stores mne.AverageTFR objects as values, conditions as keys. If not provided,
+        is assumed to be saved to file system earlier.
     """
 
-    def __init__(self, name, tfr_directory, params, content=None):
-        """
-        """
+    def __init__(self, name, directory, params, content=None):
         self._name = name
         self._params = params
-        self._tfr_directory = tfr_directory
+        self._directory = directory
 
         # ensure comments are set to match the keys / conditions
         self._content = content
@@ -28,17 +38,19 @@ class TFR(object):
                 self._content[key].comment = key
 
     def _get_fname(self, tfr_name):
-        # for backward compatibility
+        """A helper to get fname that work with old versions of meggie too."""
         if tfr_name == '':
             name = self._name + '-tfr.h5'
         else:
             name = self._name + '-' + tfr_name + '-tfr.h5'
 
-        fname = os.path.join(self._tfr_directory,
+        fname = os.path.join(self._directory,
                              name)
         return fname
 
     def save_content(self):
+        """Saves the mne.AverageTFR to h5 files in the tfr directory.
+        """
         try:
             for tfr_name, tfr in self._content.items():
                 fname = self._get_fname(tfr_name)
@@ -48,15 +60,10 @@ class TFR(object):
             raise IOError('Writing TFRs failed')
 
     def delete_content(self):
-
-        # if not self._content:
-        #     return
-        # for tfr_name, tfr in self._content.items():
-        #     fname = self._get_fname(tfr_name)
-        #     os.remove(fname)
+        """Deletes the correct h5 files in the tfr directory"""
 
         template = self._name + '-' + r'([a-zA-Z1-9_]+)\-tfr\.h5'
-        for fname in os.listdir(self._tfr_directory):
+        for fname in os.listdir(self._directory):
             match = re.match(template, fname)
             if match:
                 try:
@@ -73,15 +80,16 @@ class TFR(object):
 
                 logging.getLogger('ui_logger').debug(
                     'Removing existing tfr file: ' + str(fname))
-                os.remove(os.path.join(self._tfr_directory, fname))
+                os.remove(os.path.join(self._directory, fname))
 
     def _load_content(self):
+        """Handle the loading of the content."""
         self._content = {}
         template = self._name + '-' + r'([a-zA-Z1-9_]+)\-tfr\.h5'
-        for fname in os.listdir(self._tfr_directory):
+        for fname in os.listdir(self._directory):
             path = None
             if fname == self._name + '-tfr.h5':
-                path = os.path.join(self._tfr_directory, fname)
+                path = os.path.join(self._directory, fname)
                 key = ''
             else:
                 match = re.match(template, fname)
@@ -98,7 +106,7 @@ class TFR(object):
                                        self._params['conditions']]:
                             continue
 
-                    path = os.path.join(self._tfr_directory,
+                    path = os.path.join(self._directory,
                                         fname)
             if path:
                 logging.getLogger('ui_logger').debug(
@@ -108,46 +116,64 @@ class TFR(object):
 
     @property
     def content(self):
+        """Returns the actual mne.AverageTFR objects either
+        from cache or from the file system.
+        """
         if self._content is None:
             self._load_content()
         return self._content
 
     @property
     def params(self):
+        """Returns additional information stored.
+        """
         return self._params
 
-    @params.setter
-    def params(self, params):
-        self._params = params
+    @property
+    def data(self):
+        """Returns the actual numerical data of TFRs."""
+        data = {}
+        for key in self.content.keys():
+            data[key] = self.content[key].data
+        return data
 
     @property
     def name(self):
+        """Returns the name of the tfr."""
         return self._name
 
     @property
     def decim(self):
+        """Returns the decimation factor used in the creation."""
         return self._params.get('decim')
 
     @property
     def n_cycles(self):
+        """"Returns the number of cycles in used in the creation."""
         return self._params.get('n_cycles')
 
     @property
     def ch_names(self):
+        """Returns the channel names, must read the data first.
+        """
         return list(self.content.values())[0].info['ch_names']
 
     @property
     def times(self):
+        """Returns the array of times, must read the data first."""
         return list(self.content.values())[0].times
 
     @property
     def freqs(self):
+        """Returns the array of freqs, must read the data first."""
         return list(self.content.values())[0].freqs
 
     @property
     def info(self):
+        """Returns the info structure, must read the data first."""
         return list(self.content.values())[0].info
 
     @property
     def evoked_subtracted(self):
+        """Returns whether evoked was subtracted in the creation."""
         return self._params.get('evoked_subtracted')

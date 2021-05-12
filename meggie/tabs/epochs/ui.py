@@ -1,4 +1,4 @@
-"""
+"""Contains the python implementation of the epochs tab.
 """
 import logging
 
@@ -11,7 +11,7 @@ from meggie.tabs.epochs.dialogs.createEpochsFromEventsDialogMain import CreateEp
 
 
 def epochs_info(experiment, data, window):
-    """ Fills info element
+    """Fills info element.
     """
     try:
         selected_name = data['outputs']['epochs'][0]
@@ -20,6 +20,8 @@ def epochs_info(experiment, data, window):
         params = epochs.params
 
         message = ""
+
+        message += "Name: {0}\n\n".format(epochs.name)
 
         message += "Count: {0}\n".format(epochs.count)
 
@@ -42,14 +44,14 @@ def epochs_info(experiment, data, window):
                 message += 'ID: {0}, mask: {1}\n'.format(event['event_id'], 
                                                          event['mask'])
 
-    except BaseException:
+    except Exception as exc:
         message = ""
 
     return message
 
 
 def create_from_events(experiment, data, window):
-    """ Opens epoch creation dialog
+    """Opens epoch creation dialog.
     """
 
     default_name = next_available_name(
@@ -59,7 +61,7 @@ def create_from_events(experiment, data, window):
 
 
 def delete(experiment, data, window):
-    """ Deletes selected epochs item from active subject
+    """Deletes selected epochs item from active subject.
     """
     subject = experiment.active_subject
     try:
@@ -74,13 +76,13 @@ def delete(experiment, data, window):
 
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected epochs')
+    logging.getLogger('ui_logger').info('Deleted epochs: ' + selected_name)
 
     window.initialize_ui()
 
 
 def delete_from_all(experiment, data, window):
-    """ Deletes selected epochs item from all subjects
+    """Deletes selected epochs item from all subjects.
     """
     try:
         selected_name = data['outputs']['epochs'][0]
@@ -98,13 +100,13 @@ def delete_from_all(experiment, data, window):
                     subject.name)
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected epochs from all subjects')
+    logging.getLogger('ui_logger').info('Deleted epochs from all subjects: ' + selected_name)
 
     window.initialize_ui()
 
 
 def plot_epochs(experiment, data, window):
-    """ Plots selected item
+    """ Plots selected item.
     """
     subject = experiment.active_subject
     try:
@@ -119,7 +121,7 @@ def plot_epochs(experiment, data, window):
 
 
 def plot_image(experiment, data, window):
-    """ Plots selected item using plot_image
+    """Plots selected item using plot_image.
     """
     subject = experiment.active_subject
     try:

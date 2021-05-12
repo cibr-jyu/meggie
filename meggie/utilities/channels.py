@@ -1,9 +1,27 @@
+"""Contains functions that help with channel-related tasks.
+"""
+
+import scipy
 import numpy as np
 import mne
 
+from mne.channels import _divide_to_regions
+
 
 def is_montage_set(info, ch_type):
-    """ Checks whether montage is set for given ch type
+    """ Checks whether channel locations are found in the info for given channel type.
+
+    Parameters
+    ----------
+    info : mne.Info
+        Info structure containing channel information.
+    ch_type : str
+        Should be 'meg' or 'eeg'.
+
+    Returns
+    -------
+    bool
+        Whether the channel locations were found.
     """
     if ch_type == 'meg':
         picks = mne.pick_types(info, meg=True, eeg=False)
@@ -28,9 +46,25 @@ def is_montage_set(info, ch_type):
     return True
 
 def get_default_channel_groups(info, ch_type):
-    """ Returns channels grouped by locations (Left-frontal, Right-occipital, etc.)
+    """Returns channels grouped by standard locations
+    (Left-frontal, Right-occipital, etc.). Grouping is done via
+    geometric division from mne, to have a generic ability
+    to divide different eeg caps into groups.
+
+    Parameters
+    ----------
+    info : mne.Info
+        Info structure containing the channel information
+    ch_type : str
+        Should be 'meg' or 'eeg'
+
+    Returns
+    -------
+    dict
+        A dictionary with groups (Left-temporal, etc.) as keys and 
+        lists of channels as values.
+
     """
-    from mne.selection import _divide_to_regions
 
     if ch_type == 'meg':
         picks = mne.pick_types(info, meg=True, eeg=False)
@@ -46,7 +80,7 @@ def get_default_channel_groups(info, ch_type):
 
     # check if there is no montage set..
     if not is_montage_set(info, ch_type):
-        return ()
+        return {}
 
     regions = _divide_to_regions(info_filt, add_stim=False)
 
@@ -60,7 +94,20 @@ def get_default_channel_groups(info, ch_type):
 
 
 def get_channels_by_type(info):
-    """ Returns channels organized (in dict) by channel type
+    """Returns channels organized by channel type. A dict is returned
+    with 'eeg', 'grad' or 'mag' as keys and lists of channels as values.
+    Key-value pair is omitted if no channels present, e.g. if there is no
+    eeg channels, only 'grad' and 'mag' keys can be present.
+
+    Parameters
+    ----------
+    info : mne.Info
+        The info structure.
+
+    Returns
+    -------
+    dict
+        A dict of channels organized by type.
     """
     channels = {}
     grad_idxs = mne.pick_types(info, meg='grad', eeg=False)
@@ -83,19 +130,90 @@ def get_channels_by_type(info):
 
 
 def get_triplet_from_mag(ch_name):
-    """ get the triplet from mag by channel name in a bit hacky way
+    """Get the triplet (one mag, two grads) from mag by name hacking.
+
+    Parameters
+    ----------
+    ch_name : str
+        Name of mag channel, e.g 'MEG 1231'.
+
+    Returns
+    -------
+    list
+        List of three channels, e.g ['MEG 1231', 'MEG 1232', 'MEG 1233']
     """ 
     return [ch_name, ch_name[:-1] + '2', ch_name[:-1] + '3']
 
 
+def pairless_grads(ch_names):
+    """Returns indexes of channels for which the first three numbers of the name
+    are present only once. 
+
+    This means that if ['MEG 1232', 'MEG 1332', 'MEG 1333'] is given,
+    then [0] should be returned.
+
+    Parameters
+    ----------
+    ch_names : list
+        List of channel names, e.g. info['ch_names']
+
+    Returns
+    -------
+    list
+        list of indexes to input array where the channels do not have a pair.
+
+    """
+    stems = [name[:-1] for name in ch_names]
+    only_once = [stem for stem in stems if stems.count(stem) == 1]
+    ch_idxs = [name_idx for name_idx, name in enumerate(ch_names) if name[:-1] in only_once]
+    return ch_idxs
+
+
 def clean_names(names):
-    """ Removes whitespace from channel names
+    """Removes whitespace from channel names, useful sometimes when comparing
+    lists of channels.
+
+    Parameters
+    ----------
+    names : list
+        List of channel names
+
+    Returns
+    -------
+    list
+        Returns list of channel names without any whitespace.
+
     """
     return [name.replace(' ', '') for name in names]
 
 
 def iterate_topography(fig, info, ch_names, on_pick):
-    """ Convenience wrapper to return idx in ch_names in addition to info['ch_names']
+    """Iterator that wraps the mne.viz.iter_topography and yields a axes in correct
+    location for each channel.
+
+    The main reason for this function is historical, as info['ch_names'] did not 
+    necessarily match with ch_names stored in a data object before. Thus this returns 
+    idx in ch_names in addition to idx in info['ch_names']. Nowadays
+    the info is stored with data objects, and thus this feature is not needed.
+
+    It is probably fine to keep this function in the future, however, but should
+    simplify.
+
+    Parameters
+    ----------
+    fig : matplotlib.figure.Figure
+        Figure to plot into.
+    info : mne.Info
+        Info structure that contains channel information (locations and names).
+    ch_names : list
+        List of channel names expected to be in the data.
+    on_pick : function
+        A function that is called if a subplot is clicked.
+
+    Yields 
+    ------
+    tuple
+        A tuple of (axes, idx in info['ch_names'], idx in ch_names)
     """
     ch_names = clean_names(ch_names)
     info_names = clean_names(info['ch_names'])
@@ -117,7 +235,29 @@ def iterate_topography(fig, info, ch_names, on_pick):
 
 
 def average_to_channel_groups(data, info, ch_names, channel_groups):
-    """ Averages data to ch groups. Get types from info but indices from ch_names
+    """Averages data (first dimension representing the channels) to channel groups. 
+
+    Gets types from info but indices from ch_names.
+
+    Parameters
+    ----------
+    data : np.array
+        Data as a numpy array, with shape (n_channels, ...)
+    info : mne.Info
+        Info structure containing the channel information
+    ch_names : list
+        List of channel names, dimension should match data.
+    channel_groups : dict
+        A nested dictionary containing, where the first level is 'meg' or 'eeg', and the
+        second level has the channel group names, e.g 'Left-frontal', as keys and 
+        lists of channels are values.
+
+    Returns
+    -------
+    list 
+        A list of tuple-labels (such as ('eeg', 'Left-frontal')).
+    np.array
+        The matching averaged data.
     """
     chs_by_type = get_channels_by_type(info)
 
@@ -161,3 +301,4 @@ def average_to_channel_groups(data, info, ch_names, channel_groups):
     averaged_data = np.array(averaged_data)
 
     return data_labels, averaged_data
+

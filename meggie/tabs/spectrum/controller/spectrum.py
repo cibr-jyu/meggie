@@ -1,5 +1,4 @@
-# coding: utf-8
-"""
+""" Contains controlling logic for the spectrum implementation.
 """
 
 import os
@@ -13,106 +12,40 @@ import mne
 import numpy as np
 import matplotlib.pyplot as plt
 
+import pandas as pd
+
 import meggie.utilities.filemanager as filemanager
 
 from meggie.datatypes.spectrum.spectrum import Spectrum
 
-from meggie.utilities.events import find_stim_channel
-from meggie.utilities.events import find_events
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.formats import format_floats
 from meggie.utilities.plotting import color_cycle
-from meggie.utilities.plotting import get_channel_average_fig_size
+from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import clean_names
+from meggie.utilities.channels import get_channels_by_type
 from meggie.utilities.units import get_power_unit
 from meggie.utilities.decorators import threaded
+from meggie.utilities.stats import prepare_data_for_permutation
+from meggie.utilities.stats import permutation_analysis
+from meggie.utilities.stats import report_permutation_results
+from meggie.utilities.stats import plot_permutation_results
 
-
-def find_event_times(raw, event_id, mask):
-    stim_ch = find_stim_channel(raw)
-    sfreq = raw.info['sfreq']
-
-    events = find_events(raw, stim_ch, mask, event_id)
-    times = [(event[0] - raw.first_samp) / sfreq for event in events]
-    return times
-
-
-def get_raw_blocks_from_intervals(subject, intervals):
-    """
-    """
-    raw = subject.get_raw()
-
-    raw_times = raw.times.copy()
-
-    raw_blocks = OrderedDict()
-    times = {}
-    for ival_type, (avg_group, start, end) in intervals:
-        if avg_group not in raw_blocks:
-            raw_blocks[avg_group] = []
-            times[avg_group] = []
-
-        if ival_type == 'fixed':
-            block = raw.copy().crop(tmin=start, tmax=end)
-            raw_blocks[avg_group].append(block)
-            times[avg_group].append((start, end))
-        else:
-            # the following code finds all start points of intervals by events or
-            # start of recording. then matching end point is found by
-            # (can be same) other events or end of recording.
-            if start[0] == 'events':
-                start_times = find_event_times(raw, start[1], start[2])
-            elif start[0] == 'start':
-                start_times = [raw_times[0]]
-            elif start[0] == 'end':
-                start_times = [raw_times[-1]]
-
-            for start_time in start_times:
-                if end[0] == 'events':
-                    end_times = find_event_times(raw, end[1], end[2])
-                    found = False
-                    for end_time in end_times:
-                        # use equality so that one can also specify same trigger for
-                        # start and end (with different offsets)
-                        if end_time >= start_time:
-                            found = True
-                            break
-                    if not found:
-                        logging.getLogger('ui_logger').info(
-                            'Found start event with no matching end event')
-                        continue
-                elif end[0] == 'start':
-                    end_time = raw_times[0]
-                elif end[0] == 'end':
-                    end_time = raw_times[-1]
-
-                # crop with offsets
-                times[avg_group].append((start_time + start[3],
-                                         end_time + end[3]))
-                block = raw.copy().crop(tmin=(start_time + start[3]),
-                                        tmax=(end_time + end[3]))
-                raw_blocks[avg_group].append(block)
-
-    for key in raw_blocks:
-        if len(raw_blocks[key]) == 0:
-            raise Exception('Was not able to find raw segments for all groups')
-     
-    return times, raw_blocks
+from meggie.utilities.events import get_raw_blocks_from_intervals
 
 
 @threaded
 def create_power_spectrum(subject, spectrum_name, params, intervals):
-    """
+    """ Creates a power spectrum item.
     """
     # get raw objects organized with average groups as keys
     ival_times, raw_block_groups = get_raw_blocks_from_intervals(subject,
                                                                  intervals)
 
     raw = subject.get_raw()
-    info = raw.info
-
-    picks = mne.pick_types(info, meg=True, eeg=True,
+    picks = mne.pick_types(raw.info, meg=True, eeg=True,
                            exclude='bads')
 
     # remove zero channels from picks
@@ -121,6 +54,7 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
         if np.all(row == 0):
             zero_idxs.append(idx)
     picks = [pick for pick in picks if pick not in zero_idxs]
+
 
     fmin = params['fmin']
     fmax = params['fmax']
@@ -156,12 +90,7 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
                          weights=weights, axis=0)
         psds.append(psd)
 
-    # find all channel names this way because earlier
-    # the dimension of channels was reduced with picks
-    picked_ch_names = [ch_name for ch_idx, ch_name in
-                       enumerate(info['ch_names']) if
-                       ch_idx in picks]
-
+    info = mne.pick_info(raw.info, sel=picks)
     psd_data = dict(zip(psd_groups.keys(), psds))
 
     params = deepcopy(params)
@@ -169,14 +98,14 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     params['intervals'] = ival_times
 
     spectrum = Spectrum(spectrum_name, subject.spectrum_directory,
-                        params, psd_data, freqs, picked_ch_names)
+                        params, psd_data, freqs, info)
 
     spectrum.save_content()
     subject.add(spectrum, 'spectrum')
 
 
 def plot_spectrum_averages(experiment, name, log_transformed=True):
-    """
+    """ Plots spectrum averages.
     """
 
     subject = experiment.active_subject
@@ -188,9 +117,10 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
     freqs = spectrum.freqs
     ch_names = spectrum.ch_names 
     channel_groups = experiment.channel_groups
-    info = subject.get_raw().info
+    info = spectrum.info
 
     colors = color_cycle(len(data))
+    conditions = spectrum.content.keys()
 
     averages = {}
     for key, psd in sorted(data.items()):
@@ -209,40 +139,112 @@ def plot_spectrum_averages(experiment, name, log_transformed=True):
         ch_groups = sorted([label[1] for label in averages.keys()
                             if label[0] == ch_type])
 
-        ncols = min(4, len(ch_groups))
-        nrows = int((len(ch_groups) - 1) / ncols + 1)
-
-        fig, axes = plt.subplots(nrows=nrows, ncols=ncols, squeeze=False)
-        fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
-        for ax_idx in range(ncols*nrows):
-            ax = axes[ax_idx // ncols, ax_idx % ncols]
-            if ax_idx >= len(ch_groups):
-                ax.axis('off')
-                continue
-
+        def plot_fun(ax_idx, ax):
             ch_group = ch_groups[ax_idx]
             ax.set_title(ch_group)
             ax.set_xlabel('Frequency (Hz)')
             ax.set_ylabel('Power ({})'.format(
                 get_power_unit(ch_type, log_transformed)))
 
-            handles = []
             for color_idx, (key, curve) in enumerate(averages[(ch_type, ch_group)]):
                 if log_transformed:
                     curve = 10 * np.log10(curve)
-                handles.append(ax.plot(freqs, curve, color=colors[color_idx], label=key)[0])
+                ax.plot(freqs, curve, color=colors[color_idx])
 
-        fig.legend(handles=handles)
-        title_elems = [name, ch_type]
-        fig.canvas.set_window_title('_'.join(title_elems))
-        fig.suptitle(' '.join(title_elems))
-        fig.tight_layout()
+        title = ' '.join([name, ch_type])
+        legend = list(zip(conditions, colors))
+        create_channel_average_plot(len(ch_groups), plot_fun, title, legend)
 
     plt.show()
 
 
-def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
+def run_permutation_test(experiment, window, selected_name, groups, time_limits,
+                         frequency_limits, location_limits, threshold,
+                         significance, n_permutations, design):
+    """ Runs permutation test computation and reports the results.
     """
+    if location_limits[0] == "ch_name" and frequency_limits is not None:
+        raise Exception('Cannot run permutation tests with both location and frequency limits')
+
+    spectrum_item = experiment.active_subject.spectrum[selected_name]
+    conditions = list(spectrum_item.content.keys())
+    groups = OrderedDict(sorted(groups.items()))
+    freqs = spectrum_item.freqs
+
+    chs_by_type = get_channels_by_type(spectrum_item.info)
+    if location_limits[0] == 'ch_type':
+        ch_type = location_limits[1]
+    else:
+        ch_type = [key for key, vals in chs_by_type.items() if location_limits[1] in vals][0]
+
+    log_transformed = False
+
+    info, data, adjacency = prepare_data_for_permutation(
+        experiment, design, groups, 'spectrum', selected_name,
+        location_limits, time_limits, frequency_limits,
+        data_format=('locations', 'freqs'),
+        do_meanwhile=window.update_ui)
+
+    results = permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations,
+                                   do_meanwhile=window.update_ui)
+
+    report_permutation_results(results, design, selected_name, significance,
+                               location_limits=location_limits, 
+                               frequency_limits=frequency_limits)
+
+    if design == 'within-subjects':
+        title_template = 'Cluster {0} for group {1} (p {2})'
+    else:
+        title_template = 'Cluster {0} for condition {1} (p {2})'
+
+    def frequency_fun(cluster_idx, cluster, pvalue, res_key):
+        fig, ax = plt.subplots()
+        if design == 'within-subjects':
+            colors = color_cycle(len(conditions))
+            for cond_idx, condition in enumerate(conditions):
+                spectrum = np.mean(data[res_key][cond_idx][:, :, np.unique(cluster[-1])],
+                                   axis=(0, -1))
+                ax.plot(freqs, spectrum, label=condition, color=colors[cond_idx])
+
+        else:
+            colors = color_cycle(len(groups))
+            for group_idx, (group_key, group) in enumerate(groups.items()):
+                spectrum = np.mean(data[res_key][group_idx][:, :, np.unique(cluster[-1])],
+                                   axis=(0, -1))
+                ax.plot(freqs, spectrum, label=group_key, color=colors[group_idx])
+
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
+        fig.canvas.set_window_title('Cluster spectrum')
+
+        ax.legend()
+        ax.set_xlabel('Frequency (Hz)')
+        ax.set_ylabel('Power ({})'.format(
+            get_power_unit(ch_type, log_transformed)))
+        fmin = np.min(freqs[cluster[0]])
+        fmax = np.max(freqs[cluster[0]])
+        ax.axvspan(fmin, fmax, alpha=0.5, color='blue')
+
+    def location_fun(cluster_idx, cluster, pvalue, res_key):
+        map_ = [1 if idx in cluster[-1] else 0 for idx in 
+                range(len(info['ch_names']))]
+
+        fig, ax = plt.subplots()
+        mne.viz.plot_topomap(np.array(map_), info, vmin=0, vmax=1,
+                             cmap='Reds', axes=ax, ch_type=ch_type,
+                             contours=0)
+
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
+        fig.canvas.set_window_title('Cluster topomap')
+
+    plot_permutation_results(results, significance, window,
+                             location_limits=location_limits, 
+                             frequency_limits=frequency_limits, 
+                             location_fun=location_fun,
+                             frequency_fun=frequency_fun)
+
+
+def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
+    """ Plots spectrum topography.
     """
 
     subject = experiment.active_subject
@@ -251,7 +253,7 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
     data = spectrum.content
     freqs = spectrum.freqs
     ch_names = spectrum.ch_names
-    info = subject.get_raw().info
+    info = spectrum.info
     if ch_type == 'meg':
         picked_channels = [ch_name for ch_idx, ch_name in enumerate(info['ch_names'])
                            if ch_idx in mne.pick_types(info, meg=True, eeg=False)]
@@ -276,9 +278,9 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
             ax.plot(freqs, curve, color=colors[color_idx],
                     label=key)
 
-        title_elems = [name, ch_name]
-        ax.figure.canvas.set_window_title('_'.join(title_elems))
-        ax.figure.suptitle(' '.join(title_elems))
+        title = ' '.join([name, ch_name])
+        ax.figure.canvas.set_window_title(title.replace(' ', '_'))
+        ax.figure.suptitle(title)
         ax.set_title('')
 
         ax.legend()
@@ -310,13 +312,14 @@ def plot_spectrum_topo(experiment, name, log_transformed=True, ch_type='meg'):
         return
 
     fig.legend(handles=handles)
-    title = 'spectrum_{0}_{1}'.format(name, ch_type)
+    title = '{0}_{1}'.format(name, ch_type)
     fig.canvas.set_window_title(title)
     plt.show()
 
 @threaded
 def group_average_spectrum(experiment, spectrum_name, groups, new_name):
-
+    """ Computes a group average spectrum item.
+    """
     # check data cohesion
     keys = []
     freq_arrays = []
@@ -399,8 +402,12 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
 
     spectrum_directory = subject.spectrum_directory
 
+    info = spectrum.info
+    common_idxs = [ch_idx for ch_idx, ch_name in enumerate(clean_names(info['ch_names']))
+                   if ch_name in common_ch_names]
+    info = mne.pick_info(info, sel=common_idxs)
+
     freqs = spectrum.freqs
-    ch_names = common_ch_names
     data = grand_averages
 
     params = deepcopy(spectrum.params)
@@ -412,13 +419,14 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
     params['conditions'] = [elem for elem in grand_averages.keys()]
 
     spectrum = Spectrum(new_name, subject.spectrum_directory,
-                        params, data, freqs, ch_names)
+                        params, data, freqs, info)
 
     spectrum.save_content()
     subject.add(spectrum, 'spectrum')
 
 @threaded
 def save_all_channels(experiment, selected_name):
+    """ Saves all channesl of a spectrum item to a csv file. """
     column_names = []
     row_descs = []
     csv_data = []
@@ -444,6 +452,7 @@ def save_all_channels(experiment, selected_name):
 
 @threaded
 def save_channel_averages(experiment, selected_name, log_transformed=False):
+    """ Saves channel averages of a spectrum item to a csv file. """
     column_names = []
     row_descs = []
     csv_data = []
@@ -458,8 +467,7 @@ def save_channel_averages(experiment, selected_name, log_transformed=False):
 
         ch_names = spectrum.ch_names
         freqs = spectrum.freqs
-
-        info = subject.get_raw().info
+        info = spectrum.info
 
         for key, psd in spectrum.content.items():
 

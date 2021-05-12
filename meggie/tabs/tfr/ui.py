@@ -1,3 +1,5 @@
+"""Contains the python implementation of the tfr tab.
+"""
 import logging
 import os
 
@@ -14,19 +16,21 @@ from meggie.tabs.tfr.controller.tfr import save_tfr_all_channels
 from meggie.tabs.tfr.controller.tfr import save_tse_channel_averages
 from meggie.tabs.tfr.controller.tfr import save_tse_all_channels
 from meggie.tabs.tfr.controller.tfr import group_average_tfr
+from meggie.tabs.tfr.controller.tfr import run_permutation_test
 
 from meggie.utilities.formats import format_float
 from meggie.utilities.formats import format_floats
 from meggie.utilities.channels import get_channels_by_type
 
-from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
+from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDialog
+from meggie.utilities.dialogs.permutationTestDialogMain import PermutationTestDialog
 
 from meggie.tabs.tfr.dialogs.TFROutputOptionsMain import TFROutputOptions
 from meggie.tabs.tfr.dialogs.TFRDialogMain import TFRDialog
 
 
 def create(experiment, data, window):
-    """ Opens tfr creation dialog
+    """ Opens tfr creation dialog.
     """
     selected_names = data['inputs']['epochs']
 
@@ -45,7 +49,7 @@ def create(experiment, data, window):
 
 
 def delete(experiment, data, window):
-    """ Deletes selected tfr item for active subject
+    """ Deletes selected tfr item for active subject.
     """
     subject = experiment.active_subject
     try:
@@ -60,13 +64,13 @@ def delete(experiment, data, window):
 
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected TFR')
+    logging.getLogger('ui_logger').info('Deleted TFR: ' + selected_name)
 
     window.initialize_ui()
 
 
 def delete_from_all(experiment, data, window):
-    """ Deletes selected spetrum item from all subjects
+    """ Deletes selected spetrum item from all subjects.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
@@ -85,13 +89,40 @@ def delete_from_all(experiment, data, window):
 
     experiment.save_experiment_settings()
 
-    logging.getLogger('ui_logger').info('Deleted selected TFR from all subjects')
+    logging.getLogger('ui_logger').info('Deleted TFR from all subjects: ' + selected_name)
 
     window.initialize_ui()
 
 
+def permutation_test(experiment, data, window):
+    """ Opens up a permutation test dialog.
+    """
+    try:
+        selected_name = data['outputs']['tfr'][0]
+    except IndexError as exc:
+        return
+
+    meggie_item = experiment.active_subject.tfr[selected_name]
+    
+    def handler(groups, time_limits, frequency_limits, location_limits, threshold,
+                significance, n_permutations, design):
+        """
+        """
+        try:
+            run_permutation_test(experiment, window, selected_name, groups, time_limits,
+                                 frequency_limits, location_limits, threshold,
+                                 significance, n_permutations, design)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+            return
+
+    dialog = PermutationTestDialog(experiment, window, handler, meggie_item,
+                                   limit_frequency=True, limit_time=True)
+    dialog.show()
+
+
 def plot_tfr(experiment, data, window):
-    """ Plot TFR topography or averages from selected item
+    """ Plot TFR topography or averages from selected item.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
@@ -127,7 +158,7 @@ def plot_tfr(experiment, data, window):
     dialog.show()
 
 def plot_tse(experiment, data, window):
-    """ Plot TSE topography or averages from selected item
+    """ Plot TSE topography or averages from selected item.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
@@ -162,7 +193,7 @@ def plot_tse(experiment, data, window):
 
 
 def save_tfr(experiment, data, window):
-    """ Saves averages or channels to csv from selected item from all subjects
+    """ Saves averages or channels to csv from selected item from all subjects.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
@@ -202,7 +233,7 @@ def save_tfr(experiment, data, window):
 
 def save_tse(experiment, data, window):
     """ Computes TSE and saves averages or channels 
-    to csv from selected item from all subjects
+    to csv from selected item from all subjects.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
@@ -241,14 +272,18 @@ def save_tse(experiment, data, window):
 
 
 def group_average(experiment, data, window):
-    """ Handles group average item creation
+    """ Handles group average item creation.
     """
     try:
         selected_name = data['outputs']['tfr'][0]
     except IndexError as exc:
         return
 
-    def handler(name, groups):
+    name = next_available_name(
+        experiment.active_subject.tfr.keys(),
+        'group_' + selected_name)
+
+    def handler(groups):
         try:
             group_average_tfr(experiment, selected_name, groups, name,
                               do_meanwhile=window.update_ui)
@@ -260,15 +295,12 @@ def group_average(experiment, data, window):
 
         logging.getLogger('ui_logger').info('Finished creating group average TFR.')
 
-    default_name = next_available_name(
-        experiment.active_subject.tfr.keys(),
-        'group_' + selected_name)
-    dialog = GroupAverageDialog(experiment, window, handler, default_name)
+    dialog = GroupSelectionDialog(experiment, window, handler)
     dialog.show()
 
 
 def tfr_info(experiment, data, window):
-    """ Fills info element
+    """ Fills info element.
     """
     try:
         selected_name = data['outputs']['tfr'][0]

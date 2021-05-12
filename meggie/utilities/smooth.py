@@ -1,9 +1,26 @@
+""" Functions for smoothing data.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 
 
 def smooth_signal(x, window_len=10, window='hanning'):
-    """ from: http://scipy.org/Cookbook/SignalSmooth
+    """ Provides simple signal smoothing.
+
+    From: http://scipy.org/Cookbook/SignalSmooth
+
+    Parameters
+    ----------
+    x : np.array
+        The 1D signal.
+    window_len : int
+        Length of the smoothing kernel.
+    window : str
+        Type of smoothing window.
+    
+    Returns
+    -------
+    The smoothed version of the signal.
     """
 
     if x.ndim != 1:

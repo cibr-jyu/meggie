@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 import os
 import shutil
 import tempfile
 import mne
 
 from meggie.subject import Subject
-from meggie.utilities.preferences import PreferencesHandler
+from meggie.mainwindow.preferences import PreferencesHandler
 
 from meggie.experiment import initialize_new_experiment
 from meggie.experiment import open_existing_experiment
@@ -30,10 +29,8 @@ def test_experiment_and_subject():
         # add two subjects based on sample_audvis_raw
         # (makes copy of the file and adds it into subject directory inside experiment directory,
         # also creates and adds subject objects to the experiment object)
-        experiment.create_subject('subject_1', os.path.basename(sample_fname), 
-                                  sample_fname)
-        experiment.create_subject('subject_2', os.path.basename(sample_fname), 
-                                  sample_fname)
+        experiment.create_subject('subject_1', sample_fname)
+        experiment.create_subject('subject_2', sample_fname)
 
         # save experiment
         experiment.save_experiment_settings()

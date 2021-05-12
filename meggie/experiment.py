@@ -1,6 +1,4 @@
-# coding: utf-8
-
-"""
+""" Contains classes and functions for experiments.
 """
 
 import os
@@ -12,22 +10,29 @@ import pkg_resources
 
 from meggie.subject import Subject
 
-from meggie.utilities.filemanager import copy_subject_raw
-from meggie.utilities.dynamic import find_all_sources
+from meggie.utilities.filemanager import open_raw
+from meggie.utilities.filemanager import save_raw
 from meggie.utilities.channels import get_default_channel_groups
 from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
 
+from meggie.mainwindow.dynamic import find_all_sources
+
 
 class Experiment:
-
     """ A top-level class that contains structure of an experiment,
     all the subjects within, and so forth.
-    """
 
+    Parameters
+    ----------
+    name : str
+        Name of the experiment
+    author : str
+        Name of the author
+    path : str
+        Path to the experiment folder.
+    """
     def __init__(self, name, author, path):
-        """
-        """
         self._name = name
         self._author = author
         self._path = path
@@ -41,39 +46,39 @@ class Experiment:
 
     @property
     def path(self):
+        """ Returns the path. """
         return self._path
 
     @path.setter
     def path(self, path):
+        """ Sets the path. """
         self._path = path
 
     @property
     def name(self):
-        """
-        """
+        """ Returns the name. """
         return self._name
 
     @name.setter
     def name(self, name):
-        """
-        """
+        """ Sets the name. """
         self._name = validate_name(
             name, fieldname='name')
 
     @property
     def author(self):
-        """
-        """
+        """ Returns the author."""
         return self._author
 
     @author.setter
     def author(self, author):
-        """
-        """
+        """ Sets the author."""
         self._author = validate_name(author, minlength=0, fieldname='author')
 
     @property
     def channel_groups(self):
+        """ Returns channel groups for experiment. If not set,
+        uses defaults."""
         channel_groups = self._channel_groups.copy()
 
         # if channel groups not found, use defaults..
@@ -99,36 +104,48 @@ class Experiment:
 
     @channel_groups.setter
     def channel_groups(self, channel_groups):
+        """ Sets the channel groups."""
         self._channel_groups = channel_groups
 
     @property
     def active_subject(self):
-        """
+        """ Returns the active subject.
         """
         return self._active_subject
 
     @active_subject.setter
     def active_subject(self, subject):
-        """
+        """ Sets the active subject.
         """
         self._active_subject = subject
 
     def add_subject(self, subject):
-        """
+        """ Adds subject to the experiment.
+
+        Parameters
+        ----------
+        subject : meggie.subject.Subject
+            A subject object.
         """
         self.subjects[subject.name] = subject
 
     @property
     def subjects(self):
-        """
+        """ Returns contained subjects.
         """
         return self._subjects
 
     def remove_subject(self, name):
-        """
-        Removes the subject folder and its contents under experiment tree.
-        Removes the subject information from experiment properties and updates
-        the experiment settings file.
+        """Removes a subject.
+
+        Removes the subject folder and its contents under experiment tree, and
+        removes the subject from the experiment.
+
+        Parameters
+        ----------
+        name : str
+            Name of the subject to be removed.
+        
         """
 
         if getattr(self, 'active_subject',
@@ -146,6 +163,16 @@ class Experiment:
 
     def activate_subject(self, subject_name):
         """Activates a subject from the existing subjects
+
+        Parameters
+        ----------
+        subject_name : str
+            Name of the subject.
+
+        Returns
+        -------
+        meggie.subject.Subject
+            The activated subject.
         """
         # remove raw files from memory before activating new subject.
         if self.active_subject:
@@ -158,13 +185,29 @@ class Experiment:
 
         return self.active_subject
 
-    def create_subject(self, subject_name, raw_fname, raw_path):
-        """ Creates and adds subject object based on raw path
+    def create_subject(self, subject_name, raw_path):
+        """ Creates a subject object and copies the raw file
+        inside it (by reading and saving).
+
+        Parameters
+        ----------
+        subject_name : str
+            Name of the new subject.
+        raw_path : str
+            Path to the data file.
         """
-        subject = Subject(self, subject_name, raw_fname)
+        bname = os.path.basename(raw_path)
+        stem, ext = os.path.splitext(bname)
+        new_fname = stem + '.fif'
+
+        subject = Subject(self, subject_name, new_fname)
         subject.ensure_folders()
 
-        copy_subject_raw(subject, raw_path)
+        raw = open_raw(raw_path)
+
+        new_path = os.path.join(subject.path, new_fname)
+        save_raw(raw, new_path)
+
         self.add_subject(subject)
 
     def save_experiment_settings(self):
@@ -259,9 +302,23 @@ class Experiment:
             logging.getLogger('ui_logger').error(
                 'Could not save the experiment file. Please check your permissions..')
 
-def initialize_new_experiment(name, author, prefs):
-    """
-    Initializes new experiment object with given data.
+def initialize_new_experiment(name, author, prefs, set_previous_experiment=True):
+    """Initializes new experiment object with given data.
+
+    Parameters
+    ----------
+    name : str
+        Name of the experiment.
+    author : str
+        Name of the author.
+    prefs : meggie.mainwindow.preferences.PreferencesHandler
+        A preferences object.
+
+    Returns
+    -------
+    meggie.experiment.Experiment
+        The new experiment.
+
     """
     path = os.path.join(prefs.workspace, name)
     if os.path.exists(path):
@@ -270,13 +327,26 @@ def initialize_new_experiment(name, author, prefs):
     experiment = Experiment(name, author, path)
     experiment.save_experiment_settings()
 
-    prefs.previous_experiment_name = experiment.path
-    prefs.write_preferences_to_disk()
+    if set_previous_experiment:
+        prefs.previous_experiment_name = experiment.path
+        prefs.write_preferences_to_disk()
     return experiment
 
 
 def open_existing_experiment(prefs, path=None):
-    """
+    """ Reads and opens existing experiment.
+
+    Parameters
+    ----------
+    prefs : meggie.mainwindow.preferences.PreferencesHandler
+        A preferences object.
+    path : str, optional
+        Path to the experiment folder.
+
+    Returns
+    -------
+    meggie.experiment.Experiment
+        The opened experiment.
     """
 
     if path:
@@ -394,9 +464,14 @@ def open_existing_experiment(prefs, path=None):
                     inst = inst_class(
                         name,
                         directory,
-                        params,
+                        params.copy(),
                     )
                     subject.add(inst, datatype)
+
+                    # for backwards compatibility,
+                    # ensure spectrum objects contain info
+                    if datatype == 'spectrum' and not params.get('info_set'):
+                        inst.set_info(subject)
 
         experiment.add_subject(subject)
 

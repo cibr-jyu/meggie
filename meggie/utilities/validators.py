@@ -1,9 +1,29 @@
+""" Functions for validation.
+"""
 import re
 import numpy as np
 
 
 def validate_name(name, minlength=1, maxlength=30, fieldname='name'):
-    """ Validates a name with length and regular expression criteria """
+    """Validates a name with length and regular expression criteria.
+    
+    Parameters
+    ----------
+    name : str or QString
+        Name to be validated.
+    minlength : int
+        The minimum length of the name.
+    maxlength : int
+        The maximum length of the name.
+    fieldname : str
+        The name of the field, for good exception messages.
+
+    Returns
+    -------
+    str
+        Name that passed the validation.
+
+    """
 
     name = str(name)
 
@@ -22,17 +42,20 @@ def validate_name(name, minlength=1, maxlength=30, fieldname='name'):
 
 
 def assert_arrays_same(arrays, message='Times do not match'):
-    """ Checks if list of arrays is pairwise equal
+    """Checks if arrays in a list are all equal.
+
+    Parameters
+    ----------
+    arrays : list
+        List containing the numpy arrays to be compared.
+    message : str
+        Message for the exception if arrays are not the same.
     """
-    for i, i_values in enumerate(arrays):
-        for j, j_values in enumerate(arrays):
-            if i != j:
-                try:
-                    np.testing.assert_array_almost_equal(i_values, j_values)
-                except AssertionError:
-                    raise Exception(message)
-                except TypeError:
-                    try:
-                        assert(i_values == j_values)
-                    except AssertionError:
-                        raise Exception(message)
+    for idx in range(len(arrays)-1):
+        try:
+            first = np.array(arrays[0]).astype(np.float)
+            second = np.array(arrays[idx+1]).astype(np.float)
+            np.testing.assert_array_almost_equal(first, second)
+        except Exception as exc:
+            raise Exception(message)
+

@@ -1,5 +1,4 @@
-# coding: utf-8
-"""
+""" Contains a class for logic of filter dialog.
 """
 
 import logging
@@ -20,7 +19,7 @@ from meggie.utilities.messaging import exc_messagebox
 
 
 class FilterDialog(QtWidgets.QDialog):
-    """
+    """ Contains logic for filter dialog.
     """
 
     def __init__(self, parent, experiment):
@@ -32,23 +31,20 @@ class FilterDialog(QtWidgets.QDialog):
         self.experiment = experiment
 
         self.batching_widget = BatchingWidget(
-            experiment_getter=self.experiment_getter,
+            experiment_getter=self._experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
-    def experiment_getter(self):
+    def _experiment_getter(self):
         return self.experiment
 
     def on_pushButtonPreview_clicked(self, checked=None):
-        """
-        Draws the preview.
-        """
         if checked is None:
             return
 
-        params = self.collect_parameter_values()
+        params = self._collect_parameter_values()
         if not params:
             message = 'No filter(s) selected.'
             messagebox(self.parent, message)
@@ -72,19 +68,15 @@ class FilterDialog(QtWidgets.QDialog):
             exc_messagebox(self.parent, exc)
 
     def accept(self):
-        """
-        Get the parameters dictionary and relay it to filter_data to
-        actually do the filtering.
-        """
         subject = self.experiment.active_subject
-        params = self.collect_parameter_values()
+        params = self._collect_parameter_values()
         if not params:
             message = 'No filter(s) selected'
             messagebox(self.parent, message)
             return
 
         try:
-            self.filter(subject, params)
+            self._filter(subject, params)
         except Exception as exc:
             exc_messagebox(self.parent, exc)
 
@@ -94,10 +86,8 @@ class FilterDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        """
-        """
         subject_names = self.batching_widget.selected_subjects
-        params = self.collect_parameter_values()
+        params = self._collect_parameter_values()
         if not params:
             message = 'No filter(s) selected'
             messagebox(self.parent, message)
@@ -106,7 +96,7 @@ class FilterDialog(QtWidgets.QDialog):
         for name, subject in self.experiment.subjects.items():
             if name in subject_names:
                 try:
-                    self.filter(subject, params)
+                    self._filter(subject, params)
                     subject.release_memory()
                 except Exception as exc:
                     logging.getLogger('ui_logger').exception('')
@@ -120,11 +110,7 @@ class FilterDialog(QtWidgets.QDialog):
         self.parent.initialize_ui()
         self.close()
 
-    def collect_parameter_values(self):
-        """
-        Gets the filtering parameters from the UI fields and performs
-        rudimentary sanity checks on them.
-        """
+    def _collect_parameter_values(self):
         is_empty = True
         dictionary = {}
 
@@ -165,9 +151,7 @@ class FilterDialog(QtWidgets.QDialog):
 
         return dictionary
 
-    def filter(self, subject, params):
-        """
-        """
+    def _filter(self, subject, params):
         # mne-python wants the lengths to be human-readable values
         params = deepcopy(params)
         params['length'] = params['length'] + 's'

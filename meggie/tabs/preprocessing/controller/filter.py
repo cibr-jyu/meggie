@@ -1,4 +1,4 @@
-"""
+""" Contains controlling logic for the filter.
 """
 
 import logging

@@ -1,9 +1,10 @@
-# coding: utf-8
-"""
+""" Contains controlling logic for the tfr implementation
 """
 
 import os
 import logging
+
+from collections import OrderedDict
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,14 +14,20 @@ import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.formats import format_floats
 from meggie.utilities.plotting import color_cycle
-from meggie.utilities.plotting import get_channel_average_fig_size
+from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import clean_names
+from meggie.utilities.channels import pairless_grads
+from meggie.utilities.channels import get_channels_by_type
 from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
 from meggie.utilities.units import get_power_unit
+from meggie.utilities.stats import prepare_data_for_permutation
+from meggie.utilities.stats import permutation_analysis
+from meggie.utilities.stats import report_permutation_results
+from meggie.utilities.stats import plot_permutation_results
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.decorators import threaded
 
@@ -28,8 +35,6 @@ from meggie.datatypes.tfr.tfr import TFR
 
 
 def _compute_tse(meggie_tfr, fmin, fmax):
-    """
-    """
     tfrs = meggie_tfr.content
 
     fmin_idx = np.where(meggie_tfr.freqs >= fmin)[0][0]
@@ -47,8 +52,6 @@ def _compute_tse(meggie_tfr, fmin, fmax):
 
 
 def _crop_and_correct_to_baseline(tse, blmode, blstart, blend, tmin, tmax, times):
-    """
-    """
     tmin_idx = np.where(times >= tmin)[0][0]
     tmax_idx = np.where(times <= tmax)[0][-1]
 
@@ -73,7 +76,7 @@ def _crop_and_correct_to_baseline(tse, blmode, blstart, blend, tmin, tmax, times
 
 def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend, 
                   tmin, tmax, fmin, fmax, ch_type):
-    """
+    """ Plots a tse topography.
     """
     meggie_tfr = subject.tfr.get(tfr_name)
 
@@ -96,9 +99,9 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
         """
         ch_name = ch_names[names_idx]
 
-        title_elems = [tfr_name, ch_name]
-        ax.figure.canvas.set_window_title('_'.join(title_elems))
-        ax.figure.suptitle(' '.join(title_elems))
+        title = ' '.join([tfr_name, ch_name])
+        ax.figure.canvas.set_window_title(title.replace(' ', '_'))
+        ax.figure.suptitle(title)
         ax.set_title('')
 
         for color_idx, (key, tse) in enumerate(sorted(tses.items())):
@@ -138,7 +141,7 @@ def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend,
 
 def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
                       tmin, tmax, fmin, fmax):
-    """
+    """ Plots tse averages.
     """
     meggie_tfr = subject.tfr.get(tfr_name)
 
@@ -147,6 +150,7 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
     ch_names = meggie_tfr.ch_names
     info = meggie_tfr.info
     colors = color_cycle(len(tses))
+    conditions = meggie_tfr.content.keys()
 
     channel_groups = experiment.channel_groups
 
@@ -169,35 +173,23 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
         ch_groups = sorted([label[1] for label in averages.keys()
                             if label[0] == ch_type])
 
-        ncols = min(4, len(ch_groups))
-        nrows = int((len(ch_groups) - 1) / ncols + 1)
-
-        fig, axes = plt.subplots(nrows=nrows, ncols=ncols, squeeze=False)
-        fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
-        for ax_idx in range(ncols*nrows):
-            ax = axes[ax_idx // ncols, ax_idx % ncols]
-            if ax_idx >= len(ch_groups):
-                ax.axis('off')
-                continue
-
+        def plot_fun(ax_idx, ax):
             ch_group = ch_groups[ax_idx]
             ax.set_title(ch_group)
             ax.set_xlabel('Time (s)')
             ax.set_ylabel('Power ({})'.format(get_power_unit(
                 ch_type, False)))
 
-            handles = []
             for color_idx, (key, times, curve) in enumerate(averages[(ch_type, ch_group)]):
-                handles.append(ax.plot(times, curve, color=colors[color_idx], label=key)[0])
+                ax.plot(times, curve, color=colors[color_idx], label=key)
 
             ax.axhline(0, color='black')
             ax.axvline(0, color='black')
 
-        fig.legend(handles=handles)
-        title_elems = [tfr_name, ch_type]
-        fig.canvas.set_window_title('_'.join(title_elems))
-        fig.suptitle(' '.join(title_elems))
-        fig.tight_layout()
+        title = ' '.join([tfr_name, ch_type])
+        legend = list(zip(conditions, colors))
+        create_channel_average_plot(len(ch_groups), plot_fun, title, 
+                                    legend)
 
     plt.show()
 
@@ -205,6 +197,8 @@ def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
 def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition, 
                       blmode, blstart, blend,
                       tmin, tmax, fmin, fmax):
+    """ Plots tfr averages.
+    """
 
     meggie_tfr = subject.tfr[tfr_name]
 
@@ -242,18 +236,7 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
         ch_groups = sorted([label[1] for label in data_labels
                             if label[0] == ch_type])
 
-        ncols = min(4, len(ch_groups))
-        nrows = int((len(ch_groups) - 1) / ncols + 1)
-
-        fig, axes = plt.subplots(nrows=nrows, ncols=ncols, squeeze=False)
-        fig.set_size_inches(*get_channel_average_fig_size(nrows, ncols))
-
-        for ax_idx in range(ncols*nrows):
-            ax = axes[ax_idx // ncols, ax_idx % ncols]
-            if ax_idx >= len(ch_groups):
-                ax.axis('off')
-                continue
-
+        def plot_fun(ax_idx, ax):
             ch_group = ch_groups[ax_idx]
             ax.set_title(ch_group)
 
@@ -270,15 +253,15 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
                      fmin=fmin, fmax=fmax, 
                      tmin=tmin, tmax=tmax, axes=ax)
 
-        fig.tight_layout()
-        title_elems = [tfr_name, tfr_condition, ch_type]
-        fig.canvas.set_window_title('_'.join(title_elems))
-        fig.suptitle(' '.join(title_elems))
+        title = ' '.join([tfr_name, tfr_condition, ch_type])
+        create_channel_average_plot(len(ch_groups), plot_fun, title)
 
 
 def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition, 
                   blmode, blstart, blend,
                   tmin, tmax, fmin, fmax, ch_type):
+    """ Plots tfr topography.
+    """
 
     meggie_tfr = subject.tfr[tfr_name]
 
@@ -310,21 +293,152 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
     fig.canvas.set_window_title(title)
 
     def onclick(event):
-        channel = plt.getp(plt.gca(), 'title')
-        plt.gca().set_title('')
+        """ hacky way to change title and add colorbar after creation """
+        ax = plt.gca()
+        fig = plt.gcf()
 
-        title_elems = [tfr_name, channel]
-        plt.gcf().canvas.set_window_title('_'.join(title_elems))
-        plt.gcf().suptitle(' '.join(title_elems))
+        channel = plt.getp(ax, 'title')
+        ax.set_title('')
+
+        title = ' '.join([tfr_name, channel])
+        fig.canvas.set_window_title(title.replace(' ', '_'))
+        fig.suptitle(title)
+
+        img = ax.get_images()[0]
+        plt.colorbar(mappable=img, ax=ax)
 
         plt.show(block=False)
 
     fig.canvas.mpl_connect('button_press_event', onclick)
     fig.show()
 
+
+def run_permutation_test(experiment, window, selected_name, groups, time_limits,
+                         frequency_limits, location_limits, threshold,
+                         significance, n_permutations, design):
+    """ Runs permutation test computation and reports the results.
+    """
+    if location_limits[0] == "ch_name" and frequency_limits is not None and time_limits is not None:
+        raise Exception("Cannot run permutation tests with all location, frequency and time limits")
+
+    tfr_item = experiment.active_subject.tfr[selected_name]
+    conditions = list(tfr_item.content.keys())
+    groups = OrderedDict(sorted(groups.items()))
+    times = tfr_item.times
+    freqs = tfr_item.freqs
+
+    chs_by_type = get_channels_by_type(tfr_item.info)
+    if location_limits[0] == 'ch_type':
+        ch_type = location_limits[1]
+    else:
+        ch_type = [key for key, vals in chs_by_type.items() if location_limits[1] in vals][0]
+
+    info, data, adjacency = prepare_data_for_permutation(
+        experiment, design, groups, 'tfr', selected_name,
+        location_limits, time_limits, frequency_limits,
+        data_format=('locations', 'freqs', 'times'),
+        do_meanwhile=window.update_ui)
+
+    results = permutation_analysis(data, design, conditions, groups, threshold, adjacency, n_permutations,
+                                   do_meanwhile=window.update_ui)
+
+    report_permutation_results(results, design, selected_name, significance,
+                               location_limits=location_limits,
+                               time_limits=time_limits,
+                               frequency_limits=frequency_limits)
+
+    if design == 'within-subjects':
+        title_template = 'Cluster {0} for group {1} (p {2})'
+    else:
+        title_template = 'Cluster {0} for condition {1} (p {2})'
+
+    def time_fun(cluster_idx, cluster, pvalue, res_key):
+        fig, ax = plt.subplots()
+        if design == 'within-subjects':
+            colors = color_cycle(len(conditions))
+            for cond_idx, condition in enumerate(conditions):
+                Y = np.mean(data[res_key][cond_idx], axis=0)
+                Y = np.mean(Y[np.unique(cluster[0])], axis=0)
+                Y = np.mean(Y[:, np.unique(cluster[-1])], axis=1)
+                ax.plot(times, Y, label=condition, color=colors[cond_idx])
+        else:
+            colors = color_cycle(len(groups))
+            for group_idx, (group_key, group) in enumerate(groups.items()):
+                Y = np.mean(data[res_key][group_idx], axis=0)
+                Y = np.mean(Y[np.unique(cluster[0])], axis=0)
+                Y = np.mean(Y[:, np.unique(cluster[-1])], axis=1)
+                ax.plot(times, Y, label=condition, color=colors[group_idx])
+
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
+        fig.canvas.set_window_title('Cluster time course')
+
+        ax.legend()
+        ax.set_xlabel('Time (s)')
+        ax.set_ylabel('Power ({})'.format(
+            get_power_unit(ch_type, log=False)))
+
+        ax.axhline(0, color='black')
+        ax.axvline(0, color='black')
+
+        tmin = np.min(times[cluster[1]])
+        tmax = np.max(times[cluster[1]])
+        ax.axvspan(tmin, tmax, alpha=0.5, color='blue')
+
+    def frequency_fun(cluster_idx, cluster, pvalue, res_key):
+        fig, ax = plt.subplots()
+        if design == 'within-subjects':
+            colors = color_cycle(len(conditions))
+            for cond_idx, condition in enumerate(conditions):
+                Y = np.mean(data[res_key][cond_idx], axis=0)
+                Y = np.mean(Y[:, np.unique(cluster[1]), :], axis=1)
+                Y = np.mean(Y[:, np.unique(cluster[-1])], axis=1)
+                ax.plot(freqs, Y, label=condition, color=colors[cond_idx])
+        else:
+            colors = color_cycle(len(groups))
+            for group_idx, (group_key, group) in enumerate(groups.items()):
+                Y = np.mean(data[res_key][group_idx], axis=0)
+                Y = np.mean(Y[:, np.unique(cluster[1]), :], axis=1)
+                Y = np.mean(Y[:, np.unique(cluster[-1])], axis=1)
+                ax.plot(freqs, Y, label=condition, color=colors[group_idx])
+
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
+        fig.canvas.set_window_title('Cluster spectrum')
+
+        ax.legend()
+        ax.set_xlabel('Frequency (Hz)')
+        ax.set_ylabel('Power ({})'.format
+            (get_power_unit(ch_type, log=False)))
+        fmin = np.min(freqs[cluster[0]])
+        fmax = np.max(freqs[cluster[0]])
+        ax.axvspan(fmin, fmax, alpha=0.5, color='blue')
+
+    def location_fun(cluster_idx, cluster, pvalue, res_key):
+        map_ = [1 if idx in cluster[-1] else 0 for idx in
+                range(len(info['ch_names']))]
+        
+        fig, ax = plt.subplots()
+        ch_type = location_limits[1]
+        mne.viz.plot_topomap(np.array(map_), info, vmin=0, vmax=1,
+                             cmap='Reds', axes=ax, ch_type=ch_type,
+                             contours=0)
+
+        fig.suptitle(title_template.format(cluster_idx+1, res_key, pvalue))
+        fig.canvas.set_window_title('Cluster topomap')
+
+    plot_permutation_results(results, significance, window,
+                             location_limits=location_limits,
+                             frequency_limits=frequency_limits,
+                             time_limits=time_limits,
+                             location_fun=location_fun,
+                             frequency_fun=frequency_fun,
+                             time_fun=time_fun)
+
+
 @threaded
 def create_tfr(subject, tfr_name, epochs_names,
                freqs, decim, n_cycles, subtract_evoked):
+    """ Handles tfr item creation.
+    """
 
     time_arrays = []
     for name in epochs_names:
@@ -366,6 +480,7 @@ def create_tfr(subject, tfr_name, epochs_names,
 
 @threaded
 def group_average_tfr(experiment, tfr_name, groups, new_name):
+    """ Computes a group average item."""
 
     # check data cohesion
     keys = []
@@ -470,7 +585,7 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
 def save_tfr_all_channels(experiment, tfr_name,
                           blmode, blstart, blend,
                           tmin, tmax, fmin, fmax):
-    """
+    """ Saves all channels of tfr item to a csv file.
     """
     column_names = []
     row_descs = []
@@ -516,7 +631,7 @@ def save_tfr_all_channels(experiment, tfr_name,
 def save_tfr_channel_averages(experiment, tfr_name,
                               blmode, blstart, blend,
                               tmin, tmax, fmin, fmax):
-    """
+    """ Saves channel averages of tfr item to a csv file.
     """
     column_names = []
     row_descs = []
@@ -569,7 +684,7 @@ def save_tfr_channel_averages(experiment, tfr_name,
 @threaded
 def save_tse_all_channels(experiment, tfr_name, blmode, blstart, 
                           blend, tmin, tmax, fmin, fmax):
-    """
+    """ Saves all channels of a tse to a csv file.
     """
     column_names = []
     row_descs = []
@@ -606,7 +721,7 @@ def save_tse_all_channels(experiment, tfr_name, blmode, blstart,
 @threaded
 def save_tse_channel_averages(experiment, tfr_name, blmode, blstart, 
                               blend, tmin, tmax, fmin, fmax):
-    """
+    """ Saves channel averages of tse to a csv file.
     """
     column_names = []
     row_descs = []
@@ -644,5 +759,4 @@ def save_tse_channel_averages(experiment, tfr_name, blmode, blstart,
 
     filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
-
 

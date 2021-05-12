@@ -1,4 +1,4 @@
-"""
+""" Contains controlling logic for the ICA.
 """
 
 import logging
@@ -12,7 +12,7 @@ from meggie.utilities.compare import compare_raws
 
 
 def compute_ica(raw, n_components, method, max_iter):
-    """
+    """ Computes ICA using MNE implementation.
     """
     ica = mne.preprocessing.ICA(
         n_components=n_components,
@@ -20,17 +20,16 @@ def compute_ica(raw, n_components, method, max_iter):
         max_iter=max_iter)
 
     ica.fit(raw)
-
-    # TODO: what if ica does not converge?
-
     return ica
 
 
 def plot_topographies(ica, n_components):
-    """
+    """ Plots topographies from the ICA solution.
     """
 
-    figs = ica.plot_components()
+    figs = ica.plot_components(title='')
+    for fig in figs:
+        fig.canvas.set_window_title('ICA topographic maps')
 
     def update_topography_texts():
         """ Change texts in the axes to match names in the dialog """
@@ -47,17 +46,19 @@ def plot_topographies(ica, n_components):
 
 
 def plot_sources(raw, ica):
-    """
+    """ Plots sources of the ica solution.
     """
     sources = ica.get_sources(raw)
-    sources.plot()
+    sources.plot(title='ICA time courses')
 
 
 def plot_properties(raw, ica, picks):
-    """
+    """ Plots properties for specific ICA components.
     """
     figs = ica.plot_properties(
         raw, picks)
+    for fig in figs:
+        fig.canvas.set_window_title('ICA properties')
 
     # fix the names
     idx = 0
@@ -70,7 +71,7 @@ def plot_properties(raw, ica, picks):
 
 
 def plot_changes(raw, ica, indices):
-    """
+    """ Plot a raw comparison plot for ICA solution.
     """
     raw_removed = raw.copy()
     ica.apply(raw_removed, exclude=indices)

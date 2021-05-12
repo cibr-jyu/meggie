@@ -1,4 +1,4 @@
-"""
+""" Contains a class for logic of montage dialog.
 """
 
 import os
@@ -24,7 +24,8 @@ from meggie.tabs.preprocessing.dialogs.montageDialogUi import Ui_montageDialog
 
 
 class MontageDialog(QtWidgets.QDialog):
-
+    """ Contains logic for montage dialog.
+    """
     def __init__(self, parent, experiment):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_montageDialog()
@@ -45,20 +46,16 @@ class MontageDialog(QtWidgets.QDialog):
         # find out if montage already set.
 
         self.batching_widget = BatchingWidget(
-            experiment_getter=self.experiment_getter,
+            experiment_getter=self._experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
-    def experiment_getter(self):
+    def _experiment_getter(self):
         return self.experiment
 
     def on_pushButtonSelectFromFile_clicked(self, checked=None):
-        """
-        Called when browse montage button is clicked.
-        Opens a file dialog for selecting a file.
-        """
         if checked is None:
             return
 
@@ -75,29 +72,20 @@ class MontageDialog(QtWidgets.QDialog):
             self.ui.labelCurrentContent.setText(self.current_montage_fname)
 
     def on_radioButtonMontageFromFile_toggled(self, checked):
-        """
-        """
         if checked:
             self.ui.labelCurrentContent.setText(self.current_montage_fname)
 
     def on_comboBoxSelectFromList_currentIndexChanged(self, item):
-        """
-        """
         if self.ui.radioButtonMontageFromList.isChecked():
             self.ui.labelCurrentContent.setText(str(item))
 
     def on_radioButtonMontageFromList_toggled(self, checked):
-        """
-        """
         if checked:
             selection = self.ui.comboBoxSelectFromList.currentText()
             self.ui.labelCurrentContent.setText(selection)
 
-
     @threaded
-    def set_montage(self, subject):
-        """
-        """
+    def _set_montage(self, subject):
         head_size = float(self.ui.doubleSpinBoxHeadSize.value())
         raw = subject.get_raw()
         if self.ui.radioButtonMontageFromList.isChecked():
@@ -113,11 +101,9 @@ class MontageDialog(QtWidgets.QDialog):
             raw.set_montage(montage)
 
     def accept(self):
-        """
-        """
         subject = self.experiment.active_subject
         try:
-            self.set_montage(subject, do_meanwhile=self.parent.update_ui)
+            self._set_montage(subject, do_meanwhile=self.parent.update_ui)
             subject.save()
         except Exception as exc:
             exc_messagebox(self, exc)
@@ -127,16 +113,14 @@ class MontageDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        """
-        """
         experiment = self.experiment
         selected_subject_names = self.batching_widget.selected_subjects
 
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    self.set_montage(subject, 
-                                     do_meanwhile=self.parent.update_ui)
+                    self._set_montage(subject, 
+                                      do_meanwhile=self.parent.update_ui)
                     subject.save()
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append(

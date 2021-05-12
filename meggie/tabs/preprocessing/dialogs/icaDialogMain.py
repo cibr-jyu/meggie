@@ -1,6 +1,4 @@
-# coding: utf-8
-
-"""
+""" Contains a class for logic of ica dialog.
 """
 
 import logging
@@ -23,7 +21,7 @@ from meggie.utilities.messaging import exc_messagebox
 
 
 class ICADialog(QtWidgets.QDialog):
-    """ Functionality for ICA dialog UI
+    """ Contains logic for ICA dialog.
     """
 
     def __init__(self, parent, experiment):
@@ -40,11 +38,9 @@ class ICADialog(QtWidgets.QDialog):
         self.ui.listWidgetRemoved.setSelectionMode(
             QtWidgets.QAbstractItemView.ExtendedSelection)
 
-        self.reset()
+        self._reset()
 
-    def reset(self):
-        """ Resets all the storage
-        """
+    def _reset(self):
         self.ica = None
         self.ui.listWidgetNotRemoved.clear()
         self.ui.listWidgetRemoved.clear()
@@ -53,13 +49,11 @@ class ICADialog(QtWidgets.QDialog):
         self.component_info = {}
 
     def on_pushButtonCompute_clicked(self, checked=None):
-        """
-        """
         if checked is None:
             return
 
         # start by clearing out the previous things
-        self.reset()
+        self._reset()
 
         n_components = self.ui.doubleSpinBoxNComponents.value()
         method = 'fastica'
@@ -86,9 +80,6 @@ class ICADialog(QtWidgets.QDialog):
         logging.getLogger('ui_logger').info('Computing ICA model finished.')
 
     def on_pushButtonTransfer_clicked(self, checked=None):
-        """ Transfers items from list to another. QListWidgets are the necessary evil
-        so the self.removed_items and self.not_removed_items are also kept in sync
-        """
         if checked is None:
             return
 
@@ -121,22 +112,18 @@ class ICADialog(QtWidgets.QDialog):
             self.ui.listWidgetNotRemoved.addItem(item)
 
     def on_listWidgetNotRemoved_clicked(self):
-        """ Enforce only one list have a selected item
-        """
+        # Enforce only one list have a selected item
         widget = self.ui.listWidgetRemoved
         for i in range(widget.count()):
             widget.item(i).setSelected(False)
 
     def on_listWidgetRemoved_clicked(self):
-        """ Enforce only one list have a selected item
-        """
+        # Enforce only one list have a selected item
         widget = self.ui.listWidgetNotRemoved
         for i in range(widget.count()):
             widget.item(i).setSelected(False)
 
     def on_pushButtonPlotTopographies_clicked(self, checked=None):
-        """
-        """
         if checked is None:
             return
 
@@ -149,8 +136,6 @@ class ICADialog(QtWidgets.QDialog):
             return
 
     def on_pushButtonPlotSources_clicked(self, checked=None):
-        """
-        """
         if checked is None:
             return
 
@@ -163,12 +148,10 @@ class ICADialog(QtWidgets.QDialog):
             return
 
     def on_pushButtonPlotProperties_clicked(self, checked=None):
-        """ Plot the property windows for all selected items
-        """
         if checked is None:
             return
 
-        picks = self.get_picks()
+        picks = self._get_picks()
 
         if not picks:
             return
@@ -182,8 +165,6 @@ class ICADialog(QtWidgets.QDialog):
             return
 
     def on_pushButtonPlotChanges_clicked(self, checked=None):
-        """
-        """
         if checked is None:
             return
 
@@ -197,9 +178,7 @@ class ICADialog(QtWidgets.QDialog):
             exc_messagebox(self, exc)
             return
 
-    def get_picks(self):
-        """ Finds out the indices off all the selected components
-        """
+    def _get_picks(self):
         not_removed_selected = [item.text() for item in
                                 self.ui.listWidgetNotRemoved.selectedItems()]
         removed_selected = [item.text() for item in
@@ -214,10 +193,6 @@ class ICADialog(QtWidgets.QDialog):
         return picks
 
     def accept(self):
-        """
-        Transform and save the data.
-        """
-
         if not self.ica:
             return
 
@@ -241,7 +216,7 @@ class ICADialog(QtWidgets.QDialog):
 
         logging.getLogger('ui_logger').info('ICA applied successfully.')
 
-        self.reset()
+        self._reset()
         self.parent.initialize_ui()
 
         self.close()

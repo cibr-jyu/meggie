@@ -26,15 +26,17 @@ def test_evoked():
         # content is dict-type.
         content = {cond_name: mne_evoked}
 
+        params = {}
+
         # Create meggie-Evoked object
         # and save it to evoked directory
-        evoked = Evoked(name, evoked_dir, content=content)
+        evoked = Evoked(name, evoked_dir, params, content=content)
         ensure_folders([evoked_dir])
         evoked.save_content()
 
         # Creating meggie-Evoked object with same name and folder should allow
         # accessing the saved content.
-        loaded_evoked = Evoked(name, evoked_dir)
+        loaded_evoked = Evoked(name, evoked_dir, params)
 
         assert(loaded_evoked.content[cond_name].nave == 72)
 
