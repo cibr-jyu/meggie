@@ -1,17 +1,30 @@
 Changelog
 =========
 
-1.0.3 (unreleased)
+1.1.1 (unreleased)
 ------------------
 
 - nothing changed yet.
 
-1.0.2 (2020-03-02)
+1.1.0 (2021-05-12)
+------------------
+
+- Make mne==0.23.0 compatible
+- Add permutation tests 
+- Clean codebase for better reuse
+- Add docstrings and autogenerate documentation using sphinx
+- Include mne.Info to spectrum objects.
+- Fix non-fif reading.
+- Add utility for generating multi-subject experiments from sample_audvis_raw
+- Update messaging
+- Move source analysis out to external plugin.
+
+1.0.2 (2021-03-02)
 ------------------
 
 - Fix channel average plots with non-orthodox channel groups
 
-1.0.1 (2020-03-02)
+1.0.1 (2021-03-02)
 ------------------
 
 - Fix issue with channel selection saving

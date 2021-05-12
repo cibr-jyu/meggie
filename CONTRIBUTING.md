@@ -31,6 +31,8 @@ Now you are all set to write your code.
 
 ### Writing code
 
+See developer documentation in *https://teekuningas.github.io/meggie*.
+
 Some notes and guidelines:
 * Try to keep your code clean. Use for example pycodestyle or flake8 to check your pep8-compliance. Generated code from Qtdesigner is kept as it is.
 * UI files (\*.ui) are in the designer\_ui\_files directory. You can use Qtdesigner (open with command *designer* while in the environment) to update UI files, and then *pyuic5* command to generate \*Ui.py files in the meggie/..-directories.
