@@ -7,7 +7,7 @@ rm source/*meggie*.rst
 sphinx-apidoc -f -o source ../meggie \
                            ../meggie/tabs/* \
                            ../meggie/mainwindow/* \
-                           ../meggie/mainWindow* \
+                           ../meggie/mainWindowUi.py \
                            ../meggie/utilities/widgets/*Ui.py \
                            ../meggie/utilities/dialogs/*Ui.py
 
