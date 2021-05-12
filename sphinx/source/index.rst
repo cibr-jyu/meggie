@@ -1,7 +1,7 @@
-Developer wiki
-==============
+Developer documentation
+=======================
 
-Welcome to the Meggie developer wiki.
+Welcome to the Meggie developer documentation.
 
 .. toctree::
    :maxdepth: 2
@@ -13,7 +13,7 @@ Welcome to the Meggie developer wiki.
 Other sources
 -------------
 
-* `Documentation <http://meggie.teekuningas.net>`_
+* `User documentation <http://meggie.teekuningas.net>`_
 
 Indices and tables
 -------------------
