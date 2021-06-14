@@ -3,7 +3,7 @@
 ## Documentation
 
 * User documentation is found here: *http://meggie.teekuningas.net*
-* Developer documentation is found here: *https://teekuningas.github.io/meggie*
+* Developer documentation is found here: *https://cibr-jyu.github.io/meggie*
 
 [//]: # (Hello)
 
