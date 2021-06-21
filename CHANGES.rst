@@ -1,10 +1,15 @@
 Changelog
 =========
 
-1.1.1 (unreleased)
+1.1.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.1.1 (2021-06-21)
+------------------
+
+- Add simple reusable dialog
 
 1.1.0 (2021-05-12)
 ------------------
