@@ -25,12 +25,17 @@ from meggie.utilities.smooth import smooth_signal
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.names import next_available_name
+from meggie.utilities.decorators import threaded
 
 from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDialog
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 from meggie.utilities.dialogs.singleChannelDialogMain import SingleChannelDialog
 from meggie.utilities.dialogs.permutationTestDialogMain import PermutationTestDialog
-from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
+
+from meggie.utilities.dialogs.simpleDialogMain import SimpleDialog
+
+from meggie.datatypes.evoked.evoked import Evoked
+
 from meggie.tabs.evoked.dialogs.evokedTopomapDialogMain import EvokedTopomapDialog
 
 
@@ -49,8 +54,40 @@ def create(experiment, data, window):
     default_name = next_available_name(
         experiment.active_subject.evoked.keys(), stem)
 
-    dialog = CreateEvokedDialog(experiment, window, selected_names, 
-                                default_name)
+    def handler(subject, evoked_name):
+        # check that all the collections have same times structure.
+        time_arrays = []
+        for name in selected_names:
+            epochs = subject.epochs.get(name)
+            if epochs:
+                time_arrays.append(epochs.content.times)
+        assert_arrays_same(time_arrays)
+
+        evokeds = {}
+        for name in selected_names:
+            try:
+                epochs = subject.epochs[name]
+            except KeyError:
+                raise KeyError('No epoch collection called ' + str(name))
+
+            mne_epochs = epochs.content
+
+            @threaded
+            def average():
+                return mne_epochs.average()
+
+            mne_evoked = average(do_meanwhile=window.update_ui)
+            evokeds[name] = mne_evoked
+
+            params = {'conditions': selected_names}
+
+            evoked_directory = subject.evoked_directory
+            evoked = Evoked(evoked_name, evoked_directory, params, content=evokeds)
+            evoked.save_content()
+            subject.add(evoked, 'evoked')
+
+    dialog = SimpleDialog(experiment, window, default_name, handler, batching=False,
+                          title='Create evoked')
     dialog.show()
 
 
