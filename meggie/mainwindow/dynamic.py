@@ -38,39 +38,37 @@ def find_all_sources():
     return ['meggie'] + find_all_plugins()
 
 
-def find_all_tab_specs():
+def find_all_action_specs():
     """Finds all valid tabs from the core and plugins.
     """
-    tab_specs = {}
+    action_specs = {}
 
     sources = find_all_sources()
     for source in sources:
-        tab_path = pkg_resources.resource_filename(source, 'tabs')
-        if not os.path.exists(tab_path):
+        action_path = pkg_resources.resource_filename(source, 'actions')
+        if not os.path.exists(action_path):
             continue
-        for package in os.listdir(tab_path):
-            config_path = os.path.join(tab_path, package, 'configuration.json')
+        for package in os.listdir(action_path):
+            config_path = os.path.join(action_path, package, 'configuration.json')
             if os.path.exists(config_path):
                 with open(config_path, 'r') as f:
                     config = json.load(f)
                     if config:
-                        tab_specs[config['id']] = source, package, config
-    return tab_specs
+                        action_specs[config['id']] = source, package, config
+    return action_specs
 
 
-def construct_tab(source, package, tab_spec, parent):
+def construct_tab(tab_spec, action_specs, parent):
     """Constructs analysis tab dynamically from python package
     containing an configuration file and code. Returns a QDialog
     that can be used within a QTabDialog of the main window.
 
     Parameters
     ----------
-    source : str
-        Name of the module, should be meggie or meggie_*.
-    package : str
-        Name of the tab, e.g. evoked or preprocessing.
     tab_spec : dict
-        The configuration.json of the tab read to a dict.
+        The specification of the tab read to a dict
+    action_specs : dict
+        Specifications of the actions stored in a dict
     parent : instance of main window
         The main window, is passed to the handlers in the ui.py.
 
@@ -93,6 +91,10 @@ def construct_tab(source, package, tab_spec, parent):
             QtWidgets.QDialog.__init__(self)
             self.parent = parent
             self.tab_spec = tab_spec
+            self.action_specs = action_specs
+
+            from meggie.utilities.debug import debug_trace;
+            debug_trace()
 
             # first create basic layout
             self.gridLayoutContainer = QtWidgets.QGridLayout(self)
@@ -463,3 +465,102 @@ def construct_tab(source, package, tab_spec, parent):
     tab = DynamicTab(parent)
 
     return tab
+
+
+def construct_tabs(selected_pipeline, window):
+    """
+    """
+    pipelines = []
+    for source in find_all_sources():
+        config_path = pkg_resources.resource_filename(
+            source, 'configuration.json')
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+        if 'pipelines' in config:
+            pipelines.extend(config['pipelines'])
+
+    found = False
+    combined_spec = {}
+    for pipeline in pipelines:
+        if pipeline['id'] == selected_pipeline:
+            combined_spec = pipeline
+            found = True
+    if not found:
+        raise Exception('Could not find pipeline with the selected name')
+
+    # merges specification from others to first
+    for pipeline in pipelines:
+
+        # if this is the first, skip
+        if pipeline is combined_spec:
+            continue
+
+        # if this has different name, skip
+        if selected_pipeline != pipeline['id']:
+            continue
+
+        for tab_spec in pipeline['tabs']:
+
+            # if completely new tab, just add it to list
+            if tab_spec['id'] not in [tab['id'] for tab in combined_spec['tabs']]:
+                combined_spec['tabs'].append(tab_spec)
+            # otherwise..
+            else:
+                # find idx of the tab in the first specification
+                idx = [tab['id'] for tab in combined_spec['tabs']].index(tab_spec['id'])
+
+                # and add missing inputs
+                for input_spec in tab_spec['inputs']:
+                    if input_spec not in combined_spec['tabs'][idx]['inputs']:
+                        combined_spec['tabs'][idx]['inputs'].append(input_spec)
+
+                # add missing outputs
+                for input_spec in tab_spec['outputs']:
+                    if input_spec not in combined_spec['tabs'][idx]['outputs']:
+                        combined_spec['tabs'][idx]['outputs'].append(input_spec)
+
+                # add missing input actions
+                for input_spec in tab_spec['input_actions']:
+                    if input_spec not in combined_spec['tabs'][idx]['input_actions']:
+                        combined_spec['tabs'][idx]['input_actions'].append(input_spec)
+
+                # add missing output actions
+                for input_spec in tab_spec['output_actions']:
+                    if input_spec not in combined_spec['tabs'][idx]['output_actions']:
+                        combined_spec['tabs'][idx]['output_actions'].append(input_spec)
+
+                # add missing info elements
+                for input_spec in tab_spec['info']:
+                    if input_spec not in combined_spec['tabs'][idx]['info']:
+                        combined_spec['tabs'][idx]['info'].append(input_spec)
+
+
+    # Read action specs from file system
+    action_specs = find_all_action_specs()
+
+    # Do a thorough validation of the pipeline
+    # that is check if necessary actions are found and 
+    # if the input elements needed are present
+    for tab_spec in combined_spec['tabs']:
+        for elem in tab_spec['input_actions']:
+            if elem not in action_specs.keys():
+                raise Exception("Cannot read action " + elem + ".")
+
+            for input_elem in action_specs[elem][2]['inputs']:
+                if input_elem not in tab_spec['inputs']:
+                    raise Exception('Inconsistent tab and action. ' + str(input_elem) + 
+                                    ' not present in the tab but needed by the action.')
+
+        for elem in tab_spec['output_actions']:
+            if elem not in action_specs.keys():
+                raise Exception("Cannot read action " + elem + ".")
+
+        for elem in tab_spec['info']:
+            if elem not in action_specs.keys():
+                raise Exception("Cannot read info item " + elem + ".")
+
+    # If everything is fine, construct each of the tabs
+    tabs = []
+    for tab_spec in combined_spec['tabs']:
+        tabs.append(construct_tab(tab_spec, action_specs, window))
+

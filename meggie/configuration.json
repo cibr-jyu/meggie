@@ -1,3 +1,25 @@
 {
-    "tab_presets": [{"id": "sensor_level_analysis", "text": "Sensor level analysis", "tabs": ["preprocessing", "spectrums", "epoching", "evoked", "induced"]}]
+    "pipelines": [
+        {
+            "id": "classic",
+            "name": "Meggie classic",
+            "tabs": [
+                {"id": "preprocessing",
+                 "name": "Preprocessing",
+                 "inputs": [],
+                 "outputs": [],
+                 "input_actions": [],
+                 "output_actions": ["plot_raw", "ica"],
+                 "info": ["measurement_info"]},
+                 {"id": "spectrums",
+                  "name": "Spectrums",
+                  "inputs": [],
+                  "outputs": ["spectrum"],
+                  "input_actions": ["create_spectrum"],
+                  "output_actions": [],
+                  "info": []}
+            ]
+        }
+
+    ]
 }
