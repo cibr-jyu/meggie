@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>customTabsDialog</class>
- <widget class="QDialog" name="customTabsDialog">
+ <class>activePluginsDialog</class>
+ <widget class="QDialog" name="activePluginsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>250</width>
-    <height>280</height>
+    <width>414</width>
+    <height>176</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Meggie - Custom tabs</string>
+   <string>Meggie - Active plugins</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QListWidget" name="listWidgetTabs">
+    <widget class="QListWidget" name="listWidgetPlugins">
      <property name="dragDropMode">
       <enum>QAbstractItemView::InternalMove</enum>
      </property>
@@ -61,7 +61,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>listWidgetTabs</tabstop>
+  <tabstop>listWidgetPlugins</tabstop>
   <tabstop>pushButtonCancel</tabstop>
   <tabstop>pushButtonAccept</tabstop>
  </tabstops>
@@ -70,7 +70,7 @@
   <connection>
    <sender>pushButtonAccept</sender>
    <signal>clicked()</signal>
-   <receiver>customTabsDialog</receiver>
+   <receiver>activePluginsDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -86,7 +86,7 @@
   <connection>
    <sender>pushButtonCancel</sender>
    <signal>clicked()</signal>
-   <receiver>customTabsDialog</receiver>
+   <receiver>activePluginsDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

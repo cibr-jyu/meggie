@@ -5,7 +5,7 @@ import logging
 import numpy as np
 import matplotlib.pyplot as plt
 
-from meggie.tabs.preprocessing.dialogs.icaDialogMain import ICADialog
+from meggie.actions.ica.dialogs.icaDialogMain import ICADialog
 
 
 def handler(experiment, data, window, finished):

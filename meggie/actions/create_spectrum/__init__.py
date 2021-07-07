@@ -3,7 +3,7 @@
 
 from meggie.utilities.names import next_available_name
 from meggie.utilities.dialogs.powerSpectrumDialogMain import PowerSpectrumDialog
-from meggie.tabs.spectrum.controller.spectrum import create_power_spectrum
+from meggie.actions.create_spectrum.controller.spectrum import create_power_spectrum
 
 
 def handler(experiment, data, window, finished):

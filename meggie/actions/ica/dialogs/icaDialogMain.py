@@ -5,16 +5,15 @@ import logging
 
 from PyQt5 import QtWidgets
 
-from meggie.tabs.preprocessing.dialogs.icaDialogUi import Ui_Dialog
+from meggie.actions.ica.dialogs.icaDialogUi import Ui_Dialog
+
+from meggie.actions.ica.controller.ica import plot_topographies
+from meggie.actions.ica.controller.ica import plot_sources
+from meggie.actions.ica.controller.ica import plot_properties
+from meggie.actions.ica.controller.ica import plot_changes
+from meggie.actions.ica.controller.ica import compute_ica
 
 from meggie.utilities.decorators import threaded
-
-from meggie.tabs.preprocessing.controller.ica import plot_topographies
-from meggie.tabs.preprocessing.controller.ica import plot_sources
-from meggie.tabs.preprocessing.controller.ica import plot_properties
-from meggie.tabs.preprocessing.controller.ica import plot_changes
-from meggie.tabs.preprocessing.controller.ica import compute_ica
-
 from meggie.utilities.messaging import exc_messagebox
 
 
@@ -22,7 +21,7 @@ class ICADialog(QtWidgets.QDialog):
     """ Contains logic for ICA dialog.
     """
 
-    def __init__(self, parent, experiment, on_apply):
+    def __init__(self, parent, experiment, on_apply=None):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
@@ -213,9 +212,8 @@ class ICADialog(QtWidgets.QDialog):
         self.experiment.active_subject.ica_applied = True
         self.experiment.save_experiment_settings()
 
-        logging.getLogger('ui_logger').info('ICA applied successfully.')
-
-        self.on_apply()
+        if self.on_apply:
+            self.on_apply()
 
         self._reset()
         self.close()

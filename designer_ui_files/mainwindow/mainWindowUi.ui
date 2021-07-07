@@ -113,10 +113,10 @@
                <string>Experiment</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_4">
-               <item row="0" column="0">
-                <widget class="QLabel" name="labelExperimentName">
+               <item row="1" column="1" colspan="2">
+                <widget class="QLabel" name="labelExperimentAuthorValue">
                  <property name="text">
-                  <string>Name:</string>
+                  <string/>
                  </property>
                 </widget>
                </item>
@@ -127,13 +127,6 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0" colspan="3">
-                <widget class="QPushButton" name="pushButtonChannelGroups">
-                 <property name="text">
-                  <string>Channel groups...</string>
-                 </property>
-                </widget>
-               </item>
                <item row="0" column="1" colspan="2">
                 <widget class="QLabel" name="labelExperimentNameValue">
                  <property name="text">
@@ -141,10 +134,24 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1" colspan="2">
-                <widget class="QLabel" name="labelExperimentAuthorValue">
+               <item row="0" column="0">
+                <widget class="QLabel" name="labelExperimentName">
                  <property name="text">
-                  <string/>
+                  <string>Name:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" colspan="3">
+                <widget class="QPushButton" name="pushButtonChannelGroups">
+                 <property name="text">
+                  <string>Channel groups...</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" colspan="3">
+                <widget class="QPushButton" name="pushButtonPipelines">
+                 <property name="text">
+                  <string>Select pipeline...</string>
                  </property>
                 </widget>
                </item>

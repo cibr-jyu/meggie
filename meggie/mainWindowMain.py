@@ -28,6 +28,7 @@ from meggie.mainwindow.dialogs.logDialogMain import LogDialog
 from meggie.mainwindow.dialogs.aboutDialogMain import AboutDialog
 from meggie.mainwindow.dialogs.preferencesDialogMain import PreferencesDialog
 from meggie.mainwindow.dialogs.channelGroupsDialogMain import ChannelGroupsDialog
+from meggie.mainwindow.dialogs.pipelineDialogMain import PipelineDialog
 from meggie.mainwindow.dialogs.addSubjectDialogMain import AddSubjectDialog
 from meggie.mainwindow.dialogs.createExperimentDialogMain import CreateExperimentDialog
 
@@ -201,6 +202,16 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog = ChannelGroupsDialog(self)
         dialog.show()
 
+    def on_pushButtonPipelines_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        if not self.experiment:
+            return
+
+        dialog = PipelineDialog(self, self.prefs)
+        dialog.show()
+
     def on_pushButtonActivateSubject_clicked(self, checked=None):
         if checked is None:
             return
@@ -243,48 +254,9 @@ class MainWindow(QtWidgets.QMainWindow):
         """Reconstructs the tabs.
         """
 
-        # pipelines = []
-        # for source in find_all_sources():
-        #     config_path = pkg_resources.resource_filename(
-        #         source, 'configuration.json')
-        #     with open(config_path, 'r') as f:
-        #         config = json.load(f)
-        #     if 'pipelines' in config:
-        #         tab_presets.extend(config['pipelines'])
-
-        # enabled_tabs = self.prefs.enabled_tabs
-        # user_preset = self.prefs.tab_preset
-
-        # found = False
-        # try:
-        #     if user_preset and user_preset == 'custom':
-        #         enabled_tabs = self.prefs.enabled_tabs
-        #         found = True
-        #     elif user_preset:
-        #         for idx, preset in enumerate(tab_presets):
-        #             if preset['id'] == user_preset:
-        #                 enabled_tabs = tab_presets[idx]['tabs']
-        #                 found = True
-        #                 break
-        # except Exception as exc:
-        #     pass
-
-        # if not found:
-        #     enabled_tabs = tab_presets[0]['tabs']
-
-        # tab_specs = find_all_tab_specs()
-
-        # for tab_id in enabled_tabs:
-        #     try:
-        #         source, package, tab_spec = tab_specs[tab_id]
-        #     except Exception:
-        #         continue
-        #     tab = construct_tab(source, package, tab_spec, self)
-        #     self.tabs.append(tab)
-
-        selected_pipeline = 'classic'
+        selected_pipeline = self.experiment.selected_pipeline
         try:
-            self.tabs = construct_tabs(selected_pipeline, self)
+            self.tabs = construct_tabs(selected_pipeline, self, self.prefs)
         except Exception as exc:
             self.tabs = []
             exc_messagebox(self, exc)

@@ -43,6 +43,7 @@ class Experiment:
             'eeg': {},
             'meg': {},
         }
+        self._selected_pipeline = 'classic'
 
     @property
     def path(self):
@@ -106,6 +107,17 @@ class Experiment:
     def channel_groups(self, channel_groups):
         """ Sets the channel groups."""
         self._channel_groups = channel_groups
+
+    @property
+    def selected_pipeline(self):
+        """ Returns selected pipeline
+        """
+        return self._selected_pipeline
+
+    @selected_pipeline.setter
+    def selected_pipeline(self, selected_pipeline):
+        """ Sets selected pipeline """
+        self._selected_pipeline = selected_pipeline
 
     @property
     def active_subject(self):
@@ -259,7 +271,8 @@ class Experiment:
             'subjects': subjects,
             'name': self._name,
             'author': self._author,
-            'channel_groups': self._channel_groups
+            'channel_groups': self._channel_groups,
+            'selected_pipeline': self._selected_pipeline
         }
 
         try:
@@ -382,6 +395,9 @@ def open_existing_experiment(prefs, path=None):
             'eeg': {},
             'meg': {},
         }
+
+    if 'selected_pipeline' in data.keys():
+        experiment.selected_pipeline = data['selected_pipeline']
 
     if len(data['subjects']) == 0:
         return experiment

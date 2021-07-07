@@ -2,6 +2,9 @@
 """
 import logging
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 from meggie.utilities.events import find_stim_channel
 from meggie.utilities.events import find_events
 
@@ -34,7 +37,7 @@ def handler(experiment, data, window, finished):
             subject.save()
             window.initialize_ui()
             
-        finished(subject_name=subject.name)
+        finished(subject.name)
 
     # find events
     stim_ch = find_stim_channel(raw)
