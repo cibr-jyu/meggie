@@ -1,4 +1,5 @@
 {
     "id": "measurement_info",
-    "name": "Measurement info"
+    "name": "Measurement info",
+    "entry": "handler"
 }

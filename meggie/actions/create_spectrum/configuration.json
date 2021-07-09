@@ -1,6 +1,7 @@
 {
     "id": "create_spectrum",
     "name": "Create spectrum",
+    "entry": "CreateSpectrum",
     "inputs": [],
     "outputs": ["spectrum"]
 }

@@ -2,11 +2,10 @@
 """
 from meggie.utilities.measurement_info import MeasurementInfo
 from meggie.utilities.channels import is_montage_set
+from meggie.mainwindow.dynamic import Action
 
 
-def handler(experiment, data, window, finished):
-    """ Handles measurement info
-    """
+def handler(experiment, data, window):
 
     message = ""
     try:

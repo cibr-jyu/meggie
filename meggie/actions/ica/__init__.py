@@ -7,6 +7,13 @@ import matplotlib.pyplot as plt
 
 from meggie.actions.ica.dialogs.icaDialogMain import ICADialog
 
+from meggie.mainwindow.dynamic import Action
+
+
+class ICA(Action):
+    """
+    """
+
 
 def handler(experiment, data, window, finished):
     """ Opens up the ica dialog.

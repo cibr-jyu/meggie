@@ -300,7 +300,8 @@ def construct_tab(tab_spec, action_specs, parent):
                 source, package, action_spec = self.action_specs[info_name]
                 module = importlib.import_module(
                     '.'.join([source, 'actions', package]))
-                handler = getattr(module, 'handler')
+                entry = action_spec['entry']
+                handler = getattr(module, entry)
 
                 def handler_wrapper():
                     experiment = self.parent.experiment
@@ -312,10 +313,8 @@ def construct_tab(tab_spec, action_specs, parent):
 
                     data = self._get_data()
 
-                    finished = lambda subj_name: self.finished(subj_name, info_name)
-
                     try:
-                        info_content = handler(experiment, data, parent, finished)
+                        info_content = handler(experiment, data, parent)
                     except Exception as exc:
                         exc_messagebox(self, exc)
 
@@ -345,7 +344,8 @@ def construct_tab(tab_spec, action_specs, parent):
                 source, package, action_spec = self.action_specs[name]
                 module = importlib.import_module(
                     '.'.join([source, 'actions', package]))
-                handler = getattr(module, 'handler')
+                entry = action_spec['entry']
+                handler = getattr(module, entry)
 
                 def handler_wrapper(checked):
                     experiment = self.parent.experiment
@@ -358,10 +358,8 @@ def construct_tab(tab_spec, action_specs, parent):
 
                     data = self._get_data()
 
-                    finished = lambda subj_name: self.finished(subj_name, name)
-
                     try:
-                        handler(experiment, data, parent, finished)
+                        handler(experiment, data, parent)
                     except Exception as exc:
                         exc_messagebox(self, exc)
 
@@ -464,22 +462,15 @@ def construct_tab(tab_spec, action_specs, parent):
                 source, package, action_spec = self.action_specs[info_name]
                 module = importlib.import_module(
                     '.'.join([source, 'actions', package]))
-                handler = getattr(module, 'handler')
-
-                finished = lambda subj_name: self.finished(subj_name, info_name)
+                entry = action_spec['entry']
+                handler = getattr(module, entry)
 
                 try:
-                    info_content = handler(experiment, None, self.parent, finished)
+                    info_content = handler(experiment, None, self.parent)
                 except Exception as exc:
                     exc_messagebox(self, exc)
 
                 ui_element.setPlainText(info_content)
-
-        def finished(self, subject_name, action_name):
-            """ Called when action finishes
-            """
-            message = 'Action ' + action_name + ' finished for ' + subject_name + '.'
-            logging.getLogger('ui_logger').info(message)
 
         @property
         def name(self):
@@ -628,4 +619,47 @@ def construct_tabs(selected_pipeline, window, prefs):
         tabs.append(construct_tab(tab_spec, action_specs, window))
 
     return tabs
+
+
+def logging_function(action_uid, type_, subject_uid="", content=""):
+    """
+    """
+    content_message = ""
+    message = "[action_uid:{0}][type:{1}][subject_uid:{2}][content:{3}]".format(
+        action_uid, type_, subject_uid, content_message)
+    print(message)
+
+
+def logged(inner_function):
+    def outer_function(self, subject, params, *args, **kwargs):
+
+        content = ""
+        subject_uid = ""
+
+        logging_function(self.uid, "SUBJECT_START", subject_uid=subject_uid,
+                         content=content)
+
+        res = inner_function(self, subject, params, *args, **kwargs)
+
+        logging_function(self.uid, "SUBJECT_END", subject_uid=subject_uid)
+
+        return res
+    return outer_function
+
+
+class Action:
+    """
+    """
+    def __init__(self, experiment, data, window):
+        """
+        """
+        self.experiment = experiment
+        self.data = data
+        self.window = window
+
+        # generate short temporary id
+        import uuid
+        self.uid = uuid.uuid4().hex[0:8]
+
+        logging_function(self.uid, "ACTION_START")
 

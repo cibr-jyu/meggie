@@ -2,23 +2,41 @@
 """
 
 from meggie.utilities.names import next_available_name
+
+from meggie.mainwindow.dynamic import Action
+from meggie.mainwindow.dynamic import logged
+
 from meggie.utilities.dialogs.powerSpectrumDialogMain import PowerSpectrumDialog
 from meggie.actions.create_spectrum.controller.spectrum import create_power_spectrum
 
 
-def handler(experiment, data, window, finished):
-    """ Opens spectrum creation dialog.
+class CreateSpectrum(Action):
     """
-    default_name = next_available_name(
-        experiment.active_subject.spectrum.keys(), 'Spectrum')
-
-    def handle_create(subject, spectrum_name, params, intervals):
-        """ Handles spectrum creation, initiated by the dialog
+    """
+    def __init__(self, experiment, data, window):
         """
-        create_power_spectrum(subject, spectrum_name, params, intervals,
-                              do_meanwhile=window.update_ui)
-        finished(subject.name)
+        """
+        Action.__init__(self, experiment, data, window)
 
-    dialog = PowerSpectrumDialog(experiment, window, default_name, handle_create)
-    dialog.show()
+        default_name = next_available_name(
+            experiment.active_subject.spectrum.keys(), 'Spectrum')
+
+        dialog = PowerSpectrumDialog(experiment, window, default_name, self.handler)
+        dialog.show()
+
+
+    @logged
+    def handler(self, subject, params):
+        """
+        """
+        spectrum_name = params['name']
+        intervals = params['intervals']
+        fmin = params['fmin']
+        fmax = params['fmax']
+        nfft = params['nfft']
+        overlap = params['overlap']
+        
+        create_power_spectrum(subject, spectrum_name, intervals,
+                              fmin, fmax, nfft, overlap,
+                              do_meanwhile=self.window.update_ui)
 

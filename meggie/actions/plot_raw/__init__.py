@@ -8,6 +8,13 @@ import numpy as np
 from meggie.utilities.events import find_stim_channel
 from meggie.utilities.events import find_events
 
+from meggie.mainwindow.dynamic import Action
+
+
+class PlotRaw(Action):
+    """
+    """
+
 
 def handler(experiment, data, window, finished):
     """ Opens a raw plot.

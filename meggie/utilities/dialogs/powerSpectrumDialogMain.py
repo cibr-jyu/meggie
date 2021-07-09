@@ -169,9 +169,11 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['fmax'] = fmax
         params['nfft'] = self.ui.spinBoxNfft.value()
         params['overlap'] = self.ui.spinBoxOverlap.value()
+        params['intervals'] = intervals
+        params['name'] = spectrum_name
 
         try:
-            self.handler(subject, spectrum_name, params, intervals)
+            self.handler(subject, params)
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -204,12 +206,14 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['fmax'] = fmax
         params['nfft'] = self.ui.spinBoxNfft.value()
         params['overlap'] = self.ui.spinBoxOverlap.value()
+        params['intervals'] = intervals
+        params['name'] = spectrum_name
 
         selected_subject_names = self.batching_widget.selected_subjects
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    self.handler(subject, spectrum_name, params, intervals)
+                    self.handler(subject, params)
                     subject.release_memory()
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append((subject,

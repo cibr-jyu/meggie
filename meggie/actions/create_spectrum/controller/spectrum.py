@@ -15,7 +15,8 @@ from meggie.utilities.events import get_raw_blocks_from_intervals
 
 
 @threaded
-def create_power_spectrum(subject, spectrum_name, params, intervals):
+def create_power_spectrum(subject, spectrum_name, intervals, 
+                          fmin, fmax, nfft, overlap):
     """ Creates a power spectrum item.
     """
     # get raw objects organized with average groups as keys
@@ -33,11 +34,6 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
             zero_idxs.append(idx)
     picks = [pick for pick in picks if pick not in zero_idxs]
 
-
-    fmin = params['fmin']
-    fmax = params['fmax']
-    nfft = params['nfft']
-    overlap = params['overlap']
 
     # compute psd's
     psd_groups = OrderedDict()
@@ -71,7 +67,11 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     info = mne.pick_info(raw.info, sel=picks)
     psd_data = dict(zip(psd_groups.keys(), psds))
 
-    params = deepcopy(params)
+    params = {}
+    params['fmin'] = fmin
+    params['fmax'] = fmax
+    params['nfft'] = nfft
+    params['overlap'] = overlap
     params['conditions'] = [elem for elem in psd_groups.keys()]
     params['intervals'] = ival_times
 
