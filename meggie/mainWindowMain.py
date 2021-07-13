@@ -416,7 +416,23 @@ class MainWindow(QtWidgets.QMainWindow):
         stream_handler.setLevel('ERROR')
         mne_logger.addHandler(stream_handler)
 
-        # TODO: trait logger ..
+
+        # setup action logger
+        action_logger = logging.getLogger('action_logger')
+        action_logger.handlers = []
+
+        # setup file handler
+        if self.experiment:
+            logfile = os.path.join(
+                self.experiment.path,
+                'actions.log')
+            file_handler = logging.FileHandler(logfile)
+            file_handler.setLevel('INFO')
+
+            from pythonjsonlogger import jsonlogger
+            formatter = jsonlogger.JsonFormatter(timestamp=True)
+            file_handler.setFormatter(formatter)
+            action_logger.addHandler(file_handler)
 
 
 class EmittingStream(QtCore.QObject):

@@ -1,4 +1,4 @@
-""" Contains ICA implementation.
+""" Contains ICA action handling.
 """
 import logging 
 
@@ -8,22 +8,19 @@ import matplotlib.pyplot as plt
 from meggie.actions.ica.dialogs.icaDialogMain import ICADialog
 
 from meggie.mainwindow.dynamic import Action
+from meggie.mainwindow.dynamic import subject_action
 
 
 class ICA(Action):
-    """
-    """
 
+    def __init__(self, experiment, data, window, action_spec):
+        Action.__init__(self, experiment, data, window, action_spec)
 
-def handler(experiment, data, window, finished):
-    """ Opens up the ica dialog.
-    """
-    subject = experiment.active_subject
+        ica_dialog = ICADialog(window, experiment, on_apply=self.handler)
+        ica_dialog.show()
 
-    def on_apply():
-        finished(subject.name)
-        window.initialize_ui()
-
-    ica_dialog = ICADialog(window, experiment, on_apply=on_apply)
-    ica_dialog.show()
+    @subject_action
+    def handler(self, subject, params):
+        """
+        """
 

@@ -1,22 +1,18 @@
-""" Contains the python implementation of the create spectrum action
+""" Contains create spectrum action handling.
 """
 
 from meggie.utilities.names import next_available_name
 
 from meggie.mainwindow.dynamic import Action
-from meggie.mainwindow.dynamic import logged
+from meggie.mainwindow.dynamic import subject_action
 
 from meggie.utilities.dialogs.powerSpectrumDialogMain import PowerSpectrumDialog
 from meggie.actions.create_spectrum.controller.spectrum import create_power_spectrum
 
 
 class CreateSpectrum(Action):
-    """
-    """
-    def __init__(self, experiment, data, window):
-        """
-        """
-        Action.__init__(self, experiment, data, window)
+    def __init__(self, experiment, data, window, action_spec):
+        Action.__init__(self, experiment, data, window, action_spec)
 
         default_name = next_available_name(
             experiment.active_subject.spectrum.keys(), 'Spectrum')
@@ -25,7 +21,7 @@ class CreateSpectrum(Action):
         dialog.show()
 
 
-    @logged
+    @subject_action
     def handler(self, subject, params):
         """
         """

@@ -9,51 +9,57 @@ from meggie.utilities.events import find_stim_channel
 from meggie.utilities.events import find_events
 
 from meggie.mainwindow.dynamic import Action
+from meggie.mainwindow.dynamic import subject_action
 
 
 class PlotRaw(Action):
-    """
-    """
 
+    def __init__(self, experiment, data, window, action_spec):
+        Action.__init__(self, experiment, data, window, action_spec)
 
-def handler(experiment, data, window, finished):
-    """ Opens a raw plot.
-    """
-    subject = experiment.active_subject
-    raw = subject.get_raw()
-    if not raw:
-        return
+        subject = experiment.active_subject
+        raw = subject.get_raw()
+        if not raw:
+            return
 
-    old_bads = raw.info['bads'].copy()
-    old_annotations = raw.annotations.copy()
+        self.subject = subject
 
-    def handle_close(event):
-        bads_changed = (sorted(raw.info['bads']) != sorted(old_bads))
+        old_bads = raw.info['bads'].copy()
+        old_annotations = raw.annotations.copy()
 
-        annotations_changed = False
-        if len(raw.annotations) != len(old_annotations):
-            annotations_changed = True
-        elif not np.allclose(raw.annotations.onset, old_annotations.onset):
-            annotations_changed = True
+        # find events
+        stim_ch = find_stim_channel(raw)
+        if not stim_ch:
+            events = None
+        else:
+            events = find_events(raw, stim_ch=stim_ch)
 
-        if bads_changed:
-            logging.getLogger('ui_logger').info('Bads changed!')
-        if annotations_changed:
-            logging.getLogger('ui_logger').info('Annotations changed!')
-        if bads_changed or annotations_changed:
-            subject.save()
-            window.initialize_ui()
-            
-        finished(subject.name)
+        def handle_close(event):
+            bads_changed = (sorted(raw.info['bads']) != sorted(old_bads))
 
-    # find events
-    stim_ch = find_stim_channel(raw)
-    if not stim_ch:
-        events = None
-    else:
-        events = find_events(raw, stim_ch=stim_ch)
+            annotations_changed = False
+            if len(raw.annotations) != len(old_annotations):
+                annotations_changed = True
+            elif not np.allclose(raw.annotations.onset, old_annotations.onset):
+                annotations_changed = True
 
-    fig = raw.plot(events=events, show=False)
-    fig.canvas.mpl_connect('close_event', handle_close)
-    plt.show()
+            params = {}
+            if bads_changed:
+                params['bads'] = raw.info['bads']
+                logging.getLogger('ui_logger').info('Bads changed!')
+            if annotations_changed:
+                params['annotations'] = raw.annotations
+                logging.getLogger('ui_logger').info('Annotations changed!')
+
+            if bads_changed or annotations_changed:
+                self.handler(self.subject, params)
+
+        fig = raw.plot(events=events, show=False)
+        fig.canvas.mpl_connect('close_event', handle_close)
+        plt.show()
+
+    @subject_action
+    def handler(self, subject, params):
+        subject.save()
+        self.window.initialize_ui()
 

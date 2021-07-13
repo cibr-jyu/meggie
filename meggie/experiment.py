@@ -233,6 +233,7 @@ class Experiment:
             subject_dict = {
                 'subject_name': subject.name,
                 'raw_fname': subject.raw_fname,
+                'uid': subject.uid,
                 'ica_applied': subject.ica_applied,
                 'rereferenced': subject.rereferenced,
             }
@@ -413,11 +414,14 @@ def open_existing_experiment(prefs, path=None):
         if not raw_fname:
             raise Exception('raw_fname not set in the exp file')
 
+        uid = subject_data.get('uid')
+
         subject = Subject(experiment,
                           subject_name,
                           raw_fname,
-                          subject_data.get('ica_applied', False),
-                          subject_data.get('rereferenced', False)
+                          uid=uid,
+                          ica_applied=subject_data.get('ica_applied', False),
+                          rereferenced=subject_data.get('rereferenced', False)
                           )
 
         datatypes = []

@@ -3,7 +3,6 @@ import shutil
 import tempfile
 import mne
 
-from meggie.subject import Subject
 from meggie.mainwindow.preferences import PreferencesHandler
 
 from meggie.experiment import initialize_new_experiment

@@ -10,6 +10,7 @@ import logging
 
 from PyQt5 import QtWidgets
 
+from meggie.utilities.uid import generate_uid
 from meggie.utilities.messaging import exc_messagebox
 
 
@@ -301,6 +302,7 @@ def construct_tab(tab_spec, action_specs, parent):
                 module = importlib.import_module(
                     '.'.join([source, 'actions', package]))
                 entry = action_spec['entry']
+
                 handler = getattr(module, entry)
 
                 def handler_wrapper():
@@ -314,7 +316,7 @@ def construct_tab(tab_spec, action_specs, parent):
                     data = self._get_data()
 
                     try:
-                        info_content = handler(experiment, data, parent)
+                        info_content = handler(experiment, data, parent, action_spec)
                     except Exception as exc:
                         exc_messagebox(self, exc)
 
@@ -345,6 +347,7 @@ def construct_tab(tab_spec, action_specs, parent):
                 module = importlib.import_module(
                     '.'.join([source, 'actions', package]))
                 entry = action_spec['entry']
+
                 handler = getattr(module, entry)
 
                 def handler_wrapper(checked):
@@ -359,7 +362,7 @@ def construct_tab(tab_spec, action_specs, parent):
                     data = self._get_data()
 
                     try:
-                        handler(experiment, data, parent)
+                        handler(experiment, data, parent, action_spec)
                     except Exception as exc:
                         exc_messagebox(self, exc)
 
@@ -466,7 +469,7 @@ def construct_tab(tab_spec, action_specs, parent):
                 handler = getattr(module, entry)
 
                 try:
-                    info_content = handler(experiment, None, self.parent)
+                    info_content = handler(experiment, None, self.parent, action_spec)
                 except Exception as exc:
                     exc_messagebox(self, exc)
 
@@ -621,27 +624,25 @@ def construct_tabs(selected_pipeline, window, prefs):
     return tabs
 
 
-def logging_function(action_uid, type_, subject_uid="", content=""):
-    """
-    """
-    content_message = ""
-    message = "[action_uid:{0}][type:{1}][subject_uid:{2}][content:{3}]".format(
-        action_uid, type_, subject_uid, content_message)
-    print(message)
-
-
-def logged(inner_function):
+def subject_action(inner_function):
     def outer_function(self, subject, params, *args, **kwargs):
 
-        content = ""
-        subject_uid = ""
-
-        logging_function(self.uid, "SUBJECT_START", subject_uid=subject_uid,
-                         content=content)
+        message_dict = {
+            'uid': self.uid,
+            'type': 'SUBJECT_START',
+            'subject_uid': subject.uid,
+            'params': params
+        }
+        logging.getLogger('action_logger').info(message_dict)
 
         res = inner_function(self, subject, params, *args, **kwargs)
 
-        logging_function(self.uid, "SUBJECT_END", subject_uid=subject_uid)
+        message_dict = {
+            'uid': self.uid,
+            'type': 'SUBJECT_END',
+            'subject_uid': subject.uid
+        }
+        logging.getLogger('action_logger').info(message_dict)
 
         return res
     return outer_function
@@ -650,16 +651,22 @@ def logged(inner_function):
 class Action:
     """
     """
-    def __init__(self, experiment, data, window):
+    def __init__(self, experiment, data, window, action_spec):
         """
         """
         self.experiment = experiment
         self.data = data
         self.window = window
+        self.action_spec = action_spec
 
-        # generate short temporary id
-        import uuid
-        self.uid = uuid.uuid4().hex[0:8]
+        # generate short temporary uid
+        self.uid = generate_uid()
 
-        logging_function(self.uid, "ACTION_START")
+        # and log action with it
+        message_dict = {
+            'uid': self.uid,
+            'type': 'ACTION_START',
+            'id': action_spec['id']
+        }
+        logging.getLogger('action_logger').info(message_dict)
 

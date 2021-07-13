@@ -8,6 +8,8 @@ import pkg_resources
 
 import meggie.utilities.filemanager as filemanager
 
+from meggie.utilities.uid import generate_uid
+
 from meggie.mainwindow.dynamic import find_all_sources
 
 
@@ -29,10 +31,14 @@ class Subject:
         Whether the data has been rereferenced (at least once).
     """
 
-    def __init__(self, experiment, name, raw_fname,
+    def __init__(self, experiment, name, raw_fname, uid=None,
                  ica_applied=False, rereferenced=False):
         self.name = name
         self.raw_fname = raw_fname
+
+        self.uid = uid
+        if not self.uid:
+            self.uid = generate_uid()
 
         self._raw = None
 

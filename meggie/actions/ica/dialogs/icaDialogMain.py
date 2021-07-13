@@ -211,9 +211,10 @@ class ICADialog(QtWidgets.QDialog):
         self.experiment.active_subject.save()
         self.experiment.active_subject.ica_applied = True
         self.experiment.save_experiment_settings()
+        self.parent.initialize_ui()
 
         if self.on_apply:
-            self.on_apply()
+            self.on_apply(self.experiment.active_subject, {})
 
         self._reset()
         self.close()
