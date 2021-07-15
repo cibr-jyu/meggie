@@ -9,13 +9,14 @@ from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.decorators import threaded
 
-from meggie.actions.resample.dialogs.resamplingDialogMain import ResamplingDialog
+from meggie.actions.filter.dialogs.filterDialogMain import FilterDialog
+from meggie.actions.filter.controller.filter import filter_data
 
 from meggie.mainwindow.dynamic import Action
 from meggie.mainwindow.dynamic import subject_action
 
 
-class Resample(Action):
+class Filter(Action):
     """
     """
 
@@ -24,13 +25,12 @@ class Resample(Action):
         """
         """
         @threaded
-        def resample_fun():
-            subject.get_raw().resample(params['rate'])
+        def filter_fun():
+            filter_data(subject, params)
 
-        resample_fun(do_meanwhile=self.window.update_ui)
-        subject.save()
+        filter_fun(do_meanwhile=self.window.update_ui)
 
     def run(self):
-        resampling_dialog = ResamplingDialog(
+        filter_dialog = FilterDialog(
             self.window, self.experiment, self.handler)
-        resampling_dialog.show()
+        filter_dialog.show()

@@ -10,7 +10,7 @@
                  "outputs": [],
                  "input_actions": [],
                  "output_actions": ["plot_raw", "plot_projections", "resample", 
-                                    "ica"],
+                                    "filter", "rereference", "montage", "ica"],
                  "info": ["measurement_info", "event_info"]},
                  {"id": "spectrums",
                   "name": "Spectrums",
