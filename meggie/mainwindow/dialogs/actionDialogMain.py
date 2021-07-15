@@ -28,9 +28,9 @@ class ActionDialog(QtWidgets.QDialog):
 
         # read the actions log
         try:
-			path = os.path.join(experiment.path, 'actions.log')
-			with open(path, 'r') as f:
-				lines = f.readlines()
+            path = os.path.join(experiment.path, 'actions.log')
+            with open(path, 'r') as f:
+                lines = f.readlines()
         except Exception as exc:
             exc_messagebox(self, exc)
             return

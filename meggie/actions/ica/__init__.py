@@ -12,11 +12,10 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class ICA(Action):
-
-    def __init__(self, experiment, data, window, action_spec):
-        Action.__init__(self, experiment, data, window, action_spec)
-
-        ica_dialog = ICADialog(window, experiment, on_apply=self.handler)
+    """
+    """
+    def run(self):
+        ica_dialog = ICADialog(self.window, self.experiment, on_apply=self.handler)
         ica_dialog.show()
 
     @subject_action

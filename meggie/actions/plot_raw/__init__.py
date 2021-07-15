@@ -13,16 +13,15 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class PlotRaw(Action):
+    """
+    """
 
-    def __init__(self, experiment, data, window, action_spec):
-        Action.__init__(self, experiment, data, window, action_spec)
+    def run(self):
 
-        subject = experiment.active_subject
+        subject = self.experiment.active_subject
         raw = subject.get_raw()
         if not raw:
             return
-
-        self.subject = subject
 
         old_bads = raw.info['bads'].copy()
         old_annotations = raw.annotations.copy()
@@ -52,7 +51,7 @@ class PlotRaw(Action):
                 logging.getLogger('ui_logger').info('Annotations changed!')
 
             if bads_changed or annotations_changed:
-                self.handler(self.subject, params)
+                self.handler(subject, params)
 
         fig = raw.plot(events=events, show=False)
         fig.canvas.mpl_connect('close_event', handle_close)

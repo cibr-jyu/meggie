@@ -1,42 +1,45 @@
 """ Contains implementation for measurement info
 """
+from meggie.mainwindow.dynamic import InfoAction
+
 from meggie.utilities.measurement_info import MeasurementInfo
 from meggie.utilities.channels import is_montage_set
 
 
-def handler(experiment, data, window, action_spec):
-    """ Just a simple function, as no logging is needed 
-    (in contrast to normal actions) """
+class Info(InfoAction):
+    """
+    """
 
-    message = ""
-    try:
-        subject = experiment.active_subject
-        raw = subject.get_raw()
-        mi = MeasurementInfo(raw)
+    def run(self):
 
-        maxfilter_applied = subject.sss_applied
-        ica_applied = subject.ica_applied
-        rereferenced = subject.rereferenced
-
+        message = ""
         try:
-            eeg_montage_set = is_montage_set(raw.info, 'eeg')
+            subject = self.experiment.active_subject
+            raw = subject.get_raw()
+            mi = MeasurementInfo(raw)
+
+            maxfilter_applied = subject.sss_applied
+            ica_applied = subject.ica_applied
+            rereferenced = subject.rereferenced
+
+            try:
+                eeg_montage_set = is_montage_set(raw.info, 'eeg')
+            except Exception as exc:
+                eeg_montage_set = False
+
+            message += "Subject name: {0}\n".format(mi.subject_name)
+            message += "Date: {0}\n".format(mi.date)
+            message += "Length: {0:.2f} s\n".format(raw.times[-1])
+            message += "Highpass: {0} Hz\n".format(mi.high_pass)
+            message += "Lowpass: {0} Hz\n".format(mi.low_pass)
+            message += "Sampling rate: {0} Hz\n".format(mi.sampling_freq)
+            message += "Bads: " + ', '.join(raw.info['bads']) + '\n'
+
+            message += "Maxfilter applied: {0}\n".format(str(maxfilter_applied))
+            message += "ICA applied: {0}\n".format(str(ica_applied))
+            message += "Rereferenced: {0}\n".format(rereferenced)
+            message += "EEG montage set: {0}\n".format(eeg_montage_set)
         except Exception as exc:
-            eeg_montage_set = False
+            return ""
 
-        message += "Subject name: {0}\n".format(mi.subject_name)
-        message += "Date: {0}\n".format(mi.date)
-        message += "Length: {0:.2f} s\n".format(raw.times[-1])
-        message += "Highpass: {0} Hz\n".format(mi.high_pass)
-        message += "Lowpass: {0} Hz\n".format(mi.low_pass)
-        message += "Sampling rate: {0} Hz\n".format(mi.sampling_freq)
-        message += "Bads: " + ', '.join(raw.info['bads']) + '\n'
-
-        message += "Maxfilter applied: {0}\n".format(str(maxfilter_applied))
-        message += "ICA applied: {0}\n".format(str(ica_applied))
-        message += "Rereferenced: {0}\n".format(rereferenced)
-        message += "EEG montage set: {0}\n".format(eeg_montage_set)
-    except Exception as exc:
-        return ""
-
-    return message
-
+        return message

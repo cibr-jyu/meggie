@@ -316,11 +316,11 @@ def construct_tab(tab_spec, action_specs, parent):
                     data = self._get_data()
 
                     try:
-                        info_content = handler(experiment, data, parent, action_spec)
+                        info_content = handler(experiment, data, 
+                                               parent, action_spec).run()
+                        info_element.setPlainText(info_content)
                     except Exception as exc:
                         exc_messagebox(self, exc)
-
-                    info_element.setPlainText(info_content)
 
                 list_element.itemSelectionChanged.connect(handler_wrapper)
 
@@ -362,7 +362,7 @@ def construct_tab(tab_spec, action_specs, parent):
                     data = self._get_data()
 
                     try:
-                        handler(experiment, data, parent, action_spec)
+                        handler(experiment, data, parent, action_spec).run()
                     except Exception as exc:
                         exc_messagebox(self, exc)
 
@@ -469,11 +469,12 @@ def construct_tab(tab_spec, action_specs, parent):
                 handler = getattr(module, entry)
 
                 try:
-                    info_content = handler(experiment, None, self.parent, action_spec)
+                    info_content = handler(experiment, None, 
+                                           self.parent, action_spec).run()
+                    ui_element.setPlainText(info_content)
                 except Exception as exc:
                     exc_messagebox(self, exc)
 
-                ui_element.setPlainText(info_content)
 
         @property
         def name(self):
@@ -651,6 +652,8 @@ def subject_action(inner_function):
 class Action:
     """
     """
+    logged = True
+
     def __init__(self, experiment, data, window, action_spec):
         """
         """
@@ -662,11 +665,26 @@ class Action:
         # generate short temporary uid
         self.uid = generate_uid()
 
-        # and log action with it
-        message_dict = {
-            'uid': self.uid,
-            'type': 'ACTION_START',
-            'id': action_spec['id']
-        }
-        logging.getLogger('action_logger').info(message_dict)
+        if self.logged:
+            # and log action with it
+            message_dict = {
+                'uid': self.uid,
+                'type': 'ACTION_START',
+                'id': action_spec['id']
+            }
+            logging.getLogger('action_logger').info(message_dict)
+
+    def run(self):
+        """ Called when action is initiated
+        """
+        messagebox("Running action " + self.action_spec['id'])
+
+
+class InfoAction(Action):
+    logged = False
+
+    def run(self):
+        """ Called when the info box is filled.
+        """
+        return "Returned content."
 

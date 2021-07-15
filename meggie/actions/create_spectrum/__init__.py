@@ -11,13 +11,13 @@ from meggie.actions.create_spectrum.controller.spectrum import create_power_spec
 
 
 class CreateSpectrum(Action):
-    def __init__(self, experiment, data, window, action_spec):
-        Action.__init__(self, experiment, data, window, action_spec)
 
+    def run(self):
         default_name = next_available_name(
-            experiment.active_subject.spectrum.keys(), 'Spectrum')
+            self.experiment.active_subject.spectrum.keys(), 'Spectrum')
 
-        dialog = PowerSpectrumDialog(experiment, window, default_name, self.handler)
+        dialog = PowerSpectrumDialog(self.experiment, self.window, 
+                                     default_name, self.handler)
         dialog.show()
 
 
