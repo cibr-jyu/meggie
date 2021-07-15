@@ -256,6 +256,7 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="actionActions"/>
     <addaction name="actionShowLog"/>
     <addaction name="actionPreferences"/>
    </widget>
@@ -303,6 +304,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>About...</string>
+   </property>
+  </action>
+  <action name="actionActions">
+   <property name="text">
+    <string>Show actions...</string>
    </property>
   </action>
  </widget>

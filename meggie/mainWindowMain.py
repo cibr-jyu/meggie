@@ -25,6 +25,7 @@ from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 
 from meggie.mainwindow.dialogs.logDialogMain import LogDialog
+from meggie.mainwindow.dialogs.actionDialogMain import ActionDialog
 from meggie.mainwindow.dialogs.aboutDialogMain import AboutDialog
 from meggie.mainwindow.dialogs.preferencesDialogMain import PreferencesDialog
 from meggie.mainwindow.dialogs.channelGroupsDialogMain import ChannelGroupsDialog
@@ -165,6 +166,17 @@ class MainWindow(QtWidgets.QMainWindow):
         questionbox(self, 'Permanently remove the selected subjects and the related files?', 
                     handler)
 
+    def on_actionActions_triggered(self, checked=None):
+        if checked is None:
+            return
+
+        if not self.experiment:
+            message = 'Please open an experiment first.'
+            messagebox(self, message)
+            return
+
+        dialog = ActionDialog(self, self.experiment)
+        dialog.show()
 
     def on_actionShowLog_triggered(self, checked=None):
         if checked is None:
