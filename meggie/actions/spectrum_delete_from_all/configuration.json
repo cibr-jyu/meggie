@@ -1,0 +1,7 @@
+{
+    "id": "spectrum_delete_from_all",
+    "name": "Delete spectrum from all",
+    "entry": "DeleteSpectrumFromAll",
+    "inputs": ["spectrum"],
+    "outputs": []
+}

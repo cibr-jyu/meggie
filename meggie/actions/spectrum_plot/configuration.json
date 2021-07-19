@@ -1,0 +1,7 @@
+{
+    "id": "spectrum_plot",
+    "name": "Plot spectrum",
+    "entry": "PlotSpectrum",
+    "inputs": ["spectrum"],
+    "outputs": []
+}

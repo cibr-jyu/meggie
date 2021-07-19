@@ -9,16 +9,16 @@
                  "inputs": [],
                  "outputs": [],
                  "input_actions": [],
-                 "output_actions": ["plot_raw", "plot_projections", "resample", "filter",
-                                    "rereference", "montage", "ica", "events_from_annotations"],
-                 "info": ["measurement_info", "event_info"]},
+                 "output_actions": ["raw_plot", "raw_plot_projections", "raw_resample", "raw_filter",
+                                    "raw_rereference", "raw_montage", "raw_ica", "raw_events_from_annotations"],
+                 "info": ["raw_measurement_info", "raw_event_info"]},
                  {"id": "spectrums",
                   "name": "Spectrums",
                   "inputs": [],
                   "outputs": ["spectrum"],
-                  "input_actions": ["create_spectrum"],
-                  "output_actions": [],
-                  "info": []}
+                  "input_actions": ["spectrum_create"],
+                  "output_actions": ["spectrum_plot", "spectrum_delete", "spectrum_delete_from_all"],
+                  "info": ["spectrum_info"]}
             ]
         }
 

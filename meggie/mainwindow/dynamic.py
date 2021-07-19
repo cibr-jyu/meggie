@@ -645,6 +645,10 @@ def subject_action(inner_function):
         }
         logging.getLogger('action_logger').info(message_dict)
 
+        message = '"{0}" finished successfully for subject {1}.'.format(
+            self.action_spec['name'], subject.name)
+        logging.getLogger('ui_logger').info(message)
+
         return res
     return outer_function
 

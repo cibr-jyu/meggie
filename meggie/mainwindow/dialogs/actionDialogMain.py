@@ -5,10 +5,13 @@ import json
 import logging
 import re
 
+from pprint import pformat
+
 from PyQt5 import QtWidgets
 
 from meggie.mainwindow.dynamic import find_all_action_specs
 from meggie.utilities.messaging import exc_messagebox
+from meggie.utilities.messaging import messagebox
 
 from meggie.mainwindow.dialogs.actionDialogUi import Ui_ActionDialog
 
@@ -106,7 +109,7 @@ class ActionDialog(QtWidgets.QDialog):
   
                 # And fill it with params that are present in the data
                 for param_name, param_value in action_data['params'].items():
-                    msg = "{0}: {1}".format(param_name, param_value)
+                    msg = "{0}: {1}".format(param_name, json.dumps(param_value))
                     param_item = QtWidgets.QTreeWidgetItem(params_item)
                     param_item.setText(0, msg)
 
@@ -118,5 +121,24 @@ class ActionDialog(QtWidgets.QDialog):
                 # and add a item
                 timestamp_item = QtWidgets.QTreeWidgetItem(action_item)
                 timestamp_item.setText(0, msg)
-                
+
+    def on_treeWidgetActions_itemDoubleClicked(self, item):
+        if item.childCount() == 0:
+            # try creating a pretty formatted details dialog
+            try:
+                match = re.compile("([a-zA-Z0-9_]*): (.*)").match(item.text(0))
+                if not match:
+                    return
+
+                key = match.group(1)
+                val = match.group(2)
+                try:
+                    obj = json.loads(val)
+                except Exception as exc:
+                    obj = val
+                message = pformat(obj)
+                messagebox(self, message)
+            except Exception as exc:
+                logging.getLogger('ui_logger').exception("")
+                return
 
