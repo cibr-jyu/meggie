@@ -8,7 +8,6 @@ from meggie.actions.raw_resample.dialogs.resamplingDialogUi import Ui_resampling
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.decorators import threaded
 
 
 class ResamplingDialog(QtWidgets.QDialog):

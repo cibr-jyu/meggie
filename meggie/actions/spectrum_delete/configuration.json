@@ -1,7 +1,5 @@
 {
     "id": "spectrum_delete",
     "name": "Delete spectrum",
-    "entry": "DeleteSpectrum",
-    "inputs": ["spectrum"],
-    "outputs": []
+    "entry": "DeleteSpectrum"
 }

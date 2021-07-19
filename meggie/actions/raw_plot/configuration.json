@@ -1,7 +1,5 @@
 {
     "id": "raw_plot",
     "name": "Plot raw",
-    "entry": "PlotRaw",
-    "inputs": [],
-    "outputs": []
+    "entry": "PlotRaw"
 }

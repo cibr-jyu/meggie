@@ -1,4 +1,4 @@
-""" Contains implementation for raw plot
+""" Contains implementation for delete spectrum from all
 """
 import logging
 

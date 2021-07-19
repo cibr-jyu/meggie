@@ -1,21 +1,21 @@
-""" Contains plot spectrum action handling.
+""" Contains save spectrum action handling.
 """
 
-from meggie.utilities.names import next_available_name
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.channels import get_channels_by_type
+from meggie.utilities.validators import assert_arrays_same
 
 from meggie.mainwindow.dynamic import Action
 from meggie.mainwindow.dynamic import subject_action
 
-from meggie.actions.spectrum_plot.controller.spectrum import plot_spectrum_topo
-from meggie.actions.spectrum_plot.controller.spectrum import plot_spectrum_averages
+from meggie.actions.spectrum_save.controller.spectrum import save_channel_averages
+from meggie.actions.spectrum_save.controller.spectrum import save_all_channels
 
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 
 
-class PlotSpectrum(Action):
+class SaveSpectrum(Action):
 
     def run(self):
         """
@@ -24,6 +24,15 @@ class PlotSpectrum(Action):
             selected_name = self.data['outputs']['spectrum'][0]
         except IndexError as exc:
             return
+
+        # validate freqs
+        freq_arrays = []
+        for subject in self.experiment.subjects.values():
+            spectrum = subject.spectrum.get(selected_name)
+            if not spectrum:
+                continue
+            freq_arrays.append(spectrum.freqs)
+        assert_arrays_same(freq_arrays, 'Freqs do not match')
 
         def option_handler(selected_option):
             params = {'name': selected_name, 
@@ -42,12 +51,11 @@ class PlotSpectrum(Action):
         """
         """
         if params['output_option'] == 'channel_averages':
-            plot_spectrum_averages(subject, params['channel_groups'], params['name'])
+            save_channel_averages(self.experiment, 
+                                  params['name'], 
+                                  params['channel_groups'],
+                                  do_meanwhile=self.window.update_ui)
         else:
-            info = subject.get_raw().info
-            chs = list(get_channels_by_type(info).keys())
-            if 'eeg' in chs:
-                plot_spectrum_topo(subject, params['name'], ch_type='eeg')
-            if 'grad' in chs or 'mag' in chs:
-                plot_spectrum_topo(subject, params['name'], ch_type='meg')
+            save_all_channels(self.experiment, params['name'],
+                              do_meanwhile=self.window.update_ui)
 

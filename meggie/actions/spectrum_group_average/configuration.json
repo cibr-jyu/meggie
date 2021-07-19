@@ -1,0 +1,5 @@
+{
+    "id": "spectrum_group_average",
+    "name": "Average over subjects",
+    "entry": "GroupAverage"
+}

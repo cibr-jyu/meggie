@@ -596,18 +596,13 @@ def construct_tabs(selected_pipeline, window, prefs):
     # Read action specs from file system
     action_specs = find_all_action_specs()
 
-    # Do a thorough validation of the pipeline
+    # Do a validation of the pipeline
     # that is check if necessary actions are found and 
     # if the input elements needed are present
     for tab_spec in combined_spec['tabs']:
         for elem in tab_spec['input_actions']:
             if elem not in action_specs.keys():
                 raise Exception("Cannot read action " + elem + ".")
-
-            for input_elem in action_specs[elem][2]['inputs']:
-                if input_elem not in tab_spec['inputs']:
-                    raise Exception('Inconsistent tab and action. ' + str(input_elem) + 
-                                    ' not present in the tab but needed by the action.')
 
         for elem in tab_spec['output_actions']:
             if elem not in action_specs.keys():

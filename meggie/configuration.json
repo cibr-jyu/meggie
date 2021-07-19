@@ -17,8 +17,30 @@
                   "inputs": [],
                   "outputs": ["spectrum"],
                   "input_actions": ["spectrum_create"],
-                  "output_actions": ["spectrum_plot", "spectrum_delete", "spectrum_delete_from_all"],
-                  "info": ["spectrum_info"]}
+                  "output_actions": ["spectrum_plot", "spectrum_group_average", "spectrum_save", 
+                                     "spectrum_delete", "spectrum_delete_from_all"],
+                  "info": ["spectrum_info"]},
+                 {"id": "epochs",
+                  "name": "Epochs",
+                  "inputs": [],
+                  "outputs": ["epochs"],
+                  "input_actions": [],
+                  "output_actions": [],
+                  "info": []},
+                 {"id": "evoked",
+                  "name": "Evoked responses",
+                  "inputs": ["epochs"],
+                  "outputs": ["evoked"],
+                  "input_actions": [],
+                  "output_actions": [],
+                  "info": []},
+                 {"id": "tfr",
+                  "name": "Induced responses",
+                  "inputs": ["epochs"],
+                  "outputs": ["tfr"],
+                  "input_actions": [],
+                  "output_actions": [],
+                  "info": []}
             ]
         }
 

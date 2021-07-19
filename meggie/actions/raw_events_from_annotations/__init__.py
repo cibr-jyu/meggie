@@ -1,4 +1,4 @@
-""" Contains implementation for raw plot
+""" Contains implementation for events from annotations
 """
 import logging
 

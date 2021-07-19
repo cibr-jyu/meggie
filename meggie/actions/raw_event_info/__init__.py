@@ -1,4 +1,4 @@
-""" Contains implementation for measurement info
+""" Contains implementation for event info
 """
 import numpy as np 
 

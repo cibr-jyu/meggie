@@ -11,7 +11,6 @@ from meggie.actions.raw_rereference.dialogs.rereferencingDialogUi import Ui_rere
 
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.decorators import threaded
 
 
 class RereferencingDialog(QtWidgets.QDialog):

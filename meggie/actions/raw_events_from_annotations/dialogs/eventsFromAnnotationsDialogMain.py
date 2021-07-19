@@ -8,7 +8,6 @@ from meggie.actions.raw_events_from_annotations.dialogs.eventsFromAnnotationsDia
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.decorators import threaded
 
 
 class EventsFromAnnotationsDialog(QtWidgets.QDialog):
