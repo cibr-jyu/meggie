@@ -228,7 +228,7 @@ def plot_evoked(experiment, data, window):
                 _plot_evoked_averages(
                     experiment, evoked)
             else:
-                info = list(evoked.content.values())[0].info
+                info = evoked.info
                 chs = list(get_channels_by_type(info).keys())
                 if 'eeg' in chs:
                     _plot_evoked_topo(

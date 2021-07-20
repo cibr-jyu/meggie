@@ -11,7 +11,6 @@ from meggie.utilities.dialogs.simpleDialogUi import Ui_SimpleDialog
 
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 
-from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
@@ -60,7 +59,8 @@ class SimpleDialog(QtWidgets.QDialog):
             return
 
         try:
-            self.handler(subject, evoked_name)
+            params = {'name': evoked_name}
+            self.handler(subject, params)
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -82,10 +82,12 @@ class SimpleDialog(QtWidgets.QDialog):
 
         selected_subject_names = self.batching_widget.selected_subjects
 
+        params = {'name': evoked_name}
+
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    self.handler(subject, evoked_name)
+                    self.handler(subject, params)
                     subject.release_memory()
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append(
@@ -96,7 +98,5 @@ class SimpleDialog(QtWidgets.QDialog):
 
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
-
-        logging.getLogger('ui_logger').info('Finished creating evokeds.')
 
         self.close()

@@ -1,0 +1,5 @@
+{
+    "id": "evoked_delete_from_all",
+    "name": "Delete evoked from all",
+    "entry": "DeleteEvokedFromAll"
+}
