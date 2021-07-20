@@ -1,4 +1,4 @@
-""" Contains implementation for measurement info
+""" Contains implementation for spectrum info
 """
 from meggie.mainwindow.dynamic import InfoAction
 

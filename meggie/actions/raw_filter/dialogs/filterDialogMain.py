@@ -73,7 +73,7 @@ class FilterDialog(QtWidgets.QDialog):
         try:
             self.handler(subject, params)
         except Exception as exc:
-            exc_messagebox(self, exc)
+            exc_messagebox(self.parent, exc)
             return
 
         self.parent.initialize_ui()

@@ -1,4 +1,4 @@
-""" Contains implementation for delete spectrum
+""" Contains implementation for delete epochs
 """
 import logging
 
@@ -10,7 +10,7 @@ from meggie.mainwindow.dynamic import Action
 from meggie.mainwindow.dynamic import subject_action
 
 
-class DeleteSpectrum(Action):
+class DeleteEpochs(Action):
     """
     """
 
@@ -19,7 +19,7 @@ class DeleteSpectrum(Action):
         subject = self.experiment.active_subject
 
         try:
-            selected_name = self.data['outputs']['spectrum'][0]
+            selected_name = self.data['outputs']['epochs'][0]
         except IndexError as exc:
             return
 
@@ -34,6 +34,6 @@ class DeleteSpectrum(Action):
 
     @subject_action
     def handler(self, subject, params):
-        subject.remove(params['name'], 'spectrum')
+        subject.remove(params['name'], 'epochs')
 
 
