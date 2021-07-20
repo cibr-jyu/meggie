@@ -1,4 +1,4 @@
-""" Contains implementation for epochs info
+""" Contains implementation for evoked info
 """
 from meggie.mainwindow.dynamic import InfoAction
 
@@ -6,7 +6,7 @@ from meggie.utilities.formats import format_float
 
 
 class Info(InfoAction):
-    """ Fills up spectrum info box """
+    """ Fills up evoked info box """
 
     def run(self):
         try:
