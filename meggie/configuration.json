@@ -40,7 +40,8 @@
                   "inputs": ["epochs"],
                   "outputs": ["tfr"],
                   "input_actions": ["tfr_create"],
-                  "output_actions": ["tfr_plot", "tfr_plot_tse", "tfr_save", "tfr_save_tse", "tfr_delete", "tfr_delete_from_all"],
+                  "output_actions": ["tfr_plot", "tfr_plot_tse", "tfr_group_average", 
+                                     "tfr_save", "tfr_save_tse", "tfr_delete", "tfr_delete_from_all"],
                   "info": ["tfr_info"]}
             ]
         }

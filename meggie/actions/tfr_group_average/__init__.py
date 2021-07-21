@@ -1,4 +1,4 @@
-""" Contains evoked group average action handling.
+""" Contains tfr group average action handling.
 """
 
 from meggie.utilities.messaging import exc_messagebox
@@ -8,7 +8,7 @@ from meggie.utilities.names import next_available_name
 from meggie.mainwindow.dynamic import Action
 from meggie.mainwindow.dynamic import subject_action
 
-from meggie.actions.evoked_group_average.controller.evoked import group_average_evoked
+from meggie.actions.tfr_group_average.controller.tfr import group_average_tfr
 
 from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDialog
 
@@ -19,12 +19,12 @@ class GroupAverage(Action):
         """
         """
         try:
-            selected_name = self.data['outputs']['evoked'][0]
+            selected_name = self.data['outputs']['tfr'][0]
         except IndexError as exc:
             return
 
         name = next_available_name(
-            self.experiment.active_subject.evoked.keys(),
+            self.experiment.active_subject.tfr.keys(),
             'group_' + selected_name)
 
         def group_handler(groups):
@@ -43,7 +43,7 @@ class GroupAverage(Action):
     def handler(self, subject, params):
         """
         """
-        group_average_evoked(self.experiment, 
+        group_average_tfr(self.experiment, 
                              params['based_on'],
                              params['groups'],
                              params['name'],
