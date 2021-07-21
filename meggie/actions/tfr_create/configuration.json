@@ -1,0 +1,5 @@
+{
+    "id": "tfr_create",
+    "name": "Create TFR",
+    "entry": "CreateTFR"
+}

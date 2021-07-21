@@ -39,7 +39,7 @@
                   "name": "Induced responses",
                   "inputs": ["epochs"],
                   "outputs": ["tfr"],
-                  "input_actions": [],
+                  "input_actions": ["tfr_create"],
                   "output_actions": ["tfr_delete", "tfr_delete_from_all"],
                   "info": ["tfr_info"]}
             ]

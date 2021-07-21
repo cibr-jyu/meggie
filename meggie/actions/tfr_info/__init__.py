@@ -3,6 +3,7 @@
 from meggie.mainwindow.dynamic import InfoAction
 
 from meggie.utilities.formats import format_float
+from meggie.utilities.formats import format_floats
 
 
 class Info(InfoAction):
@@ -12,7 +13,7 @@ class Info(InfoAction):
         try:
             selected_name = self.data['outputs']['tfr'][0]
 
-            self.tfr = experiment.active_subject.tfr[selected_name]
+            tfr = self.experiment.active_subject.tfr[selected_name]
             params = tfr.params
 
             message = ""
