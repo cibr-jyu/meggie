@@ -12,7 +12,7 @@
                  "output_actions": ["raw_plot", "raw_plot_projections", "raw_resample", "raw_filter",
                                     "raw_rereference", "raw_montage", "raw_ica", "raw_events_from_annotations"],
                  "info": ["raw_measurement_info", "raw_event_info"]},
-                 {"id": "spectrums",
+                 {"id": "spectrum",
                   "name": "Spectrums",
                   "inputs": [],
                   "outputs": ["spectrum"],
