@@ -1,5 +1,6 @@
 {
     "id": "raw_montage",
     "name": "Montage",
-    "entry": "Montage"
+    "entry": "Montage",
+    "tags": ["eeg"]
 }

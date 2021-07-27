@@ -3,7 +3,6 @@
 
 import os
 import json
-import logging
 import pkg_resources
 
 from PyQt5 import QtWidgets
@@ -51,14 +50,7 @@ class PipelineDialog(QtWidgets.QDialog):
                         name = pipeline.get('name', '')
                         pipelines.append((id_, name))
 
-        # remove possible duplicates and hope that the first has the name
-        self.pipelines = []
-        for pipeline in pipelines:
-            if pipeline[0] not in [pipe[0] for pipe in self.pipelines]:
-                if pipeline[1]:
-                    self.pipelines.append(pipeline)
-                else:
-                    self.pipelines.append((pipeline[0], pipeline[0]))
+        self.pipelines = pipelines
 
         # create buttons for pipelines
         self.pipeline_buttons = []

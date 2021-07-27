@@ -1,5 +1,6 @@
 {
     "id": "raw_rereference",
     "name": "Rereference",
-    "entry": "Rereference"
+    "entry": "Rereference",
+    "tags": ["eeg"]
 }

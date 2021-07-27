@@ -6,6 +6,8 @@ import logging
 import json
 import pkg_resources
 
+import mne
+
 import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.uid import generate_uid
@@ -147,6 +149,16 @@ class Subject:
         """
         if self._raw is not None:
             self._raw = None
+
+    @property
+    def has_eeg(self):
+        """ Checks if the raw has eeg data present
+        """
+        raw = self.get_raw(preload=False)
+        channels = mne.pick_types(raw.info, eeg=True, meg=False)
+        if len(channels) == 0:
+            return False
+        return True
 
     @property
     def sss_applied(self):

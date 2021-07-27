@@ -488,11 +488,13 @@ def construct_tab(tab_spec, action_specs, parent):
     return tab
 
 
-def construct_tabs(selected_pipeline, window, prefs):
-    """
+def construct_tabs(selected_pipeline, window, prefs, include_eeg):
+    """ Constructs a set of tabs based on specifications and the
+    selected pipeline
     """
     active_plugins = prefs.active_plugins
 
+    tabs = []
     pipelines = []
     for source in find_all_sources():
         if source not in active_plugins and source != "meggie":
@@ -501,120 +503,130 @@ def construct_tabs(selected_pipeline, window, prefs):
             source, 'configuration.json')
         with open(config_path, 'r') as f:
             config = json.load(f)
+        if 'tabs' in config:
+            tabs.extend(config['tabs'])
         if 'pipelines' in config:
             pipelines.extend(config['pipelines'])
 
     # add possibly missing fields
-    for pipeline in pipelines:
+    for tab in tabs:
+        if 'id' not in tab:
+            raise Exception('Every tab specification must have id.')
 
+        if 'name' not in tab:
+            tab['name'] = tab['id']
+
+        if 'inputs' not in tab:
+            tab['inputs'] = []
+
+        if 'outputs' not in tab:
+            tab['outputs'] = []
+
+        if 'input_actions' not in tab:
+            tab['input_actions'] = []
+
+        if 'output_actions' not in tab:
+            tab['output_actions'] = []
+
+        if 'info' not in tab:
+            tab['info'] = []
+ 
+    for pipeline in pipelines:
         if 'id' not in pipeline:
-            raise Exception('Every pipeline specification must have id.')
+            raise Exception('Every pipeline must have id.')
 
         if 'name' not in pipeline:
             pipeline['name'] = pipeline['id']
 
-        for tab_spec in pipeline['tabs']:
-
-            if 'id' not in tab_spec:
-                raise Exception('Every tab specification must have id.')
-
-            if 'name' not in tab_spec:
-                tab_spec['name'] = tab_spec['id']
-
-            if 'inputs' not in tab_spec:
-                tab_spec['inputs'] = []
-
-            if 'outputs' not in tab_spec:
-                tab_spec['outputs'] = []
-
-            if 'input_actions' not in tab_spec:
-                tab_spec['input_actions'] = []
-
-            if 'output_actions' not in tab_spec:
-                tab_spec['output_actions'] = []
-
-            if 'info' not in tab_spec:
-                tab_spec['info'] = []
-
     found = False
-    combined_spec = {}
+    pipeline_spec = None
     for pipeline in pipelines:
         if pipeline['id'] == selected_pipeline:
-            combined_spec = pipeline
             found = True
+            pipeline_spec = pipeline
             break
     if not found:
         raise Exception('Could not find pipeline with the selected name')
 
-    # merges specification from others to first
-    for pipeline in pipelines:
-
-        # if this is the first, skip
-        if pipeline is combined_spec:
-            continue
-
-        # if this has different name, skip
-        if selected_pipeline != pipeline['id']:
-            continue
-
-        for tab_spec in pipeline['tabs']:
-
-            # if completely new tab, just add it to list
-            if tab_spec['id'] not in [tab['id'] for tab in combined_spec['tabs']]:
-                combined_spec['tabs'].append(tab_spec)
-            # otherwise..
-            else:
-                # find idx of the tab in the first specification
-                idx = [tab['id'] for tab in combined_spec['tabs']].index(tab_spec['id'])
-
-                # and add missing inputs
-                for input_spec in tab_spec['inputs']:
-                    if input_spec not in combined_spec['tabs'][idx]['inputs']:
-                        combined_spec['tabs'][idx]['inputs'].append(input_spec)
-
-                # add missing outputs
-                for input_spec in tab_spec['outputs']:
-                    if input_spec not in combined_spec['tabs'][idx]['outputs']:
-                        combined_spec['tabs'][idx]['outputs'].append(input_spec)
-
-                # add missing input actions
-                for input_spec in tab_spec['input_actions']:
-                    if input_spec not in combined_spec['tabs'][idx]['input_actions']:
-                        combined_spec['tabs'][idx]['input_actions'].append(input_spec)
-
-                # add missing output actions
-                for input_spec in tab_spec['output_actions']:
-                    if input_spec not in combined_spec['tabs'][idx]['output_actions']:
-                        combined_spec['tabs'][idx]['output_actions'].append(input_spec)
-
-                # add missing info elements
-                for input_spec in tab_spec['info']:
-                    if input_spec not in combined_spec['tabs'][idx]['info']:
-                        combined_spec['tabs'][idx]['info'].append(input_spec)
-
-
     # Read action specs from file system
     action_specs = find_all_action_specs()
 
-    # Do a validation of the pipeline
-    # that is check if necessary actions are found and 
-    # if the input elements needed are present
-    for tab_spec in combined_spec['tabs']:
-        for elem in tab_spec['input_actions']:
-            if elem not in action_specs.keys():
-                raise Exception("Cannot read action " + elem + ".")
+    # merges tab specification from others to first and 
+    # filters to tabs specified by the pipeline
+    combined_tabs = []
+    for tab_spec in tabs:
+        # Include only tabs relevant to the pipeline
+        if pipeline_spec.get("include_tabs"):
+            if tab_spec['id'] not in pipeline_spec['include_tabs']:
+                continue
 
-        for elem in tab_spec['output_actions']:
-            if elem not in action_specs.keys():
-                raise Exception("Cannot read action " + elem + ".")
+        # if a completely new tab, initialize it
+        if tab_spec['id'] not in [tab['id'] for tab in combined_tabs]:
 
-        for elem in tab_spec['info']:
-            if elem not in action_specs.keys():
-                raise Exception("Cannot read info item " + elem + ".")
+            new_tab = {}
+            new_tab['id'] = tab_spec['id']
+            new_tab['name'] = tab_spec['name']
+            new_tab['inputs'] = []
+            new_tab['outputs'] = []
+            new_tab['input_actions'] = []
+            new_tab['output_actions'] = []
+            new_tab['info'] = []
+
+            idx = len(combined_tabs)
+            combined_tabs.append(new_tab)
+        # otherwise find idx of the tab in the first specification
+        else:
+            idx = [tab['id'] for tab in combined_tabs].index(tab_spec['id'])
+
+        # Add missing inputs
+        for input_spec in tab_spec['inputs']:
+            if input_spec not in combined_tabs[idx]['inputs']:
+                combined_tabs[idx]['inputs'].append(input_spec)
+
+        # Add missing outputs
+        for output_spec in tab_spec['outputs']:
+            if output_spec not in combined_tabs[idx]['outputs']:
+                combined_tabs[idx]['outputs'].append(output_spec)
+
+        # add missing input actions
+        for input_spec in tab_spec['input_actions']:
+
+            action_spec = action_specs.get(input_spec)
+            if not action_spec:
+                raise Exception("Cannot read action " + id_ + ".")
+
+            if not include_eeg and 'eeg' in action_spec[2].get('tags', []):
+                continue
+
+            if input_spec not in combined_tabs[idx]['input_actions']:
+                combined_tabs[idx]['input_actions'].append(input_spec)
+
+        # add missing output actions
+        for output_spec in tab_spec['output_actions']:
+
+            action_spec = action_specs.get(output_spec)
+            if not action_spec:
+                raise Exception("Cannot read action " + id_ + ".")
+
+            if not include_eeg and 'eeg' in action_spec[2].get('tags', []):
+                continue
+
+            if output_spec not in combined_tabs[idx]['output_actions']:
+                combined_tabs[idx]['output_actions'].append(output_spec)
+
+        # add missing info elements
+        for info_spec in tab_spec['info']:
+
+            action_spec = action_specs.get(info_spec)
+            if not action_spec:
+                raise Exception("Cannot read info item " + id_ + ".")
+
+            if info_spec not in combined_tabs[idx]['info']:
+                combined_tabs[idx]['info'].append(info_spec)
 
     # If everything is fine, construct each of the tabs
     tabs = []
-    for tab_spec in combined_spec['tabs']:
+    for tab_spec in combined_tabs:
         tabs.append(construct_tab(tab_spec, action_specs, window))
 
     return tabs

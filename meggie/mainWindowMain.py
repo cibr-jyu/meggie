@@ -74,7 +74,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self.prefs.write_preferences_to_disk()
 
-
         self.reconstruct_tabs()
         self.initialize_ui()
 
@@ -248,6 +247,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
             activate(subject_name, do_meanwhile=self.update_ui)
 
+            self.reconstruct_tabs()
+
         except Exception as exc:
             self.experiment.active_subject = None
             messagebox(self, "Could not activate the subject.")
@@ -268,9 +269,15 @@ class MainWindow(QtWidgets.QMainWindow):
         """Reconstructs the tabs.
         """
 
+        if self.experiment.active_subject:
+            include_eeg = self.experiment.active_subject.has_eeg
+        else:
+            include_eeg = True
+
         selected_pipeline = self.experiment.selected_pipeline
         try:
-            self.tabs = construct_tabs(selected_pipeline, self, self.prefs)
+            self.tabs = construct_tabs(selected_pipeline, self, self.prefs,
+                                       include_eeg=include_eeg)
         except Exception as exc:
             self.tabs = []
             exc_messagebox(self, exc)
