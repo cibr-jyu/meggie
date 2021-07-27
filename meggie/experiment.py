@@ -89,8 +89,7 @@ class Experiment:
                 try:
                     channel_groups['eeg'] = get_default_channel_groups(raw.info, 'eeg')
                 except Exception as exc:
-                    logging.getLogger('ui_logger').debug(
-                        'Could not get default channel groups for EEG')
+                    pass
 
         if not channel_groups.get('meg'):
             if self.active_subject:
@@ -98,8 +97,7 @@ class Experiment:
                 try:
                     channel_groups['meg'] = get_default_channel_groups(raw.info, 'meg')
                 except Exception as exc:
-                    logging.getLogger('ui_logger').debug(
-                        'Could not get default channel groups for MEG')
+                    pass
 
         return channel_groups
 

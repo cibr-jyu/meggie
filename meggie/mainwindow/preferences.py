@@ -33,23 +33,23 @@ class PreferencesHandler(object):
         # Sanity of these values is assumed to be checked by the calling method
 
         config.set('Workspace', 'workspaceDir', self.workspace)
-        logging.getLogger('ui_logger').debug("Workspace: " + 
-                                             self.workspace)
+        logging.getLogger('ui_logger').info("Workspace: " + 
+                                            self.workspace)
 
         config.set('MiscOptions', 'previousExperimentName',
                    self.previous_experiment_name)
-        logging.getLogger('ui_logger').debug("Previous experiment: " + 
-                                             self.previous_experiment_name)
+        logging.getLogger('ui_logger').info("Previous experiment: " + 
+                                            self.previous_experiment_name)
 
         if self.auto_load_last_open_experiment:
             config.set('MiscOptions', 'autoReloadPreviousExperiment', 'True')
         else:
             config.set('MiscOptions', 'autoReloadPreviousExperiment', 'False')
-        logging.getLogger('ui_logger').debug("Auto reload previous experiment: " + 
-                                             str(self.auto_load_last_open_experiment))
+        logging.getLogger('ui_logger').info("Auto reload previous experiment: " + 
+                                            str(self.auto_load_last_open_experiment))
 
         config.set('MiscOptions', 'activePlugins', ','.join(self.active_plugins))
-        logging.getLogger('ui_logger').debug("Active plugins: " + str(self.active_plugins))
+        logging.getLogger('ui_logger').info("Active plugins: " + str(self.active_plugins))
 
         path = self.prefs_path
         if not path:

@@ -89,9 +89,6 @@ class Spectrum(Datatype):
                                    self._params['conditions']]:
                         continue
 
-                logging.getLogger('ui_logger').debug(
-                    'Reading spectrum file: ' + str(fname))
-
                 freqs, row_descs, psd = filemanager.load_csv(
                     os.path.join(self._directory, fname))
 
@@ -162,8 +159,6 @@ class Spectrum(Datatype):
                                    self._params['conditions']]:
                         continue
 
-                logging.getLogger('ui_logger').debug(
-                    'Removing existing spectrum file: ' + str(fname))
                 os.remove(os.path.join(self._directory, fname))
 
     def set_info(self, subject):

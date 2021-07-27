@@ -184,7 +184,7 @@ class Ui_MainWindow(object):
         self.actionOpenExperiment.setText(_translate("MainWindow", "Open experiment..."))
         self.actionShowExperimentInfo.setText(_translate("MainWindow", "Show experiment info..."))
         self.actionQuit.setText(_translate("MainWindow", "Quit"))
-        self.actionShowLog.setText(_translate("MainWindow", "Show log..."))
+        self.actionShowLog.setText(_translate("MainWindow", "Show mne log..."))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences..."))
         self.actionAbout.setText(_translate("MainWindow", "About..."))
         self.actionActions.setText(_translate("MainWindow", "Show actions..."))

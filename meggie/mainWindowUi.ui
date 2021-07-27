@@ -293,7 +293,7 @@
   </action>
   <action name="actionShowLog">
    <property name="text">
-    <string>Show log...</string>
+    <string>Show mne log...</string>
    </property>
   </action>
   <action name="actionPreferences">

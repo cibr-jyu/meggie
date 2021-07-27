@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'logDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_LogDialog(object):
     def setupUi(self, LogDialog):
@@ -27,7 +29,7 @@ class Ui_LogDialog(object):
         self.pushButtonClose.setObjectName("pushButtonClose")
         self.horizontalLayout.addWidget(self.pushButtonClose)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.gridLayout.addLayout(self.verticalLayout, 3, 0, 1, 1)
+        self.gridLayout.addLayout(self.verticalLayout, 2, 0, 1, 1)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.labelBufferSize = QtWidgets.QLabel(LogDialog)
@@ -45,20 +47,7 @@ class Ui_LogDialog(object):
         self.pushButtonBufferSize = QtWidgets.QPushButton(LogDialog)
         self.pushButtonBufferSize.setObjectName("pushButtonBufferSize")
         self.horizontalLayout_3.addWidget(self.pushButtonBufferSize)
-        self.gridLayout.addLayout(self.horizontalLayout_3, 2, 0, 1, 1)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.checkBoxShowMeggie = QtWidgets.QCheckBox(LogDialog)
-        self.checkBoxShowMeggie.setChecked(True)
-        self.checkBoxShowMeggie.setObjectName("checkBoxShowMeggie")
-        self.horizontalLayout_2.addWidget(self.checkBoxShowMeggie)
-        self.checkBoxShowMNE = QtWidgets.QCheckBox(LogDialog)
-        self.checkBoxShowMNE.setObjectName("checkBoxShowMNE")
-        self.horizontalLayout_2.addWidget(self.checkBoxShowMNE)
-        self.checkBoxShowMNEcall = QtWidgets.QCheckBox(LogDialog)
-        self.checkBoxShowMNEcall.setObjectName("checkBoxShowMNEcall")
-        self.horizontalLayout_2.addWidget(self.checkBoxShowMNEcall)
-        self.gridLayout.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 1, 0, 1, 1)
 
         self.retranslateUi(LogDialog)
         self.pushButtonClose.clicked.connect(LogDialog.accept)
@@ -70,7 +59,3 @@ class Ui_LogDialog(object):
         self.pushButtonClose.setText(_translate("LogDialog", "Close"))
         self.labelBufferSize.setText(_translate("LogDialog", "Buffer size (lines):"))
         self.pushButtonBufferSize.setText(_translate("LogDialog", "Accept"))
-        self.checkBoxShowMeggie.setText(_translate("LogDialog", "Meggie"))
-        self.checkBoxShowMNE.setText(_translate("LogDialog", "MNE"))
-        self.checkBoxShowMNEcall.setText(_translate("LogDialog", "MNE call"))
-

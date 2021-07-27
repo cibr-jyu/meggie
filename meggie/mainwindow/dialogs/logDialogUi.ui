@@ -14,7 +14,7 @@
    <string>Meggie - Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="3" column="0">
+   <item row="2" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QTextEdit" name="textEditBrowser"/>
@@ -45,7 +45,7 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item row="1" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QLabel" name="labelBufferSize">
@@ -90,34 +90,6 @@
       <widget class="QPushButton" name="pushButtonBufferSize">
        <property name="text">
         <string>Accept</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QCheckBox" name="checkBoxShowMeggie">
-       <property name="text">
-        <string>Meggie</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBoxShowMNE">
-       <property name="text">
-        <string>MNE</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBoxShowMNEcall">
-       <property name="text">
-        <string>MNE call</string>
        </property>
       </widget>
      </item>

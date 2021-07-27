@@ -54,8 +54,6 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
 
         logging.getLogger('ui_logger').info(str(len(common_ch_names)) +
                                             ' common channels found.')
-        logging.getLogger('ui_logger').debug(
-            'Common channels are ' + str(common_ch_names))
     else:
         common_ch_names = ch_names[0]
 

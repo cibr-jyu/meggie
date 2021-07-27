@@ -14,7 +14,6 @@ import mne
 
 
 # Some (many) of the uninteresting calls are blacklisted here.
-# Not very elegant.
 blacklist = ['tests',
              'conftest',
              'externals',

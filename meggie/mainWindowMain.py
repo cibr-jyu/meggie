@@ -7,6 +7,8 @@ import logging
 import warnings
 import pkg_resources
 
+from pythonjsonlogger import jsonlogger
+
 from PyQt5.Qt import QApplication
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
@@ -369,11 +371,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         mne_wrapper_logger.handlers = []
 
-        # setup file handler
         if self.experiment:
             logfile = os.path.join(
                 self.experiment.path,
-                'meggie.log')
+                'mne.log')
             file_handler = logging.FileHandler(logfile)
             file_handler.setLevel('DEBUG')
             file_handler.setFormatter(formatter)
@@ -384,45 +385,23 @@ class MainWindow(QtWidgets.QMainWindow):
         stream_handler.setLevel('INFO')
         mne_wrapper_logger.addHandler(stream_handler)
 
-        # logger for ui output
+        # setup logger for informative messages
         ui_logger = logging.getLogger('ui_logger')
         formatter = logging.Formatter('Meggie: %(asctime)s %(message)s',
                                       datefmt='%Y-%m-%d %H:%M:%S')
 
         ui_logger.handlers = []
-
-        # setup file handler
-        if self.experiment:
-            logfile = os.path.join(
-                self.experiment.path,
-                'meggie.log')
-            file_handler = logging.FileHandler(logfile)
-            file_handler.setLevel('DEBUG')
-            file_handler.setFormatter(formatter)
-            ui_logger.addHandler(file_handler)
-
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
         stream_handler.setLevel('INFO')
         ui_logger.addHandler(stream_handler)
 
-        # logger for real mne
+        # setup logger for mne error messages
         mne_logger = logging.getLogger('mne')
         formatter = logging.Formatter('MNE: %(asctime)s %(message)s',
                                       datefmt='%Y-%m-%d %H:%M:%S')
 
         mne_logger.handlers = []
-
-        # setup file handler
-        if self.experiment:
-            logfile = os.path.join(
-                self.experiment.path,
-                'meggie.log')
-            file_handler = logging.FileHandler(logfile)
-            file_handler.setLevel('DEBUG')
-            file_handler.setFormatter(formatter)
-            mne_logger.addHandler(file_handler)
-
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
         stream_handler.setLevel('ERROR')
@@ -441,7 +420,6 @@ class MainWindow(QtWidgets.QMainWindow):
             file_handler = logging.FileHandler(logfile)
             file_handler.setLevel('INFO')
 
-            from pythonjsonlogger import jsonlogger
             formatter = jsonlogger.JsonFormatter(timestamp=True)
             file_handler.setFormatter(formatter)
             action_logger.addHandler(file_handler)

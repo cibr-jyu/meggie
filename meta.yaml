@@ -1,6 +1,6 @@
 package:
   name: meggie
-  version: "0.14.6"
+  version: "1.2.0"
 
 source:
   path: .
@@ -28,6 +28,7 @@ requirements:
     - scikit-learn
     - pysurfer
     - h5py
+    - python-json-logger
 
 about:
   license: BSD (3-clause)
