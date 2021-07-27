@@ -11,13 +11,15 @@ import mne
 from meggie.utilities.compare import compare_raws
 
 
-def compute_ica(raw, n_components, method, max_iter):
+def compute_ica(raw, n_components, method, max_iter, random_state):
     """ Computes ICA using MNE implementation.
     """
+
     ica = mne.preprocessing.ICA(
         n_components=n_components,
         method=method,
-        max_iter=max_iter)
+        max_iter=max_iter,
+        random_state=random_state)
 
     ica.fit(raw)
     return ica

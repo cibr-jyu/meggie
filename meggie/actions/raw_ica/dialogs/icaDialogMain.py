@@ -21,7 +21,7 @@ class ICADialog(QtWidgets.QDialog):
     """ Contains logic for ICA dialog.
     """
 
-    def __init__(self, parent, experiment, on_apply=None):
+    def __init__(self, parent, experiment, random_state, on_apply=None):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
@@ -29,6 +29,7 @@ class ICADialog(QtWidgets.QDialog):
         self.parent = parent
         self.experiment = experiment
         self.on_apply = on_apply
+        self.random_state = random_state
 
         # change normal list widgets to multiselect widgets
         self.ui.listWidgetNotRemoved.setSelectionMode(
@@ -45,6 +46,7 @@ class ICADialog(QtWidgets.QDialog):
         self.not_removed = []
         self.removed = []
         self.component_info = {}
+        self.params = {}
 
     def on_pushButtonCompute_clicked(self, checked=None):
         if checked is None:
@@ -61,13 +63,18 @@ class ICADialog(QtWidgets.QDialog):
 
         @threaded
         def _compute_ica():
-            return compute_ica(raw, n_components, method, max_iter)
+            return compute_ica(raw, n_components, method, max_iter, self.random_state)
 
         try:
             self.ica = _compute_ica(do_meanwhile=self.parent.update_ui)
         except Exception as exc:
             exc_messagebox(self, exc)
             return
+
+        self.params['n_components'] = n_components
+        self.params['method'] = method
+        self.params['max_iter'] = max_iter
+        self.params['random_state'] = self.random_state
 
         for idx in range(self.ica.n_components_):
             label = 'Component ' + str(idx)
@@ -213,8 +220,11 @@ class ICADialog(QtWidgets.QDialog):
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
+        self.params['exclude'] = indices
+
+        # for logging purposes, call the handler
         if self.on_apply:
-            self.on_apply(self.experiment.active_subject, {})
+            self.on_apply(self.experiment.active_subject, self.params)
 
         self._reset()
         self.close()

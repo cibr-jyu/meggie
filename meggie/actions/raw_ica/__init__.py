@@ -14,8 +14,11 @@ from meggie.mainwindow.dynamic import subject_action
 class ICA(Action):
     """
     """
+    random_state = 10
+
     def run(self):
-        ica_dialog = ICADialog(self.window, self.experiment, on_apply=self.handler)
+        ica_dialog = ICADialog(self.window, self.experiment, 
+                               self.random_state, on_apply=self.handler)
         ica_dialog.show()
 
     @subject_action
