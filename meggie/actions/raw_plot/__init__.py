@@ -43,15 +43,12 @@ class PlotRaw(Action):
                 annotations_changed = True
 
             params = {}
-            if bads_changed:
-                params['bads'] = raw.info['bads']
-                logging.getLogger('ui_logger').info('Bads changed!')
-            if annotations_changed:
-                params['annotations'] = raw.annotations
-                logging.getLogger('ui_logger').info('Annotations changed!')
+            params['bads'] = raw.info['bads']
+            params['annotations'] = list(raw.annotations)
+            params['bads_changed'] = bads_changed
+            params['annotations_changed'] = annotations_changed
 
-            if bads_changed or annotations_changed:
-                self.handler(subject, params)
+            self.handler(subject, params)
 
         fig = raw.plot(events=events, show=False)
         fig.canvas.mpl_connect('close_event', handle_close)
@@ -59,6 +56,14 @@ class PlotRaw(Action):
 
     @subject_action
     def handler(self, subject, params):
-        subject.save()
+
+        if params['bads_changed']:
+            logging.getLogger('ui_logger').info('Bads changed!')
+        if params['annotations_changed']:
+            logging.getLogger('ui_logger').info('Annotations changed!')
+
+        if params['bads_changed'] or params['annotations_changed']:
+            subject.save()
+
         self.window.initialize_ui()
 
