@@ -41,6 +41,8 @@
           "info": ["tfr_info"]}
     ],
     "pipelines": [
+        {"id": "classic",
+         "name": "Include everything"},
         {"id": "spectrum_sensor",
          "name": "Sensor-level continuous data analysis",
          "include_tabs": ["preprocessing", "spectrum"]},
@@ -49,8 +51,6 @@
          "include_tabs": ["preprocessing", "evoked"]},
         {"id": "induced_sensor",
          "name": "Sensor-level induced response analysis",
-         "include_tabs": ["preprocessing", "tfr"]},
-        {"id": "classic",
-         "name": "Include everything"}
+         "include_tabs": ["preprocessing", "tfr"]}
     ]
 }

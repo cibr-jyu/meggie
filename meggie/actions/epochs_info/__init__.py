@@ -6,7 +6,7 @@ from meggie.utilities.formats import format_float
 
 
 class Info(InfoAction):
-    """ Fills up spectrum info box """
+    """ Fills up epochs info box """
 
     def run(self):
 

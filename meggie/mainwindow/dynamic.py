@@ -593,7 +593,7 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg):
 
             action_spec = action_specs.get(input_spec)
             if not action_spec:
-                raise Exception("Cannot read action " + id_ + ".")
+                raise Exception("Cannot read action " + input_spec + ".")
 
             if not include_eeg and 'eeg' in action_spec[2].get('tags', []):
                 continue
@@ -606,7 +606,7 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg):
 
             action_spec = action_specs.get(output_spec)
             if not action_spec:
-                raise Exception("Cannot read action " + id_ + ".")
+                raise Exception("Cannot read action " + output_spec + ".")
 
             if not include_eeg and 'eeg' in action_spec[2].get('tags', []):
                 continue
@@ -619,7 +619,7 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg):
 
             action_spec = action_specs.get(info_spec)
             if not action_spec:
-                raise Exception("Cannot read info item " + id_ + ".")
+                raise Exception("Cannot read info item " + info_spec + ".")
 
             if info_spec not in combined_tabs[idx]['info']:
                 combined_tabs[idx]['info'].append(info_spec)
