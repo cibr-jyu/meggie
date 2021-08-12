@@ -13,7 +13,7 @@ from meggie.actions.raw_ica.controller.ica import plot_properties
 from meggie.actions.raw_ica.controller.ica import plot_changes
 from meggie.actions.raw_ica.controller.ica import compute_ica
 
-from meggie.utilities.decorators import threaded
+from meggie.utilities.threading import threaded
 from meggie.utilities.messaging import exc_messagebox
 
 

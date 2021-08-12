@@ -8,7 +8,7 @@ import mne
 
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.decorators import threaded
+from meggie.utilities.threading import threaded
 
 from meggie.actions.raw_montage.dialogs.montageDialogMain import MontageDialog
 

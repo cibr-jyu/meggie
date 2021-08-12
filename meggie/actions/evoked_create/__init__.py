@@ -3,7 +3,7 @@
 
 from meggie.utilities.names import next_available_name
 from meggie.utilities.validators import assert_arrays_same
-from meggie.utilities.decorators import threaded
+from meggie.utilities.threading import threaded
 
 from meggie.datatypes.evoked.evoked import Evoked
 

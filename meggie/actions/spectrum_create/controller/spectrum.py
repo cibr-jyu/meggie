@@ -10,7 +10,7 @@ import numpy as np
 
 from meggie.datatypes.spectrum.spectrum import Spectrum
 
-from meggie.utilities.decorators import threaded
+from meggie.utilities.threading import threaded
 from meggie.utilities.events import get_raw_blocks_from_intervals
 
 

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import scipy.stats
 import scipy
 
-from meggie.utilities.decorators import threaded
+from meggie.utilities.threading import threaded
 from meggie.utilities.channels import get_channels_by_type
 from meggie.utilities.channels import pairless_grads
 from meggie.utilities.channels import clean_names

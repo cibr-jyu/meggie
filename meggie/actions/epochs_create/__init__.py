@@ -2,7 +2,7 @@
 """
 
 from meggie.utilities.names import next_available_name
-from meggie.utilities.decorators import threaded
+from meggie.utilities.threading import threaded
 
 from meggie.mainwindow.dynamic import Action
 from meggie.mainwindow.dynamic import subject_action

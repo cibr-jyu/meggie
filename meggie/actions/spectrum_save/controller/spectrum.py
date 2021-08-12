@@ -12,7 +12,7 @@ import meggie.utilities.filemanager as filemanager
 from meggie.utilities.formats import format_floats
 from meggie.utilities.channels import average_to_channel_groups
 
-from meggie.utilities.decorators import threaded
+from meggie.utilities.threading import threaded
 
 
 @threaded

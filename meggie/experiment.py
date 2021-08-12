@@ -13,7 +13,6 @@ from meggie.subject import Subject
 from meggie.utilities.filemanager import open_raw
 from meggie.utilities.filemanager import save_raw
 from meggie.utilities.channels import get_default_channel_groups
-from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
 
 from meggie.mainwindow.dynamic import find_all_sources

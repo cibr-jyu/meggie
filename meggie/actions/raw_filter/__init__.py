@@ -7,7 +7,7 @@ import numpy as np
 
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.decorators import threaded
+from meggie.utilities.threading import threaded
 
 from meggie.actions.raw_filter.dialogs.filterDialogMain import FilterDialog
 from meggie.actions.raw_filter.controller.filter import filter_data

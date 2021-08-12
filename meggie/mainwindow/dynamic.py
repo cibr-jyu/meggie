@@ -12,6 +12,8 @@ from PyQt5 import QtWidgets
 
 from meggie.utilities.uid import generate_uid
 from meggie.utilities.messaging import exc_messagebox
+from meggie.utilities.messaging import messagebox
+from meggie.utilities.threading import threaded
 
 
 def find_all_plugins():
@@ -303,7 +305,9 @@ def construct_tab(tab_spec, action_specs, parent):
                     '.'.join([source, 'actions', package]))
                 entry = action_spec['entry']
 
-                handler = getattr(module, entry)
+                @threaded
+                def handler(*args):
+                    return getattr(module, entry)(*args).run()
 
                 def handler_wrapper():
                     experiment = self.parent.experiment
@@ -317,7 +321,8 @@ def construct_tab(tab_spec, action_specs, parent):
 
                     try:
                         info_content = handler(experiment, data, 
-                                               parent, action_spec).run()
+                                               parent, action_spec, 
+                                               do_meanwhile=parent.update_ui)
                         info_element.setPlainText(info_content)
                     except Exception as exc:
                         exc_messagebox(self, exc)
@@ -466,11 +471,15 @@ def construct_tab(tab_spec, action_specs, parent):
                 module = importlib.import_module(
                     '.'.join([source, 'actions', package]))
                 entry = action_spec['entry']
-                handler = getattr(module, entry)
+
+                @threaded
+                def handler(*args):
+                    return getattr(module, entry)(*args).run()
 
                 try:
                     info_content = handler(experiment, None, 
-                                           self.parent, action_spec).run()
+                                           self.parent, action_spec, 
+                                           do_meanwhile=parent.update_ui)
                     ui_element.setPlainText(info_content)
                 except Exception as exc:
                     exc_messagebox(self, exc)

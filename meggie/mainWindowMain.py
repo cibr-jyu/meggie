@@ -21,7 +21,7 @@ from meggie.mainwindow.preferences import PreferencesHandler
 from meggie.mainWindowUi import Ui_MainWindow
 from meggie.experiment import open_existing_experiment
 
-from meggie.utilities.decorators import threaded
+from meggie.utilities.threading import threaded
 from meggie.utilities.messaging import questionbox
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox

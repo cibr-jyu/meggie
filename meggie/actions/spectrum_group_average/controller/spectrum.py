@@ -13,7 +13,7 @@ from meggie.datatypes.spectrum.spectrum import Spectrum
 
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.channels import clean_names
-from meggie.utilities.decorators import threaded
+from meggie.utilities.threading import threaded
 
 
 @threaded

@@ -13,7 +13,7 @@ from meggie.mainwindow.dialogs.addSubjectDialogUi import Ui_AddSubject
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
-from meggie.utilities.decorators import threaded
+from meggie.utilities.threading import threaded
 from meggie.utilities.names import next_available_name
 
 

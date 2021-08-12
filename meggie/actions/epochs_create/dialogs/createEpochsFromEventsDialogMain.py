@@ -15,7 +15,6 @@ from meggie.actions.epochs_create.controller.epoching import create_epochs_from_
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 from meggie.utilities.dialogs.bitSelectionDialogMain import BitSelectionDialog
 
-from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
