@@ -12,7 +12,7 @@ import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.uid import generate_uid
 
-from meggie.mainwindow.dynamic import find_all_sources
+from meggie.mainwindow.dynamic import find_all_datatype_specs
 
 
 class Subject:
@@ -50,24 +50,14 @@ class Subject:
         self.path = os.path.join(experiment.path,
                                  name)
 
-        for source in find_all_sources():
-            datatype_path = pkg_resources.resource_filename(source, 'datatypes')
-            if not os.path.exists(datatype_path):
-                continue
-            for package in os.listdir(datatype_path):
-                config_path = os.path.join(
-                    datatype_path, package, 'configuration.json')
-                if os.path.exists(config_path):
-                    with open(config_path, 'r') as f:
-                        config = json.load(f)
-                        datatype = config['id']
-                        dir_ = config['dir']
+        datatype_specs = find_all_datatype_specs()
+        for source, package, datatype_spec in datatype_specs.values():
+            datatype = datatype_spec['id']
+            dir_ = datatype_spec['dir']
+            setattr(self, datatype, dict())
+            setattr(self, datatype + '_directory',
+                    os.path.join(self.path, dir_))
 
-                        # for example: self.epochs
-                        setattr(self, datatype, dict())
-                        # for example: self.epochs_directory
-                        setattr(self, datatype + '_directory',
-                                os.path.join(self.path, dir_))
 
     def add(self, dataobject, datatype):
         """ Adds a dataobject of type datatype to the subject.
@@ -180,19 +170,12 @@ class Subject:
         exist and if not, creates them.
         """
         paths = []
-        for source in find_all_sources():
-            datatype_path = pkg_resources.resource_filename(source, 'datatypes')
-            if not os.path.exists(datatype_path):
-                continue
-            for package in os.listdir(datatype_path):
-                config_path = os.path.join(datatype_path, package,
-                                           'configuration.json')
-                if os.path.exists(config_path):
-                    with open(config_path, 'r') as f:
-                        config = json.load(f)
-                        datatype = config['id']
-                        path = getattr(self, datatype + '_directory')
-                        paths.append(path)
+        datatype_specs = find_all_datatype_specs()
+
+        for source, package, datatype_spec in datatype_specs.values():
+            datatype = datatype_spec['id']
+            path = getattr(self, datatype + '_directory')
+            paths.append(path)
 
         try:
             filemanager.ensure_folders(

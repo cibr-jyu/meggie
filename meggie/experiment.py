@@ -15,7 +15,7 @@ from meggie.utilities.filemanager import save_raw
 from meggie.utilities.channels import get_default_channel_groups
 from meggie.utilities.validators import validate_name
 
-from meggie.mainwindow.dynamic import find_all_sources
+from meggie.mainwindow.dynamic import find_all_datatype_specs
 
 
 class Experiment:
@@ -235,23 +235,12 @@ class Experiment:
                 'rereferenced': subject.rereferenced,
             }
 
-            datatypes = []
-            for source in find_all_sources():
-                datatype_path = pkg_resources.resource_filename(
-                    source, 'datatypes')
-                if not os.path.exists(datatype_path):
-                    continue
-                for package in os.listdir(datatype_path):
-                    config_path = os.path.join(
-                        datatype_path, package, 'configuration.json')
-                    if os.path.exists(config_path):
-                        with open(config_path, 'r') as f:
-                            config = json.load(f)
-                            datatype = config['id']
-                            key = config['save_key']
-                            datatypes.append((key, datatype))
+            datatype_specs = find_all_datatype_specs()
 
-            for save_key, datatype in datatypes:
+            for source, package, datatype_spec in datatype_specs.values():
+                save_key = datatype_spec['save_key']
+                datatype = datatype_spec['id']
+
                 for inst in getattr(subject, datatype).values():
                     datatype_dict = {
                         'name': inst.name,
@@ -421,24 +410,13 @@ def open_existing_experiment(prefs, path=None):
                           rereferenced=subject_data.get('rereferenced', False)
                           )
 
-        datatypes = []
-        for source in find_all_sources():
-            datatype_path = pkg_resources.resource_filename(
-                source, 'datatypes')
-            if not os.path.exists(datatype_path):
-                continue
-            for package in os.listdir(datatype_path):
-                config_path = os.path.join(
-                    datatype_path, package, 'configuration.json')
-                if os.path.exists(config_path):
-                    with open(config_path, 'r') as f:
-                        config = json.load(f)
-                        datatype = config['id']
-                        key = config['save_key']
-                        entry = config['entry']
-                        datatypes.append((key, source, package, entry, datatype))
+        datatype_specs = find_all_datatype_specs()
 
-        for save_key, source, package, entry, datatype in datatypes:
+        for source, package, datatype_spec in datatype_specs.values():
+            save_key = datatype_spec['save_key']
+            entry = datatype_spec['entry']
+            datatype = datatype_spec['id']
+
             for inst_data in subject_data.get(save_key, []):
                 module_name, class_name = entry.split('.')
                 module = importlib.import_module(

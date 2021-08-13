@@ -48,9 +48,9 @@
          "include_tabs": ["preprocessing", "spectrum"]},
         {"id": "evoked_sensor",
          "name": "Sensor-level evoked response analysis",
-         "include_tabs": ["preprocessing", "evoked"]},
+         "include_tabs": ["preprocessing", "epochs", "evoked"]},
         {"id": "induced_sensor",
          "name": "Sensor-level induced response analysis",
-         "include_tabs": ["preprocessing", "tfr"]}
+         "include_tabs": ["preprocessing", "epochs", "tfr"]}
     ]
 }

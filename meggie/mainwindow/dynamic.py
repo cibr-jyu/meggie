@@ -41,11 +41,70 @@ def find_all_sources():
     return ['meggie'] + find_all_plugins()
 
 
+def find_all_package_specs():
+    """
+    """
+    package_specs = {}
+
+    sources = find_all_sources()
+    for source in sources:
+        config_path = pkg_resources.resource_filename(source, 'configuration.json')
+        if not os.path.exists(config_path):
+            continue
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+            if config:
+                package_specs[source] = config
+
+    # add possibly missing fields
+    for package_spec in package_specs.values():
+        if 'name' not in package_spec:
+            package_spec['name'] = ""
+
+        if 'author' not in package_spec:
+            package_spec['author'] = ""
+
+    return package_specs
+
+
+def find_all_datatype_specs():
+    """
+    """
+    datatype_specs = {}
+    found_keys = []
+
+    sources = find_all_sources()
+    for source in sources:
+        datatype_path = pkg_resources.resource_filename(source, 'datatypes')
+        if not os.path.exists(datatype_path):
+            continue
+        for package in os.listdir(datatype_path):
+            config_path = os.path.join(
+                datatype_path, package, 'configuration.json')
+            if os.path.exists(config_path):
+                with open(config_path, 'r') as f:
+                    config = json.load(f)
+                    if config:
+                        if config['id'] in found_keys:
+                            raise Exception('Datatype with the same id found ' + 
+                                            'in multiple packages')
+                        else:
+                            found_keys.append(config['id'])
+
+                        datatype_specs[config['id']] = source, package, config
+
+    # add possibly missing fields
+    for source, package, datatype_spec in datatype_specs.values():
+        if 'name' not in datatype_spec:
+            datatype_spec['name'] = datatype_spec['id']
+        
+    return datatype_specs
+
+
 def find_all_action_specs():
     """Finds all valid tabs from the core and plugins.
     """
     action_specs = {}
-
     found_keys = []
 
     sources = find_all_sources()
@@ -64,13 +123,11 @@ def find_all_action_specs():
                                             'in multiple packages')
                         else:
                             found_keys.append(config['id'])
+
                         action_specs[config['id']] = source, package, config
 
     # add possibly missing fields
     for source, package, action_spec in action_specs.values():
-
-        if 'id' not in action_spec:
-            raise Exception('Every action specification must have id.')
 
         if 'name' not in action_spec:
             action_spec['name'] = action_spec['id']
@@ -78,7 +135,7 @@ def find_all_action_specs():
     return action_specs
 
 
-def construct_tab(tab_spec, action_specs, parent):
+def construct_tab(tab_spec, action_specs, datatype_specs, parent):
     """Constructs analysis tab dynamically. Returns a QDialog
     that can be used within a QTabDialog of the main window.
 
@@ -111,6 +168,7 @@ def construct_tab(tab_spec, action_specs, parent):
             self.parent = parent
             self.tab_spec = tab_spec
             self.action_specs = action_specs
+            self.datatype_specs = datatype_specs
 
             # first create basic layout
             self.gridLayoutContainer = QtWidgets.QGridLayout(self)
@@ -152,6 +210,10 @@ def construct_tab(tab_spec, action_specs, parent):
 
                 title = input_name.capitalize()
 
+                for source, package, datatype_spec in datatype_specs.values():
+                    if datatype_spec['id'] == input_name:
+                        title = datatype_spec['name']
+
                 groupBoxInputElement = QtWidgets.QGroupBox(self.groupBoxInputs)
                 groupBoxInputElement.setTitle(title)
                 gridLayoutInputElement = QtWidgets.QGridLayout(
@@ -177,6 +239,10 @@ def construct_tab(tab_spec, action_specs, parent):
             for idx, output_name in enumerate(self.tab_spec['outputs']):
 
                 title = output_name.capitalize()
+
+                for source, package, datatype_spec in datatype_specs.values():
+                    if datatype_spec['id'] == output_name:
+                        title = datatype_spec['name']
 
                 groupBoxOutputElement = QtWidgets.QGroupBox(
                     self.groupBoxOutputs)
@@ -503,19 +569,19 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg):
     """
     active_plugins = prefs.active_plugins
 
+    action_specs = find_all_action_specs()
+    datatype_specs = find_all_datatype_specs()
+    package_specs = find_all_package_specs()
+
     tabs = []
     pipelines = []
-    for source in find_all_sources():
+    for source, package_spec in package_specs.items():
         if source not in active_plugins and source != "meggie":
             continue
-        config_path = pkg_resources.resource_filename(
-            source, 'configuration.json')
-        with open(config_path, 'r') as f:
-            config = json.load(f)
-        if 'tabs' in config:
-            tabs.extend(config['tabs'])
-        if 'pipelines' in config:
-            pipelines.extend(config['pipelines'])
+        if 'tabs' in package_spec:
+            tabs.extend(package_spec['tabs'])
+        if 'pipelines' in package_spec:
+            pipelines.extend(package_spec['pipelines'])
 
     # add possibly missing fields
     for tab in tabs:
@@ -556,9 +622,6 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg):
             break
     if not found:
         raise Exception('Could not find pipeline with the selected name')
-
-    # Read action specs from file system
-    action_specs = find_all_action_specs()
 
     # merges tab specification from others to first and 
     # filters to tabs specified by the pipeline
@@ -636,7 +699,7 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg):
     # If everything is fine, construct each of the tabs
     tabs = []
     for tab_spec in combined_tabs:
-        tabs.append(construct_tab(tab_spec, action_specs, window))
+        tabs.append(construct_tab(tab_spec, action_specs, datatype_specs, window))
 
     return tabs
 

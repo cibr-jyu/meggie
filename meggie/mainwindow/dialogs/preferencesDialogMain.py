@@ -10,8 +10,6 @@ from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSignal
 
-from meggie.mainwindow.dynamic import find_all_sources
-
 from meggie.mainwindow.dialogs.preferencesDialogUi import Ui_DialogPreferences
 
 from meggie.mainwindow.dialogs.activePluginsDialogMain import ActivePluginsDialog

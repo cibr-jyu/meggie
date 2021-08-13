@@ -269,12 +269,15 @@ class MainWindow(QtWidgets.QMainWindow):
         """Reconstructs the tabs.
         """
 
-        if self.experiment.active_subject:
+        if self.experiment and self.experiment.active_subject:
             include_eeg = self.experiment.active_subject.has_eeg
         else:
             include_eeg = True
 
-        selected_pipeline = self.experiment.selected_pipeline
+        if self.experiment:
+            selected_pipeline = self.experiment.selected_pipeline
+        else:
+            selected_pipeline = 'classic'
         try:
             self.tabs = construct_tabs(selected_pipeline, self, self.prefs,
                                        include_eeg=include_eeg)

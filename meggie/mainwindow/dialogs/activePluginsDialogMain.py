@@ -8,6 +8,7 @@ import json
 from PyQt5 import QtWidgets
 
 from meggie.mainwindow.dynamic import find_all_plugins
+from meggie.mainwindow.dynamic import find_all_package_specs
 
 from meggie.mainwindow.dialogs.activePluginsDialogUi import Ui_activePluginsDialog
 
@@ -24,24 +25,19 @@ class ActivePluginsDialog(QtWidgets.QDialog):
         self.handler = handler
 
         plugins = find_all_plugins()
+        package_specs = find_all_package_specs()
+
+
         plugin_info = []
-        for plugin in plugins:
-            config_path = pkg_resources.resource_filename(
-                plugin, 'configuration.json')
-            with open(config_path, 'r') as f:
-                config = json.load(f)
+        for source, package_spec in package_specs.items():
+            if source not in plugins:
+                continue
 
-                id_ = config.get('id')
-                if not id_:
-                    logging.getLogger('ui_logger').info(
-                        "Plugin " + plugin + " does not have an id.")
-                    continue
+            id_ = package_spec['id']
+            name = package_spec['name']
+            author = package_spec['author']
 
-                name = config.get('name', id_)
-                author = config.get('author', "")
-
-                plugin_info.append((id_, name, author))
-
+            plugin_info.append((id_, name, author))
         self.plugin_info = plugin_info
 
         for id_, name, author in plugin_info:

@@ -8,6 +8,7 @@ import pkg_resources
 from PyQt5 import QtWidgets
 
 from meggie.mainwindow.dynamic import find_all_sources
+from meggie.mainwindow.dynamic import find_all_package_specs
 
 from meggie.mainwindow.dialogs.pipelineDialogUi import Ui_pipelineDialog
 
@@ -33,15 +34,13 @@ class PipelineDialog(QtWidgets.QDialog):
 
         # read all pipeline ids and names to a list
         pipelines = []
-        sources = find_all_sources()
-        for source in sources:
+        package_specs = find_all_package_specs()
+
+        for source, package_spec in package_specs.items():
             if source == 'meggie' or source in self.active_plugins:
-                config_path = pkg_resources.resource_filename(
-                    source, 'configuration.json')
-                with open(config_path, 'r') as f:
-                    config = json.load(f)
-                if 'pipelines' in config:
-                    for pipeline in config['pipelines']:
+
+                if 'pipelines' in package_spec:
+                    for pipeline in package_spec['pipelines']:
                         try:
                             id_ = pipeline['id']
                         except Exception as exc:
