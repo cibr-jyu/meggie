@@ -17,6 +17,7 @@ from meggie.actions.tfr_save.controller.tfr import save_tfr_all_channels
 
 
 class SaveTFR(Action):
+    """ Saves TFR items to csv files """
 
     def run(self):
         """

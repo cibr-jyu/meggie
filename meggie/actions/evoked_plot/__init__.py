@@ -16,10 +16,10 @@ from meggie.actions.evoked_plot.controller.evoked import plot_evoked_topo
 
 
 class PlotEvoked(Action):
+    """ Plots evoked time courses """
 
     def run(self):
-        """
-        """
+
         try:
             selected_name = self.data['outputs']['evoked'][0]
         except IndexError as exc:

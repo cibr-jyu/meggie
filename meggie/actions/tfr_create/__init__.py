@@ -11,6 +11,8 @@ from meggie.actions.tfr_create.controller.tfr import create_tfr
 
 
 class CreateTFR(Action):
+    """ Shows a TFR parameter dialog and then
+    creates TFR """
 
     def run(self):
 

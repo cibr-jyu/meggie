@@ -12,7 +12,7 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class PlotEpochs(Action):
-    """
+    """ Plots all epochs from all channels.
     """
 
     def run(self):

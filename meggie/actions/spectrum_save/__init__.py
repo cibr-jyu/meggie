@@ -16,10 +16,9 @@ from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 
 
 class SaveSpectrum(Action):
+    """ Saves spectrum items to csv files """
 
     def run(self):
-        """
-        """
         try:
             selected_name = self.data['outputs']['spectrum'][0]
         except IndexError as exc:

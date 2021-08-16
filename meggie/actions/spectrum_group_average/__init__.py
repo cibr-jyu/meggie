@@ -14,6 +14,7 @@ from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDial
 
 
 class GroupAverage(Action):
+    """ Creates group average items """
 
     def run(self):
         """
@@ -33,6 +34,8 @@ class GroupAverage(Action):
                       'groups': groups}
             try:
                 self.handler(self.experiment.active_subject, params)
+                self.experiment.save_experiment_settings()
+                self.window.initialize_ui()
             except Exception as exc:
                 exc_messagebox(self.window, exc)
 
@@ -48,5 +51,3 @@ class GroupAverage(Action):
                                params['groups'],
                                params['name'],
                                do_meanwhile=self.window.update_ui)
-        self.experiment.save_experiment_settings()
-        self.window.initialize_ui()

@@ -17,10 +17,9 @@ from meggie.actions.tfr_save_tse.controller.tfr import save_tse_all_channels
 
 
 class SaveTSE(Action):
+    """ Saves TSE's to csv files """
 
     def run(self):
-        """
-        """
         try:
             selected_name = self.data['outputs']['tfr'][0]
         except IndexError as exc:

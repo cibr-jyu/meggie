@@ -62,11 +62,11 @@ class SimpleDialog(QtWidgets.QDialog):
             params = {'name': evoked_name}
             self.handler(subject, params)
             self.experiment.save_experiment_settings()
-            self.parent.initialize_ui()
         except Exception as exc:
             exc_messagebox(self, exc)
             return
 
+        self.parent.initialize_ui()
         self.close()
 
     def acceptBatch(self):
@@ -97,9 +97,9 @@ class SimpleDialog(QtWidgets.QDialog):
 
         try:
             self.experiment.save_experiment_settings()
-            self.parent.initialize_ui()
         except Exception as exc:
             exc_messagebox(self, exc)
             return
 
+        self.parent.initialize_ui()
         self.close()

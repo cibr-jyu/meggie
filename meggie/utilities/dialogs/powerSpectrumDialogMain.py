@@ -175,11 +175,11 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         try:
             self.handler(subject, params)
             self.experiment.save_experiment_settings()
-            self.parent.initialize_ui()
         except Exception as exc:
             exc_messagebox(self, exc)
             return
 
+        self.parent.initialize_ui()
         self.close()
 
     def acceptBatch(self, *args):
@@ -221,9 +221,9 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
 
         try:
             self.experiment.save_experiment_settings()
-            self.parent.initialize_ui()
         except Exception as exc:
             exc_messagebox(self, exc)
             return
 
+        self.parent.initialize_ui()
         self.close()

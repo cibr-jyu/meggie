@@ -18,7 +18,7 @@ from meggie.actions.evoked_plot_topomap.dialogs.evokedTopomapDialogMain import E
 
 
 class PlotEvokedTopomap(Action):
-    """
+    """ Plots a sequence of topomaps.
     """
 
     def run(self):

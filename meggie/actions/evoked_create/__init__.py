@@ -1,4 +1,4 @@
-""" Contains create spectrum action handling.
+""" Contains create evoked action handling.
 """
 
 from meggie.utilities.names import next_available_name
@@ -14,6 +14,8 @@ from meggie.utilities.dialogs.simpleDialogMain import SimpleDialog
 
 
 class CreateEvoked(Action):
+    """ Allows averaging epochs to evoked
+    """
 
     def run(self):
 

@@ -16,10 +16,9 @@ from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 
 
 class SaveEvoked(Action):
+    """ Saved evoked items to csv files """
 
     def run(self):
-        """
-        """
         try:
             selected_name = self.data['outputs']['evoked'][0]
         except IndexError as exc:

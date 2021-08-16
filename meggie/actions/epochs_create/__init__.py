@@ -1,4 +1,4 @@
-""" Contains create spectrum action handling.
+""" Contains create epochs action handling.
 """
 
 from meggie.utilities.names import next_available_name
@@ -12,7 +12,8 @@ from meggie.actions.epochs_create.controller.epoching import create_epochs_from_
 
 
 class CreateEpochs(Action):
-
+    """ Shows a dialog for event selection and then creates epochs.
+    """
     def run(self):
         default_name = next_available_name(
             self.experiment.active_subject.spectrum.keys(), 'Epochs')

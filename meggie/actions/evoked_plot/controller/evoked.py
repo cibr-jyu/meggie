@@ -15,8 +15,6 @@ from meggie.utilities.units import get_unit
 
 
 def _create_averages(mne_evoked, channel_groups):
-    """
-    """
     mne_evoked = mne_evoked.copy().drop_channels(mne_evoked.info['bads'])
 
     data_labels, averaged_data = average_to_channel_groups(
@@ -71,6 +69,7 @@ def plot_evoked_averages(evoked, channel_groups):
 
 
 def plot_evoked_topo(evoked, ch_type):
+    """ Plots evoked time courses arranged as a topography """
     evokeds = []
     labels = []
     for key, evok in sorted(evoked.content.items()):

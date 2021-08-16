@@ -12,7 +12,7 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class PlotEpochsImage(Action):
-    """
+    """ Opens MNE's image plot.
     """
 
     def run(self):

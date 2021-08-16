@@ -11,6 +11,8 @@ from meggie.actions.spectrum_create.controller.spectrum import create_power_spec
 
 
 class CreateSpectrum(Action):
+    """ Shows a dialog to get parameters for spectrum creation and
+    then allows creating spectrums """
 
     def run(self):
         default_name = next_available_name(
