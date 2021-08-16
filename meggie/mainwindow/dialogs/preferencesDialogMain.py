@@ -15,6 +15,7 @@ from meggie.mainwindow.dialogs.preferencesDialogUi import Ui_DialogPreferences
 from meggie.mainwindow.dialogs.activePluginsDialogMain import ActivePluginsDialog
 
 from meggie.utilities.messaging import messagebox
+from meggie.utilities.messaging import exc_messagebox
 
 
 class PreferencesDialog(QtWidgets.QDialog):
@@ -72,7 +73,11 @@ class PreferencesDialog(QtWidgets.QDialog):
 
         self.prefs.active_plugins = self.active_plugins
 
-        self.prefs.write_preferences_to_disk()
+        try:
+            self.prefs.write_preferences_to_disk()
+        except Exception as exc:
+            exc_messagebox(self.parent, exc)
+            return
 
         # Plugins can add new actions to existing pipelines.
         self.parent.reconstruct_tabs()

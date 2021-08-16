@@ -294,7 +294,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tabs = []
             exc_messagebox(self, exc)
 
-
     def initialize_ui(self):
         """Initializes the main window UI view. 
 
@@ -320,7 +319,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle('Meggie - ' + self.experiment.name)
 
         self._populate_subject_list()
-
 
     def _populate_subject_list(self):
         active_subject_name = None

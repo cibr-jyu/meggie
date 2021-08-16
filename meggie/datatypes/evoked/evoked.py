@@ -116,8 +116,8 @@ class Evoked(Datatype):
         try:
             mne.write_evokeds(self._path, list(self.content.values()))
         except Exception as exc:
-            logging.getLogger('ui_logger').exception('')
-            raise IOError('Writing evokeds failed')
+            raise Exception("Writing evokeds failed. Please check that the "
+                            "entire experiment folder has write permissions.")
 
     def delete_content(self):
         """Deletes the fif file from the file system.

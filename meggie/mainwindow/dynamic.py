@@ -36,13 +36,13 @@ def find_all_plugins():
 
 
 def find_all_sources():
-    """Returns all packages where to look for tabs / datatypes.
+    """Returns all packages where to look for actions / datatypes.
     """
     return ['meggie'] + find_all_plugins()
 
 
 def find_all_package_specs():
-    """
+    """Returns all package specifications found.
     """
     package_specs = {}
 
@@ -68,7 +68,7 @@ def find_all_package_specs():
 
 
 def find_all_datatype_specs():
-    """
+    """Returns all datatype specifications found.
     """
     datatype_specs = {}
     found_keys = []
@@ -102,7 +102,7 @@ def find_all_datatype_specs():
 
 
 def find_all_action_specs():
-    """Finds all valid tabs from the core and plugins.
+    """Returns all action specifications found.
     """
     action_specs = {}
     found_keys = []
@@ -144,7 +144,9 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
     tab_spec : dict
         The specification of the tab read to a dict
     action_specs : dict
-        Specifications of the actions stored in a dict
+        Specifications of actions
+    datatype_specs : dict
+        Specifications of datatypes
     parent : instance of main window
         The main window, is passed to the handlers in the ui.py.
 
@@ -564,9 +566,26 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
 
 
 def construct_tabs(selected_pipeline, window, prefs, include_eeg):
-    """ Constructs a set of tabs based on specifications and the
-    selected pipeline
+    """Constructs as set of tabs based on specifications and the
+    selected pipeline.
+
+    Parameters
+    ----------
+    selected_pipeline : str
+        ID of the selected pipeline
+    window : instance of main window
+        The main window.
+    prefs : Instance of PreferencesHandler
+        Stores e.g. active plugins.
+    include_eeg : bool
+        Whether to add EEG-related actions
+
+    Returns
+    -------
+    list of QDialog
+        Contains the constructed tabs relevant to the pipeline
     """
+ 
     active_plugins = prefs.active_plugins
 
     action_specs = find_all_action_specs()
@@ -705,6 +724,9 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg):
 
 
 def subject_action(inner_function):
+    """ Decorator for automatically logging actions for each subject
+    separately. Should be used within Action-instances.
+    """
     def outer_function(self, subject, params, *args, **kwargs):
 
         message_dict = {
@@ -733,7 +755,8 @@ def subject_action(inner_function):
 
 
 class Action:
-    """
+    """ All actions should inherit this, so that automatic logging
+    works.
     """
     logged = True
 
@@ -764,6 +787,8 @@ class Action:
 
 
 class InfoAction(Action):
+    """ This should be inherited instead of Action
+    when filling info boxes. """
     logged = False
 
     def run(self):

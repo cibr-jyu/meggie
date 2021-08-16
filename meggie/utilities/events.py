@@ -261,5 +261,3 @@ def get_raw_blocks_from_intervals(subject, intervals):
      
     return times, raw_blocks
 
-
-

@@ -1,4 +1,4 @@
-""" Contains useful decorators.
+""" Contains threading related utilities.
 """
 
 from queue import Queue

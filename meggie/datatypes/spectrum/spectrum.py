@@ -110,12 +110,13 @@ class Spectrum(Datatype):
     def save_content(self):
         """Saves spectral data and info structure to the spectrum directory.
         """
-        # save info
-        info_path = os.path.join(self._directory,
-                                 self._name + '-info.fif')
-        mne.io.meas_info.write_info(info_path, self._info)
-        self._params['info_set'] = True
         try:
+            # save info
+            info_path = os.path.join(self._directory,
+                                     self._name + '-info.fif')
+            mne.io.meas_info.write_info(info_path, self._info)
+            self._params['info_set'] = True
+
             # save data
             for key, psd in self._content.items():
 
@@ -128,8 +129,8 @@ class Spectrum(Datatype):
 
                 filemanager.save_csv(path, data, column_names, row_descs)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception('')
-            raise IOError('Writing spectrums failed')
+            raise Exception("Writing spectrums failed. Please check that the "
+                            "entire experiment folder has write permissions.")
 
     def delete_content(self):
         """Removes spectral data and info structure from the

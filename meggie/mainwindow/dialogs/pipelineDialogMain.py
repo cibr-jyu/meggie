@@ -17,7 +17,7 @@ from meggie.utilities.messaging import exc_messagebox
 
 
 class PipelineDialog(QtWidgets.QDialog):
-    """ Contains logic for preferences dialog.
+    """ Contains logic for pipeline dialog.
     """
 
     def __init__(self, parent, prefs):

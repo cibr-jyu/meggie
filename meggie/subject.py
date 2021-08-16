@@ -27,6 +27,9 @@ class Subject:
         Name of the subject.
     raw_fname : str
         Path to the subject data.
+    uid : str
+        A unique identifier to differentiate between subjects that have 
+        same name.
     ica_applied : bool
         Whether ICA has been applied (at least once) to this data.
     rereferenced : bool

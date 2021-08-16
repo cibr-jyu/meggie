@@ -14,7 +14,7 @@ from meggie.mainwindow.dialogs.activePluginsDialogUi import Ui_activePluginsDial
 
 
 class ActivePluginsDialog(QtWidgets.QDialog):
-    """ Contains logic for custom tabs dialog.
+    """ Contains logic for active plugins dialog.
     """
 
     def __init__(self, active_plugins, parent, handler):
@@ -48,7 +48,6 @@ class ActivePluginsDialog(QtWidgets.QDialog):
                 item.setSelected(True)
 
     def accept(self):
-        
         idxs = [elem.row() for elem in self.ui.listWidgetPlugins.selectedIndexes()]
         active_plugins = [self.plugin_info[idx][0] for idx in idxs]
         self.handler(active_plugins)
