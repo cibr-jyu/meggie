@@ -19,7 +19,8 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class EventsFromAnnotations(Action):
-    """
+    """ Shows a dialog for parameter selection and then
+    applies a conversion from annotations to events.
     """
 
     @subject_action

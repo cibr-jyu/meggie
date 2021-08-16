@@ -1,4 +1,4 @@
-""" Contains implementation for event info
+""" Contains implementation for raw event info
 """
 import numpy as np 
 
@@ -8,7 +8,7 @@ from meggie.utilities.events import find_events
 
 
 class Info(InfoAction):
-    """
+    """ Shows event information on a info box.
     """
 
     def run(self):

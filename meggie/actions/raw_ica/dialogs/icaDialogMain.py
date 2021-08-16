@@ -211,19 +211,20 @@ class ICADialog(QtWidgets.QDialog):
                 self.ica.apply(raw, exclude=indices)
 
             apply_ica_wrapper(do_meanwhile=self.parent.update_ui)
+
+            self.experiment.active_subject.save()
+            self.experiment.active_subject.ica_applied = True
+            self.experiment.save_experiment_settings()
+     
         except Exception as exc:
             exc_messagebox(self, exc)
             return
 
-        self.experiment.active_subject.save()
-        self.experiment.active_subject.ica_applied = True
-        self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
-
-        self.params['exclude'] = indices
 
         # for logging purposes, call the handler
         if self.on_apply:
+            self.params['exclude'] = indices
             self.on_apply(self.experiment.active_subject, self.params)
 
         self._reset()

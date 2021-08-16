@@ -165,9 +165,8 @@ class Experiment:
 
         try:
             shutil.rmtree(subject.path)
-        except OSError as exc:
-            logging.getLogger('ui_logger').exception('')
-            raise OSError(
+        except Exception as exc:
+            raise Exception(
                 'Could not remove the contents of the subject folder.')
 
     def activate_subject(self, subject_name):
@@ -275,9 +274,10 @@ class Experiment:
             pass
 
         path = os.path.join(self._path, os.path.basename(self._path) + '.exp')
+
         # let's backup previous exp file with version number
-        if os.path.exists(path):
-            try:
+        try:
+            if os.path.exists(path):
                 with open(path, 'r') as f:
                     old_data = json.load(f)
 
@@ -287,20 +287,21 @@ class Experiment:
                     os.path.basename(self._path) + '_' + version + '.exp.bak')
 
                 shutil.copy(path, backup_path)
+        except Exception as exc:
+            message = ("Could not backup experiment file to {0}. "
+                       "Please check that the experiment folder "
+                       "has write permissions everywhere.")
+            raise Exception(message.format(backup_path))
 
-            except Exception as exc:
-                logging.getLogger('ui_logger').exception('')
-                logging.getLogger('ui_logger').warning(
-                    'Could not backup experiment file. Please check your permissions..')
-
-        # save to file
+        # and then overwrite the current exp file
         try:
             with open(path, 'w') as f:
                 json.dump(save_dict, f, sort_keys=True, indent=4)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception('')
-            logging.getLogger('ui_logger').error(
-                'Could not save the experiment file. Please check your permissions..')
+            message = ("Could not save experiment file {0}. "
+                       "Please check that the experiment folder "
+                       "has write permissions everywhere.")
+            raise Exception(message.format(path))
 
 def initialize_new_experiment(name, author, prefs, set_previous_experiment=True):
     """Initializes new experiment object with given data.

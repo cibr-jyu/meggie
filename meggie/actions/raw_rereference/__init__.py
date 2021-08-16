@@ -16,7 +16,7 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class Rereference(Action):
-    """
+    """ Shows a dialog and then allows rereferencing eeg data.
     """
 
     @subject_action

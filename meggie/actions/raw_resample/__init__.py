@@ -1,4 +1,4 @@
-""" Contains implementation for raw resample
+""" Contains implementation for raw resample.
 """
 import logging
 
@@ -16,7 +16,8 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class Resample(Action):
-    """
+    """ Shows a dialog for getting parameters and allows
+    resampling data of the subject.
     """
 
     @subject_action

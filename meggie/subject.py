@@ -132,7 +132,13 @@ class Subject:
 
     def save(self):
         """ Saves the data to the existing path. """
-        filemanager.save_raw(self._raw, self.raw_path)
+        try:
+            filemanager.save_raw(self._raw, self.raw_path)
+        except Exception as exc:
+            raise Exception("Could not save the raw file. Please ensure "
+                            "that the entire experiment folder has "
+                            "write permissions.")
+
 
     def release_memory(self):
         """ Releases data from the memory.
@@ -182,4 +188,5 @@ class Subject:
                 [self.path] + paths)
         except OSError:
             raise OSError("Couldn't create all the necessary folders. "
-                          "Do you have the necessary permissions?")
+                          "Please ensure that the experiment folder "
+                          "has write permissions everywhere.")

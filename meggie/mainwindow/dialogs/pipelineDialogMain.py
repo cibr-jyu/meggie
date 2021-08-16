@@ -13,6 +13,7 @@ from meggie.mainwindow.dynamic import find_all_package_specs
 from meggie.mainwindow.dialogs.pipelineDialogUi import Ui_pipelineDialog
 
 from meggie.utilities.messaging import messagebox
+from meggie.utilities.messaging import exc_messagebox
 
 
 class PipelineDialog(QtWidgets.QDialog):
@@ -78,10 +79,17 @@ class PipelineDialog(QtWidgets.QDialog):
                 break
 
         # store selected pipeline to the experiment
-        if selected_pipeline:
+        if not selected_pipeline:
+            return
+
+        try:
             self.experiment.selected_pipeline = selected_pipeline
             self.experiment.save_experiment_settings()
-            self.parent.reconstruct_tabs()
-            self.parent.initialize_ui()
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
+
+        self.parent.reconstruct_tabs()
+        self.parent.initialize_ui()
 
         self.close()

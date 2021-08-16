@@ -1,4 +1,4 @@
-""" Contains implementation for measurement info
+""" Contains implementation for raw measurement info
 """
 from meggie.mainwindow.dynamic import InfoAction
 
@@ -7,7 +7,7 @@ from meggie.utilities.channels import is_montage_set
 
 
 class Info(InfoAction):
-    """
+    """ Shows measurement information on a info box
     """
 
     def run(self):

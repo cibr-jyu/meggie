@@ -7,13 +7,15 @@ import numpy as np
 
 from meggie.utilities.events import find_stim_channel
 from meggie.utilities.events import find_events
+from meggie.utilities.messaging import exc_messagebox
 
 from meggie.mainwindow.dynamic import Action
 from meggie.mainwindow.dynamic import subject_action
 
 
 class PlotRaw(Action):
-    """
+    """ Shows a mne raw plot and saves the changes to FS
+    if annotations or bads have changed.
     """
 
     def run(self):
@@ -48,7 +50,10 @@ class PlotRaw(Action):
             params['bads_changed'] = bads_changed
             params['annotations_changed'] = annotations_changed
 
-            self.handler(subject, params)
+            try:
+                self.handler(subject, params)
+            except Exception as exc:
+                exc_messagebox(self.window, exc)
 
         fig = raw.plot(events=events, show=False)
         fig.canvas.mpl_connect('close_event', handle_close)

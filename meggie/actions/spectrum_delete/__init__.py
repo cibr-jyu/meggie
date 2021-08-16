@@ -11,7 +11,7 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class DeleteSpectrum(Action):
-    """
+    """ Deletes spectrum of selected name
     """
 
     def run(self):
@@ -27,9 +27,8 @@ class DeleteSpectrum(Action):
             self.handler(subject, {'name': selected_name})
         except Exception as exc:
             exc_messagebox(self.window, exc)
-            return
+            self.experiment.save_experiment_settings()
 
-        self.experiment.save_experiment_settings()
         self.window.initialize_ui()
 
     @subject_action

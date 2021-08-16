@@ -6,18 +6,22 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from meggie.utilities.messaging import messagebox
+from meggie.utilities.messaging import exc_messagebox
 
 from meggie.mainwindow.dynamic import Action
 from meggie.mainwindow.dynamic import subject_action
 
 
 class PlotProjections(Action):
-    """
+    """ Shows a plot of existing projection vectors.
     """
     def run(self):
 
         subject = self.experiment.active_subject
-        self.handler(subject, {})
+        try:
+            self.handler(subject, {})
+        except Exception as exc:
+            exc_messagebox(self.window, exc)
 
     @subject_action
     def handler(self, subject, params):

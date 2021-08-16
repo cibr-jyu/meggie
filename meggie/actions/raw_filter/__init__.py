@@ -17,7 +17,8 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class Filter(Action):
-    """
+    """ Shows a dialog for getting parameters and allows
+    filtering the raw data.
     """
 
     @subject_action

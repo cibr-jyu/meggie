@@ -53,11 +53,18 @@ class AddSubjectDialog(QtWidgets.QDialog):
             except Exception as exc:
                 logging.getLogger('ui_logger').exception('')
 
-        self.parent.experiment.save_experiment_settings()
+        try:
+            self.parent.experiment.save_experiment_settings()
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
 
-        message = (str(n_successful) + '/' + str(self.ui.listWidgetFileNames.count()) + 
-                   ' subjects added successfully')
-        logging.getLogger('ui_logger').info(message)
+        n_total = self.ui.listWidgetFileNames.count()
+
+        if n_total != n_successful:
+            message = ("Only {0} / {1} subjects added successfully. "
+                       "Please check console below for details.")
+            messagebox(self.parent, message.format(n_successful, n_total))
 
         self.parent.initialize_ui()
         self.close()

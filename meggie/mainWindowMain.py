@@ -147,21 +147,30 @@ class MainWindow(QtWidgets.QMainWindow):
         def handler(accepted):
             if not accepted:
                 return
-            failures = []
+            
+            n_successful = 0
             for index in selIndexes:
                 subject_name = index.data()
                 try:
                     self.experiment.remove_subject(subject_name)
+                    n_successful += 1
                 except Exception:
-                    failures.append(subject_name)
+                    logging.getLogger('ui_logger').exception('')
 
-            if failures:
-                msg = ''.join(['Could not remove subject folders ',
-                               'for following subjects: ',
-                               '\n'.join(failures)])
-                messagebox(self, msg)
 
-            self.experiment.save_experiment_settings()
+            try:
+                self.experiment.save_experiment_settings()
+            except Exception as exc:
+                exc_messagebox(self, exc)
+                return
+
+            n_total = len(selIndexes)
+
+            if n_successful != n_total:
+                message = ("Could not remove all subjects completely. "
+                           "Please check console below for details.")
+                messagebox(self, message)
+
             self.initialize_ui()
 
         questionbox(self, 'Permanently remove the selected subjects and the related files?', 
@@ -374,6 +383,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         logging.getLogger().setLevel(logging.DEBUG)
 
+        logger_error_message = ("Could not setup loggers because of missing "
+                                "permissions. The whole experiment folder "
+                                "should have write permissions.")
+
         # logger for mne wrapper functions
         mne_wrapper_logger = logging.getLogger('mne_wrapper_logger')
         formatter = logging.Formatter('MNE call: %(asctime)s %(message)s',
@@ -382,13 +395,16 @@ class MainWindow(QtWidgets.QMainWindow):
         mne_wrapper_logger.handlers = []
 
         if self.experiment:
-            logfile = os.path.join(
-                self.experiment.path,
-                'mne.log')
-            file_handler = logging.FileHandler(logfile)
-            file_handler.setLevel('DEBUG')
-            file_handler.setFormatter(formatter)
-            mne_wrapper_logger.addHandler(file_handler)
+            try:
+                logfile = os.path.join(
+                    self.experiment.path,
+                    'mne.log')
+                file_handler = logging.FileHandler(logfile)
+                file_handler.setLevel('DEBUG')
+                file_handler.setFormatter(formatter)
+                mne_wrapper_logger.addHandler(file_handler)
+            except PermissionError as exc:
+                raise Exception(logger_error_message)
 
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
@@ -424,15 +440,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # setup file handler
         if self.experiment:
-            logfile = os.path.join(
-                self.experiment.path,
-                'actions.log')
-            file_handler = logging.FileHandler(logfile)
-            file_handler.setLevel('INFO')
+            try:
+                logfile = os.path.join(
+                    self.experiment.path,
+                    'actions.log')
+                file_handler = logging.FileHandler(logfile)
+                file_handler.setLevel('INFO')
 
-            formatter = jsonlogger.JsonFormatter(timestamp=True)
-            file_handler.setFormatter(formatter)
-            action_logger.addHandler(file_handler)
+                formatter = jsonlogger.JsonFormatter(timestamp=True)
+                file_handler.setFormatter(formatter)
+                action_logger.addHandler(file_handler)
+            except PermissionError as exc:
+                raise Exception(logger_error_message)
 
 
 class EmittingStream(QtCore.QObject):

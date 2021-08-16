@@ -17,7 +17,8 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class Montage(Action):
-    """
+    """ Shows a dialog for gathering parameters and then
+    allows setting montage for EEG.
     """
 
     @subject_action

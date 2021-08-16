@@ -12,7 +12,8 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class ICA(Action):
-    """
+    """ Shows a dialog which can be used to compute ICA decompositions
+    and selecting components for removal.
     """
     random_state = 10
 
