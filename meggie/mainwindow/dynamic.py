@@ -640,7 +640,9 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg):
             pipeline_spec = pipeline
             break
     if not found:
-        raise Exception('Could not find pipeline with the selected name')
+        # Use classic
+        pipeline_spec = {'id': "classic",
+                         'name': "Include everything"}
 
     # merges tab specification from others to first and 
     # filters to tabs specified by the pipeline

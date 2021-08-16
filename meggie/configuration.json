@@ -41,8 +41,6 @@
           "info": ["tfr_info"]}
     ],
     "pipelines": [
-        {"id": "classic",
-         "name": "Include everything"},
         {"id": "spectrum_sensor",
          "name": "Sensor-level continuous data analysis",
          "include_tabs": ["preprocessing", "spectrum"]},

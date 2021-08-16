@@ -49,6 +49,9 @@ class CreateExperimentDialog(QtWidgets.QDialog):
                         name = pipeline.get('name', '')
                         pipelines.append((id_, name))
 
+        # Add classic
+        pipelines.append(('classic', 'Include everything'))
+
         self.pipelines = pipelines
 
         # Create buttons for pipelines

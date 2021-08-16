@@ -50,6 +50,8 @@ class PipelineDialog(QtWidgets.QDialog):
                         name = pipeline.get('name', '')
                         pipelines.append((id_, name))
 
+        pipelines.append(('classic', 'Include everything'))
+
         self.pipelines = pipelines
 
         # create buttons for pipelines
