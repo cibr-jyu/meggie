@@ -15,7 +15,7 @@ from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
 from meggie.mainwindow.dynamic import construct_tabs
-from meggie.mainwindow.mne_wrapper import wrap_mne
+
 from meggie.mainwindow.preferences import PreferencesHandler
 
 from meggie.mainWindowUi import Ui_MainWindow
@@ -26,7 +26,6 @@ from meggie.utilities.messaging import questionbox
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 
-from meggie.mainwindow.dialogs.logDialogMain import LogDialog
 from meggie.mainwindow.dialogs.actionDialogMain import ActionDialog
 from meggie.mainwindow.dialogs.aboutDialogMain import AboutDialog
 from meggie.mainwindow.dialogs.preferencesDialogMain import PreferencesDialog
@@ -51,7 +50,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.experiment = None
 
         self._setup_loggers()
-        wrap_mne()
 
         # Direct output to console
         if not sys.argv[-1] == 'debug':
@@ -186,18 +184,6 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         dialog = ActionDialog(self, self.experiment)
-        dialog.show()
-
-    def on_actionShowLog_triggered(self, checked=None):
-        if checked is None:
-            return
-
-        if not self.experiment:
-            message = 'Please open an experiment first.'
-            messagebox(self, message)
-            return
-
-        dialog = LogDialog(self)
         dialog.show()
 
     def on_actionPreferences_triggered(self, checked=None):
@@ -384,30 +370,6 @@ class MainWindow(QtWidgets.QMainWindow):
         logger_error_message = ("Could not setup loggers because of missing "
                                 "permissions. The whole experiment folder "
                                 "should have write permissions.")
-
-        # logger for mne wrapper functions
-        mne_wrapper_logger = logging.getLogger('mne_wrapper_logger')
-        formatter = logging.Formatter('MNE call: %(asctime)s %(message)s',
-                                      datefmt='%Y-%m-%d %H:%M:%S')
-
-        mne_wrapper_logger.handlers = []
-
-        if self.experiment:
-            try:
-                logfile = os.path.join(
-                    self.experiment.path,
-                    'mne.log')
-                file_handler = logging.FileHandler(logfile)
-                file_handler.setLevel('DEBUG')
-                file_handler.setFormatter(formatter)
-                mne_wrapper_logger.addHandler(file_handler)
-            except PermissionError as exc:
-                raise Exception(logger_error_message)
-
-        stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(formatter)
-        stream_handler.setLevel('INFO')
-        mne_wrapper_logger.addHandler(stream_handler)
 
         # setup logger for informative messages
         ui_logger = logging.getLogger('ui_logger')

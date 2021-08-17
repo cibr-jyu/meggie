@@ -257,7 +257,6 @@
      <string>Tools</string>
     </property>
     <addaction name="actionActions"/>
-    <addaction name="actionShowLog"/>
     <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuHelp">

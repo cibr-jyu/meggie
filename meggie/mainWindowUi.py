@@ -146,7 +146,6 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionOpenExperiment)
         self.menuFile.addAction(self.actionQuit)
         self.menuTools.addAction(self.actionActions)
-        self.menuTools.addAction(self.actionShowLog)
         self.menuTools.addAction(self.actionPreferences)
         self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
