@@ -103,7 +103,7 @@ class Subject:
                             self.raw_fname)
         return path
 
-    def get_raw(self, preload=True, verbose='info'):
+    def get_raw(self, preload=True, verbose='warning'):
         """ Gets the raw object for the subject.
 
         Reads from the file system if not in the memory already.

@@ -1,5 +1,5 @@
 {
     "id": "spectrum_delete",
-    "name": "Delete spectrum",
+    "name": "Delete",
     "entry": "DeleteSpectrum"
 }

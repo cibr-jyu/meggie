@@ -169,7 +169,7 @@ class Spectrum(Datatype):
         from the raw object. This was problematic as the raw could change
         after creation of the spectrum.
         """
-        info = subject.get_raw(preload=False, verbose='warning').info
+        info = subject.get_raw(preload=False).info
 
         # filter to correct set of channels
         _, _, _, ch_names = self._get_content()

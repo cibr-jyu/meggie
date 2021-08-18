@@ -65,12 +65,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 exp = open_existing_experiment(self.prefs)
                 self.experiment = exp
                 self.prefs.previous_experiment_name = exp.path
+                self.prefs.write_preferences_to_disk()
                 logging.getLogger('ui_logger').info('Opening experiment ' + exp.path)
             except Exception as exc:
                 self.prefs.previous_experiment_name = ''
                 exc_messagebox(self, exc)
-
-            self.prefs.write_preferences_to_disk()
 
         self.reconstruct_tabs()
         self.initialize_ui()
@@ -113,11 +112,12 @@ class MainWindow(QtWidgets.QMainWindow):
             exp = open_existing_experiment(self.prefs, path=path)
             self.experiment = exp
             self.prefs.previous_experiment_name = exp.path
+            self.prefs.write_preferences_to_disk()
+            self.reconstruct_tabs()
+            self.initialize_ui()
         except Exception as exc:
             exc_messagebox(self, exc)
 
-        self.prefs.write_preferences_to_disk()
-        self.initialize_ui()
 
     def on_pushButtonAddSubjects_clicked(self, checked=None):
         if checked is None:

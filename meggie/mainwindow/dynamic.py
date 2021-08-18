@@ -186,13 +186,13 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
 
             if self.tab_spec['output_actions']:
                 self.groupBoxOutputActions = QtWidgets.QGroupBox(self)
-                self.groupBoxOutputActions.setTitle('Actions')
+                self.groupBoxOutputActions.setTitle('')
                 self.gridLayoutOutputActions = QtWidgets.QGridLayout(
                     self.groupBoxOutputActions)
 
             if self.tab_spec['input_actions']:
                 self.groupBoxInputActions = QtWidgets.QGroupBox(self)
-                self.groupBoxInputActions.setTitle('Actions')
+                self.groupBoxInputActions.setTitle('')
                 self.gridLayoutInputActions = QtWidgets.QGridLayout(
                     self.groupBoxInputActions)
 

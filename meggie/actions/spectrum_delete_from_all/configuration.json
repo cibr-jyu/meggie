@@ -1,5 +1,5 @@
 {
     "id": "spectrum_delete_from_all",
-    "name": "Delete spectrum from all",
+    "name": "Delete from all",
     "entry": "DeleteSpectrumFromAll"
 }

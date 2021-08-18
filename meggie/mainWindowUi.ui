@@ -151,7 +151,7 @@
                <item row="3" column="0" colspan="3">
                 <widget class="QPushButton" name="pushButtonPipelines">
                  <property name="text">
-                  <string>Select pipeline...</string>
+                  <string>Change pipeline...</string>
                  </property>
                 </widget>
                </item>
@@ -307,7 +307,7 @@
   </action>
   <action name="actionActions">
    <property name="text">
-    <string>Show actions...</string>
+    <string>Show past actions...</string>
    </property>
   </action>
  </widget>

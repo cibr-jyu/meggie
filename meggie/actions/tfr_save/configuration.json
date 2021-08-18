@@ -1,5 +1,5 @@
 {
     "id": "tfr_save",
-    "name": "Save TFR",
+    "name": "Save TFR to csv",
     "entry": "SaveTFR"
 }

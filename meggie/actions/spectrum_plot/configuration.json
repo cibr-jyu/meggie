@@ -1,5 +1,5 @@
 {
     "id": "spectrum_plot",
-    "name": "Plot spectrum",
+    "name": "Plot",
     "entry": "PlotSpectrum"
 }

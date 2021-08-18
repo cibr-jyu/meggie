@@ -1,5 +1,5 @@
 {
     "id": "evoked_save",
-    "name": "Save evoked",
+    "name": "Save to csv",
     "entry": "SaveEvoked"
 }

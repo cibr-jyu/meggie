@@ -66,6 +66,10 @@ class AddSubjectDialog(QtWidgets.QDialog):
                        "Please check console below for details.")
             messagebox(self.parent, message.format(n_successful, n_total))
 
+        message = ('{0} / {1} subjects added successfully.').format(
+            n_successful, n_total)
+        logging.getLogger('ui_logger').info(message)
+
         self.parent.initialize_ui()
         self.close()
 

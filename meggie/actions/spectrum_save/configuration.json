@@ -1,5 +1,5 @@
 {
     "id": "spectrum_save",
-    "name": "Save spectrum",
+    "name": "Save to csv",
     "entry": "SaveSpectrum"
 }

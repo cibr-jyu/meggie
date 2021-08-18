@@ -1,5 +1,5 @@
 {
     "id": "epochs_delete",
-    "name": "Delete epochs",
+    "name": "Delete",
     "entry": "DeleteEpochs"
 }
