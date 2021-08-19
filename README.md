@@ -20,7 +20,7 @@
 
 1. Create a conda environemnt: conda create -n meggie-env python=3
 1. Activate the environment: conda activate meggie-env
-1. Install meggie: conda install meggie
+1. Install meggie: conda install -c conda-forge meggie
 1. Run: meggie
 
 ### Using this repository:
