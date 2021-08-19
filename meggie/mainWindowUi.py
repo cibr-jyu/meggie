@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'mainWindowUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -59,23 +61,26 @@ class Ui_MainWindow(object):
         self.groupBoxExperiment.setObjectName("groupBoxExperiment")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.groupBoxExperiment)
         self.gridLayout_4.setObjectName("gridLayout_4")
-        self.labelExperimentName = QtWidgets.QLabel(self.groupBoxExperiment)
-        self.labelExperimentName.setObjectName("labelExperimentName")
-        self.gridLayout_4.addWidget(self.labelExperimentName, 0, 0, 1, 1)
-        self.labelExperimentAuthor = QtWidgets.QLabel(self.groupBoxExperiment)
-        self.labelExperimentAuthor.setObjectName("labelExperimentAuthor")
-        self.gridLayout_4.addWidget(self.labelExperimentAuthor, 1, 0, 1, 1)
-        self.pushButtonChannelGroups = QtWidgets.QPushButton(self.groupBoxExperiment)
-        self.pushButtonChannelGroups.setObjectName("pushButtonChannelGroups")
-        self.gridLayout_4.addWidget(self.pushButtonChannelGroups, 2, 0, 1, 3)
-        self.labelExperimentNameValue = QtWidgets.QLabel(self.groupBoxExperiment)
-        self.labelExperimentNameValue.setText("")
-        self.labelExperimentNameValue.setObjectName("labelExperimentNameValue")
-        self.gridLayout_4.addWidget(self.labelExperimentNameValue, 0, 1, 1, 2)
         self.labelExperimentAuthorValue = QtWidgets.QLabel(self.groupBoxExperiment)
         self.labelExperimentAuthorValue.setText("")
         self.labelExperimentAuthorValue.setObjectName("labelExperimentAuthorValue")
         self.gridLayout_4.addWidget(self.labelExperimentAuthorValue, 1, 1, 1, 2)
+        self.labelExperimentAuthor = QtWidgets.QLabel(self.groupBoxExperiment)
+        self.labelExperimentAuthor.setObjectName("labelExperimentAuthor")
+        self.gridLayout_4.addWidget(self.labelExperimentAuthor, 1, 0, 1, 1)
+        self.labelExperimentNameValue = QtWidgets.QLabel(self.groupBoxExperiment)
+        self.labelExperimentNameValue.setText("")
+        self.labelExperimentNameValue.setObjectName("labelExperimentNameValue")
+        self.gridLayout_4.addWidget(self.labelExperimentNameValue, 0, 1, 1, 2)
+        self.labelExperimentName = QtWidgets.QLabel(self.groupBoxExperiment)
+        self.labelExperimentName.setObjectName("labelExperimentName")
+        self.gridLayout_4.addWidget(self.labelExperimentName, 0, 0, 1, 1)
+        self.pushButtonChannelGroups = QtWidgets.QPushButton(self.groupBoxExperiment)
+        self.pushButtonChannelGroups.setObjectName("pushButtonChannelGroups")
+        self.gridLayout_4.addWidget(self.pushButtonChannelGroups, 2, 0, 1, 3)
+        self.pushButtonPipelines = QtWidgets.QPushButton(self.groupBoxExperiment)
+        self.pushButtonPipelines.setObjectName("pushButtonPipelines")
+        self.gridLayout_4.addWidget(self.pushButtonPipelines, 3, 0, 1, 3)
         self.gridLayout_2.addWidget(self.groupBoxExperiment, 0, 0, 1, 1)
         self.scrollAreaLeft.setWidget(self.scrollAreaWidgetContents)
         self.gridLayoutTop.addWidget(self.scrollAreaLeft, 0, 0, 1, 1)
@@ -135,10 +140,12 @@ class Ui_MainWindow(object):
         self.actionPreferences.setObjectName("actionPreferences")
         self.actionAbout = QtWidgets.QAction(MainWindow)
         self.actionAbout.setObjectName("actionAbout")
+        self.actionActions = QtWidgets.QAction(MainWindow)
+        self.actionActions.setObjectName("actionActions")
         self.menuFile.addAction(self.actionCreateExperiment)
         self.menuFile.addAction(self.actionOpenExperiment)
         self.menuFile.addAction(self.actionQuit)
-        self.menuTools.addAction(self.actionShowLog)
+        self.menuTools.addAction(self.actionActions)
         self.menuTools.addAction(self.actionPreferences)
         self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -165,9 +172,10 @@ class Ui_MainWindow(object):
         self.pushButtonRemoveSubject.setText(_translate("MainWindow", "Remove selected"))
         self.pushButtonActivateSubject.setText(_translate("MainWindow", "Activate selected"))
         self.groupBoxExperiment.setTitle(_translate("MainWindow", "Experiment"))
-        self.labelExperimentName.setText(_translate("MainWindow", "Name:"))
         self.labelExperimentAuthor.setText(_translate("MainWindow", "Author:"))
+        self.labelExperimentName.setText(_translate("MainWindow", "Name:"))
         self.pushButtonChannelGroups.setText(_translate("MainWindow", "Channel groups..."))
+        self.pushButtonPipelines.setText(_translate("MainWindow", "Change pipeline..."))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuTools.setTitle(_translate("MainWindow", "Tools"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
@@ -175,7 +183,7 @@ class Ui_MainWindow(object):
         self.actionOpenExperiment.setText(_translate("MainWindow", "Open experiment..."))
         self.actionShowExperimentInfo.setText(_translate("MainWindow", "Show experiment info..."))
         self.actionQuit.setText(_translate("MainWindow", "Quit"))
-        self.actionShowLog.setText(_translate("MainWindow", "Show log..."))
+        self.actionShowLog.setText(_translate("MainWindow", "Show mne log..."))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences..."))
         self.actionAbout.setText(_translate("MainWindow", "About..."))
-
+        self.actionActions.setText(_translate("MainWindow", "Show past actions..."))

@@ -1,0 +1,5 @@
+{
+    "id": "tfr_delete",
+    "name": "Delete",
+    "entry": "DeleteTFR"
+}

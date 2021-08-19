@@ -1,0 +1,5 @@
+{
+    "id": "spectrum_save",
+    "name": "Save to csv",
+    "entry": "SaveSpectrum"
+}

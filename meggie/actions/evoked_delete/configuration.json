@@ -1,0 +1,5 @@
+{
+    "id": "evoked_delete",
+    "name": "Delete",
+    "entry": "DeleteEvoked"
+}

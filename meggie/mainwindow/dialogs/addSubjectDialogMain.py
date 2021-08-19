@@ -13,7 +13,7 @@ from meggie.mainwindow.dialogs.addSubjectDialogUi import Ui_AddSubject
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
-from meggie.utilities.decorators import threaded
+from meggie.utilities.threading import threaded
 from meggie.utilities.names import next_available_name
 
 
@@ -53,10 +53,21 @@ class AddSubjectDialog(QtWidgets.QDialog):
             except Exception as exc:
                 logging.getLogger('ui_logger').exception('')
 
-        self.parent.experiment.save_experiment_settings()
+        try:
+            self.parent.experiment.save_experiment_settings()
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
 
-        message = (str(n_successful) + '/' + str(self.ui.listWidgetFileNames.count()) + 
-                   ' subjects added successfully')
+        n_total = self.ui.listWidgetFileNames.count()
+
+        if n_total != n_successful:
+            message = ("Only {0} / {1} subjects added successfully. "
+                       "Please check console below for details.")
+            messagebox(self.parent, message.format(n_successful, n_total))
+
+        message = ('{0} / {1} subjects added successfully.').format(
+            n_successful, n_total)
         logging.getLogger('ui_logger').info(message)
 
         self.parent.initialize_ui()

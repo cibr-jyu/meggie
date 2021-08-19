@@ -56,8 +56,8 @@ class TFR(Datatype):
                 fname = self._get_fname(tfr_name)
                 tfr.save(fname, overwrite=True)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception('')
-            raise IOError('Writing TFRs failed')
+            raise Exception("Writing TFRs failed. Please ensure that the "
+                            "entire experiment folder has write permissions.")
 
     def delete_content(self):
         """Deletes the correct h5 files in the tfr directory"""
@@ -78,8 +78,6 @@ class TFR(Datatype):
                                    self._params['conditions']]:
                         continue
 
-                logging.getLogger('ui_logger').debug(
-                    'Removing existing tfr file: ' + str(fname))
                 os.remove(os.path.join(self._directory, fname))
 
     def _load_content(self):
@@ -109,9 +107,6 @@ class TFR(Datatype):
                     path = os.path.join(self._directory,
                                         fname)
             if path:
-                logging.getLogger('ui_logger').debug(
-                    'Reading tfr file: ' + str(path))
-
                 self._content[key] = mne.time_frequency.read_tfrs(path)[0]
 
     @property

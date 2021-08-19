@@ -169,18 +169,17 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['fmax'] = fmax
         params['nfft'] = self.ui.spinBoxNfft.value()
         params['overlap'] = self.ui.spinBoxOverlap.value()
+        params['intervals'] = intervals
+        params['name'] = spectrum_name
 
         try:
-            self.handler(subject, spectrum_name, params, intervals)
+            self.handler(subject, params)
+            self.experiment.save_experiment_settings()
         except Exception as exc:
             exc_messagebox(self, exc)
             return
 
-        self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
-
-        logging.getLogger('ui_logger').info('Finished creating spectrum.')
-
         self.close()
 
     def acceptBatch(self, *args):
@@ -204,12 +203,14 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['fmax'] = fmax
         params['nfft'] = self.ui.spinBoxNfft.value()
         params['overlap'] = self.ui.spinBoxOverlap.value()
+        params['intervals'] = intervals
+        params['name'] = spectrum_name
 
         selected_subject_names = self.batching_widget.selected_subjects
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    self.handler(subject, spectrum_name, params, intervals)
+                    self.handler(subject, params)
                     subject.release_memory()
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append((subject,
@@ -217,9 +218,12 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
                     logging.getLogger('ui_logger').exception('')
 
         self.batching_widget.cleanup()
-        self.experiment.save_experiment_settings()
+
+        try:
+            self.experiment.save_experiment_settings()
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
+
         self.parent.initialize_ui()
-
-        logging.getLogger('ui_logger').info('Finished creating spectrum.')
-
         self.close()

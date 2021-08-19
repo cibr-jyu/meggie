@@ -74,6 +74,6 @@ class Epochs(Datatype):
         try:
             self._content.save(self._path, overwrite=True)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception('')
-            raise IOError('Writing epochs failed')
+            raise Exception("Writing epochs failed. Please ensure that "
+                            "the entire experiment folder has write permissions")
 

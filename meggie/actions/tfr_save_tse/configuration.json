@@ -1,0 +1,5 @@
+{
+    "id": "tfr_save_tse",
+    "name": "Save TSE to csv",
+    "entry": "SaveTSE"
+}

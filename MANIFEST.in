@@ -1,3 +1,5 @@
 recursive-include meggie *
 global-exclude *.py[co]
 global-exclude __pycache__
+global-exclude *.ui
+exclude meggie/preferences.cfg

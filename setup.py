@@ -2,11 +2,11 @@ from setuptools import setup
 
 setup(
     name='meggie',
-    version='1.1.1',
+    version='1.2.0',
     description="",
     author='CIBR',
     author_email='erkka.heinila@jyu.fi',
-    url='https://github.com/Teekuningas/meggie',
+    url='https://github.com/cibr-jyu/meggie',
     license='BSD',
     packages=['meggie'],
     include_package_data=True,

@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'designer_ui_files/preferencesDialogUi.ui'
+# Form implementation generated from reading ui file 'preferencesDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_DialogPreferences(object):
     def setupUi(self, DialogPreferences):
@@ -33,6 +35,16 @@ class Ui_DialogPreferences(object):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_5.setObjectName("gridLayout_5")
+        self.groupBoxMisc = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
+        self.groupBoxMisc.setObjectName("groupBoxMisc")
+        self.gridLayout_4 = QtWidgets.QGridLayout(self.groupBoxMisc)
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.checkBoxAutomaticOpenPreviousExperiment = QtWidgets.QCheckBox(self.groupBoxMisc)
+        self.checkBoxAutomaticOpenPreviousExperiment.setObjectName("checkBoxAutomaticOpenPreviousExperiment")
+        self.gridLayout_4.addWidget(self.checkBoxAutomaticOpenPreviousExperiment, 0, 0, 1, 1)
+        self.gridLayout_5.addWidget(self.groupBoxMisc, 2, 0, 1, 1)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem1, 3, 0, 1, 1)
         self.groupBoxWorkspace = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxWorkspace.setObjectName("groupBoxWorkspace")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.groupBoxWorkspace)
@@ -44,30 +56,14 @@ class Ui_DialogPreferences(object):
         self.ButtonBrowseWorkingDir.setObjectName("ButtonBrowseWorkingDir")
         self.gridLayout_2.addWidget(self.ButtonBrowseWorkingDir, 0, 1, 1, 1)
         self.gridLayout_5.addWidget(self.groupBoxWorkspace, 0, 0, 1, 1)
-        self.groupBoxTabs = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
-        self.groupBoxTabs.setObjectName("groupBoxTabs")
-        self.gridLayoutTabs = QtWidgets.QGridLayout(self.groupBoxTabs)
-        self.gridLayoutTabs.setObjectName("gridLayoutTabs")
-        self.horizontalLayoutCustom = QtWidgets.QHBoxLayout()
-        self.horizontalLayoutCustom.setObjectName("horizontalLayoutCustom")
-        self.radioButtonCustom = QtWidgets.QRadioButton(self.groupBoxTabs)
-        self.radioButtonCustom.setObjectName("radioButtonCustom")
-        self.horizontalLayoutCustom.addWidget(self.radioButtonCustom)
-        self.pushButtonCustom = QtWidgets.QPushButton(self.groupBoxTabs)
-        self.pushButtonCustom.setObjectName("pushButtonCustom")
-        self.horizontalLayoutCustom.addWidget(self.pushButtonCustom)
-        self.gridLayoutTabs.addLayout(self.horizontalLayoutCustom, 0, 0, 1, 1)
-        self.gridLayout_5.addWidget(self.groupBoxTabs, 2, 0, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_5.addItem(spacerItem1, 4, 0, 1, 1)
-        self.groupBoxMisc = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
-        self.groupBoxMisc.setObjectName("groupBoxMisc")
-        self.gridLayout_4 = QtWidgets.QGridLayout(self.groupBoxMisc)
-        self.gridLayout_4.setObjectName("gridLayout_4")
-        self.checkBoxAutomaticOpenPreviousExperiment = QtWidgets.QCheckBox(self.groupBoxMisc)
-        self.checkBoxAutomaticOpenPreviousExperiment.setObjectName("checkBoxAutomaticOpenPreviousExperiment")
-        self.gridLayout_4.addWidget(self.checkBoxAutomaticOpenPreviousExperiment, 0, 0, 1, 1)
-        self.gridLayout_5.addWidget(self.groupBoxMisc, 3, 0, 1, 1)
+        self.groupBoxPlugins = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
+        self.groupBoxPlugins.setObjectName("groupBoxPlugins")
+        self.formLayout = QtWidgets.QFormLayout(self.groupBoxPlugins)
+        self.formLayout.setObjectName("formLayout")
+        self.pushButtonPlugins = QtWidgets.QPushButton(self.groupBoxPlugins)
+        self.pushButtonPlugins.setObjectName("pushButtonPlugins")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.SpanningRole, self.pushButtonPlugins)
+        self.gridLayout_5.addWidget(self.groupBoxPlugins, 1, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_3.addWidget(self.scrollArea, 0, 0, 1, 1)
 
@@ -81,11 +77,9 @@ class Ui_DialogPreferences(object):
         DialogPreferences.setWindowTitle(_translate("DialogPreferences", "Meggie - Preferences"))
         self.pushButtonCancel.setText(_translate("DialogPreferences", "Cancel"))
         self.pushButtonAccept.setText(_translate("DialogPreferences", "Ok"))
-        self.groupBoxWorkspace.setTitle(_translate("DialogPreferences", "Workspace:"))
-        self.ButtonBrowseWorkingDir.setText(_translate("DialogPreferences", "Browse..."))
-        self.groupBoxTabs.setTitle(_translate("DialogPreferences", "Tabs"))
-        self.radioButtonCustom.setText(_translate("DialogPreferences", "Custom"))
-        self.pushButtonCustom.setText(_translate("DialogPreferences", "Specify..."))
         self.groupBoxMisc.setTitle(_translate("DialogPreferences", "Miscellaneous:"))
         self.checkBoxAutomaticOpenPreviousExperiment.setText(_translate("DialogPreferences", "Automatically open previous experiment upon application startup"))
-
+        self.groupBoxWorkspace.setTitle(_translate("DialogPreferences", "Workspace:"))
+        self.ButtonBrowseWorkingDir.setText(_translate("DialogPreferences", "Browse..."))
+        self.groupBoxPlugins.setTitle(_translate("DialogPreferences", "Plugins:"))
+        self.pushButtonPlugins.setText(_translate("DialogPreferences", "Select active plugins..."))

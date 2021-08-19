@@ -1,0 +1,5 @@
+{
+    "id": "spectrum_create",
+    "name": "Create spectrum",
+    "entry": "CreateSpectrum"
+}
