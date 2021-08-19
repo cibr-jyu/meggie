@@ -1,10 +1,26 @@
 Changelog
 =========
 
-1.1.2 (unreleased)
+1.2.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.2.1 (2021-08-19)
+------------------
+
+- Update setup.py for pypi
+
+1.2.0 (2021-08-19)
+------------------
+
+- Switch to pipelines and actions architecture
+- Replace message logging with more structured actions logging
+- Add three basic pipelines for evokeds, spectrums and TFR's
+- Make it possible to easily extend pipelines from plugins
+- Add dialog for explicitly enabling or disabling installed plugins
+- Improve exception handling to avoid crashing
+- Add more throbbers to UI
 
 1.1.1 (2021-06-21)
 ------------------

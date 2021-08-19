@@ -9,7 +9,7 @@ import pkg_resources
 
 from pythonjsonlogger import jsonlogger
 
-from PyQt5.Qt import QApplication
+from PyQt5.QtWidgets import QApplication
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore

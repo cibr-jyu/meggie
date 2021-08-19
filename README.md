@@ -1,4 +1,4 @@
-# Meggie 1.1
+# Meggie 1.2
 
 ## Documentation
 
@@ -9,17 +9,27 @@
 
 ## Installation
 
-The simplest way to install and run meggie is with anaconda / miniconda:
-1. Have anaconda / miniconda installed.
-1. Install meggie inside an environment: *conda create -n meggie-env -c cibr -c conda-forge meggie=1.1*
-1. Activate environment: *conda activate meggie-env*
-1. Run: *meggie*
+### From PYPI:
 
-[//]: # (Hello)
+1. Create virtual environment: python -m venv /path/to/meggie-env
+1. Activate the environment: /path/to/meggie-env/bin/activate
+1. Install meggie: python -m pip install meggie
+1. Run: meggie
 
-The general way to install Meggie is:
-1. Install mne and all its dependencies (https://mne.tools/stable/install)
-1. Then install meggie with setuptools (python setup.py install)
+### From conda-forge:
+
+1. Create a conda environemnt: conda create -n meggie-env python=3
+1. Activate the environment: conda activate meggie-env
+1. Install meggie: conda install meggie
+1. Run: meggie
+
+### Using this repository:
+
+1. Clone this repository to /path/to/meggie/repo
+1. Create virtual environment: python -m venv /path/to/meggie-env
+1. Activate the environment: /path/to/meggie-env/bin/activate
+1. Enter the repository: cd /path/to/meggie/repo
+1. Install meggie: python -m pip install .
 
 [//]: # (Hello)
 
@@ -29,9 +39,13 @@ The general way to install Meggie is:
 * If the command is found, but the software crashes during startup to an *ImportError*, you should ensure that you are using *Python 3* and that the dependencies are installed. Individual missing dependencies can often be installed with either *conda install* or *pip install*.
 * If the software crashes during analysis or startup, and the terminal window does not show you the stacktrace, you can start meggie using command *meggie debug* and then the next crash will come with a stacktrace.
 
+[//]: # (Hello)
+
 ## License
 
 This project is licensed under the BSD license.
+
+[//]: # (Hello)
 
 ## Acknowledgements
 

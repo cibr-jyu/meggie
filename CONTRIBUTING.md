@@ -20,7 +20,7 @@ We use a simplified variant of GitFlow-model, and have two main branches: master
 ### Using Git 
 
 Inside the cloned project directory, you can do following to ensure you are up to date and then create the branch for contribution:
-1. Add remote for upstream updates (only once): git remote add upstream git@github.com:Teekuningas/meggie.git
+1. Add remote for upstream updates (only once): git remote add upstream git@github.com:cibr-jyu/meggie.git
 1. Switch to local develop branch: git checkout develop
 1. Download and merge updates from upstream: git pull upstream develop
 1. Give a good name for feature / bugfix branch and switch to it: git checkout -b fix-bad-documentation
@@ -31,11 +31,10 @@ Now you are all set to write your code.
 
 ### Writing code
 
-See developer documentation in *https://teekuningas.github.io/meggie*.
+See developer documentation in *https://cibr-jyu.github.io/meggie*.
 
 Some notes and guidelines:
 * Try to keep your code clean. Use for example pycodestyle or flake8 to check your pep8-compliance. Generated code from Qtdesigner is kept as it is.
-* UI files (\*.ui) are in the designer\_ui\_files directory. You can use Qtdesigner (open with command *designer* while in the environment) to update UI files, and then *pyuic5* command to generate \*Ui.py files in the meggie/..-directories.
 * You can use command *meggie debug* to start meggie in mode, where all output is written into terminal, and you can use python debugger normally.
 * If you are fond of *import pdb; pdb.set_trace()*, you should use *meggie.utilities.debug import debug\_trace; debug\_trace()*. Otherwise Qt will spam the window full.
 
