@@ -18,7 +18,7 @@ except ImportError:
 
 setup(
     name='meggie',
-    version='1.2.0',
+    version='1.2.1',
     description="User-friendly graphical user interface to do M/EEG analysis",
     long_description="User-friendly graphical user interface to do M/EEG analysis",
     long_description_content_type="text/plain",

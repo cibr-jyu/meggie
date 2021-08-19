@@ -2,6 +2,9 @@
 
 INTERP=/usr/bin/python
 
+echo "Removing previous build artifacts"
+rm -f dist/*
+
 echo "Building source distribution.."
 $INTERP -m build --sdist
 echo "Building wheel.."
