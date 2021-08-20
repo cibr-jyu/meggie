@@ -16,103 +16,34 @@ Experiment contains the highest-level container for all the data. It implements 
 
 Subject
 *******
-Subjects are added to experiments and store subject-specific data. Most importantly they are responsible for saving and loading the raw data, but they also store dataobjects based on datatypes.
+Subjects are added to experiments and store subject-specific data. Most importantly they are responsible for saving and loading the raw data, but they also store instances of datatypes.
 
-Tabs and datatypes
-------------------
-The analysis functionality is based on two key structures, datatypes and tabs. 
+Actions, pipelines and datatypes
+--------------------------------
+The analysis functionality is based on three key structures: actions, pipelines and datatypes.
 
 Datatypes 
 *********
-Often the raw data can be summarized in structures, that capture the essential features for the purpose of analysis. For example, based on event information, the raw data can split into small segments of data that are averaged together to create event-related responses. These kind of structures, e.g. epochs, evokeds, spectrums, TFRs, that are instantiated from prespecified datatypes, can be stored within subjects. In meggie, these "blueprints" are all stored in the datatypes folder.
+Often the raw data can be summarized in structures that capture the essential features for the purpose of analysis. For example, based on event information, the raw data can split into small segments of data that are averaged together to create event-related responses. These kind of structures, e.g. epochs, evokeds, spectrums, TFRs, that are instantiated from prespecified datatypes, can be stored within subjects. In meggie, these "blueprints" are all stored, declared and implemented in the datatypes folder.
 
-Tabs
-****
-Tabs provide implementations for the analysis actions. They consist of a declaration of what buttons (actions and transformations), and what boxes (inputs, outputs, info) should be in the tab, and the implementations of these in Python. From the declaration meggie dynamically creates the tab, figures out its layout, fills in the contents, and puts it into the MainWindow. Clicking the buttons, for example, will then call a function with matching name in the python implementation. In meggie, these are stored in the tabs folder.
+Actions
+*******
+Actions are basic analysis steps such as "filter" or "create epochs". In Meggie, each one of these is declared independently in its own folder within "actions" folder. Each action consists of metadata in "configuration.json" and python code. The entry point within the python code is assumed to inherit from the Action-class defined in mainwindow/dynamic.py. If done so, the actions can be embedded in pipelines, and are automatically logged in a backlog of actions.
+
+Pipelines
+*********
+Pipelines are sets of actions arranged as buttons within tabs in the GUI and correspond to certain types of analyses from the beginning to the end such as "Sensor-level continuous data analysis" or "Source-level evoked response analysis". These are declared in the main configuration.json and as they utilize the actions for implementations, they do not include any python code.
 
 Plugins
 -------
-Creation of plugins is simple and fun. Datatypes and tabs are dynamically located at the runtime and are loadable from other python packages from meggie_* namespace. Thus implementing a plugin corresponds to creating a python package (with name in the meggie_* namespace) which introduced tabs and datatypes.
+Creation of plugins is simple. Pipelines, datatypes and actions are dynamically located at the runtime and are loadable from other python packages from meggie_* namespace. Thus implementing a plugin corresponds to creating a python package (with name in the meggie_* namespace) which introduced pipelines, actions and/or datatypes.
 
 API
 ***
-We thrive to keep the core of Meggie, which is covers everything but the tabs, as stable and reusable as possible. Thus as a plugin developer, you are allowed to use the API of MainWindow, Subject and Experiment classes, the four datatypes provided in the datatypes folder, as well as the utilities stored in the utilities folder.
+We thrive to keep the core of Meggie, which covers everything but the actions, as stable and reusable as possible. Thus as a plugin developer, you are allowed to use the API of MainWindow, Subject and Experiment classes, the four datatypes provided in the datatypes folder, as well as the functions, dialogs and widgets stored in the utilities folder.
 
-Simplest possible plugin
-************************
-To create a plugin, start by bootstrapping a package with this structure:
-
-.. container:: codelisting
-
-   * meggie_simpleplugin
-
-      * MANIFEST.in
-      * setup.py
-      * meggie_simplelugin
-
-         * configuration.json
-         * tabs
-
-            * simpleplugin
-
-               * configuration.json
-               * ui.py
-
-MANIFEST.in and setup.py are standard files in python packaging. MANIFEST.in lists
-what files inside the subdirectories should be included and what should be excluded when
-installing the package. setup.py contains the installation script with some metadata and
-flags. Let us use trivial ones. 
-MANIFEST.in:
-
-.. container:: codelisting
-
-   * recursive-include meggie_simpleplugin *
-   * global-exclude \*.py[co]
-   * global exclude __pycache__
-
-setup.py:
-
-.. container:: codelisting
-
-   * from setuptools import setup
-   * setup(
-
-      * name='meggie_simpleplugin',
-      * version='0.1.0',
-      * license='BSD',
-      * packages=['meggie_simpleplugin'],
-      * include_package_data=True,
-      * zip_safe=False,
-      * install_requires=['setuptools'])
-
-Next, configuration.json declares the name and description of the plugin.
-
-.. container:: codelisting
-
-   * {"name": "meggie_simpleplugin",
-   * "description": "The most simple possible meggie plugin"}
-
-The plugin introduces a tab, and a tab needs a declaration in the 
-meggie_simpleplugin/tabs/simpleplugin/configuration.json file:
-
-.. container:: codelisting
-
-   * {"id": "simpleplugin",
-   * "name": "Simple plugin",
-   * "actions": ["hello"]}
-
-The tab introduces an action that needs a implementation in ui.py:
-
-.. container:: codelisting
-   
-   * from meggie.utilities.messaging import messagebox
-   * def hello(experiment, data, window):
-
-      * """ Helloes the active subject.
-      * """
-      * message = 'Hello {}!'.format(experiment.active_subject.name)
-      * messagebox(window, message)
-
-That's it! The code is available in `here <https://github.com/Teekuningas/meggie_simpleplugin>`_. 
+Where to start
+**************
+See the code for simplest possible plugin `here <https://github.com/cibr-jyu/meggie_simpleplugin>`_. 
 To see it in use, see `the user documentation <http://meggie.teekuningas.net>`_.
 
