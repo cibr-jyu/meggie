@@ -1,4 +1,4 @@
-# Meggie 1.2
+# Meggie 1.3
 
 ## Documentation
 
@@ -7,7 +7,7 @@
 
 [//]: # (Hello)
 
-## Installation
+## Installation (from terminal)
 
 ### From PYPI:
 

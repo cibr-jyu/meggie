@@ -1,10 +1,16 @@
 Changelog
 =========
 
-1.2.2 (unreleased)
+1.3.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.3.0 (2021-08-20)
+------------------
+
+- Fix spectrums and actions for old experiments
+- Add descriptions to logged actions
 
 1.2.1 (2021-08-19)
 ------------------

@@ -8,6 +8,8 @@ install_requires = [
     'pyqt5',
 ]
 
+description = "User-friendly graphical user interface to do M/EEG analysis"
+
 # As PyQt5 is PyQt5 in pypi and pyqt in conda-forge, avoid
 # installing PyQt5 from pypi if already installed from conda.
 try:
@@ -18,9 +20,9 @@ except ImportError:
 
 setup(
     name='meggie',
-    version='1.2.1',
-    description="User-friendly graphical user interface to do M/EEG analysis",
-    long_description="User-friendly graphical user interface to do M/EEG analysis",
+    version='1.3.0',
+    description=description,
+    long_description=description,
     long_description_content_type="text/plain",
     author='CIBR',
     author_email='erkka.heinila@jyu.fi',
