@@ -58,6 +58,7 @@ class ActionDialog(QtWidgets.QDialog):
             for row in action_rows:
                 if row['type'] == 'ACTION_START':
                     id_ = row['id']
+                    desc = row.get('desc')
 
                 if row['type'] == 'SUBJECT_START':
                     if not row['subject_uid'] in action_tree:
@@ -74,6 +75,7 @@ class ActionDialog(QtWidgets.QDialog):
             for subject_uid, branch in action_tree.items():
                 if branch.get('finished'):
                     branch['id'] = id_
+                    branch['desc'] = desc
                     if subject_uid not in subject_tree:
                         subject_tree[subject_uid] = []
                     subject_tree[subject_uid].append(branch)
@@ -101,6 +103,10 @@ class ActionDialog(QtWidgets.QDialog):
                 if action_data['id'] in action_specs:
                     if action_specs[action_data['id']][2].get('name'):
                         name = action_specs[action_data['id']][2].get('name')
+
+                if action_data['desc']:
+                    name += " ({0})".format(action_data['desc'])
+
                 action_item.setText(0, name)
 
                 # Add params item to the action

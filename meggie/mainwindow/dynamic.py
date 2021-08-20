@@ -458,6 +458,8 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
             data = {'inputs': {},
                     'outputs': {}}
 
+            data['tab_id'] = self.tab_spec['id']
+
             inputs = []
             for idx, name in enumerate(self.tab_spec['inputs']):
                 ui_element = getattr(
@@ -778,7 +780,8 @@ class Action:
             message_dict = {
                 'uid': self.uid,
                 'type': 'ACTION_START',
-                'id': action_spec['id']
+                'id': action_spec['id'],
+                'desc': self.data['tab_id']
             }
             logging.getLogger('action_logger').info(message_dict)
 
