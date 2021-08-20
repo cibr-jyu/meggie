@@ -14,6 +14,7 @@ from meggie.utilities.filemanager import open_raw
 from meggie.utilities.filemanager import save_raw
 from meggie.utilities.channels import get_default_channel_groups
 from meggie.utilities.validators import validate_name
+from meggie.utilities.uid import generate_uid
 
 from meggie.mainwindow.dynamic import find_all_datatype_specs
 
@@ -208,7 +209,9 @@ class Experiment:
         stem, ext = os.path.splitext(bname)
         new_fname = stem + '.fif'
 
-        subject = Subject(self, subject_name, new_fname)
+        uid = generate_uid()
+
+        subject = Subject(self, subject_name, new_fname, uid)
         subject.ensure_folders()
 
         raw = open_raw(raw_path)
@@ -350,6 +353,8 @@ def open_existing_experiment(prefs, path=None):
         The opened experiment.
     """
 
+    experiment_updated = False
+
     if path:
         exp_file = os.path.join(path, os.path.basename(path) + '.exp')
     else:
@@ -402,11 +407,14 @@ def open_existing_experiment(prefs, path=None):
             raise Exception('raw_fname not set in the exp file')
 
         uid = subject_data.get('uid')
+        if not uid:
+            uid = generate_uid()
+            experiment_updated = True
 
         subject = Subject(experiment,
                           subject_name,
                           raw_fname,
-                          uid=uid,
+                          uid,
                           ica_applied=subject_data.get('ica_applied', False),
                           rereferenced=subject_data.get('rereferenced', False)
                           )
@@ -474,5 +482,8 @@ def open_existing_experiment(prefs, path=None):
         # ensure that the folder structure exists
         # (to not crash on updates)
         subject.ensure_folders()
+
+    if experiment_updated:
+        experiment.save_experiment_settings()
 
     return experiment
