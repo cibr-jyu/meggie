@@ -1,10 +1,15 @@
 Changelog
 =========
 
-1.3.1 (unreleased)
+1.3.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.3.1 (2021-09-08)
+------------------
+
+- Add missing h5py dependency
 
 1.3.0 (2021-08-20)
 ------------------

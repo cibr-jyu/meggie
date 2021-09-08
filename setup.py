@@ -6,6 +6,7 @@ install_requires = [
     'scikit-learn',
     'python-json-logger',
     'pyqt5',
+    'h5py'
 ]
 
 description = "User-friendly graphical user interface to do M/EEG analysis"
@@ -20,7 +21,7 @@ except ImportError:
 
 setup(
     name='meggie',
-    version='1.3.0',
+    version='1.3.1',
     description=description,
     long_description=description,
     long_description_content_type="text/plain",

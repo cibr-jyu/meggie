@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INTERP=/usr/bin/python
+INTERP=/usr/bin/python3
 
 echo "Removing previous build artifacts"
 rm -f dist/*
