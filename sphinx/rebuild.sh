@@ -5,7 +5,7 @@ rm source/*meggie*.rst
 
 # generate sources from docstrings
 sphinx-apidoc -f -o source ../meggie \
-                           ../meggie/tabs/* \
+                           ../meggie/actions/* \
                            ../meggie/mainwindow/* \
                            ../meggie/mainWindowUi.py \
                            ../meggie/utilities/widgets/*Ui.py \

@@ -1,10 +1,127 @@
 Changelog
 =========
 
-0.14.7 (unreleased)
+1.3.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.3.1 (2021-09-08)
+------------------
+
+- Add missing h5py dependency
+
+1.3.0 (2021-08-20)
+------------------
+
+- Fix spectrums and actions for old experiments
+- Add descriptions to logged actions
+
+1.2.1 (2021-08-19)
+------------------
+
+- Update setup.py for pypi
+
+1.2.0 (2021-08-19)
+------------------
+
+- Switch to pipelines and actions architecture
+- Replace message logging with more structured actions logging
+- Add three basic pipelines for evokeds, spectrums and TFR's
+- Make it possible to easily extend pipelines from plugins
+- Add dialog for explicitly enabling or disabling installed plugins
+- Improve exception handling to avoid crashing
+- Add more throbbers to UI
+
+1.1.1 (2021-06-21)
+------------------
+
+- Add simple reusable dialog
+
+1.1.0 (2021-05-12)
+------------------
+
+- Make mne==0.23.0 compatible
+- Add permutation tests 
+- Clean codebase for better reuse
+- Add docstrings and autogenerate documentation using sphinx
+- Include mne.Info to spectrum objects.
+- Fix non-fif reading.
+- Add utility for generating multi-subject experiments from sample_audvis_raw
+- Update messaging
+- Move source analysis out to external plugin.
+
+1.0.2 (2021-03-02)
+------------------
+
+- Fix channel average plots with non-orthodox channel groups
+
+1.0.1 (2021-03-02)
+------------------
+
+- Fix issue with channel selection saving
+
+1.0.0 (2020-01-11)
+------------------
+
+- Add 19 tests.
+- Improve exception handling and logging
+- Make plugin loading more robust
+- Fix tab ordering of main window
+- Channel average plots for each channel type are put into single figure
+- Fix tse baselining for channel averages
+- Sorted conditions in topo plot and channel averages
+- Try to use default channel groups if channel groups not set
+- Fix regexp for next_available_name
+- Allow delay in epoch creation
+
+0.17.1 (2020-12-31)
+------------------
+
+- Update mne dependency to >=0.22.0
+
+0.17.0 (2020-12-31)
+------------------
+
+- Remove workspace attribute from experiment and use path instead
+- Do not require comment attribute to be set when creating Evoked
+- Try to get default channel groups from active subject if channel groups not set
+- Add tests for utilities, experiment.py, subject.py and datatypes
+- Remove old stc code to separate branch
+- Add new import possibilities by using read_raw instead of read_raw_fif
+- If both EEG and MEG data present, show both when plotting topography
+- Add event delay for epoch creation
+- Fix mne_wrapper pkgutil bug
+- Improve exception messaging in many places
+
+0.16.1 (2020-11-13)
+------------------
+
+- Fix broken import
+
+0.16.0 (2020-11-13)
+------------------
+
+- Add single channel plotting functionality for evokeds
+- Add radius setting for evoked topomaps (to allow different "skirts")
+- Add more information to info boxes
+- Overwrite when saving epochs
+- Fix import bug in montage dialog
+- Fix reject param ticks bug
+
+0.15.0 (2020-04-20)
+------------------
+
+- Use Qt5 backend instead off Tkinter for matplotlib (fixes threading issues, hopefully not much slower)
+- Implement plugin discovery
+- Try printing more info on terminal on crash even on non-debug session
+- Update to mne==0.20.0
+- Replace layouts with default montages (mne is deprecating layouts)
+- Add dialog for setting and computing channel average groups
+- Store spectrums under the hood only in power units
+- Fix couple of crashes
+- Clean up iterate_topography code and name cleaning code
+- In saved csvs, use different columns for ch_name, ch_type, subject name etc.
 
 0.14.6 (2020-03-11)
 ------------------

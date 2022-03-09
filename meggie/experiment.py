@@ -13,10 +13,10 @@ from meggie.subject import Subject
 from meggie.utilities.filemanager import open_raw
 from meggie.utilities.filemanager import save_raw
 from meggie.utilities.channels import get_default_channel_groups
-from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
+from meggie.utilities.uid import generate_uid
 
-from meggie.mainwindow.dynamic import find_all_sources
+from meggie.mainwindow.dynamic import find_all_datatype_specs
 
 
 class Experiment:
@@ -43,6 +43,7 @@ class Experiment:
             'eeg': {},
             'meg': {},
         }
+        self._selected_pipeline = 'classic'
 
     @property
     def path(self):
@@ -88,8 +89,7 @@ class Experiment:
                 try:
                     channel_groups['eeg'] = get_default_channel_groups(raw.info, 'eeg')
                 except Exception as exc:
-                    logging.getLogger('ui_logger').debug(
-                        'Could not get default channel groups for EEG')
+                    pass
 
         if not channel_groups.get('meg'):
             if self.active_subject:
@@ -97,8 +97,7 @@ class Experiment:
                 try:
                     channel_groups['meg'] = get_default_channel_groups(raw.info, 'meg')
                 except Exception as exc:
-                    logging.getLogger('ui_logger').debug(
-                        'Could not get default channel groups for MEG')
+                    pass
 
         return channel_groups
 
@@ -106,6 +105,17 @@ class Experiment:
     def channel_groups(self, channel_groups):
         """ Sets the channel groups."""
         self._channel_groups = channel_groups
+
+    @property
+    def selected_pipeline(self):
+        """ Returns selected pipeline
+        """
+        return self._selected_pipeline
+
+    @selected_pipeline.setter
+    def selected_pipeline(self, selected_pipeline):
+        """ Sets selected pipeline """
+        self._selected_pipeline = selected_pipeline
 
     @property
     def active_subject(self):
@@ -156,9 +166,8 @@ class Experiment:
 
         try:
             shutil.rmtree(subject.path)
-        except OSError as exc:
-            logging.getLogger('ui_logger').exception('')
-            raise OSError(
+        except Exception as exc:
+            raise Exception(
                 'Could not remove the contents of the subject folder.')
 
     def activate_subject(self, subject_name):
@@ -200,7 +209,9 @@ class Experiment:
         stem, ext = os.path.splitext(bname)
         new_fname = stem + '.fif'
 
-        subject = Subject(self, subject_name, new_fname)
+        uid = generate_uid()
+
+        subject = Subject(self, subject_name, new_fname, uid)
         subject.ensure_folders()
 
         raw = open_raw(raw_path)
@@ -221,27 +232,17 @@ class Experiment:
             subject_dict = {
                 'subject_name': subject.name,
                 'raw_fname': subject.raw_fname,
+                'uid': subject.uid,
                 'ica_applied': subject.ica_applied,
                 'rereferenced': subject.rereferenced,
             }
 
-            datatypes = []
-            for source in find_all_sources():
-                datatype_path = pkg_resources.resource_filename(
-                    source, 'datatypes')
-                if not os.path.exists(datatype_path):
-                    continue
-                for package in os.listdir(datatype_path):
-                    config_path = os.path.join(
-                        datatype_path, package, 'configuration.json')
-                    if os.path.exists(config_path):
-                        with open(config_path, 'r') as f:
-                            config = json.load(f)
-                            datatype = config['id']
-                            key = config['save_key']
-                            datatypes.append((key, datatype))
+            datatype_specs = find_all_datatype_specs()
 
-            for save_key, datatype in datatypes:
+            for source, package, datatype_spec in datatype_specs.values():
+                save_key = datatype_spec['save_key']
+                datatype = datatype_spec['id']
+
                 for inst in getattr(subject, datatype).values():
                     datatype_dict = {
                         'name': inst.name,
@@ -259,7 +260,8 @@ class Experiment:
             'subjects': subjects,
             'name': self._name,
             'author': self._author,
-            'channel_groups': self._channel_groups
+            'channel_groups': self._channel_groups,
+            'selected_pipeline': self._selected_pipeline
         }
 
         try:
@@ -275,9 +277,10 @@ class Experiment:
             pass
 
         path = os.path.join(self._path, os.path.basename(self._path) + '.exp')
+
         # let's backup previous exp file with version number
-        if os.path.exists(path):
-            try:
+        try:
+            if os.path.exists(path):
                 with open(path, 'r') as f:
                     old_data = json.load(f)
 
@@ -287,20 +290,21 @@ class Experiment:
                     os.path.basename(self._path) + '_' + version + '.exp.bak')
 
                 shutil.copy(path, backup_path)
+        except Exception as exc:
+            message = ("Could not backup experiment file to {0}. "
+                       "Please check that the experiment folder "
+                       "has write permissions everywhere.")
+            raise Exception(message.format(backup_path))
 
-            except Exception as exc:
-                logging.getLogger('ui_logger').exception('')
-                logging.getLogger('ui_logger').warning(
-                    'Could not backup experiment file. Please check your permissions..')
-
-        # save to file
+        # and then overwrite the current exp file
         try:
             with open(path, 'w') as f:
                 json.dump(save_dict, f, sort_keys=True, indent=4)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception('')
-            logging.getLogger('ui_logger').error(
-                'Could not save the experiment file. Please check your permissions..')
+            message = ("Could not save experiment file {0}. "
+                       "Please check that the experiment folder "
+                       "has write permissions everywhere.")
+            raise Exception(message.format(path))
 
 def initialize_new_experiment(name, author, prefs, set_previous_experiment=True):
     """Initializes new experiment object with given data.
@@ -349,6 +353,8 @@ def open_existing_experiment(prefs, path=None):
         The opened experiment.
     """
 
+    experiment_updated = False
+
     if path:
         exp_file = os.path.join(path, os.path.basename(path) + '.exp')
     else:
@@ -383,6 +389,9 @@ def open_existing_experiment(prefs, path=None):
             'meg': {},
         }
 
+    if 'selected_pipeline' in data.keys():
+        experiment.selected_pipeline = data['selected_pipeline']
+
     if len(data['subjects']) == 0:
         return experiment
 
@@ -397,31 +406,26 @@ def open_existing_experiment(prefs, path=None):
         if not raw_fname:
             raise Exception('raw_fname not set in the exp file')
 
+        uid = subject_data.get('uid')
+        if not uid:
+            uid = generate_uid()
+            experiment_updated = True
+
         subject = Subject(experiment,
                           subject_name,
                           raw_fname,
-                          subject_data.get('ica_applied', False),
-                          subject_data.get('rereferenced', False)
+                          uid,
+                          ica_applied=subject_data.get('ica_applied', False),
+                          rereferenced=subject_data.get('rereferenced', False)
                           )
 
-        datatypes = []
-        for source in find_all_sources():
-            datatype_path = pkg_resources.resource_filename(
-                source, 'datatypes')
-            if not os.path.exists(datatype_path):
-                continue
-            for package in os.listdir(datatype_path):
-                config_path = os.path.join(
-                    datatype_path, package, 'configuration.json')
-                if os.path.exists(config_path):
-                    with open(config_path, 'r') as f:
-                        config = json.load(f)
-                        datatype = config['id']
-                        key = config['save_key']
-                        entry = config['entry']
-                        datatypes.append((key, source, package, entry, datatype))
+        datatype_specs = find_all_datatype_specs()
 
-        for save_key, source, package, entry, datatype in datatypes:
+        for source, package, datatype_spec in datatype_specs.values():
+            save_key = datatype_spec['save_key']
+            entry = datatype_spec['entry']
+            datatype = datatype_spec['id']
+
             for inst_data in subject_data.get(save_key, []):
                 module_name, class_name = entry.split('.')
                 module = importlib.import_module(
@@ -478,5 +482,8 @@ def open_existing_experiment(prefs, path=None):
         # ensure that the folder structure exists
         # (to not crash on updates)
         subject.ensure_folders()
+
+    if experiment_updated:
+        experiment.save_experiment_settings()
 
     return experiment

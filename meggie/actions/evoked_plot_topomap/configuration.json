@@ -1,0 +1,5 @@
+{
+    "id": "evoked_plot_topomap",
+    "name": "Plot topomaps",
+    "entry": "PlotEvokedTopomap"
+}

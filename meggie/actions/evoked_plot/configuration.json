@@ -1,0 +1,5 @@
+{
+    "id": "evoked_plot",
+    "name": "Plot",
+    "entry": "PlotEvoked"
+}

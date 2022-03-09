@@ -1,0 +1,5 @@
+{
+    "id": "raw_events_from_annotations",
+    "name": "Events from annotations",
+    "entry": "EventsFromAnnotations"
+}

@@ -59,17 +59,23 @@ class Spectrum(Datatype):
     def _load_content(self):
         """Gets content from the file system and 
         stores it to corresponding attributes."""
-        info, data_dict, freqs, ch_names = self._get_content()
+        data_dict, freqs, ch_names = self._get_content()
+        info = self._get_info()
         self._info = info
         self._freqs = freqs
         self._content = data_dict
 
-    def _get_content(self):
-        """Handles the file loading."""
-        # load info
+    def _get_info(self):
+        """ Gets info from file system.
+        """
         info_path = os.path.join(self._directory,
                                  self._name + '-info.fif')
         info = mne.io.meas_info.read_info(info_path)
+
+        return info
+
+    def _get_content(self):
+        """Handles the file loading."""
 
         # load data
         data_dict = {}
@@ -89,9 +95,6 @@ class Spectrum(Datatype):
                                    self._params['conditions']]:
                         continue
 
-                logging.getLogger('ui_logger').debug(
-                    'Reading spectrum file: ' + str(fname))
-
                 freqs, row_descs, psd = filemanager.load_csv(
                     os.path.join(self._directory, fname))
 
@@ -108,17 +111,18 @@ class Spectrum(Datatype):
                 freqs = np.array(freqs).astype(np.float)
                 data_dict[key] = np.array(psd)
 
-        return info, data_dict, freqs, ch_names
+        return data_dict, freqs, ch_names
 
     def save_content(self):
         """Saves spectral data and info structure to the spectrum directory.
         """
-        # save info
-        info_path = os.path.join(self._directory,
-                                 self._name + '-info.fif')
-        mne.io.meas_info.write_info(info_path, self._info)
-        self._params['info_set'] = True
         try:
+            # save info
+            info_path = os.path.join(self._directory,
+                                     self._name + '-info.fif')
+            mne.io.meas_info.write_info(info_path, self._info)
+            self._params['info_set'] = True
+
             # save data
             for key, psd in self._content.items():
 
@@ -131,8 +135,8 @@ class Spectrum(Datatype):
 
                 filemanager.save_csv(path, data, column_names, row_descs)
         except Exception as exc:
-            logging.getLogger('ui_logger').exception('')
-            raise IOError('Writing spectrums failed')
+            raise Exception("Writing spectrums failed. Please check that the "
+                            "entire experiment folder has write permissions.")
 
     def delete_content(self):
         """Removes spectral data and info structure from the
@@ -162,8 +166,6 @@ class Spectrum(Datatype):
                                    self._params['conditions']]:
                         continue
 
-                logging.getLogger('ui_logger').debug(
-                    'Removing existing spectrum file: ' + str(fname))
                 os.remove(os.path.join(self._directory, fname))
 
     def set_info(self, subject):
@@ -173,10 +175,10 @@ class Spectrum(Datatype):
         from the raw object. This was problematic as the raw could change
         after creation of the spectrum.
         """
-        info = subject.get_raw(preload=False, verbose='warning').info
+        info = subject.get_raw(preload=False).info
 
         # filter to correct set of channels
-        _, _, _, ch_names = self._get_content()
+        _, _, ch_names = self._get_content()
         picks = [ch_idx for ch_idx, ch_name in enumerate(info['ch_names'])
                  if ch_name in ch_names]
         info = mne.pick_info(info, sel=picks)

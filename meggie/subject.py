@@ -6,9 +6,11 @@ import logging
 import json
 import pkg_resources
 
+import mne
+
 import meggie.utilities.filemanager as filemanager
 
-from meggie.mainwindow.dynamic import find_all_sources
+from meggie.mainwindow.dynamic import find_all_datatype_specs
 
 
 class Subject:
@@ -23,16 +25,21 @@ class Subject:
         Name of the subject.
     raw_fname : str
         Path to the subject data.
+    uid : str
+        A unique identifier to differentiate between subjects that have 
+        same name.
     ica_applied : bool
         Whether ICA has been applied (at least once) to this data.
     rereferenced : bool
         Whether the data has been rereferenced (at least once).
     """
 
-    def __init__(self, experiment, name, raw_fname,
+    def __init__(self, experiment, name, raw_fname, uid,
                  ica_applied=False, rereferenced=False):
         self.name = name
         self.raw_fname = raw_fname
+
+        self.uid = uid
 
         self._raw = None
 
@@ -42,24 +49,14 @@ class Subject:
         self.path = os.path.join(experiment.path,
                                  name)
 
-        for source in find_all_sources():
-            datatype_path = pkg_resources.resource_filename(source, 'datatypes')
-            if not os.path.exists(datatype_path):
-                continue
-            for package in os.listdir(datatype_path):
-                config_path = os.path.join(
-                    datatype_path, package, 'configuration.json')
-                if os.path.exists(config_path):
-                    with open(config_path, 'r') as f:
-                        config = json.load(f)
-                        datatype = config['id']
-                        dir_ = config['dir']
+        datatype_specs = find_all_datatype_specs()
+        for source, package, datatype_spec in datatype_specs.values():
+            datatype = datatype_spec['id']
+            dir_ = datatype_spec['dir']
+            setattr(self, datatype, dict())
+            setattr(self, datatype + '_directory',
+                    os.path.join(self.path, dir_))
 
-                        # for example: self.epochs
-                        setattr(self, datatype, dict())
-                        # for example: self.epochs_directory
-                        setattr(self, datatype + '_directory',
-                                os.path.join(self.path, dir_))
 
     def add(self, dataobject, datatype):
         """ Adds a dataobject of type datatype to the subject.
@@ -102,7 +99,7 @@ class Subject:
                             self.raw_fname)
         return path
 
-    def get_raw(self, preload=True, verbose='info'):
+    def get_raw(self, preload=True, verbose='warning'):
         """ Gets the raw object for the subject.
 
         Reads from the file system if not in the memory already.
@@ -134,13 +131,29 @@ class Subject:
 
     def save(self):
         """ Saves the data to the existing path. """
-        filemanager.save_raw(self._raw, self.raw_path)
+        try:
+            filemanager.save_raw(self._raw, self.raw_path)
+        except Exception as exc:
+            raise Exception("Could not save the raw file. Please ensure "
+                            "that the entire experiment folder has "
+                            "write permissions.")
+
 
     def release_memory(self):
         """ Releases data from the memory.
         """
         if self._raw is not None:
             self._raw = None
+
+    @property
+    def has_eeg(self):
+        """ Checks if the raw has eeg data present
+        """
+        raw = self.get_raw(preload=False)
+        channels = mne.pick_types(raw.info, eeg=True, meg=False)
+        if len(channels) == 0:
+            return False
+        return True
 
     @property
     def sss_applied(self):
@@ -162,23 +175,17 @@ class Subject:
         exist and if not, creates them.
         """
         paths = []
-        for source in find_all_sources():
-            datatype_path = pkg_resources.resource_filename(source, 'datatypes')
-            if not os.path.exists(datatype_path):
-                continue
-            for package in os.listdir(datatype_path):
-                config_path = os.path.join(datatype_path, package,
-                                           'configuration.json')
-                if os.path.exists(config_path):
-                    with open(config_path, 'r') as f:
-                        config = json.load(f)
-                        datatype = config['id']
-                        path = getattr(self, datatype + '_directory')
-                        paths.append(path)
+        datatype_specs = find_all_datatype_specs()
+
+        for source, package, datatype_spec in datatype_specs.values():
+            datatype = datatype_spec['id']
+            path = getattr(self, datatype + '_directory')
+            paths.append(path)
 
         try:
             filemanager.ensure_folders(
                 [self.path] + paths)
         except OSError:
             raise OSError("Couldn't create all the necessary folders. "
-                          "Do you have the necessary permissions?")
+                          "Please ensure that the experiment folder "
+                          "has write permissions everywhere.")

@@ -1,0 +1,5 @@
+{
+    "id": "epochs_plot_image",
+    "name": "Plot image",
+    "entry": "PlotEpochsImage"
+}

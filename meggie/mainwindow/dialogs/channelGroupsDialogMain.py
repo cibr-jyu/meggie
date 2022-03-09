@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.messaging import messagebox
+from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.channels import get_default_channel_groups
 from meggie.utilities.channels import get_triplet_from_mag
 
@@ -207,9 +208,12 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
             'eeg': self.eeg_channel_groups,
             'meg': self.meg_channel_groups
         }
-        self.parent.experiment.channel_groups = channel_groups
-        self.parent.experiment.save_experiment_settings()
-
-        logging.getLogger('ui_logger').info('Channel groups saved.')
+        try:
+            self.parent.experiment.channel_groups = channel_groups
+            self.parent.experiment.save_experiment_settings()
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
         
+        logging.getLogger('ui_logger').info('Channel groups saved.')
         self.close()
