@@ -20,3 +20,4 @@ preferences.cfg
 .pydevproject
 .settings/
 .eggs
+.meggie-env
