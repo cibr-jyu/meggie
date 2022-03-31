@@ -6,7 +6,7 @@ install_requires = [
     'scikit-learn',
     'python-json-logger',
     'pyqt5',
-    'h5py'
+    'h5io'
 ]
 
 description = "User-friendly graphical user interface to do M/EEG analysis"
