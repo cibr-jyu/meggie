@@ -1,14 +1,14 @@
 #!/bin/bash
 
-INTERP=/usr/bin/python3
+INTERP=python
 
 echo "Removing previous build artifacts"
 rm -f dist/*
 
 echo "Building source distribution.."
-$INTERP -m build --sdist
+$INTERP setup.py sdist
 echo "Building wheel.."
-$INTERP -m build --wheel
+$INTERP setup.py bdist_wheel
 echo "Uploading to pypi.."
 $INTERP -m twine upload dist/*
 echo "Finished."

@@ -7,5 +7,6 @@ else
   python -m venv .meggie-env
   ./.meggie-env/bin/python -m pip install -e .
   ./.meggie-env/bin/python -m pip install PyQt5.sip
+  ./.meggie-env/bin/python -m pip install nose
 fi
 bash
