@@ -9,6 +9,8 @@
 
 ## Installation (from terminal)
 
+Note that Python >= 3.7 is required.
+
 ### From PYPI:
 
 1. Create virtual environment: python -m venv /path/to/meggie-env
@@ -28,6 +30,7 @@
 1. Clone this repository to /path/to/meggie/repo
 1. Create virtual environment: python -m venv /path/to/meggie-env
 1. Activate the environment: source /path/to/meggie-env/bin/activate
+1. Install dependencies (most importantly, mne and pyqt5)
 1. Enter the repository: cd /path/to/meggie/repo
 1. Install meggie: python -m pip install .
 

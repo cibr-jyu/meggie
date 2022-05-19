@@ -1,10 +1,15 @@
 Changelog
 =========
 
-1.3.4 (unreleased)
+1.3.5 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.3.4 (2022-05-19)
+------------------
+
+- Bump version to fix pypi build
 
 1.3.3 (2022-0-23)
 ------------------

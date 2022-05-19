@@ -21,7 +21,7 @@ except ImportError:
 
 setup(
     name='meggie',
-    version='1.3.3',
+    version='1.3.4',
     description=description,
     long_description=description,
     long_description_content_type="text/plain",
