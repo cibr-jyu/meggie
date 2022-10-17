@@ -23,7 +23,7 @@ class Info(InfoAction):
             rereferenced = subject.rereferenced
 
             try:
-                eeg_montage_set = is_montage_set(raw.info, 'eeg')
+                eeg_montage_set = is_montage_set(raw, 'eeg')
             except Exception as exc:
                 eeg_montage_set = False
 

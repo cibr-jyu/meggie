@@ -8,13 +8,13 @@ import mne
 from mne.channels import _divide_to_regions
 
 
-def is_montage_set(info, ch_type):
+def is_montage_set(raw, ch_type):
     """ Checks whether channel locations are found in the info for given channel type.
 
     Parameters
     ----------
-    info : mne.Info
-        Info structure containing channel information.
+    raw : mne.io.Raw
+        Raw containing info which contains channel information.
     ch_type : str
         Should be 'meg' or 'eeg'.
 
@@ -23,18 +23,19 @@ def is_montage_set(info, ch_type):
     bool
         Whether the channel locations were found.
     """
-    if ch_type == 'meg':
-        picks = mne.pick_types(info, meg=True, eeg=False)
-    else:
-        picks = mne.pick_types(info, meg=False, eeg=True)
 
-    ch_names = [ch_name for idx, ch_name in enumerate(info['ch_names'])
+    if ch_type == 'meg':
+        picks = mne.pick_types(raw.info, meg=True, eeg=False)
+    else:
+        picks = mne.pick_types(raw.info, meg=False, eeg=True)
+
+    ch_names = [ch_name for idx, ch_name in enumerate(raw.info['ch_names'])
                 if idx in picks]
 
     if not ch_names:
         raise Exception('Data does not contain channels of type ' + str(ch_type))
 
-    info_filt = info.copy().pick_channels(ch_names)
+    info_filt = filter_info(raw.info, ch_names)
 
     # check if there is no montage set..
     ch_norms = []
@@ -45,7 +46,7 @@ def is_montage_set(info, ch_type):
 
     return True
 
-def get_default_channel_groups(info, ch_type):
+def get_default_channel_groups(raw, ch_type):
     """Returns channels grouped by standard locations
     (Left-frontal, Right-occipital, etc.). Grouping is done via
     geometric division from mne, to have a generic ability
@@ -54,7 +55,7 @@ def get_default_channel_groups(info, ch_type):
     Parameters
     ----------
     info : mne.Info
-        Info structure containing the channel information
+        Raw containing info containing channel information
     ch_type : str
         Should be 'meg' or 'eeg'
 
@@ -67,20 +68,20 @@ def get_default_channel_groups(info, ch_type):
     """
 
     if ch_type == 'meg':
-        picks = mne.pick_types(info, meg=True, eeg=False)
+        picks = mne.pick_types(raw.info, meg=True, eeg=False)
     else:
-        picks = mne.pick_types(info, meg=False, eeg=True)
+        picks = mne.pick_types(raw.info, meg=False, eeg=True)
 
-    ch_names = [ch_name for idx, ch_name in enumerate(info['ch_names'])
+    ch_names = [ch_name for idx, ch_name in enumerate(raw.info['ch_names'])
                 if idx in picks]
     if not ch_names:
         return {}
 
-    info_filt = info.copy().pick_channels(ch_names)
-
     # check if there is no montage set..
-    if not is_montage_set(info, ch_type):
+    if not is_montage_set(raw, ch_type):
         return {}
+
+    info_filt = filter_info(raw.info, ch_names)
 
     regions = _divide_to_regions(info_filt, add_stim=False)
 
@@ -302,3 +303,22 @@ def average_to_channel_groups(data, info, ch_names, channel_groups):
 
     return data_labels, averaged_data
 
+
+def filter_info(info, channels):
+    """ At some point mne removed .pick_channels from Info class.
+    This tries to restore that functionality.
+
+    Parameters
+    ----------
+    info : mne.Info
+        Info structure containing the channel information
+    channels : list
+        List of channels to filter to
+
+    """
+    ch_idxs = [idx for idx, ch_name in enumerate(info['ch_names'])
+               if ch_name in channels]
+
+    filt_info = mne.pick_info(info, ch_idxs)
+
+    return filt_info

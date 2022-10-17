@@ -10,6 +10,7 @@ from meggie.utilities.plotting import color_cycle
 from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.channels import iterate_topography
+from meggie.utilities.channels import filter_info
 from meggie.utilities.units import get_power_unit
 
 
@@ -81,7 +82,8 @@ def plot_spectrum_topo(subject, name, log_transformed=True, ch_type='meg'):
     else:
         picked_channels = [ch_name for ch_idx, ch_name in enumerate(info['ch_names'])
                            if ch_idx in mne.pick_types(info, eeg=True, meg=False)]
-    info = info.copy().pick_channels(picked_channels)
+
+    info = filter_info(info, picked_channels)
 
     colors = color_cycle(len(data))
 

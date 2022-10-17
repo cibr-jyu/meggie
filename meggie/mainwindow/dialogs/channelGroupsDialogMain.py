@@ -96,16 +96,16 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
             messagebox(self.parent, 'To reset, active subject is needed')
             return
 
-        info = subject.get_raw().info
+        raw = subject.get_raw()
 
         if self.ui.radioButtonEEG.isChecked():
-            self.eeg_channel_groups = get_default_channel_groups(info, 'eeg')
+            self.eeg_channel_groups = get_default_channel_groups(raw, 'eeg')
             self.ui.listWidgetChannelGroups.clear()
             for ch_name in sorted(self.eeg_channel_groups.keys()):
                 self.ui.listWidgetChannelGroups.addItem(ch_name)
 
         else:
-            meg_defaults = get_default_channel_groups(info, 'meg')
+            meg_defaults = get_default_channel_groups(raw, 'meg')
             self.meg_channel_groups = meg_defaults
             self.ui.listWidgetChannelGroups.clear()
             for ch_name in sorted(self.meg_channel_groups.keys()):
@@ -126,16 +126,16 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
             messagebox(self.parent, 'Select a channel group first')
             return
 
-        info = subject.get_raw().info
+        raw = subject.get_raw()
         
         if self.ui.radioButtonEEG.isChecked():
-            if mne.pick_types(info, meg=False, eeg=True).size == 0:
+            if mne.pick_types(raw.info, meg=False, eeg=True).size == 0:
                 messagebox(self.parent, 'No EEG channels found')
                 return
 
             ch_names = self.eeg_channel_groups[selected_item.text()]
             try:
-                ch_idxs = [info['ch_names'].index(ch_name) for ch_name in ch_names]
+                ch_idxs = [raw.info['ch_names'].index(ch_name) for ch_name in ch_names]
             except ValueError:
                 messagebox(self.parent, "Channel names in the group "
                                         "and the current subject don't match")
@@ -144,7 +144,7 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
             ch_groups = [[], ch_idxs]
 
             try:
-                fig, selection = mne.viz.plot_sensors(info, kind='select', ch_type='eeg',
+                fig, selection = mne.viz.plot_sensors(raw.info, kind='select', ch_type='eeg',
                                                       ch_groups=ch_groups, show=False,
                                                       title='Group channels')
             except RuntimeError:
@@ -152,13 +152,13 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
                 return
 
         else:
-            if mne.pick_types(info, meg=True, eeg=False).size == 0:
+            if mne.pick_types(raw.info, meg=True, eeg=False).size == 0:
                 messagebox(self.parent, 'No MEG channels found')
                 return
 
             ch_names = self.meg_channel_groups[selected_item.text()]
             try:
-                ch_idxs = [info['ch_names'].index(ch_name) for ch_name in ch_names]
+                ch_idxs = [raw.info['ch_names'].index(ch_name) for ch_name in ch_names]
             except ValueError:
                 messagebox(self.parent, "Channel names in the group "
                                         "and the current subject don't match")
@@ -166,7 +166,7 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
 
             ch_groups = [[], ch_idxs]
 
-            fig, selection = mne.viz.plot_sensors(info, kind='select', ch_type='mag',
+            fig, selection = mne.viz.plot_sensors(raw.info, kind='select', ch_type='mag',
                                                   ch_groups=ch_groups, show=False,
                                                   title='Group channels')
 

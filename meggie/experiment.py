@@ -87,7 +87,7 @@ class Experiment:
             if self.active_subject:
                 raw = self.active_subject.get_raw(preload=False)
                 try:
-                    channel_groups['eeg'] = get_default_channel_groups(raw.info, 'eeg')
+                    channel_groups['eeg'] = get_default_channel_groups(raw, 'eeg')
                 except Exception as exc:
                     pass
 
@@ -95,7 +95,7 @@ class Experiment:
             if self.active_subject:
                 raw = self.active_subject.get_raw(preload=False)
                 try:
-                    channel_groups['meg'] = get_default_channel_groups(raw.info, 'meg')
+                    channel_groups['meg'] = get_default_channel_groups(raw, 'meg')
                 except Exception as exc:
                     pass
 
