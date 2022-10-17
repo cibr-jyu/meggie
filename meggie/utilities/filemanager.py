@@ -199,7 +199,12 @@ def load_csv(path):
     np.array
         The data.
     """
-    all_data = np.loadtxt(path, dtype=np.str, delimiter=', ')
+
+    all_data = np.loadtxt(
+        path,
+        dtype=np.str,
+        delimiter=',',
+        converters=lambda s: s.strip())
 
     data = []
     column_names = []
