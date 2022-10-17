@@ -67,9 +67,9 @@ class CreateEvoked(Action):
             mne_evoked = average(do_meanwhile=self.window.update_ui)
             evokeds[name] = mne_evoked
 
-            evoked_directory = subject.evoked_directory
-            evoked = Evoked(params['name'], evoked_directory, 
-                            params, content=evokeds)
-            evoked.save_content()
-            subject.add(evoked, 'evoked')
+        evoked_directory = subject.evoked_directory
+        evoked = Evoked(params['name'], evoked_directory,
+                        params, content=evokeds)
+        evoked.save_content()
+        subject.add(evoked, 'evoked')
 
