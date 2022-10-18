@@ -92,10 +92,20 @@ def plot_evoked_topo(evoked, ch_type):
     # setup legend for subplots
     lines = [Line2D([0], [0], color=colors[idx], label=labels[idx])
              for idx in range(len(labels))]
+
+    fig, axes = plt.subplots()
+    mne.viz.plot_evoked_topo(evokeds, color=colors, legend=False, show=False, axes=axes)
+    axes.legend(handles=lines, loc='upper right')
+    title = "{0}_{1}".format(evoked.name, ch_type)
+    fig.canvas.set_window_title(title)
+
     def onclick(event):
         try:
             # not nice:
             ax = plt.gca()
+
+            if ax is axes:
+                return
 
             channel = plt.getp(ax, 'title')
             ax.set_title('')
@@ -109,8 +119,7 @@ def plot_evoked_topo(evoked, ch_type):
         except Exception as exc:
             pass
 
-    fig = mne.viz.plot_evoked_topo(evokeds, color=colors)
     fig.canvas.mpl_connect('button_press_event', onclick)
-    title = "{0}_{1}".format(evoked.name, ch_type)
-    fig.canvas.set_window_title(title)
+
+    plt.show()
 
