@@ -1,11 +1,20 @@
 Changelog
 =========
 
-1.3.8 (unreleased)
+1.3.10 (unreleased)
 ------------------
 
 - nothing changed yet.
 
+1.3.9 (2022-10-18)
+------------------
+
+- And fix one more missing set_figure_title
+
+1.3.8 (2022-10-18)
+------------------
+
+- nothing changed yet.
 
 1.3.7 (2022-10-18)
 ------------------

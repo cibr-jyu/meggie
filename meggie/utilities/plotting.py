@@ -68,7 +68,7 @@ def create_channel_average_plot(n_plots, plot_fun, title, legend=None):
         fig.legend(lines, texts)
 
     fig.suptitle(title)
-    fig.canvas.set_window_title(title.replace(' ', '_'))
+    set_figure_title(fig, title.replace(' ', '_'))
 
     return fig
 
