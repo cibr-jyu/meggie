@@ -10,6 +10,7 @@ from matplotlib.lines import Line2D
 from meggie.utilities.plotting import color_cycle
 from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
+from meggie.utilities.plotting import set_figure_title
 
 from meggie.utilities.units import get_unit
 
@@ -97,7 +98,7 @@ def plot_evoked_topo(evoked, ch_type):
     mne.viz.plot_evoked_topo(evokeds, color=colors, legend=False, show=False, axes=axes)
     axes.legend(handles=lines, loc='upper right')
     title = "{0}_{1}".format(evoked.name, ch_type)
-    fig.canvas.set_window_title(title)
+    set_figure_title(fig, title)
 
     def onclick(event):
         try:
@@ -114,7 +115,7 @@ def plot_evoked_topo(evoked, ch_type):
 
             title = ' '.join([evoked.name, channel])
             ax.figure.suptitle(title)
-            ax.figure.canvas.set_window_title(title.replace(' ', '_'))
+            set_figure_title(ax.figure, title.replace(' ', '_'))
             plt.show()
         except Exception as exc:
             pass

@@ -10,6 +10,7 @@ from matplotlib.gridspec import GridSpec
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.channels import get_channels_by_type
+from meggie.utilities.plotting import set_figure_title
 
 from meggie.mainwindow.dynamic import Action
 from meggie.mainwindow.dynamic import subject_action
@@ -83,5 +84,5 @@ class PlotEvokedTopomap(Action):
                 fig = mne.viz.plot_evoked_topomap(
                     evok, times=times, ch_type=ch_type,
                     title=' '.join(title_elems), axes=axes, sphere=sphere)
-                fig.canvas.set_window_title('_'.join(title_elems))
+                set_figure_title(fig, '_'.join(title_elems))
 

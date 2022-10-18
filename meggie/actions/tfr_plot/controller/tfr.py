@@ -7,6 +7,7 @@ import mne
 
 from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
+from meggie.utilities.plotting import set_figure_title
 
 
 def plot_tfr_averages(subject, tfr_name, tfr_condition, 
@@ -104,7 +105,7 @@ def plot_tfr_topo(subject, tfr_name, tfr_condition,
                         fmin=fmin, fmax=fmax,
                         title="")
 
-    fig.canvas.set_window_title(title)
+    set_figure_title(fig, title)
 
     def onclick(event):
         """ hacky way to change title and add colorbar after creation """
@@ -115,7 +116,7 @@ def plot_tfr_topo(subject, tfr_name, tfr_condition,
         ax.set_title('')
 
         title = ' '.join([tfr_name, channel])
-        fig.canvas.set_window_title(title.replace(' ', '_'))
+        set_figure_title(fig, title.replace(' ', '_'))
         fig.suptitle(title)
 
         img = ax.get_images()[0]

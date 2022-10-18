@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from meggie.utilities.messaging import exc_messagebox
+from meggie.utilities.plotting import set_figure_title
 
 from meggie.mainwindow.dynamic import Action
 from meggie.mainwindow.dynamic import subject_action
@@ -36,5 +37,5 @@ class PlotEpochsImage(Action):
         for fig in figs:
             ch_type = fig.canvas.get_window_title()
             title = '{0}_{1}'.format(params['name'], ch_type)
-            fig.canvas.set_window_title(title)
+            set_figure_title(fig, title)
 

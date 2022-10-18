@@ -11,6 +11,7 @@ from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import filter_info
+from meggie.utilities.plotting import set_figure_title
 from meggie.utilities.units import get_power_unit
 
 
@@ -102,7 +103,7 @@ def plot_spectrum_topo(subject, name, log_transformed=True, ch_type='meg'):
                     label=key)
 
         title = ' '.join([name, ch_name])
-        ax.figure.canvas.set_window_title(title.replace(' ', '_'))
+        set_figure_title(ax.figure, title.replace(' ', '_'))
         ax.figure.suptitle(title)
         ax.set_title('')
 
@@ -136,6 +137,6 @@ def plot_spectrum_topo(subject, name, log_transformed=True, ch_type='meg'):
 
     fig.legend(handles=handles)
     title = '{0}_{1}'.format(name, ch_type)
-    fig.canvas.set_window_title(title)
+    set_figure_title(fig, title)
     plt.show()
 

@@ -72,3 +72,9 @@ def create_channel_average_plot(n_plots, plot_fun, title, legend=None):
 
     return fig
 
+
+def set_figure_title(fig, title):
+    """ matplotlib suddenly deprecated fig.canvas.set_window_title.
+    """
+    fig.canvas.manager.set_window_title(title)
+

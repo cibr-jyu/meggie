@@ -9,6 +9,7 @@ import numpy as np
 import mne
 
 from meggie.utilities.compare import compare_raws
+from meggie.utilities.plotting import set_figure_title
 
 
 def compute_ica(raw, n_components, method, max_iter, random_state):
@@ -31,7 +32,7 @@ def plot_topographies(ica, n_components):
 
     figs = ica.plot_components(title='')
     for fig in figs:
-        fig.canvas.set_window_title('ICA topographic maps')
+        set_figure_title(fig, 'ICA topographic maps')
 
     def update_topography_texts():
         """ Change texts in the axes to match names in the dialog """
@@ -60,7 +61,7 @@ def plot_properties(raw, ica, picks):
     figs = ica.plot_properties(
         raw, picks)
     for fig in figs:
-        fig.canvas.set_window_title('ICA properties')
+        set_figure_title(fig, 'ICA properties')
 
     # fix the names
     idx = 0

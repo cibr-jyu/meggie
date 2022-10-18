@@ -1,10 +1,31 @@
 Changelog
 =========
 
-1.3.5 (unreleased)
+1.3.8 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+
+1.3.7 (2022-10-18)
+------------------
+
+- Fix breaking typo
+
+1.3.6 (2022-10-18)
+------------------
+
+- matplotlib introduced a breaking change
+
+1.3.6 (2022-10-28)
+------------------
+
+- Fix packaging
+
+1.3.5 (2022-10-18)
+------------------
+
+- Fix regressions due to mne changes.
 
 1.3.4 (2022-05-19)
 ------------------

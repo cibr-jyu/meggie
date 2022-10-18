@@ -1,7 +1,7 @@
 from setuptools import setup
 
 install_requires = [
-    'mne>=1.0.0',
+    'mne==1.2.0',
     'matplotlib',
     'scikit-learn',
     'python-json-logger',
@@ -21,7 +21,7 @@ except ImportError:
 
 setup(
     name='meggie',
-    version='1.3.4',
+    version='1.3.8',
     description=description,
     long_description=description,
     long_description_content_type="text/plain",
