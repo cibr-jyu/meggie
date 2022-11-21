@@ -1,10 +1,15 @@
 Changelog
 =========
 
-1.3.10 (unreleased)
+1.4.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.4.0 (2022-11-21)
+------------------
+
+- Fix meggie to use matplotlib backend for plot browser even when mne-qt-browser is installed
 
 1.3.9 (2022-10-18)
 ------------------

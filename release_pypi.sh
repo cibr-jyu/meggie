@@ -2,8 +2,6 @@
 
 INTERP=python
 
-# Note: remember to run in a environment where there's not PyQt5 installed.
-
 echo "Removing previous build artifacts"
 rm -f dist/*
 

@@ -11,16 +11,9 @@
 
 Note that Python >= 3.7 is required.
 
-### From PYPI:
-
-1. Create virtual environment: python -m venv /path/to/meggie-env
-1. Activate the environment: /path/to/meggie-env/bin/activate
-1. Install meggie: python -m pip install meggie
-1. Run: meggie
-
 ### From conda-forge:
 
-1. Create a conda environemnt: conda create -n meggie-env python=3
+1. Create a conda environment: conda create -n meggie-env python=3
 1. Activate the environment: conda activate meggie-env
 1. Install meggie: conda install -c conda-forge meggie
 1. Run: meggie
@@ -30,8 +23,8 @@ Note that Python >= 3.7 is required.
 1. Clone this repository to /path/to/meggie/repo
 1. Create virtual environment: python -m venv /path/to/meggie-env
 1. Activate the environment: source /path/to/meggie-env/bin/activate
-1. Install dependencies (most importantly, mne and pyqt5)
 1. Enter the repository: cd /path/to/meggie/repo
+1. Install dependencies: python -m pip install -r requirements.txt
 1. Install meggie: python -m pip install .
 
 [//]: # (Hello)
