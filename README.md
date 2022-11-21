@@ -13,9 +13,8 @@ Note that Python >= 3.7 is required.
 
 ### From conda-forge:
 
-1. Create a conda environment: conda create -n meggie-env python=3
+1. Install meggie to a conda environment: conda create -n meggie-env -c conda-forge meggie
 1. Activate the environment: conda activate meggie-env
-1. Install meggie: conda install -c conda-forge meggie
 1. Run: meggie
 
 ### Using this repository:
