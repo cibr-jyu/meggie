@@ -23,12 +23,24 @@ class PreferencesHandler(object):
 
         self.read_preferences_from_disk()
 
+    def read_config(self):
+        """ Reads the config file from file system """
+        filename = os.path.join(homepath(), '.meggieprefs')
+        config = configparser.RawConfigParser()
+        if os.path.isfile(filename):
+            config.read(filename)
+        return config
+
     def write_preferences_to_disk(self):
         """ Writes the preferences to file system, in INI style.
         """
-        config = configparser.RawConfigParser()
-        config.add_section('MiscOptions')
-        config.add_section('Workspace')
+        # Base the new config on the old one.
+        config = self.read_config()
+        try:
+            config.add_section('MiscOptions')
+            config.add_section('Workspace')
+        except configparser.DuplicateSectionError as exc:
+            pass
 
         # Sanity of these values is assumed to be checked by the calling method
 
@@ -61,10 +73,7 @@ class PreferencesHandler(object):
     def read_preferences_from_disk(self):
         """ Reads the preferences from file system into attributes.
         """
-        filename = os.path.join(homepath(), '.meggieprefs')
-        if os.path.isfile(filename):
-            config = configparser.RawConfigParser()
-            config.read(filename)
+        config = self.read_config()
 
         try:
             self.workspace = config.get('Workspace', 'workspaceDir')
