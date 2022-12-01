@@ -1,4 +1,4 @@
-# Meggie 1.3
+# Meggie
 
 ## Documentation
 
