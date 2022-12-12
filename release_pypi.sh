@@ -1,6 +1,8 @@
 #!/bin/bash
 
-INTERP=python
+if [[ -z "${INTERP}" ]]; then
+  INTERP=python
+fi
 
 echo "Removing previous build artifacts"
 rm -f dist/*

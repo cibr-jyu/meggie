@@ -1,11 +1,15 @@
 Changelog
 =========
 
-1.4.2 (unreleased)
+1.4.3 (unreleased)
 ------------------
 
 - nothing changed yet.
 
+1.4.2 (2022-12-12)
+------------------
+
+- Fix evoked image plot
 
 1.4.1 (2022-11-25)
 ------------------
