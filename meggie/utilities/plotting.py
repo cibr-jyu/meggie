@@ -78,3 +78,9 @@ def set_figure_title(fig, title):
     """
     fig.canvas.manager.set_window_title(title)
 
+def get_figure_title(fig):
+    """ matplotlib suddenly deprecated fig.canvas.get_window_title.
+    """
+    return fig.canvas.manager.get_window_title()
+
+
