@@ -25,6 +25,7 @@ Note that Python >= 3.7 is required.
 1. Enter the repository: cd /path/to/meggie/repo
 1. Install dependencies: python -m pip install -r requirements.txt
 1. Install meggie: python -m pip install .
+1. Run: meggie
 
 [//]: # (Hello)
 
