@@ -47,7 +47,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         window_in_seconds = 2
         nfft = int(
             np.power(2, np.ceil(np.log(sfreq * window_in_seconds) / np.log(2))))
-        overlap = nfft / 2
+        overlap = int(nfft / 2)
 
         self.ui.spinBoxNfft.setValue(nfft)
         self.ui.spinBoxOverlap.setValue(overlap)

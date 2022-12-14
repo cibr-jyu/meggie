@@ -1,10 +1,15 @@
 Changelog
 =========
 
-1.4.3 (unreleased)
+1.4.4 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.4.3 (2022-12-14)
+------------------
+
+- Fix spectrum dialog crashing for non-int overlap
 
 1.4.2 (2022-12-12)
 ------------------
