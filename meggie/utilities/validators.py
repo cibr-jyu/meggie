@@ -1,5 +1,7 @@
 """ Functions for validation.
 """
+from functools import reduce
+import operator
 import re
 import numpy as np
 
@@ -59,3 +61,18 @@ def assert_arrays_same(arrays, message='Times do not match'):
         except Exception as exc:
             raise Exception(message)
 
+
+def assert_lists_same(lists, message):
+    """Checks if lists in a list are all equal.
+
+    Parameters
+    ----------
+    lists : list
+        List containing lists to be compared.
+    message : str
+        Message for the exception if lists are not the same.
+    """
+    try:
+        assert reduce(operator.eq, [set(lst) for lst in lists])
+    except Exception as exc:
+        raise Exception(message)

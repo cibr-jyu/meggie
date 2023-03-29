@@ -8,6 +8,7 @@ import mne
 from meggie.utilities.channels import clean_names
 from meggie.utilities.threading import threaded
 from meggie.utilities.validators import assert_arrays_same
+from meggie.utilities.validators import assert_lists_same
 
 from meggie.datatypes.tfr.tfr import TFR
 
@@ -31,7 +32,7 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
             except Exception as exc:
                 continue
 
-    assert_arrays_same(keys, 'Conditions do no match')
+    assert_lists_same(keys, 'Conditions do no match')
     assert_arrays_same(freq_arrays, 'Freqs do not match')
     assert_arrays_same(time_arrays)
 
