@@ -108,7 +108,7 @@ class Spectrum(Datatype):
                         if np.mean(psd) < 0:
                             psd = 10 ** (psd / 10.0)
 
-                freqs = np.array(freqs).astype(np.float)
+                freqs = np.array(freqs).astype(float)
                 data_dict[key] = np.array(psd)
 
         return data_dict, freqs, ch_names

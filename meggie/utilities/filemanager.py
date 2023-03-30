@@ -202,7 +202,7 @@ def load_csv(path):
 
     all_data = np.loadtxt(
         path,
-        dtype=np.str,
+        dtype=str,
         delimiter=',',
         converters=lambda s: s.strip())
 
@@ -214,7 +214,7 @@ def load_csv(path):
 
     column_names = all_data[0, first_data_idx:].tolist()
     row_descs = [tuple(elems) for elems in all_data[1:, :first_data_idx]]
-    data = all_data[1:, first_data_idx:].astype(np.float)
+    data = all_data[1:, first_data_idx:].astype(float)
 
     return column_names, row_descs, data
 

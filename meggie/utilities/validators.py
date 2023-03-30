@@ -55,8 +55,8 @@ def assert_arrays_same(arrays, message='Times do not match'):
     """
     for idx in range(len(arrays)-1):
         try:
-            first = np.array(arrays[0]).astype(np.float)
-            second = np.array(arrays[idx+1]).astype(np.float)
+            first = np.array(arrays[0]).astype(float)
+            second = np.array(arrays[idx+1]).astype(float)
             np.testing.assert_array_almost_equal(first, second)
         except Exception as exc:
             raise Exception(message)
@@ -73,6 +73,7 @@ def assert_lists_same(lists, message):
         Message for the exception if lists are not the same.
     """
     try:
-        assert reduce(operator.eq, [set(lst) for lst in lists])
+        sets = [set(lst) for lst in lists]
+        assert all(e == sets[0] for e in sets)
     except Exception as exc:
         raise Exception(message)
