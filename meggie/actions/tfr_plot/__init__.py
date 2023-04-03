@@ -50,11 +50,16 @@ class PlotTFR(Action):
                               params['blmode'], params['blstart'], params['blend'],
                               params['tmin'], params['tmax'], params['fmin'], params['fmax'],
                               'eeg')
-            if 'grad' in chs or 'mag' in chs:
+            if 'grad' in chs:
                 plot_tfr_topo(subject, params['name'], params['condition'],
                               params['blmode'], params['blstart'], params['blend'],
                               params['tmin'], params['tmax'], params['fmin'], params['fmax'],
-                              'meg')
+                              'grad')
+            if 'mag' in chs:
+                plot_tfr_topo(subject, params['name'], params['condition'],
+                              params['blmode'], params['blstart'], params['blend'],
+                              params['tmin'], params['tmax'], params['fmin'], params['fmax'],
+                              'mag')
         else:
             plot_tfr_averages(subject, params['name'], params['condition'],
                               params['blmode'], params['blstart'], params['blend'],

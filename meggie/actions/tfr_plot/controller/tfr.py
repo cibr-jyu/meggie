@@ -92,17 +92,28 @@ def plot_tfr_topo(subject, tfr_name, tfr_condition,
     if ch_type == 'eeg':
         dropped_names = [ch_name for ch_idx, ch_name in enumerate(tfr.info['ch_names'])
                          if ch_idx not in mne.pick_types(tfr.info, eeg=True, meg=False)]
-    else:
+    elif ch_type == 'grad':
         dropped_names = [ch_name for ch_idx, ch_name in enumerate(tfr.info['ch_names'])
-                         if ch_idx not in mne.pick_types(tfr.info, eeg=False, meg=True)]
+                         if ch_idx not in mne.pick_types(tfr.info, eeg=False, meg='grad')]
+    elif ch_type == 'mag':
+        dropped_names = [ch_name for ch_idx, ch_name in enumerate(tfr.info['ch_names'])
+                         if ch_idx not in mne.pick_types(tfr.info, eeg=False, meg='mag')]
 
     tfr = tfr.copy().drop_channels(dropped_names)
 
+    # apply baseline here to get better vmin and vmax values
+    tfr.apply_baseline(baseline=bline, mode=mode)
+
+    values = tfr.data.flatten()
+    vmax = np.percentile(np.abs(values), 99)
+    vmin = -vmax
+
     title = '{0}_{1}_{2}'.format(tfr_name, tfr_condition, ch_type)
     fig = tfr.plot_topo(show=False,
-                        baseline=bline, mode=mode,
+                        baseline=None,
                         tmin=tmin, tmax=tmax,
                         fmin=fmin, fmax=fmax,
+                        vmin=vmin, vmax=vmax,
                         title="")
 
     set_figure_title(fig, title)
@@ -113,6 +124,9 @@ def plot_tfr_topo(subject, tfr_name, tfr_condition,
         fig = plt.gcf()
 
         channel = plt.getp(ax, 'title')
+        if not channel:
+            return
+
         ax.set_title('')
 
         title = ' '.join([tfr_name, channel])
