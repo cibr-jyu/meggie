@@ -1,10 +1,16 @@
 Changelog
 =========
 
-1.4.4 (unreleased)
+1.4.5 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.4.4 (2023-04-03)
+------------------
+
+- Better color defaults for TFR's
+- Fix regression in group average assertions
 
 1.4.3 (2022-12-14)
 ------------------
