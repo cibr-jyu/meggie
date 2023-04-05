@@ -81,8 +81,7 @@ class PlotEvokedTopomap(Action):
                 if ch_type in ['mag', 'grad']:
                     sphere = radius
 
-                fig = mne.viz.plot_evoked_topomap(
-                    evok, times=times, ch_type=ch_type,
-                    title=' '.join(title_elems), axes=axes, sphere=sphere)
+                fig = evok.plot_topomap(
+                    times=times, ch_type=ch_type,
+                    axes=axes, sphere=sphere)
                 set_figure_title(fig, '_'.join(title_elems))
-

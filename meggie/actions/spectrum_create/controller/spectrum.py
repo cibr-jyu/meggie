@@ -40,10 +40,16 @@ def create_power_spectrum(subject, spectrum_name, intervals,
     for key, raw_blocks in raw_block_groups.items():
         for raw_block in raw_blocks:
             length = len(raw_block.times)
-            psds, freqs = mne.time_frequency.psd_welch(
-                raw_block, fmin=fmin, fmax=fmax,
+
+            # create spectrum using mne's new api.
+            # However, continue as before and convert
+            # to plain freqs and data arrays.
+            mne_spectrum = raw_block.compute_psd(
+                method="welch", fmin=fmin, fmax=fmax,
                 n_fft=nfft, n_overlap=overlap, picks=picks,
                 proj=True)
+            psds = mne_spectrum.get_data()
+            freqs = mne_spectrum.freqs
 
             if key not in psd_groups:
                 psd_groups[key] = []
