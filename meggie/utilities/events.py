@@ -116,9 +116,6 @@ def update_stim_channel(raw, events):
 
     stim_channel = find_stim_channel(raw)
 
-    from meggie.utilities.debug import debug_trace;
-    debug_trace()
-
     if not stim_channel:
         # create stim_channel
         info = mne.create_info(['STI101'], raw.info['sfreq'], ['stim'])

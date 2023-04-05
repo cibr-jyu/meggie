@@ -2,7 +2,6 @@ import tempfile
 import os
 
 import mne
-from mne.time_frequency import psd_welch
 
 from meggie.datatypes.spectrum.spectrum import Spectrum
 
@@ -16,7 +15,9 @@ def test_spectrum():
         sample_fname = os.path.join(sample_folder, 'MEG', 'sample', 'sample_audvis_raw.fif')
 
         raw = mne.io.read_raw_fif(sample_fname, preload=True)
-        psds, freqs = psd_welch(raw, fmin=1, fmax=40, tmin=1, tmax=10)
+        mne_spectrum = raw.compute_psd(fmin=1, fmax=40, tmin=1, tmax=10)
+        psds = mne_spectrum.get_data()
+        freqs = mne_spectrum.freqs
         ch_names = raw.info['ch_names']
 
         name = 'TestSpectrum'
@@ -29,7 +30,7 @@ def test_spectrum():
 
         # Create meggie-Spectrum object with spectrum array stored within
         # and save it to spectrum directory
-        spectrum = Spectrum(name, spectrum_dir, params, 
+        spectrum = Spectrum(name, spectrum_dir, params,
                             content=content, freqs=freqs, info=raw.info)
         ensure_folders([spectrum_dir])
         spectrum.save_content()

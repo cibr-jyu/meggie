@@ -1,10 +1,16 @@
 Changelog
 =========
 
-1.5.1 (unreleased)
+1.5.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.5.1 (unreleased)
+------------------
+
+- Remove a forgotten debug command
+- Fix tests
 
 1.5.0 (unreleased)
 ------------------
