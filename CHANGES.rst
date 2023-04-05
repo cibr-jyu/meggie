@@ -1,10 +1,16 @@
 Changelog
 =========
 
-1.4.5 (unreleased)
+1.5.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.5.0 (unreleased)
+------------------
+
+- Update to mne==1.3.1
+- Replace heuristic find_stim_channel with mne's own
 
 1.4.4 (2023-04-03)
 ------------------
