@@ -71,7 +71,8 @@ def find_events(raw, stim_ch=None, mask=0, id_=None):
     if counter > 0:
         message = (str(counter) +
                    " events dropped because they seem spurious "
-                   "(only one sample difference to next event)")
+                   "(only one sample difference to next event). "
+                   "This is normal and should not be worried about.")
         logging.getLogger('ui_logger').warning(message)
 
     return events
@@ -79,8 +80,6 @@ def find_events(raw, stim_ch=None, mask=0, id_=None):
 
 def find_stim_channel(raw):
     """ Finds the appropriate stim channel from raw.
-
-    Heuristically just looks for STI101 or STI014.
 
     Parameters
     ----------
@@ -92,15 +91,12 @@ def find_stim_channel(raw):
     str
         Channel name of the stimulus channel.
     """
-    channels = raw.info.get('ch_names')
-    if 'STI101' in channels:
-        return 'STI101'
-    elif 'STI 101' in channels:
-        return 'STI 101'
-    elif 'STI 014' in channels:
-        return 'STI 014'
-    elif 'STI014' in channels:
-        return 'STI014'
+
+    # Use mne's own function to find out the stim channel
+    try:
+        channels = mne.utils.config._get_stim_channel(None, raw.info)[0]
+    except Exception as exc:
+        pass
 
 
 def update_stim_channel(raw, events):
@@ -119,7 +115,7 @@ def update_stim_channel(raw, events):
     length = 5
 
     stim_channel = find_stim_channel(raw)
-    
+
     if not stim_channel:
         # create stim_channel
         info = mne.create_info(['STI101'], raw.info['sfreq'], ['stim'])
