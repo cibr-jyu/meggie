@@ -94,7 +94,7 @@ def find_stim_channel(raw):
 
     # Use mne's own function to find out the stim channel
     try:
-        channels = mne.utils.config._get_stim_channel(None, raw.info)[0]
+        return mne.utils.config._get_stim_channel(None, raw.info)[0]
     except Exception as exc:
         pass
 
@@ -115,6 +115,9 @@ def update_stim_channel(raw, events):
     length = 5
 
     stim_channel = find_stim_channel(raw)
+
+    from meggie.utilities.debug import debug_trace;
+    debug_trace()
 
     if not stim_channel:
         # create stim_channel
