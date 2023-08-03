@@ -1,18 +1,23 @@
 Changelog
 =========
 
-1.5.2 (unreleased)
+1.5.3 (unreleased)
 ------------------
 
 - nothing changed yet.
 
-1.5.1 (unreleased)
+1.5.2 (2023-08-03)
+------------------
+
+- Allow selecting multiple channels for rereferencing
+
+1.5.1 (2023-04-05)
 ------------------
 
 - Remove a forgotten debug command
 - Fix tests
 
-1.5.0 (unreleased)
+1.5.0 (2023-04-05)
 ------------------
 
 - Update to mne==1.3.1
