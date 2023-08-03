@@ -34,8 +34,9 @@ class RereferencingDialog(QtWidgets.QDialog):
         ch_names = [ch_name for ch_idx, ch_name in
                     enumerate(raw.info['ch_names']) if ch_idx in picks]
 
+        self.ui.listWidgetChannels.clear()
         for ch_name in ch_names:
-            self.ui.comboBoxChannel.addItem(ch_name)
+            self.ui.listWidgetChannels.addItem(ch_name)
 
         self.batching_widget = BatchingWidget(
             experiment_getter=self._experiment_getter,
@@ -51,7 +52,13 @@ class RereferencingDialog(QtWidgets.QDialog):
         experiment = self.experiment
         subject = experiment.active_subject
 
-        selection = self.ui.comboBoxChannel.currentText()
+        if self.ui.radioButtonUseAverage.isChecked():
+            selection = "average"
+        else:
+            selection = [
+                item.text() for item in
+                self.ui.listWidgetChannels.selectedItems()
+            ]
 
         try:
             params = {'selection': selection}
@@ -66,7 +73,14 @@ class RereferencingDialog(QtWidgets.QDialog):
 
     def acceptBatch(self):
         experiment = self.experiment
-        selection = self.ui.comboBoxChannel.currentText()
+
+        if self.ui.radioButtonUseAverage.isChecked():
+            selection = "average"
+        else:
+            selection = [
+                item.text() for item in
+                self.ui.listWidgetChannels.selectedItems()
+            ]
 
         selected_subject_names = self.batching_widget.selected_subjects
 
