@@ -26,13 +26,10 @@ class Rereference(Action):
         @threaded
         def rereference_fun():
             raw = subject.get_raw()
-            if params['selection'] == 'Use average':
-                raw.set_eeg_reference(ref_channels='average', 
-                                      projection=False)
-            elif params['selection'] == '':
-                raise Exception('Empty selection')
-            else:
-                raw.set_eeg_reference(ref_channels=[selection])
+            raw = raw.set_eeg_reference(
+                ref_channels=params['selection'],
+                projection=False,
+            )
 
         rereference_fun(do_meanwhile=self.window.update_ui)
         subject.rereferenced = True

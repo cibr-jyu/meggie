@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>423</width>
-    <height>498</height>
+    <width>527</width>
+    <height>702</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,8 +62,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>403</width>
-        <height>447</height>
+        <width>507</width>
+        <height>646</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
@@ -74,26 +74,58 @@
          </property>
          <layout class="QFormLayout" name="formLayout_2">
           <item row="1" column="0">
-           <widget class="QLabel" name="labelSelectChannel">
+           <widget class="QRadioButton" name="radioButtonUseAverage">
             <property name="text">
-             <string>Select channel:</string>
+             <string>Use average reference</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="comboBoxChannel">
-            <property name="minimumSize">
-             <size>
-              <width>120</width>
-              <height>0</height>
-             </size>
+          <item row="2" column="0">
+           <widget class="QRadioButton" name="radioButtonUseChannels">
+            <property name="text">
+             <string>Select channel(s):</string>
             </property>
-            <property name="currentText">
-             <string>Use average</string>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QListWidget" name="listWidgetChannels">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::ExtendedSelection</enum>
             </property>
             <item>
              <property name="text">
-              <string>Use average</string>
+              <string>Channel 1</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Channel 2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Channel 3</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Channel 4</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Channel 5</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Channel 6</string>
              </property>
             </item>
            </widget>
@@ -148,8 +180,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>240</x>
-     <y>487</y>
+     <x>344</x>
+     <y>691</y>
     </hint>
     <hint type="destinationlabel">
      <x>18</x>
@@ -164,8 +196,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>412</x>
-     <y>487</y>
+     <x>516</x>
+     <y>691</y>
     </hint>
     <hint type="destinationlabel">
      <x>47</x>
@@ -180,12 +212,28 @@
    <slot>acceptBatch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>304</x>
-     <y>479</y>
+     <x>430</x>
+     <y>691</y>
     </hint>
     <hint type="destinationlabel">
      <x>35</x>
      <y>469</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonUseChannels</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listWidgetChannels</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>101</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>351</x>
+     <y>175</y>
     </hint>
    </hints>
   </connection>
