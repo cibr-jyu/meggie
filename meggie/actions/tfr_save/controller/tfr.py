@@ -23,6 +23,13 @@ def save_tfr_all_channels(experiment, tfr_name,
     row_descs = []
     csv_data = []
 
+    if blmode:
+        bline = (blstart, blend)
+        mode = blmode
+    else:
+        bline = None
+        mode = None
+
     # accumulate csv contents
     for subject in experiment.subjects.values():
         tfr = subject.tfr.get(tfr_name)
@@ -42,8 +49,8 @@ def save_tfr_all_channels(experiment, tfr_name,
             column_names = format_floats(times)
             freqs = format_floats(mne_tfr.freqs)
 
-            data = mne.baseline.rescale(mne_tfr.data, times, baseline=(blstart, blend), 
-                                       mode=blmode)
+            data = mne.baseline.rescale(mne_tfr.data, times, baseline=bline,
+                                        mode=mode)
 
             for ix in range(data.shape[0]):
                 for iy in range(data.shape[1]):
@@ -70,6 +77,13 @@ def save_tfr_channel_averages(experiment, tfr_name,
     row_descs = []
     csv_data = []
 
+    if blmode:
+        bline = (blstart, blend)
+        mode = blmode
+    else:
+        bline = None
+        mode = None
+
     # accumulate csv contents
     for subject in experiment.subjects.values():
         tfr = subject.tfr.get(tfr_name)
@@ -90,8 +104,8 @@ def save_tfr_channel_averages(experiment, tfr_name,
             column_names = format_floats(times)
             freqs = format_floats(mne_tfr.freqs)
 
-            data = mne.baseline.rescale(mne_tfr.data, times, baseline=(blstart, blend), 
-                                       mode=blmode)
+            data = mne.baseline.rescale(mne_tfr.data, times, baseline=bline,
+                                        mode=mode)
 
             data_labels, averaged_data = average_to_channel_groups(
                 data, info, ch_names, channel_groups)
