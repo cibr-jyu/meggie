@@ -1,10 +1,14 @@
 Changelog
 =========
-
-1.5.3 (unreleased)
+1.5.4 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.5.3 (2023-10-23)
+------------------
+
+- Fix error that happened when saving TFR without baselining
 
 1.5.2 (2023-08-03)
 ------------------
