@@ -59,12 +59,13 @@ def save_tfr_all_channels(experiment, tfr_name,
                     row_desc = (subject.name, key, ch_names[ix], freqs[iy])
                     row_descs.append(row_desc)
 
-        folder = filemanager.create_timestamped_folder(experiment)
-        fname = tfr_name + '_all_subjects_all_channels_tfr.csv'
-        path = os.path.join(folder, fname)
+    folder = filemanager.create_timestamped_folder(experiment)
+    fname = tfr_name + '_all_subjects_all_channels_tfr.csv'
+    path = os.path.join(folder, fname)
 
-        filemanager.save_csv(path, csv_data, column_names, row_descs)
-        logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
+    filemanager.save_csv(path, csv_data, column_names, row_descs)
+    logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
+
 
 @threaded
 def save_tfr_channel_averages(experiment, tfr_name,
@@ -119,11 +120,11 @@ def save_tfr_channel_averages(experiment, tfr_name,
                     row_desc = (subject.name, key, ch_type, area, freqs[iy])
                     row_descs.append(row_desc)
 
-        folder = filemanager.create_timestamped_folder(experiment)
-        fname = tfr_name + '_all_subjects_channel_averages_tfr.csv'
-        path = os.path.join(folder, fname)
+    folder = filemanager.create_timestamped_folder(experiment)
+    fname = tfr_name + '_all_subjects_channel_averages_tfr.csv'
+    path = os.path.join(folder, fname)
 
-        filemanager.save_csv(path, csv_data, column_names, row_descs)
-        logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
+    filemanager.save_csv(path, csv_data, column_names, row_descs)
+    logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
 
