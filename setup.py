@@ -4,7 +4,7 @@ description = "User-friendly graphical user interface to do M/EEG analysis"
 
 setup(
     name='meggie',
-    version='1.5.3',
+    version='1.6.0',
     description=description,
     long_description=description,
     long_description_content_type="text/plain",

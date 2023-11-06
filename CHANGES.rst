@@ -1,9 +1,17 @@
 Changelog
 =========
-1.5.4 (unreleased)
+
+1.6.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.6.0 (2023-11-06)
+------------------
+
+- Make meggie consistent across induced response channel averages: baseline is corrected to before averaging over channels
+- Pin matplotlib==3.7.3 as newer matplotlibs are not compatible with pinned mne==1.3.1
+- Fix bug where saving TFR's resulted in csv file for each subject even though there should be only one file with all subjects' data in.
 
 1.5.3 (2023-10-23)
 ------------------
