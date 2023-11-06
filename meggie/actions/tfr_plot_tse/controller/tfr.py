@@ -135,11 +135,13 @@ def plot_tse_averages(subject, tfr_name, blmode, blstart, blend,
 
     averages = {}
     for key, tse in sorted(tses.items()):
-        data_labels, averaged_data = average_to_channel_groups(
-            tse, info, ch_names, channel_groups)
 
-        times, averaged_data = _crop_and_correct_to_baseline(
-            averaged_data, blmode, blstart, blend, tmin, tmax, meggie_tfr.times)
+        # note: baseline is corrected before channel average
+        times, ch_data = _crop_and_correct_to_baseline(
+            tse, blmode, blstart, blend, tmin, tmax, meggie_tfr.times)
+
+        data_labels, averaged_data = average_to_channel_groups(
+            ch_data, info, ch_names, channel_groups)
 
         for label_idx, label in enumerate(data_labels):
             if not label in averages:

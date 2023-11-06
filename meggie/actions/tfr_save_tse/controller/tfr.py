@@ -45,7 +45,7 @@ def _crop_and_correct_to_baseline(tse, blmode, blstart, blend, tmin, tmax, times
                 'Baseline end should not be later than crop end.')
 
         # correct to baseline
-        tse = mne.baseline.rescale(tse, times, baseline=(blstart, blend), 
+        tse = mne.baseline.rescale(tse, times, baseline=(blstart, blend),
                                    mode=blmode)
 
         # crop
@@ -111,11 +111,12 @@ def save_tse_channel_averages(experiment, tfr_name, blmode, blstart,
 
         for key, tse in tses.items():
 
-            data_labels, averaged_data = average_to_channel_groups(
-                tse, tfr.info, tfr.ch_names, channel_groups)
+            # note: baseline is corrected before channel average
+            times, ch_data = _crop_and_correct_to_baseline(
+                tse, blmode, blstart, blend, tmin, tmax, tfr.times)
 
-            times, averaged_data = _crop_and_correct_to_baseline(
-                averaged_data, blmode, blstart, blend, tmin, tmax, tfr.times)
+            data_labels, averaged_data = average_to_channel_groups(
+                ch_data, tfr.info, tfr.ch_names, channel_groups)
 
             csv_data.extend(averaged_data.tolist())
 

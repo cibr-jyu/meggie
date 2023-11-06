@@ -10,7 +10,7 @@ from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.plotting import set_figure_title
 
 
-def plot_tfr_averages(subject, tfr_name, tfr_condition, 
+def plot_tfr_averages(subject, tfr_name, tfr_condition,
                       blmode, blstart, blend,
                       tmin, tmax, fmin, fmax, channel_groups):
     """ Plots tfr averages.
@@ -27,16 +27,14 @@ def plot_tfr_averages(subject, tfr_name, tfr_condition,
 
     tfr = meggie_tfr.content.get(tfr_condition)
 
-    data = tfr.data
     ch_names = meggie_tfr.ch_names
 
     sfreq = meggie_tfr.info['sfreq']
     times = meggie_tfr.times
     freqs = meggie_tfr.freqs
 
-    # compared to spectrums, evoked and tse, tfr is plotted with only one condition.
-    # it makes the plotting a bit simpler. we will also misuse 
-    # AverageTFR object to do the heavy work.
+    # note: baseline is corrected before channel average
+    data = mne.baseline.rescale(tfr.data, times, baseline=bline, mode=mode)
 
     data_labels, averaged_data = average_to_channel_groups(
         data, meggie_tfr.info, ch_names, channel_groups)
@@ -64,15 +62,15 @@ def plot_tfr_averages(subject, tfr_name, tfr_condition,
                 pass
             tfr._onselect = onselect
 
-            tfr.plot(baseline=bline, mode=mode, title='', 
-                     fmin=fmin, fmax=fmax, 
+            tfr.plot(baseline=None, title='',
+                     fmin=fmin, fmax=fmax,
                      tmin=tmin, tmax=tmax, axes=ax)
 
         title = ' '.join([tfr_name, tfr_condition, ch_type])
         create_channel_average_plot(len(ch_groups), plot_fun, title)
 
 
-def plot_tfr_topo(subject, tfr_name, tfr_condition, 
+def plot_tfr_topo(subject, tfr_name, tfr_condition,
                   blmode, blstart, blend,
                   tmin, tmax, fmin, fmax, ch_type):
     """ Plots tfr topography.
