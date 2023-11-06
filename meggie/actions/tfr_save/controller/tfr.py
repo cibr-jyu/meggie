@@ -105,6 +105,7 @@ def save_tfr_channel_averages(experiment, tfr_name,
             column_names = format_floats(times)
             freqs = format_floats(mne_tfr.freqs)
 
+            # note: baseline is corrected before channel average
             data = mne.baseline.rescale(mne_tfr.data, times, baseline=bline,
                                         mode=mode)
 
