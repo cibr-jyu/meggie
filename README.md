@@ -9,11 +9,11 @@
 
 ## Installation (from terminal)
 
-Note that Python >= 3.7 is required.
+Note that Python>=3.8 might be required to get the newest version.
 
-### From conda-forge:
+### From conda-forge (mamba instead of conda might install faster):
 
-1. Install meggie to a conda environment: conda create -n meggie-env -c conda-forge meggie
+1. Install meggie to a conda environment: conda create -n meggie-env -c conda-forge meggie=1.6.0
 1. Activate the environment: conda activate meggie-env
 1. Run: meggie
 
