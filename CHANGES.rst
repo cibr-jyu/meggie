@@ -1,10 +1,15 @@
 Changelog
 =========
 
-1.6.1 (unreleased)
+1.6.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.6.1 (2023-11-23)
+------------------
+
+- Fix save_raw for long recordings with split files
 
 1.6.0 (2023-11-06)
 ------------------
