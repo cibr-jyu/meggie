@@ -43,9 +43,9 @@ def open_raw(fname, preload=True, verbose='info'):
 def save_raw(raw, path, overwrite=True):
     """Saves a raw to file(s).
 
-    After witnessing several corruptions along the way, 
-    this was made more atomic by saving the raw first to a tmp file 
-    and then moving with shutil.
+    For some safety, move the old files first to temp files,
+    then save the new version, and then (if has not failed),
+    remove the temp files.
 
     Parameters
     ----------
@@ -57,55 +57,41 @@ def save_raw(raw, path, overwrite=True):
         Whether to overwrite.
     """
 
+    logger = logging.getLogger('ui_logger')
+
     folder = os.path.dirname(path)
     bname = os.path.basename(path)
 
-    exists = False
-    if os.path.exists(path):
-        if not overwrite:
-            raise IOError('File already exists.')
-        exists = True
+    if os.path.exists(path) and not overwrite:
+        raise IOError('File already exists.')
 
-    # be protective and save with other name first and move afterwards
-    temp_path = os.path.join(folder, '_' + bname)
-    raw.save(temp_path, overwrite=True)
-
+    # Move existing files to temporary names
     stem, ext = os.path.splitext(bname)
     ext_len = len(ext)
 
-    # assumes filename ends with .fif
     pat_old = re.compile(bname[:-ext_len] + r'(-[0-9]+)?' + bname[-ext_len:])
-    pat_new = re.compile('_' + bname[:-ext_len] + r'(-[0-9]+)?' + bname[-ext_len:])
-
     contents = os.listdir(folder)
     old_files = [fname_ for fname_ in contents if pat_old.match(fname_)]
-    new_files = [fname_ for fname_ in contents if pat_new.match(fname_)]
 
-    if len(old_files) != len(new_files):
-        logger = logging.getLogger('ui_logger')
-        if exists:
-            logger.warning("Be warned, amount of parts has changed!")
-        logger.debug("Old parts: ")
-        for part in old_files:
-            logger.debug(part)
-        logger.debug("New parts: ")
-        for part in new_files:
-            logger.debug(part)
-
-    moved_paths = []
-    for file_ in new_files:
-        tmp_path = os.path.join(folder, os.path.basename(file_))
-        new_path = os.path.join(folder, os.path.basename(file_)[1:])
-        shutil.move(tmp_path, new_path)
-        moved_paths.append(new_path)
-
+    temp_paths = []
     for file_ in old_files:
-        old_file_path = os.path.join(folder, os.path.basename(file_))
-        if old_file_path not in moved_paths:
-            logger.warning('Removing unused part: ' + str(old_file_path))
-            os.remove(old_file_path)
+        old_path = os.path.join(folder, os.path.basename(file_))
+        temp_path = os.path.join(folder, '_' + os.path.basename(file_))
+        logger.debug('Moving previously existing file to: ' + str(temp_path))
+        shutil.move(old_path, temp_path)
+        temp_paths.append(temp_path)
 
-    raw._filenames[0] = path
+    # Save raw data
+    logger.debug('Saving new data to: ' + str(path))
+    raw.save(path)
+
+    # Remove old files
+    for temp_path in temp_paths:
+        logger.debug('Removing previously existing file: ' + str(temp_path))
+        os.remove(temp_path)
+
+    # Just to make sure, set _filenames[0] to match the new path.
+    raw._filenames = [path]
 
 
 def ensure_folders(paths):
