@@ -95,10 +95,14 @@ def plot_tse_topo(subject, tfr_name, blmode, blstart, blend,
         ax.legend()
 
         ax.set_xlabel('Time (s)')
-        ax.set_ylabel('Power ({})'.format(get_power_unit(
-            mne.io.pick.channel_type(info, info_idx),
-            False
-        )))
+
+        if blmode and blmode != "mean":
+            ax.set_ylabel('Power')
+        else:
+            ax.set_ylabel('Power ({})'.format(get_power_unit(
+                mne.io.pick.channel_type(info, info_idx),
+                log=False
+            )))
 
         plt.show()
 
@@ -158,8 +162,12 @@ def plot_tse_averages(subject, tfr_name, blmode, blstart, blend,
             ch_group = ch_groups[ax_idx]
             ax.set_title(ch_group)
             ax.set_xlabel('Time (s)')
-            ax.set_ylabel('Power ({})'.format(get_power_unit(
-                ch_type, False)))
+
+            if blmode and blmode != "mean":
+                ax.set_ylabel('Power')
+            else:
+                ax.set_ylabel('Power ({})'.format(get_power_unit(
+                    ch_type, log=False)))
 
             for color_idx, (key, times, curve) in enumerate(averages[(ch_type, ch_group)]):
                 ax.plot(times, curve, color=colors[color_idx], label=key)
