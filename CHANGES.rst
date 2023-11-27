@@ -1,10 +1,16 @@
 Changelog
 =========
 
-1.6.2 (unreleased)
+1.6.3 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.6.2 (2023-11-27)
+------------------
+
+- Fix group averages for multiple groups
+- Fix tse plot units with no-mean baseline correction
 
 1.6.1 (2023-11-23)
 ------------------
