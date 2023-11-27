@@ -34,6 +34,36 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
 
     assert_arrays_same(time_arrays)
 
+    # handle channel differences
+    ch_names = []
+    for group_key, group_subjects in groups.items():
+        for subject_name in group_subjects:
+            try:
+                subject = experiment.subjects.get(subject_name)
+                evoked = subject.evoked.get(evoked_name)
+
+                mne_evokeds = evoked.content
+                for mne_evoked in mne_evokeds.values():
+                    ch_idxs = mne.pick_types(mne_evoked.info, meg=True, eeg=True)
+                    ch_names.append(tuple(
+                        [ch_name for ch_idx, ch_name
+                         in enumerate(mne_evoked.info['ch_names'])
+                         if ch_idx in ch_idxs]
+                    ))
+            except Exception as exc:
+                continue
+
+    if len(set(ch_names)) != 1:
+        logging.getLogger('ui_logger').debug(
+            "Evokeds contain different sets of good channels. Identifying common ones..")
+
+        common_ch_names = list(set.intersection(*map(set, ch_names)))
+
+        logging.getLogger('ui_logger').debug(
+            str(len(common_ch_names)) + ' common channels found.')
+    else:
+        common_ch_names = ch_names[0]
+
     grand_evokeds = {}
     for group_key, group_subjects in groups.items():
         for subject in experiment.subjects.values():
@@ -51,7 +81,9 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
 
                 if grand_key not in grand_evokeds:
                     grand_evokeds[grand_key] = []
-                grand_evokeds[grand_key].append(evoked_item)
+                grand_evokeds[grand_key].append(
+                    evoked_item.copy().pick(common_ch_names)
+                )
 
     grand_averages = {}
     new_keys = []
