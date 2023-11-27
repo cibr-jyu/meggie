@@ -63,10 +63,13 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
             grand_averages[new_key] = mne.grand_average(grand_evoked)
         new_keys.append(new_key)
 
+    # to avoid mne complaints, set dev_head_t manually to same for all
+    keys = sorted(grand_averages.keys())
+    for key in keys:
+        grand_averages[key].info['dev_head_t'] = grand_averages[keys[0]].info['dev_head_t']
+
     subject = experiment.active_subject
-
     evoked_directory = subject.evoked_directory
-
     params = {'conditions': new_keys,
               'groups': groups}
 
