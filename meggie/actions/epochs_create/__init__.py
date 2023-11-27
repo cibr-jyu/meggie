@@ -16,7 +16,7 @@ class CreateEpochs(Action):
     """
     def run(self):
         default_name = next_available_name(
-            self.experiment.active_subject.spectrum.keys(), 'Epochs')
+            self.experiment.active_subject.epochs.keys(), 'Epochs')
 
         dialog = CreateEpochsFromEventsDialog(self.experiment, self.window, 
                                               default_name, self.handler)
