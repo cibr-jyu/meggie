@@ -66,10 +66,13 @@ def save_raw(raw, path, overwrite=True):
         raise IOError('File already exists.')
 
     # Move existing files to temporary names
-    stem, ext = os.path.splitext(bname)
-    ext_len = len(ext)
+    ext = os.path.splitext(bname)[1]
 
-    pat_old = re.compile(bname[:-ext_len] + r'(-[0-9]+)?' + bname[-ext_len:])
+    # Match filenames that
+    # 1) do not start with an underscore,
+    # 2) do not contain any extra dots, and
+    # 3) end with the ext
+    pat_old = re.compile(r'^(?!_)[^.]*' + re.escape(ext) + r'$')
     contents = os.listdir(folder)
     old_files = [fname_ for fname_ in contents if pat_old.match(fname_)]
 
@@ -83,7 +86,7 @@ def save_raw(raw, path, overwrite=True):
 
     # Save raw data
     logger.debug('Saving new data to: ' + str(path))
-    raw.save(path)
+    raw.save(path, overwrite=True)
 
     # Remove old files
     for temp_path in temp_paths:
