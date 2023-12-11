@@ -1,10 +1,15 @@
 Changelog
 =========
 
-1.6.3 (unreleased)
+1.6.4 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.6.3 (2023-12-11)
+------------------
+
+- Fix problem with a regexp in save_raw.
 
 1.6.2 (2023-11-27)
 ------------------
