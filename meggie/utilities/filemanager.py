@@ -86,7 +86,7 @@ def save_raw(raw, path, overwrite=True):
 
     # Save raw data
     logger.debug('Saving new data to: ' + str(path))
-    raw.save(path)
+    raw.save(path, overwrite=True)
 
     # Remove old files
     for temp_path in temp_paths:
