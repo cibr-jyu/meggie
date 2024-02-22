@@ -1,5 +1,6 @@
 site_name: Meggie
 site_url: https://cibr-jyu.github.io/meggie
+docs_dir: docs_updated
 
 nav:
     - Home: index.md

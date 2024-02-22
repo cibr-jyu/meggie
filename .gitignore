@@ -1,3 +1,10 @@
+build
+conda-bld
+dist
+meggie.egg-info
+preferences.cfg
+site
+docs_updated
 *.swm
 *.pyc
 *.swm
@@ -5,12 +12,6 @@
 *.swn
 *.swp
 *~
-build
-conda-bld
-dist
-meggie.egg-info
-preferences.cfg
-site
 *.~lock.*
 *.orig
 .project

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Before, remember to:
+# 1) Update setup.py
+# 2) Update CHANGES.rst
+# 3) Add a tag
+
 if [[ -z "${INTERP}" ]]; then
   INTERP=python
 fi
