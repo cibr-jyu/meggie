@@ -1,11 +1,6 @@
 """ Contains implementation for epochs plot
 """
 
-import logging
-
-import matplotlib.pyplot as plt
-import numpy as np
-
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.plotting import set_figure_title
 from meggie.utilities.plotting import get_figure_title
@@ -21,7 +16,7 @@ class PlotEpochsImage(Action):
 
         try:
             selected_name = self.data["outputs"]["epochs"][0]
-        except IndexError as exc:
+        except IndexError:
             return
 
         subject = self.experiment.active_subject

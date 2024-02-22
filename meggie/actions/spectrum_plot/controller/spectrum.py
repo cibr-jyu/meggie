@@ -18,8 +18,6 @@ from meggie.utilities.units import get_power_unit
 def plot_spectrum_averages(subject, channel_groups, name, log_transformed=True):
     """Plots spectrum averages."""
 
-    subject_name = subject.name
-
     spectrum = subject.spectrum.get(name)
 
     data = spectrum.content
@@ -38,7 +36,7 @@ def plot_spectrum_averages(subject, channel_groups, name, log_transformed=True):
         )
 
         for label_idx, label in enumerate(data_labels):
-            if not label in averages:
+            if label not in averages:
                 averages[label] = []
             averages[label].append((key, averaged_data[label_idx]))
 
@@ -70,7 +68,6 @@ def plot_spectrum_averages(subject, channel_groups, name, log_transformed=True):
 def plot_spectrum_topo(subject, name, log_transformed=True, ch_type="meg"):
     """Plots spectrum topography."""
 
-    subject_name = subject.name
     spectrum = subject.spectrum.get(name)
     data = spectrum.content
     freqs = spectrum.freqs

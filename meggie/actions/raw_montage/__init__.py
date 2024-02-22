@@ -1,14 +1,8 @@
 """ Contains implementation for raw montage
 """
 
-import logging
-
-import matplotlib.pyplot as plt
-import numpy as np
 import mne
 
-from meggie.utilities.messaging import messagebox
-from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.threading import threaded
 
 from meggie.actions.raw_montage.dialogs.montageDialogMain import MontageDialog
@@ -33,7 +27,7 @@ class Montage(Action):
 
             head_size = params["head_size"]
 
-            if params["custom"] == True:
+            if params["custom"] is True:
                 montage_fname = params["selection"]
                 montage = mne.channels.read_custom_montage(
                     montage_fname, head_size=head_size

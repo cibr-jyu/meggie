@@ -3,8 +3,6 @@
 
 from meggie.mainwindow.dynamic import InfoAction
 
-from meggie.utilities.formats import format_float
-
 
 class Info(InfoAction):
     """Fills up evoked info box"""
@@ -28,7 +26,7 @@ class Info(InfoAction):
                     for name in names:
                         message += name + "\n"
 
-        except Exception as exc:
+        except Exception:
             message = ""
 
         return message

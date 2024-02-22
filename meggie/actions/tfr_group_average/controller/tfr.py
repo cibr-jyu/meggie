@@ -29,7 +29,7 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
                 keys.append(tuple(sorted(tfr.content.keys())))
                 freq_arrays.append(tuple(tfr.freqs))
                 time_arrays.append(tuple(tfr.times))
-            except Exception as exc:
+            except Exception:
                 continue
 
     assert_lists_same(keys, "Conditions do no match")
@@ -44,7 +44,7 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
                 subject = experiment.subjects.get(subject_name)
                 tfr = subject.tfr.get(tfr_name)
                 ch_names.append(tuple(clean_names(tfr.ch_names)))
-            except Exception as exc:
+            except Exception:
                 continue
 
     if len(set(ch_names)) != 1:

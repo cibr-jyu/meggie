@@ -2,7 +2,6 @@
 """
 
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.messaging import messagebox
 from meggie.utilities.names import next_available_name
 
 from meggie.mainwindow.dynamic import Action
@@ -19,7 +18,7 @@ class GroupAverage(Action):
     def run(self):
         try:
             selected_name = self.data["outputs"]["evoked"][0]
-        except IndexError as exc:
+        except IndexError:
             return
 
         name = next_available_name(

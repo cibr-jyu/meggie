@@ -89,7 +89,6 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        experiment = self.experiment
 
         selected_subject_names = self.batching_widget.selected_subjects
 

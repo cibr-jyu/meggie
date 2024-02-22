@@ -4,9 +4,6 @@
 import logging
 import os
 
-import mne
-import numpy as np
-
 import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.formats import format_floats

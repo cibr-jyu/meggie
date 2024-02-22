@@ -12,7 +12,6 @@ from meggie.actions.tfr_create.dialogs.TFRDialogUi import Ui_TFRDialog
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.utilities.validators import validate_name
-from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 
 

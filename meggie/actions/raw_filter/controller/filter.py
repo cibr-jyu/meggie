@@ -1,8 +1,6 @@
 """ Contains controlling logic for the filter.
 """
 
-import logging
-
 
 def filter_data(subject, params, preview=False):
     """

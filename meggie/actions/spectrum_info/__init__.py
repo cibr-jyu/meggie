@@ -51,7 +51,7 @@ class Info(InfoAction):
                     for name in names:
                         message += name + "\n"
 
-        except Exception as exc:
+        except Exception:
             message = ""
 
         return message

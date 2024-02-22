@@ -5,16 +5,11 @@ import os
 import pkg_resources
 import logging
 
-import mne
-
-from copy import deepcopy
-
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 import meggie.utilities.filemanager as filemanager
 
-from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
@@ -122,7 +117,6 @@ class MontageDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        experiment = self.experiment
         selected_subject_names = self.batching_widget.selected_subjects
 
         params = self._get_params()

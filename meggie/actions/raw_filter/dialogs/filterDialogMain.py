@@ -3,9 +3,6 @@
 
 import logging
 
-from copy import deepcopy
-
-from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 from meggie.actions.raw_filter.dialogs.filterDialogUi import Ui_DialogFilter
@@ -99,7 +96,6 @@ class FilterDialog(QtWidgets.QDialog):
         self.close()
 
     def _collect_parameter_values(self):
-        is_empty = True
         dictionary = {}
 
         length = str(self.ui.doubleSpinBoxLength.value()) + "s"
@@ -109,28 +105,22 @@ class FilterDialog(QtWidgets.QDialog):
 
         dictionary["lowpass"] = self.ui.checkBoxLowpass.isChecked()
         if dictionary["lowpass"]:
-            is_empty = False
             dictionary["low_cutoff_freq"] = self.ui.doubleSpinBoxLowpassCutoff.value()
 
         dictionary["highpass"] = self.ui.checkBoxHighpass.isChecked()
         if dictionary["highpass"]:
-            is_empty = False
             dictionary["high_cutoff_freq"] = self.ui.doubleSpinBoxHighpassCutoff.value()
 
         dictionary["bandstop1"] = self.ui.checkBoxBandstop.isChecked()
         if dictionary["bandstop1"]:
-            is_empty = False
             dictionary["bandstop1_freq"] = self.ui.doubleSpinBoxBandstopFreq.value()
 
         dictionary["bandstop2"] = self.ui.checkBoxBandstop2.isChecked()
         if dictionary["bandstop2"]:
-            is_empty = False
             dictionary["bandstop2_freq"] = self.ui.doubleSpinBoxBandstopFreq2.value()
 
         dictionary["bandstop_bw"] = self.ui.doubleSpinBoxBandstopWidth.value()
-        dictionary["bandstop_transbw"] = (
-            self.ui.doubleSpinBoxNotchTransBw.value()
-        )  # noqa
+        dictionary["bandstop_transbw"] = self.ui.doubleSpinBoxNotchTransBw.value()
 
         length = str(self.ui.doubleSpinBoxBandStopLength.value()) + "s"
         dictionary["bandstop_length"] = length

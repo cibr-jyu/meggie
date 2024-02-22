@@ -1,7 +1,6 @@
 """ Contains spectrum creation logic.
 """
 
-from copy import deepcopy
 from collections import OrderedDict
 
 import mne

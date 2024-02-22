@@ -42,11 +42,7 @@ class ResamplingDialog(QtWidgets.QDialog):
 
     def accept(self):
         subject = self.experiment.active_subject
-        raw = subject.get_raw()
-
-        old_rate = raw.info["sfreq"]
         rate = self.ui.doubleSpinBoxNewRate.value()
-
         params = {"rate": rate}
 
         try:
@@ -59,15 +55,11 @@ class ResamplingDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        experiment = self.experiment
-
         selected_subject_names = self.batching_widget.selected_subjects
 
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    raw = subject.get_raw()
-                    old_rate = raw.info["sfreq"]
                     rate = self.ui.doubleSpinBoxNewRate.value()
 
                     params = {"rate": rate}

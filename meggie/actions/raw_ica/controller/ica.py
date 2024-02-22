@@ -1,11 +1,6 @@
 """ Contains controlling logic for the ICA.
 """
 
-import logging
-
-from copy import deepcopy
-
-import numpy as np
 import mne
 
 from meggie.utilities.compare import compare_raws

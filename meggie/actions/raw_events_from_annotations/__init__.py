@@ -1,14 +1,6 @@
 """ Contains implementation for events from annotations
 """
 
-import logging
-
-import matplotlib.pyplot as plt
-import numpy as np
-import mne
-
-from meggie.utilities.messaging import messagebox
-from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.threading import threaded
 
 from meggie.actions.raw_events_from_annotations.dialogs.eventsFromAnnotationsDialogMain import (

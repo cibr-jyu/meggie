@@ -4,14 +4,12 @@
 import logging
 
 import mne
-import numpy as np
 
 from meggie.datatypes.evoked.evoked import Evoked
 
 from meggie.utilities.validators import assert_arrays_same
 
 from meggie.utilities.threading import threaded
-from meggie.utilities.units import get_unit
 
 
 @threaded
@@ -28,7 +26,7 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
                 mne_evokeds = evoked.content
                 for mne_evoked in mne_evokeds.values():
                     time_arrays.append(mne_evoked.times)
-            except Exception as exc:
+            except Exception:
                 continue
 
     assert_arrays_same(time_arrays)
@@ -55,7 +53,7 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
                             ]
                         )
                     )
-            except Exception as exc:
+            except Exception:
                 continue
 
     if len(set(ch_names)) != 1:

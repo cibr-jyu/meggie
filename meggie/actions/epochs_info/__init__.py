@@ -45,7 +45,7 @@ class Info(InfoAction):
                         event["event_id"], event["mask"]
                     )
 
-        except Exception as exc:
+        except Exception:
             message = ""
 
         return message

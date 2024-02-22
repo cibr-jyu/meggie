@@ -30,8 +30,6 @@ class CreateTFR(Action):
             self.experiment.active_subject.tfr.keys(), stem
         )
 
-        subject = self.experiment.active_subject
-
         dialog = TFRDialog(
             self.experiment, self.window, selected_names, default_name, self.handler
         )

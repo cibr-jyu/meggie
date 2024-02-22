@@ -2,7 +2,6 @@
 """
 
 import mne
-import numpy as np
 import matplotlib.pyplot as plt
 
 from matplotlib.lines import Line2D
@@ -36,7 +35,7 @@ def plot_evoked_averages(evoked, channel_groups):
         data_labels, averaged_data = _create_averages(mne_evoked, channel_groups)
 
         for label_idx, label in enumerate(data_labels):
-            if not label in averages:
+            if label not in averages:
                 averages[label] = []
             averages[label].append((key, averaged_data[label_idx]))
 
@@ -123,7 +122,7 @@ def plot_evoked_topo(evoked, ch_type):
             ax.figure.suptitle(title)
             set_figure_title(ax.figure, title.replace(" ", "_"))
             plt.show()
-        except Exception as exc:
+        except Exception:
             pass
 
     fig.canvas.mpl_connect("button_press_event", onclick)

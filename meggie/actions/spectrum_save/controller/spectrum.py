@@ -4,7 +4,6 @@
 import os
 import logging
 
-import mne
 import numpy as np
 
 import meggie.utilities.filemanager as filemanager

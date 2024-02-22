@@ -135,8 +135,6 @@ class ICADialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        raw = self.experiment.active_subject.get_raw()
-
         try:
             plot_topographies(self.ica, len(self.component_info))
         except Exception as exc:

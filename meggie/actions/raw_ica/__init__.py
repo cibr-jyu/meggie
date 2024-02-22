@@ -1,11 +1,6 @@
 """ Contains ICA action handling.
 """
 
-import logging
-
-import numpy as np
-import matplotlib.pyplot as plt
-
 from meggie.actions.raw_ica.dialogs.icaDialogMain import ICADialog
 
 from meggie.mainwindow.dynamic import Action

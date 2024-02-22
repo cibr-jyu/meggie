@@ -1,13 +1,6 @@
 """ Contains implementation for raw filter
 """
 
-import logging
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-from meggie.utilities.messaging import messagebox
-from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.threading import threaded
 
 from meggie.actions.raw_filter.dialogs.filterDialogMain import FilterDialog

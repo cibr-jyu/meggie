@@ -1,10 +1,6 @@
 """ Contains implementation for delete evoked
 """
 
-import logging
-
-import numpy as np
-
 from meggie.utilities.messaging import exc_messagebox
 
 from meggie.mainwindow.dynamic import Action
@@ -20,7 +16,7 @@ class DeleteEvoked(Action):
 
         try:
             selected_name = self.data["outputs"]["evoked"][0]
-        except IndexError as exc:
+        except IndexError:
             return
 
         try:

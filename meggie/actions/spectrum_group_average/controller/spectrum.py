@@ -30,7 +30,7 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
                 spectrum = subject.spectrum.get(spectrum_name)
                 keys.append(tuple(sorted(spectrum.content.keys())))
                 freq_arrays.append(tuple(spectrum.freqs))
-            except Exception as exc:
+            except Exception:
                 continue
 
     assert_lists_same(keys, "Conditions do not match")
@@ -44,7 +44,7 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
                 subject = experiment.subjects.get(subject_name)
                 spectrum = subject.spectrum.get(spectrum_name)
                 ch_names.append(tuple(clean_names(spectrum.ch_names)))
-            except Exception as exc:
+            except Exception:
                 continue
 
     if len(set(ch_names)) != 1:
@@ -96,10 +96,8 @@ def group_average_spectrum(experiment, spectrum_name, groups, new_name):
 
     try:
         spectrum = subject.spectrum.get(spectrum_name)
-    except Exception as exc:
+    except Exception:
         raise Exception("Active subject should be included in the groups")
-
-    spectrum_directory = subject.spectrum_directory
 
     info = spectrum.info
     common_idxs = [

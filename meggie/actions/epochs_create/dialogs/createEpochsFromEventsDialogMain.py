@@ -3,16 +3,11 @@
 
 import logging
 
-from copy import deepcopy
-
 from PyQt5 import QtWidgets
-
-import numpy as np
 
 from meggie.actions.epochs_create.dialogs.createEpochsFromEventsDialogUi import (
     Ui_CreateEpochsFromEventsDialog,
 )
-from meggie.actions.epochs_create.controller.epoching import create_epochs_from_events
 
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 from meggie.utilities.dialogs.bitSelectionDialogMain import BitSelectionDialog
@@ -123,7 +118,6 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        experiment = self.experiment
 
         if self.ui.listWidgetEvents.count() == 0:
             message = "Cannot create epochs from empty list."

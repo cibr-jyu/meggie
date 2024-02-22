@@ -3,8 +3,6 @@
 
 import logging
 
-import numpy as np
-
 from meggie.utilities.messaging import exc_messagebox
 
 from meggie.mainwindow.dynamic import Action
@@ -18,14 +16,14 @@ class DeleteEvokedFromAll(Action):
 
         try:
             selected_name = self.data["outputs"]["evoked"][0]
-        except IndexError as exc:
+        except IndexError:
             return
 
         for subject in self.experiment.subjects.values():
             if selected_name in subject.evoked:
                 try:
                     self.handler(subject, {"name": selected_name})
-                except Exception as exc:
+                except Exception:
                     logging.getLogger("ui_logger").exception("")
                     logging.getLogger("ui_logger").warning(
                         "Could not remove evoked for " + subject.name

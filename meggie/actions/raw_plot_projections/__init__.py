@@ -1,11 +1,6 @@
 """ Contains implementation for raw plot projections
 """
 
-import logging
-
-import matplotlib.pyplot as plt
-import numpy as np
-
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.plotting import set_figure_title

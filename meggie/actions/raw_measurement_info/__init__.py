@@ -24,7 +24,7 @@ class Info(InfoAction):
 
             try:
                 eeg_montage_set = is_montage_set(raw, "eeg")
-            except Exception as exc:
+            except Exception:
                 eeg_montage_set = False
 
             message += "Subject name: {0}\n".format(mi.subject_name)
@@ -39,7 +39,7 @@ class Info(InfoAction):
             message += "ICA applied: {0}\n".format(str(ica_applied))
             message += "Rereferenced: {0}\n".format(rereferenced)
             message += "EEG montage set: {0}\n".format(eeg_montage_set)
-        except Exception as exc:
+        except Exception:
             return ""
 
         return message

@@ -1,9 +1,7 @@
 """ Contains plot spectrum action handling.
 """
 
-from meggie.utilities.names import next_available_name
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.messaging import messagebox
 from meggie.utilities.channels import get_channels_by_type
 
 from meggie.mainwindow.dynamic import Action
@@ -21,7 +19,7 @@ class PlotSpectrum(Action):
     def run(self):
         try:
             selected_name = self.data["outputs"]["spectrum"][0]
-        except IndexError as exc:
+        except IndexError:
             return
 
         def option_handler(selected_option):

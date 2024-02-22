@@ -2,8 +2,6 @@
 """
 
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.messaging import messagebox
-from meggie.utilities.names import next_available_name
 from meggie.utilities.channels import get_channels_by_type
 
 from meggie.mainwindow.dynamic import Action
@@ -21,7 +19,7 @@ class PlotTFR(Action):
     def run(self):
         try:
             selected_name = self.data["outputs"]["tfr"][0]
-        except IndexError as exc:
+        except IndexError:
             return
 
         def option_handler(params):

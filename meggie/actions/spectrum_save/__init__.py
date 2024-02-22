@@ -2,8 +2,6 @@
 """
 
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.messaging import messagebox
-from meggie.utilities.channels import get_channels_by_type
 from meggie.utilities.validators import assert_arrays_same
 
 from meggie.mainwindow.dynamic import Action
@@ -21,7 +19,7 @@ class SaveSpectrum(Action):
     def run(self):
         try:
             selected_name = self.data["outputs"]["spectrum"][0]
-        except IndexError as exc:
+        except IndexError:
             return
 
         # validate freqs

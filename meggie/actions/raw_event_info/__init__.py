@@ -37,5 +37,5 @@ class Info(InfoAction):
                 events_string += "Trigger %s, %s events\n" % (str(key), str(value))
 
             return events_string
-        except Exception as exc:
+        except Exception:
             return ""

@@ -1,15 +1,11 @@
 """ Contains implementation for evoked topomaps
 """
 
-import logging
-
 import matplotlib.pyplot as plt
 import numpy as np
-import mne
 
 from matplotlib.gridspec import GridSpec
 
-from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.channels import get_channels_by_type
 from meggie.utilities.plotting import set_figure_title
 
@@ -28,7 +24,7 @@ class PlotEvokedTopomap(Action):
 
         try:
             selected_name = self.data["outputs"]["evoked"][0]
-        except IndexError as exc:
+        except IndexError:
             return
 
         subject = self.experiment.active_subject

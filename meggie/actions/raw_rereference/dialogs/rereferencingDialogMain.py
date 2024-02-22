@@ -3,7 +3,6 @@
 
 import logging
 
-import numpy as np
 import mne
 
 from PyQt5 import QtWidgets
@@ -30,7 +29,6 @@ class RereferencingDialog(QtWidgets.QDialog):
 
         subject = self.experiment.active_subject
         raw = subject.get_raw()
-        sfreq = raw.info["sfreq"]
 
         # fill the combobox
         picks = mne.pick_types(raw.info, eeg=True, meg=False, eog=True)

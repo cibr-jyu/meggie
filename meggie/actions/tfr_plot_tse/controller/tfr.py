@@ -162,7 +162,7 @@ def plot_tse_averages(
         )
 
         for label_idx, label in enumerate(data_labels):
-            if not label in averages:
+            if label not in averages:
                 averages[label] = []
             averages[label].append((key, times, averaged_data[label_idx]))
 
