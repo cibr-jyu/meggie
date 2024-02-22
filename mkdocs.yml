@@ -1,0 +1,24 @@
+site_name: Meggie
+site_url: https://cibr-jyu.github.io/meggie
+
+nav:
+    - Home: index.md
+    - About: about.md
+    - User Guide:
+        - Getting Started: user-guide/getting-started.md
+        - Experiments: user-guide/experiments.md
+        - Actions: user-guide/actions.md
+    - Developer Guide:
+        - Setting up: developer-guide/setting-up.md
+        - Architecture: developer-guide/architecture.md
+        - Development: developer-guide/development.md
+
+theme:
+    name: readthedocs
+
+# Extensions
+markdown_extensions:
+    - toc:
+        permalink: true
+    - admonition
+    - codehilite

@@ -1,0 +1,30 @@
+name: Deploy gh-pages
+
+on:
+  push:
+    branches:
+      - 'update-environment'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install mkdocs
+
+    - name: Build and deploy
+      run: |
+        mkdocs gh-deploy -b gh-pages-test --force
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
