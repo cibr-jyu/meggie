@@ -1,6 +1,7 @@
 """ Contains implementation for raw event info
 """
-import numpy as np 
+
+import numpy as np
 
 from meggie.mainwindow.dynamic import InfoAction
 from meggie.utilities.events import find_stim_channel
@@ -8,8 +9,7 @@ from meggie.utilities.events import find_events
 
 
 class Info(InfoAction):
-    """ Shows event information on a info box.
-    """
+    """Shows event information on a info box."""
 
     def run(self):
         try:
@@ -27,16 +27,15 @@ class Info(InfoAction):
             if events is None:
                 return ""
 
-            bins = np.bincount(events[:,2])
+            bins = np.bincount(events[:, 2])
             event_counts = dict()
             for event_id in set(events[:, 2]):
                 event_counts[event_id] = bins[event_id]
 
             events_string = ""
             for key, value in event_counts.items():
-                events_string += 'Trigger %s, %s events\n' % (str(key), str(value))
+                events_string += "Trigger %s, %s events\n" % (str(key), str(value))
 
             return events_string
-        except Exception as exc:
+        except Exception:
             return ""
-

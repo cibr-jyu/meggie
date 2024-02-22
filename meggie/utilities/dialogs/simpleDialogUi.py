@@ -1,12 +1,13 @@
 """ UI layout for simple dialog
 """
+
 from PyQt5 import QtCore
-from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
+
 class Ui_SimpleDialog(object):
-    """ Contains layout of very simple reusable dialog
-    """
+    """Contains layout of very simple reusable dialog"""
+
     def setupUi(self, dialog):
         dialog.setObjectName("CreateEvokedDialog")
         dialog.resize(364, 530)
@@ -14,7 +15,9 @@ class Ui_SimpleDialog(object):
         self.gridLayout = QtWidgets.QGridLayout(dialog)
         self.gridLayout.setObjectName("gridLayout")
 
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
 
         self.horizontalLayoutButtons = QtWidgets.QHBoxLayout()
         self.horizontalLayoutButtons.setObjectName("horizontalLayoutButtons")
@@ -74,7 +77,9 @@ class Ui_SimpleDialog(object):
 
         self.gridLayoutScrollArea.addWidget(self.groupBoxInfo, 0, 0, 1, 1)
 
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayoutScrollArea.addItem(spacerItem, 2, 0, 1, 1)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
@@ -96,4 +101,3 @@ class Ui_SimpleDialog(object):
         self.groupBoxBatching.setTitle(_translate("SimpleDialog", "Batching"))
         self.groupBoxInfo.setTitle(_translate("SimpleDialog", "Info"))
         self.labelName.setText(_translate("SimpleDialog", "Name:"))
-

@@ -25,20 +25,21 @@ def exc_messagebox(parent, exc, exec_=False):
         else:
             error_message = str(exc)
             if not error_message:
-                error_message = ('(empty message of type ' +
-                                 str(exc.__repr__()) + ')')
-    except Exception as e:
-        error_message = ''
+                error_message = "(empty message of type " + str(exc.__repr__()) + ")"
+    except Exception:
+        error_message = ""
 
     # print traceback to console
-    logging.getLogger('ui_logger').exception('')
+    logging.getLogger("ui_logger").exception("")
 
     # create messagebox for user
-    message = '\n\n'.join([
-        'There has been an error with following message: ',
-        error_message,
-        'More information can be found from console below.',
-    ])
+    message = "\n\n".join(
+        [
+            "There has been an error with following message: ",
+            error_message,
+            "More information can be found from console below.",
+        ]
+    )
 
     messagebox = shortMessageBox(message, parent)
     if exec_:
@@ -48,7 +49,7 @@ def exc_messagebox(parent, exc, exec_=False):
 
 
 def messagebox(parent, msg, exec_=False):
-    """ Pops up a messagebox with a message.
+    """Pops up a messagebox with a message.
 
     Parameters
     ----------
@@ -68,7 +69,7 @@ def messagebox(parent, msg, exec_=False):
 
 
 def questionbox(parent, question, handler):
-    """ Pops up a yes/no questionbox.
+    """Pops up a yes/no questionbox.
 
     Parameters
     ----------

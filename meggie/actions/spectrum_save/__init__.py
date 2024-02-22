@@ -2,8 +2,6 @@
 """
 
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.messaging import messagebox
-from meggie.utilities.channels import get_channels_by_type
 from meggie.utilities.validators import assert_arrays_same
 
 from meggie.mainwindow.dynamic import Action
@@ -16,12 +14,12 @@ from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 
 
 class SaveSpectrum(Action):
-    """ Saves spectrum items to csv files """
+    """Saves spectrum items to csv files"""
 
     def run(self):
         try:
-            selected_name = self.data['outputs']['spectrum'][0]
-        except IndexError as exc:
+            selected_name = self.data["outputs"]["spectrum"][0]
+        except IndexError:
             return
 
         # validate freqs
@@ -31,12 +29,14 @@ class SaveSpectrum(Action):
             if not spectrum:
                 continue
             freq_arrays.append(spectrum.freqs)
-        assert_arrays_same(freq_arrays, 'Freqs do not match')
+        assert_arrays_same(freq_arrays, "Freqs do not match")
 
         def option_handler(selected_option):
-            params = {'name': selected_name, 
-                      'output_option': selected_option,
-                      'channel_groups': self.experiment.channel_groups}
+            params = {
+                "name": selected_name,
+                "output_option": selected_option,
+                "channel_groups": self.experiment.channel_groups,
+            }
             try:
                 self.handler(self.experiment.active_subject, params)
             except Exception as exc:
@@ -47,14 +47,15 @@ class SaveSpectrum(Action):
 
     @subject_action
     def handler(self, subject, params):
-        """
-        """
-        if params['output_option'] == 'channel_averages':
-            save_channel_averages(self.experiment, 
-                                  params['name'], 
-                                  params['channel_groups'],
-                                  do_meanwhile=self.window.update_ui)
+        """ """
+        if params["output_option"] == "channel_averages":
+            save_channel_averages(
+                self.experiment,
+                params["name"],
+                params["channel_groups"],
+                do_meanwhile=self.window.update_ui,
+            )
         else:
-            save_all_channels(self.experiment, params['name'],
-                              do_meanwhile=self.window.update_ui)
-
+            save_all_channels(
+                self.experiment, params["name"], do_meanwhile=self.window.update_ui
+            )

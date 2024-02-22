@@ -1,5 +1,6 @@
 {
     "id": "evoked_info",
     "name": "Evoked info",
-    "entry": "Info"
+    "entry": "Info",
+    "description": "Extract information about the selected evoked response."
 }

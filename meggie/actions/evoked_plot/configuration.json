@@ -1,5 +1,6 @@
 {
     "id": "evoked_plot",
     "name": "Plot",
-    "entry": "PlotEvoked"
+    "entry": "PlotEvoked",
+    "description": "Generate a plot for the selected evoked response object. The response may be visualized for all channels individually or as an average across specified channel groups."
 }

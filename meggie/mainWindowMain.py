@@ -1,11 +1,10 @@
 """ Contains the class for main window logic.
 """
+
 import os
 import sys
-import json
 import logging
 import warnings
-import pkg_resources
 
 from pythonjsonlogger import jsonlogger
 
@@ -36,13 +35,13 @@ from meggie.mainwindow.dialogs.createExperimentDialogMain import CreateExperimen
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    """ Contains the main window logic and stores the experiment.
-    """
+    """Contains the main window logic and stores the experiment."""
+
     def __init__(self, application):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        
+
         # set default ratio of splitter
         self.ui.splitterTopBottom.setStretchFactor(0, 2)
         self.ui.splitterTopBottom.setStretchFactor(1, 1)
@@ -52,7 +51,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._setup_loggers()
 
         # Direct output to console
-        if not sys.argv[-1] == 'debug':
+        if not sys.argv[-1] == "debug":
             self._direct_output()
 
         # For storing and handling program wide preferences.
@@ -66,9 +65,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.experiment = exp
                 self.prefs.previous_experiment_name = exp.path
                 self.prefs.write_preferences_to_disk()
-                logging.getLogger('ui_logger').info('Opening experiment ' + exp.path)
+                logging.getLogger("ui_logger").info("Opening experiment " + exp.path)
             except Exception as exc:
-                self.prefs.previous_experiment_name = ''
+                self.prefs.previous_experiment_name = ""
                 exc_messagebox(self, exc)
 
         self.reconstruct_tabs()
@@ -84,10 +83,12 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         if not self.prefs.workspace:
-            messagebox(self, 
+            messagebox(
+                self,
                 "Please set up a workspace "
                 "(a place where experiments are stored) in preferences "
-                "before creating experiments")
+                "before creating experiments",
+            )
             dialog = PreferencesDialog(self)
             dialog.show()
         else:
@@ -100,13 +101,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         directory = self.prefs.workspace
         path = QtCore.QDir.toNativeSeparators(
-            str(QtWidgets.QFileDialog.getExistingDirectory(self,
-            "Select experiment directory", directory)))
+            str(
+                QtWidgets.QFileDialog.getExistingDirectory(
+                    self, "Select experiment directory", directory
+                )
+            )
+        )
 
-        if path == '':
+        if path == "":
             return
 
-        logging.getLogger('ui_logger').info('Opening experiment ' + path)
+        logging.getLogger("ui_logger").info("Opening experiment " + path)
 
         try:
             exp = open_existing_experiment(self.prefs, path=path)
@@ -118,15 +123,16 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception as exc:
             exc_messagebox(self, exc)
 
-
     def on_pushButtonAddSubjects_clicked(self, checked=None):
         if checked is None:
             return
 
         # Check that we have an experiment that we can add a subject to
         if not self.experiment:
-            msg = ('No active experiment to add a subject to. Load an '
-                   'experiment or make a new one, then try again.')
+            msg = (
+                "No active experiment to add a subject to. Load an "
+                "experiment or make a new one, then try again."
+            )
             messagebox(self, msg)
             return
 
@@ -145,7 +151,7 @@ class MainWindow(QtWidgets.QMainWindow):
         def handler(accepted):
             if not accepted:
                 return
-            
+
             n_successful = 0
             for index in selIndexes:
                 subject_name = index.data()
@@ -153,8 +159,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.experiment.remove_subject(subject_name)
                     n_successful += 1
                 except Exception:
-                    logging.getLogger('ui_logger').exception('')
-
+                    logging.getLogger("ui_logger").exception("")
 
             try:
                 self.experiment.save_experiment_settings()
@@ -165,21 +170,26 @@ class MainWindow(QtWidgets.QMainWindow):
             n_total = len(selIndexes)
 
             if n_successful != n_total:
-                message = ("Could not remove all subjects completely. "
-                           "Please check console below for details.")
+                message = (
+                    "Could not remove all subjects completely. "
+                    "Please check console below for details."
+                )
                 messagebox(self, message)
 
             self.initialize_ui()
 
-        questionbox(self, 'Permanently remove the selected subjects and the related files?', 
-                    handler)
+        questionbox(
+            self,
+            "Permanently remove the selected subjects and the related files?",
+            handler,
+        )
 
     def on_actionActions_triggered(self, checked=None):
         if checked is None:
             return
 
         if not self.experiment:
-            message = 'Please open an experiment first.'
+            message = "Please open an experiment first."
             messagebox(self, message)
             return
 
@@ -236,6 +246,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         previous_subject = self.experiment.active_subject
         try:
+
             @threaded
             def activate(subject_name):
                 self.experiment.activate_subject(subject_name)
@@ -244,25 +255,23 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self.reconstruct_tabs()
 
-        except Exception as exc:
+        except Exception:
             self.experiment.active_subject = None
             messagebox(self, "Could not activate the subject.")
 
             if previous_subject:
                 message = "Couldn't activate the subject, resuming to previous one."
-                logging.getLogger('ui_logger').info(message)
+                logging.getLogger("ui_logger").info(message)
                 self.experiment.activate_subject(previous_subject.name)
 
         self.initialize_ui()
 
     def update_ui(self):
-        """Used for keeping the ui responsive when threading.
-        """
+        """Used for keeping the ui responsive when threading."""
         QApplication.processEvents()
 
     def reconstruct_tabs(self):
-        """Reconstructs the tabs.
-        """
+        """Reconstructs the tabs."""
 
         if self.experiment and self.experiment.active_subject:
             include_eeg = self.experiment.active_subject.has_eeg
@@ -272,16 +281,17 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.experiment:
             selected_pipeline = self.experiment.selected_pipeline
         else:
-            selected_pipeline = 'classic'
+            selected_pipeline = "classic"
         try:
-            self.tabs = construct_tabs(selected_pipeline, self, self.prefs,
-                                       include_eeg=include_eeg)
+            self.tabs = construct_tabs(
+                selected_pipeline, self, self.prefs, include_eeg=include_eeg
+            )
         except Exception as exc:
             self.tabs = []
             exc_messagebox(self, exc)
 
     def initialize_ui(self):
-        """Initializes the main window UI view. 
+        """Initializes the main window UI view.
 
         Often used if the underlying experiment changes.
         """
@@ -291,7 +301,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.listWidgetSubjects.clear()
 
         if not self.experiment:
-            self.setWindowTitle('Meggie')
+            self.setWindowTitle("Meggie")
             return
 
         if self.experiment.name:
@@ -302,7 +312,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.ui.labelExperimentAuthorValue.setText("")
 
-        self.setWindowTitle('Meggie - ' + self.experiment.name)
+        self.setWindowTitle("Meggie - " + self.experiment.name)
 
         self._populate_subject_list()
 
@@ -326,8 +336,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.tabWidget.removeTab(0)
 
         for tab_idx, tab in enumerate(self.tabs):
-            self.ui.tabWidget.insertTab(
-                tab_idx + 1, tab, tab.name)
+            self.ui.tabWidget.insertTab(tab_idx + 1, tab, tab.name)
 
         self.ui.tabWidget.setCurrentIndex(current_tab)
 
@@ -335,11 +344,9 @@ class MainWindow(QtWidgets.QMainWindow):
             tab.initialize_ui()
 
     def _direct_output(self):
-        stdout_stream = EmittingStream(
-            textWritten=self._normal_output_written)
+        stdout_stream = EmittingStream(textWritten=self._normal_output_written)
         stdout_stream.orig_stream = sys.__stdout__
-        stderr_stream = EmittingStream(
-            textWritten=self._error_output_written)
+        stderr_stream = EmittingStream(textWritten=self._error_output_written)
         stderr_stream.orig_stream = sys.__stderr__
 
         sys.stdout = stdout_stream
@@ -363,60 +370,61 @@ class MainWindow(QtWidgets.QMainWindow):
         # hide warnings-module warnings,
         # most of these are still contained
         # in mne-level logging
-        warnings.simplefilter('ignore')
+        warnings.simplefilter("ignore")
 
         logging.getLogger().setLevel(logging.DEBUG)
 
-        logger_error_message = ("Could not setup loggers because of missing "
-                                "permissions. The whole experiment folder "
-                                "should have write permissions.")
+        logger_error_message = (
+            "Could not setup loggers because of missing "
+            "permissions. The whole experiment folder "
+            "should have write permissions."
+        )
 
         # setup logger for informative messages
-        ui_logger = logging.getLogger('ui_logger')
-        formatter = logging.Formatter('Meggie: %(asctime)s %(message)s',
-                                      datefmt='%Y-%m-%d %H:%M:%S')
+        ui_logger = logging.getLogger("ui_logger")
+        formatter = logging.Formatter(
+            "Meggie: %(asctime)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+        )
 
         ui_logger.handlers = []
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
-        stream_handler.setLevel('INFO')
+        stream_handler.setLevel("INFO")
         ui_logger.addHandler(stream_handler)
 
         # setup logger for mne error messages
-        mne_logger = logging.getLogger('mne')
-        formatter = logging.Formatter('MNE: %(asctime)s %(message)s',
-                                      datefmt='%Y-%m-%d %H:%M:%S')
+        mne_logger = logging.getLogger("mne")
+        formatter = logging.Formatter(
+            "MNE: %(asctime)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+        )
 
         mne_logger.handlers = []
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
-        stream_handler.setLevel('ERROR')
+        stream_handler.setLevel("ERROR")
         mne_logger.addHandler(stream_handler)
 
-
         # setup action logger
-        action_logger = logging.getLogger('action_logger')
+        action_logger = logging.getLogger("action_logger")
         action_logger.handlers = []
 
         # setup file handler
         if self.experiment:
             try:
-                logfile = os.path.join(
-                    self.experiment.path,
-                    'actions.log')
+                logfile = os.path.join(self.experiment.path, "actions.log")
                 file_handler = logging.FileHandler(logfile)
-                file_handler.setLevel('INFO')
+                file_handler.setLevel("INFO")
 
                 formatter = jsonlogger.JsonFormatter(timestamp=True)
                 file_handler.setFormatter(formatter)
                 action_logger.addHandler(file_handler)
-            except PermissionError as exc:
+            except PermissionError:
                 raise Exception(logger_error_message)
 
 
 class EmittingStream(QtCore.QObject):
-    """ Helper class for console.
-    """
+    """Helper class for console."""
+
     textWritten = QtCore.pyqtSignal(str)
 
     def write(self, text):

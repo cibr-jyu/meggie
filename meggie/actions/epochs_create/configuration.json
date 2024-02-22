@@ -1,5 +1,6 @@
 {
     "id": "epochs_create",
     "name": "Create epochs",
-    "entry": "CreateEpochs"
+    "entry": "CreateEpochs",
+    "description": "Create a new epoch collection for the current subject."
 }

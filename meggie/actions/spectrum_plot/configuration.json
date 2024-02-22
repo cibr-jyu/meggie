@@ -1,5 +1,6 @@
 {
     "id": "spectrum_plot",
     "name": "Plot",
-    "entry": "PlotSpectrum"
+    "entry": "PlotSpectrum",
+    "description": "Generate a plot for the selected spectrum object. The spectrum object may be visualized for all channels individually or as an average across specified channel groups."
 }

@@ -1,5 +1,6 @@
 {
     "id": "spectrum_delete_from_all",
     "name": "Delete from all",
-    "entry": "DeleteSpectrumFromAll"
+    "entry": "DeleteSpectrumFromAll",
+    "description": "Permanently remove the selected spectrum object from all matching subjects."
 }

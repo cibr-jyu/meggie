@@ -1,15 +1,18 @@
 """ Contains a class for logic of the evoked topomap dialog.
 """
+
 from PyQt5 import QtWidgets
 
-from meggie.actions.evoked_plot_topomap.dialogs.evokedTopomapDialogUi import Ui_evokedTopomapDialog
+from meggie.actions.evoked_plot_topomap.dialogs.evokedTopomapDialogUi import (
+    Ui_evokedTopomapDialog,
+)
 
 from meggie.utilities.messaging import exc_messagebox
 
 
 class EvokedTopomapDialog(QtWidgets.QDialog):
-    """ Contains logic for the evoked topomap dialog.
-    """
+    """Contains logic for the evoked topomap dialog."""
+
     def __init__(self, parent, evoked, handler):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_evokedTopomapDialog()
@@ -42,4 +45,3 @@ class EvokedTopomapDialog(QtWidgets.QDialog):
             exc_messagebox(self.parent, exc)
 
         self.close()
-

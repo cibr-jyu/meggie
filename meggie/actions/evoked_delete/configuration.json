@@ -1,5 +1,6 @@
 {
     "id": "evoked_delete",
     "name": "Delete",
-    "entry": "DeleteEvoked"
+    "entry": "DeleteEvoked",
+    "description": "Permanently remove the selected evoked response object from the current subject."
 }

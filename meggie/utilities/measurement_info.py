@@ -1,6 +1,7 @@
 """Provides for a class that wraps measurement information from the mne.Info.
 """
 
+
 class MeasurementInfo(object):
     """A class for collecting information from raw files.
 
@@ -15,49 +16,45 @@ class MeasurementInfo(object):
 
     @property
     def high_pass(self):
-        """Returns the high-pass filter value.
-        """
+        """Returns the high-pass filter value."""
         try:
-            return round(self._info.get('highpass'), 2)
-        except Exception as exc:
+            return round(self._info.get("highpass"), 2)
+        except Exception:
             pass
 
     @property
     def low_pass(self):
-        """Returns the low-pass filter value.
-        """
+        """Returns the low-pass filter value."""
         try:
-            return round(self._info.get('lowpass'), 2)
-        except Exception as exc:
+            return round(self._info.get("lowpass"), 2)
+        except Exception:
             return ""
 
     @property
     def sampling_freq(self):
-        """Returns the sampling frequency.
-        """
+        """Returns the sampling frequency."""
         try:
-            return round(self._info.get('sfreq'), 2)
-        except Exception as exc:
+            return round(self._info.get("sfreq"), 2)
+        except Exception:
             return ""
 
     @property
     def date(self):
         """Returns the measurement date."""
         try:
-            return str(self._info['meas_date'].date())
-        except Exception as exc:
+            return str(self._info["meas_date"].date())
+        except Exception:
             return ""
 
     @property
     def subject_name(self):
         """Constructs a one-string-name."""
-        subj_info = self._info.get('subject_info')
+        subj_info = self._info.get("subject_info")
 
         if not subj_info:
-            return ''
+            return ""
 
-        last_name = subj_info.get('last_name', '')
-        first_name = subj_info.get('first_name', '')
+        last_name = subj_info.get("last_name", "")
+        first_name = subj_info.get("first_name", "")
 
-        return last_name + ' ' + first_name
-
+        return last_name + " " + first_name

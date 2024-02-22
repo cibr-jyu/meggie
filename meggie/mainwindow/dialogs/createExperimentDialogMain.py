@@ -1,10 +1,6 @@
 """ Contains a class for logic of experiment creation dialog.
 """
 
-import os
-import pkg_resources
-import json
-
 from PyQt5 import QtWidgets
 
 from meggie.mainwindow.dialogs.createExperimentDialogUi import Ui_CreateExperimentDialog
@@ -18,8 +14,7 @@ from meggie.utilities.messaging import messagebox
 
 
 class CreateExperimentDialog(QtWidgets.QDialog):
-    """ Contains logic for experiment creation dialog.
-    """
+    """Contains logic for experiment creation dialog."""
 
     def __init__(self, parent):
         QtWidgets.QDialog.__init__(self, parent)
@@ -38,19 +33,19 @@ class CreateExperimentDialog(QtWidgets.QDialog):
 
         for source, package_spec in package_specs.items():
 
-            if source == 'meggie' or source in self.active_plugins:
-                if 'pipelines' in package_spec:
-                    for pipeline in package_spec['pipelines']:
+            if source == "meggie" or source in self.active_plugins:
+                if "pipelines" in package_spec:
+                    for pipeline in package_spec["pipelines"]:
                         try:
-                            id_ = pipeline['id']
-                        except Exception as exc:
-                            raise Exception('Every pipeline should have id.')
+                            id_ = pipeline["id"]
+                        except Exception:
+                            raise Exception("Every pipeline should have id.")
 
-                        name = pipeline.get('name', '')
+                        name = pipeline.get("name", "")
                         pipelines.append((id_, name))
 
         # Add classic
-        pipelines.append(('classic', 'Include everything'))
+        pipelines.append(("classic", "Include everything"))
 
         self.pipelines = pipelines
 
@@ -60,8 +55,7 @@ class CreateExperimentDialog(QtWidgets.QDialog):
             radio_button = QtWidgets.QRadioButton(self.ui.groupBoxPipeline)
             radio_button.setText(pipeline_name)
 
-            self.ui.gridLayoutPipeline.addWidget(
-                radio_button, idx + 1, 0, 1, 1)
+            self.ui.gridLayoutPipeline.addWidget(radio_button, idx + 1, 0, 1, 1)
 
             self.pipeline_buttons.append(radio_button)
 
@@ -73,8 +67,8 @@ class CreateExperimentDialog(QtWidgets.QDialog):
             self.pipeline_buttons[0].setChecked(True)
 
     def accept(self):
-        if self.ui.lineEditExperimentName.text() == '':
-            message = 'Give experiment a name.'
+        if self.ui.lineEditExperimentName.text() == "":
+            message = "Give experiment a name."
             messagebox(self.parent, message)
             return
 
@@ -88,7 +82,7 @@ class CreateExperimentDialog(QtWidgets.QDialog):
             experiment = initialize_new_experiment(
                 self.ui.lineEditExperimentName.text(),
                 self.ui.lineEditAuthor.text(),
-                self.parent.prefs
+                self.parent.prefs,
             )
 
             experiment.selected_pipeline = selected_pipeline

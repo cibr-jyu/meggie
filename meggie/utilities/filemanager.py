@@ -12,7 +12,7 @@ import numpy as np
 import mne
 
 
-def open_raw(fname, preload=True, verbose='info'):
+def open_raw(fname, preload=True, verbose="info"):
     """Reads a raw from file.
 
     Parameters
@@ -30,15 +30,16 @@ def open_raw(fname, preload=True, verbose='info'):
         The raw object read from the file.
     """
     try:
-        if verbose == 'info' or verbose == 'debug':
-            logging.getLogger('ui_logger').info('Reading ' + fname)
+        if verbose == "info" or verbose == "debug":
+            logging.getLogger("ui_logger").info("Reading " + fname)
             raw = mne.io.read_raw(fname, preload=preload)
         else:
             raw = mne.io.read_raw(fname, preload=preload, verbose=verbose)
         return raw
-    except Exception as exc:
-        logging.getLogger('ui_logger').exception('')
-        raise Exception('Could not read the raw file: ' + str(fname))
+    except Exception:
+        logging.getLogger("ui_logger").exception("")
+        raise Exception("Could not read the raw file: " + str(fname))
+
 
 def save_raw(raw, path, overwrite=True):
     """Saves a raw to file(s).
@@ -57,13 +58,13 @@ def save_raw(raw, path, overwrite=True):
         Whether to overwrite.
     """
 
-    logger = logging.getLogger('ui_logger')
+    logger = logging.getLogger("ui_logger")
 
     folder = os.path.dirname(path)
     bname = os.path.basename(path)
 
     if os.path.exists(path) and not overwrite:
-        raise IOError('File already exists.')
+        raise IOError("File already exists.")
 
     # Move existing files to temporary names
     ext = os.path.splitext(bname)[1]
@@ -72,25 +73,25 @@ def save_raw(raw, path, overwrite=True):
     # 1) do not start with an underscore,
     # 2) do not contain any extra dots, and
     # 3) end with the ext
-    pat_old = re.compile(r'^(?!_)[^.]*' + re.escape(ext) + r'$')
+    pat_old = re.compile(r"^(?!_)[^.]*" + re.escape(ext) + r"$")
     contents = os.listdir(folder)
     old_files = [fname_ for fname_ in contents if pat_old.match(fname_)]
 
     temp_paths = []
     for file_ in old_files:
         old_path = os.path.join(folder, os.path.basename(file_))
-        temp_path = os.path.join(folder, '_' + os.path.basename(file_))
-        logger.debug('Moving previously existing file to: ' + str(temp_path))
+        temp_path = os.path.join(folder, "_" + os.path.basename(file_))
+        logger.debug("Moving previously existing file to: " + str(temp_path))
         shutil.move(old_path, temp_path)
         temp_paths.append(temp_path)
 
     # Save raw data
-    logger.debug('Saving new data to: ' + str(path))
+    logger.debug("Saving new data to: " + str(path))
     raw.save(path, overwrite=True)
 
     # Remove old files
     for temp_path in temp_paths:
-        logger.debug('Removing previously existing file: ' + str(temp_path))
+        logger.debug("Removing previously existing file: " + str(temp_path))
         os.remove(temp_path)
 
     # Just to make sure, set _filenames[0] to match the new path.
@@ -124,8 +125,8 @@ def create_timestamped_folder(experiment):
     str
         The path to the folder.
     """
-    current_time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    path = os.path.join(experiment.path, 'output')
+    current_time_str = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    path = os.path.join(experiment.path, "output")
     timestamped_folder = os.path.join(path, current_time_str)
 
     try:
@@ -138,7 +139,7 @@ def create_timestamped_folder(experiment):
 
 
 def save_csv(path, data, column_names, row_descs):
-    """ Saves tabular data to csv.
+    """Saves tabular data to csv.
 
     Parameters
     ----------
@@ -150,17 +151,17 @@ def save_csv(path, data, column_names, row_descs):
         List of column names.
     row_descs : list
         List of row descriptions that can be tuples like
-        ('EEG', 'Left-frontal'), which are then put to the 
+        ('EEG', 'Left-frontal'), which are then put to the
         csv as multiple columns.
     """
     # gather all the data to list of rows
     all_data = []
 
-    if type(data) == np.ndarray:
+    if isinstance(data, np.ndarray):
         data = data.tolist()
 
     # freqs data, assume same lengths
-    all_data.append(['']*len(row_descs[0]) + column_names)
+    all_data.append([""] * len(row_descs[0]) + column_names)
 
     for idx in range(len(data)):
         row = list(row_descs[idx]) + data[idx]
@@ -168,7 +169,7 @@ def save_csv(path, data, column_names, row_descs):
 
     # save to file
     all_data = np.array(all_data)
-    np.savetxt(path, all_data, fmt='%s', delimiter=', ')
+    np.savetxt(path, all_data, fmt="%s", delimiter=", ")
 
 
 def load_csv(path):
@@ -190,16 +191,14 @@ def load_csv(path):
     """
 
     all_data = np.loadtxt(
-        path,
-        dtype=str,
-        delimiter=',',
-        converters=lambda s: s.strip())
+        path, dtype=str, delimiter=",", converters=lambda s: s.strip()
+    )
 
     data = []
     column_names = []
     row_descs = []
 
-    first_data_idx = np.min(np.where(all_data[0] != '')[0])
+    first_data_idx = np.min(np.where(all_data[0] != "")[0])
 
     column_names = all_data[0, first_data_idx:].tolist()
     row_descs = [tuple(elems) for elems in all_data[1:, :first_data_idx]]
@@ -260,10 +259,10 @@ def homepath():
 
     """
     from os.path import expanduser
+
     home = expanduser("~")
 
     if not home:
-        return '.'
+        return "."
 
     return home
-

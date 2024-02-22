@@ -7,26 +7,29 @@ from meggie.utilities.threading import threaded
 from meggie.mainwindow.dynamic import Action
 from meggie.mainwindow.dynamic import subject_action
 
-from meggie.actions.epochs_create.dialogs.createEpochsFromEventsDialogMain import CreateEpochsFromEventsDialog
+from meggie.actions.epochs_create.dialogs.createEpochsFromEventsDialogMain import (
+    CreateEpochsFromEventsDialog,
+)
 from meggie.actions.epochs_create.controller.epoching import create_epochs_from_events
 
 
 class CreateEpochs(Action):
-    """ Shows a dialog for event selection and then creates epochs.
-    """
+    """Shows a dialog for event selection and then creates epochs."""
+
     def run(self):
         default_name = next_available_name(
-            self.experiment.active_subject.epochs.keys(), 'Epochs')
+            self.experiment.active_subject.epochs.keys(), "Epochs"
+        )
 
-        dialog = CreateEpochsFromEventsDialog(self.experiment, self.window, 
-                                              default_name, self.handler)
+        dialog = CreateEpochsFromEventsDialog(
+            self.experiment, self.window, default_name, self.handler
+        )
         dialog.show()
-
 
     @subject_action
     def handler(self, subject, params):
-        """
-        """
+        """ """
+
         @threaded
         def create():
             create_epochs_from_events(subject, params)

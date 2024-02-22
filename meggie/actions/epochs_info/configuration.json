@@ -1,5 +1,6 @@
 {
     "id": "epochs_info",
     "name": "Epochs info",
-    "entry": "Info"
+    "entry": "Info",
+    "description": "Extract information about the selected epoch collection."
 }

@@ -1,7 +1,10 @@
-sphinx/build
-sphinx/source/*meggie*
-meggie/.coverage
-.coverage
+build
+conda-bld
+dist
+meggie.egg-info
+preferences.cfg
+site
+docs_updated
 *.swm
 *.pyc
 *.swm
@@ -9,11 +12,6 @@ meggie/.coverage
 *.swn
 *.swp
 *~
-build
-conda-bld
-dist
-meggie.egg-info
-preferences.cfg
 *.~lock.*
 *.orig
 .project

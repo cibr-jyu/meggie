@@ -13,9 +13,9 @@ from PyQt5 import QtWidgets
 
 
 def threaded(func):
-    """Allows decorating functions so that they will be run in a separate thread. 
+    """Allows decorating functions so that they will be run in a separate thread.
 
-    This is not meant for parallelization but to keep the Qt window 
+    This is not meant for parallelization but to keep the Qt window
     responsive while doing a resource intensive task.
 
     Carefully pipes the exceptions out of the thread to the main thread.
@@ -27,29 +27,29 @@ def threaded(func):
 
     Returns
     -------
-    function 
+    function
         The wrapped function.
     """
+
     def decorated(*args, **kwargs):
-        """ Inner function for threaded-decoration """
+        """Inner function for threaded-decoration"""
 
         # allow bypassing threads for testing
-        if kwargs.pop('no_threading', None):
+        if kwargs.pop("no_threading", None):
             return func(*args, **kwargs)
 
         # worker threads should be used on time consuming
         # tasks so add a indicator for user
-        QtWidgets.QApplication.setOverrideCursor(
-            QtGui.QCursor(QtCore.Qt.WaitCursor))
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
 
         pool = ThreadPool(processes=1)
-        do_meanwhile = kwargs.pop('do_meanwhile', None)
+        do_meanwhile = kwargs.pop("do_meanwhile", None)
         bucket = Queue()
 
         # exceptions are carried over from worker thread
         # to main thread
         def exception_wrapper():
-            """ Helper to get exception info out of thread """
+            """Helper to get exception info out of thread"""
             try:
                 result = func(*args, **kwargs)
             except BaseException:
@@ -79,5 +79,5 @@ def threaded(func):
         QtWidgets.QApplication.restoreOverrideCursor()
 
         return result
-    return decorated
 
+    return decorated

@@ -1,5 +1,6 @@
 {
     "id": "raw_measurement_info",
     "name": "Measurement info",
-    "entry": "Info"
+    "entry": "Info",
+    "description": "Extract measurement information from the raw data."
 }

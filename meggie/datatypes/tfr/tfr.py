@@ -3,7 +3,6 @@
 
 import os
 import re
-import logging
 
 import mne
 
@@ -11,7 +10,7 @@ from meggie.utilities.datatype import Datatype
 
 
 class TFR(Datatype):
-    """ A wrapper for mne.AverageTFR objects.
+    """A wrapper for mne.AverageTFR objects.
 
     Parameters
     ----------
@@ -39,43 +38,42 @@ class TFR(Datatype):
 
     def _get_fname(self, tfr_name):
         """A helper to get fname that work with old versions of meggie too."""
-        if tfr_name == '':
-            name = self._name + '-tfr.h5'
+        if tfr_name == "":
+            name = self._name + "-tfr.h5"
         else:
-            name = self._name + '-' + tfr_name + '-tfr.h5'
+            name = self._name + "-" + tfr_name + "-tfr.h5"
 
-        fname = os.path.join(self._directory,
-                             name)
+        fname = os.path.join(self._directory, name)
         return fname
 
     def save_content(self):
-        """Saves the mne.AverageTFR to h5 files in the tfr directory.
-        """
+        """Saves the mne.AverageTFR to h5 files in the tfr directory."""
         try:
             for tfr_name, tfr in self._content.items():
                 fname = self._get_fname(tfr_name)
                 tfr.save(fname, overwrite=True)
-        except Exception as exc:
-            raise Exception("Writing TFRs failed. Please ensure that the "
-                            "entire experiment folder has write permissions.")
+        except Exception:
+            raise Exception(
+                "Writing TFRs failed. Please ensure that the "
+                "entire experiment folder has write permissions."
+            )
 
     def delete_content(self):
         """Deletes the correct h5 files in the tfr directory"""
 
-        template = self._name + '-' + r'([a-zA-Z1-9_]+)\-tfr\.h5'
+        template = self._name + "-" + r"([a-zA-Z1-9_]+)\-tfr\.h5"
         for fname in os.listdir(self._directory):
             match = re.match(template, fname)
             if match:
                 try:
                     key = str(match.group(1))
-                except Exception as exc:
+                except Exception:
                     continue
 
                 # if proper condition parameters set,
                 # check if the key is in there
-                if 'conditions' in self._params:
-                    if key not in [str(elem) for elem in
-                                   self._params['conditions']]:
+                if "conditions" in self._params:
+                    if key not in [str(elem) for elem in self._params["conditions"]]:
                         continue
 
                 os.remove(os.path.join(self._directory, fname))
@@ -83,29 +81,29 @@ class TFR(Datatype):
     def _load_content(self):
         """Handle the loading of the content."""
         self._content = {}
-        template = self._name + '-' + r'([a-zA-Z1-9_]+)\-tfr\.h5'
+        template = self._name + "-" + r"([a-zA-Z1-9_]+)\-tfr\.h5"
         for fname in os.listdir(self._directory):
             path = None
-            if fname == self._name + '-tfr.h5':
+            if fname == self._name + "-tfr.h5":
                 path = os.path.join(self._directory, fname)
-                key = ''
+                key = ""
             else:
                 match = re.match(template, fname)
                 if match:
                     try:
                         key = str(match.group(1))
-                    except Exception as exc:
+                    except Exception:
                         raise Exception("Unknown file name format.")
 
                     # if proper condition parameters set,
                     # check if the key is in there
-                    if 'conditions' in self._params:
-                        if key not in [str(elem) for elem in
-                                       self._params['conditions']]:
+                    if "conditions" in self._params:
+                        if key not in [
+                            str(elem) for elem in self._params["conditions"]
+                        ]:
                             continue
 
-                    path = os.path.join(self._directory,
-                                        fname)
+                    path = os.path.join(self._directory, fname)
             if path:
                 self._content[key] = mne.time_frequency.read_tfrs(path)[0]
 
@@ -120,8 +118,7 @@ class TFR(Datatype):
 
     @property
     def params(self):
-        """Returns additional information stored.
-        """
+        """Returns additional information stored."""
         return self._params
 
     @property
@@ -140,18 +137,17 @@ class TFR(Datatype):
     @property
     def decim(self):
         """Returns the decimation factor used in the creation."""
-        return self._params.get('decim')
+        return self._params.get("decim")
 
     @property
     def n_cycles(self):
-        """"Returns the number of cycles in used in the creation."""
-        return self._params.get('n_cycles')
+        """ "Returns the number of cycles in used in the creation."""
+        return self._params.get("n_cycles")
 
     @property
     def ch_names(self):
-        """Returns the channel names, must read the data first.
-        """
-        return list(self.content.values())[0].info['ch_names']
+        """Returns the channel names, must read the data first."""
+        return list(self.content.values())[0].info["ch_names"]
 
     @property
     def times(self):
@@ -171,4 +167,4 @@ class TFR(Datatype):
     @property
     def evoked_subtracted(self):
         """Returns whether evoked was subtracted in the creation."""
-        return self._params.get('evoked_subtracted')
+        return self._params.get("evoked_subtracted")

@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 
 class Ui_ActionDialog(object):
@@ -18,7 +18,9 @@ class Ui_ActionDialog(object):
         self.gridLayoutDialog.setObjectName("gridLayoutDialog")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.pushButtonClose = QtWidgets.QPushButton(ActionDialog)
         self.pushButtonClose.setObjectName("pushButtonClose")
@@ -51,13 +53,27 @@ class Ui_ActionDialog(object):
         _translate = QtCore.QCoreApplication.translate
         ActionDialog.setWindowTitle(_translate("ActionDialog", "Meggie - Actions"))
         self.pushButtonClose.setText(_translate("ActionDialog", "Close"))
-        self.treeWidgetActions.headerItem().setText(0, _translate("ActionDialog", "Action"))
+        self.treeWidgetActions.headerItem().setText(
+            0, _translate("ActionDialog", "Action")
+        )
         __sortingEnabled = self.treeWidgetActions.isSortingEnabled()
         self.treeWidgetActions.setSortingEnabled(False)
-        self.treeWidgetActions.topLevelItem(0).setText(0, _translate("ActionDialog", "subject_001"))
-        self.treeWidgetActions.topLevelItem(0).child(0).setText(0, _translate("ActionDialog", "ica"))
-        self.treeWidgetActions.topLevelItem(0).child(1).setText(0, _translate("ActionDialog", "filter"))
-        self.treeWidgetActions.topLevelItem(1).setText(0, _translate("ActionDialog", "subject_002"))
-        self.treeWidgetActions.topLevelItem(1).child(0).setText(0, _translate("ActionDialog", "ica"))
-        self.treeWidgetActions.topLevelItem(1).child(1).setText(0, _translate("ActionDialog", "filter"))
+        self.treeWidgetActions.topLevelItem(0).setText(
+            0, _translate("ActionDialog", "subject_001")
+        )
+        self.treeWidgetActions.topLevelItem(0).child(0).setText(
+            0, _translate("ActionDialog", "ica")
+        )
+        self.treeWidgetActions.topLevelItem(0).child(1).setText(
+            0, _translate("ActionDialog", "filter")
+        )
+        self.treeWidgetActions.topLevelItem(1).setText(
+            0, _translate("ActionDialog", "subject_002")
+        )
+        self.treeWidgetActions.topLevelItem(1).child(0).setText(
+            0, _translate("ActionDialog", "ica")
+        )
+        self.treeWidgetActions.topLevelItem(1).child(1).setText(
+            0, _translate("ActionDialog", "filter")
+        )
         self.treeWidgetActions.setSortingEnabled(__sortingEnabled)

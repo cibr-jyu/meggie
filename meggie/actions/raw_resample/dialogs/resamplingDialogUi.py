@@ -6,7 +6,8 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
+
 
 class Ui_resamplingDialog(object):
     def setupUi(self, resamplingDialog):
@@ -18,7 +19,9 @@ class Ui_resamplingDialog(object):
         self.scrollArea.setMinimumSize(QtCore.QSize(0, 0))
         self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.scrollArea.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+        self.scrollArea.setSizeAdjustPolicy(
+            QtWidgets.QAbstractScrollArea.AdjustToContents
+        )
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
@@ -33,19 +36,27 @@ class Ui_resamplingDialog(object):
         self.formLayout.setObjectName("formLayout")
         self.labelCurrentRateHeading = QtWidgets.QLabel(self.groupBoxResample)
         self.labelCurrentRateHeading.setObjectName("labelCurrentRateHeading")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.labelCurrentRateHeading)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.LabelRole, self.labelCurrentRateHeading
+        )
         self.labelCurrentRateValue = QtWidgets.QLabel(self.groupBoxResample)
         self.labelCurrentRateValue.setText("")
         self.labelCurrentRateValue.setObjectName("labelCurrentRateValue")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.labelCurrentRateValue)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.labelCurrentRateValue
+        )
         self.labelNewRateHeading = QtWidgets.QLabel(self.groupBoxResample)
         self.labelNewRateHeading.setObjectName("labelNewRateHeading")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.labelNewRateHeading)
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.LabelRole, self.labelNewRateHeading
+        )
         self.doubleSpinBoxNewRate = QtWidgets.QDoubleSpinBox(self.groupBoxResample)
         self.doubleSpinBoxNewRate.setMaximum(10000.0)
         self.doubleSpinBoxNewRate.setProperty("value", 100.0)
         self.doubleSpinBoxNewRate.setObjectName("doubleSpinBoxNewRate")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxNewRate)
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxNewRate
+        )
         self.gridLayout_2.addWidget(self.groupBoxResample, 0, 0, 1, 1)
         self.groupBoxBatching = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxBatching.setObjectName("groupBoxBatching")
@@ -56,13 +67,17 @@ class Ui_resamplingDialog(object):
         self.batchingWidgetPlaceholder.setObjectName("batchingWidgetPlaceholder")
         self.gridLayoutBatching.addWidget(self.batchingWidgetPlaceholder, 0, 0, 1, 1)
         self.gridLayout_2.addWidget(self.groupBoxBatching, 1, 0, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout_2.addItem(spacerItem, 2, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem1)
         self.pushButtonCancel = QtWidgets.QPushButton(resamplingDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -83,12 +98,17 @@ class Ui_resamplingDialog(object):
 
     def retranslateUi(self, resamplingDialog):
         _translate = QtCore.QCoreApplication.translate
-        resamplingDialog.setWindowTitle(_translate("resamplingDialog", "Meggie - Resampling"))
-        self.groupBoxResample.setTitle(_translate("resamplingDialog", "Resampling options:"))
-        self.labelCurrentRateHeading.setText(_translate("resamplingDialog", "Current rate:"))
+        resamplingDialog.setWindowTitle(
+            _translate("resamplingDialog", "Meggie - Resampling")
+        )
+        self.groupBoxResample.setTitle(
+            _translate("resamplingDialog", "Resampling options:")
+        )
+        self.labelCurrentRateHeading.setText(
+            _translate("resamplingDialog", "Current rate:")
+        )
         self.labelNewRateHeading.setText(_translate("resamplingDialog", "Resample to:"))
         self.groupBoxBatching.setTitle(_translate("resamplingDialog", "Batching"))
         self.pushButtonCancel.setText(_translate("resamplingDialog", "Cancel"))
         self.pushButtonBatch.setText(_translate("resamplingDialog", "Batch"))
         self.pushButtonApply.setText(_translate("resamplingDialog", "Apply"))
-

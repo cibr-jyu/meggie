@@ -1,5 +1,6 @@
 {
     "id": "evoked_plot_topomap",
     "name": "Plot topomaps",
-    "entry": "PlotEvokedTopomap"
+    "entry": "PlotEvokedTopomap",
+    "description": "Produce a series of topographical maps at specified time intervals for the selected evoked response object."
 }

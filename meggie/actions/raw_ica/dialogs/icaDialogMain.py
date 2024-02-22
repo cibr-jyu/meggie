@@ -18,8 +18,7 @@ from meggie.utilities.messaging import exc_messagebox
 
 
 class ICADialog(QtWidgets.QDialog):
-    """ Contains logic for ICA dialog.
-    """
+    """Contains logic for ICA dialog."""
 
     def __init__(self, parent, experiment, random_state, on_apply=None):
         QtWidgets.QDialog.__init__(self, parent)
@@ -33,9 +32,11 @@ class ICADialog(QtWidgets.QDialog):
 
         # change normal list widgets to multiselect widgets
         self.ui.listWidgetNotRemoved.setSelectionMode(
-            QtWidgets.QAbstractItemView.ExtendedSelection)
+            QtWidgets.QAbstractItemView.ExtendedSelection
+        )
         self.ui.listWidgetRemoved.setSelectionMode(
-            QtWidgets.QAbstractItemView.ExtendedSelection)
+            QtWidgets.QAbstractItemView.ExtendedSelection
+        )
 
         self._reset()
 
@@ -56,7 +57,7 @@ class ICADialog(QtWidgets.QDialog):
         self._reset()
 
         n_components = self.ui.doubleSpinBoxNComponents.value()
-        method = 'fastica'
+        method = "fastica"
         max_iter = self.ui.spinBoxMaxIter.value()
 
         raw = self.experiment.active_subject.get_raw()
@@ -71,28 +72,30 @@ class ICADialog(QtWidgets.QDialog):
             exc_messagebox(self, exc)
             return
 
-        self.params['n_components'] = n_components
-        self.params['method'] = method
-        self.params['max_iter'] = max_iter
-        self.params['random_state'] = self.random_state
+        self.params["n_components"] = n_components
+        self.params["method"] = method
+        self.params["max_iter"] = max_iter
+        self.params["random_state"] = self.random_state
 
         for idx in range(self.ica.n_components_):
-            label = 'Component ' + str(idx)
+            label = "Component " + str(idx)
             self.ui.listWidgetNotRemoved.addItem(label)
             self.component_info[label] = idx
             self.not_removed.append(label)
 
-        logging.getLogger('ui_logger').info('Computing ICA model finished.')
+        logging.getLogger("ui_logger").info("Computing ICA model finished.")
 
     def on_pushButtonTransfer_clicked(self, checked=None):
         if checked is None:
             return
 
         # gather contents of the widgets
-        not_removed_selected = [item.text() for item in
-                                self.ui.listWidgetNotRemoved.selectedItems()]
-        removed_selected = [item.text() for item in
-                            self.ui.listWidgetRemoved.selectedItems()]
+        not_removed_selected = [
+            item.text() for item in self.ui.listWidgetNotRemoved.selectedItems()
+        ]
+        removed_selected = [
+            item.text() for item in self.ui.listWidgetRemoved.selectedItems()
+        ]
 
         # update the "backend"
         for item in not_removed_selected:
@@ -131,8 +134,6 @@ class ICADialog(QtWidgets.QDialog):
     def on_pushButtonPlotTopographies_clicked(self, checked=None):
         if checked is None:
             return
-
-        raw = self.experiment.active_subject.get_raw()
 
         try:
             plot_topographies(self.ica, len(self.component_info))
@@ -184,15 +185,15 @@ class ICADialog(QtWidgets.QDialog):
             return
 
     def _get_picks(self):
-        not_removed_selected = [item.text() for item in
-                                self.ui.listWidgetNotRemoved.selectedItems()]
-        removed_selected = [item.text() for item in
-                            self.ui.listWidgetRemoved.selectedItems()]
+        not_removed_selected = [
+            item.text() for item in self.ui.listWidgetNotRemoved.selectedItems()
+        ]
+        removed_selected = [
+            item.text() for item in self.ui.listWidgetRemoved.selectedItems()
+        ]
 
-        picks = [self.component_info[label]
-                 for label in not_removed_selected]
-        picks.extend([self.component_info[label]
-                      for label in removed_selected])
+        picks = [self.component_info[label] for label in not_removed_selected]
+        picks.extend([self.component_info[label] for label in removed_selected])
 
         picks = sorted(picks)
         return picks
@@ -206,6 +207,7 @@ class ICADialog(QtWidgets.QDialog):
         indices = [self.component_info[name] for name in self.removed]
 
         try:
+
             @threaded
             def apply_ica_wrapper():
                 self.ica.apply(raw, exclude=indices)
@@ -215,7 +217,7 @@ class ICADialog(QtWidgets.QDialog):
             self.experiment.active_subject.save()
             self.experiment.active_subject.ica_applied = True
             self.experiment.save_experiment_settings()
-     
+
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -224,7 +226,7 @@ class ICADialog(QtWidgets.QDialog):
 
         # for logging purposes, call the handler
         if self.on_apply:
-            self.params['exclude'] = indices
+            self.params["exclude"] = indices
             self.on_apply(self.experiment.active_subject, self.params)
 
         self._reset()

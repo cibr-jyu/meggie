@@ -3,14 +3,11 @@
 
 import logging
 
-from copy import deepcopy
-
 from PyQt5 import QtWidgets
 
-import numpy as np
-
-from meggie.actions.epochs_create.dialogs.createEpochsFromEventsDialogUi import Ui_CreateEpochsFromEventsDialog
-from meggie.actions.epochs_create.controller.epoching import create_epochs_from_events
+from meggie.actions.epochs_create.dialogs.createEpochsFromEventsDialogUi import (
+    Ui_CreateEpochsFromEventsDialog,
+)
 
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 from meggie.utilities.dialogs.bitSelectionDialogMain import BitSelectionDialog
@@ -21,8 +18,7 @@ from meggie.utilities.messaging import messagebox
 
 
 class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
-    """Dialog responsible for collecting parameters for epoch creation.
-    """
+    """Dialog responsible for collecting parameters for epoch creation."""
 
     def __init__(self, experiment, parent, default_name, handler):
         QtWidgets.QDialog.__init__(self, parent)
@@ -39,7 +35,8 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
             experiment_getter=self._experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
-            geometry=self.ui.batchingWidgetPlaceholder.geometry())
+            geometry=self.ui.batchingWidgetPlaceholder.geometry(),
+        )
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
         self.ui.lineEditCollectionName.setText(default_name)
@@ -54,10 +51,9 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
 
         for event in events:
             item = QtWidgets.QListWidgetItem(
-                '%s, %s' % (
-                    'ID ' + str(event['event_id']),
-                    'mask=' + str(event['mask'])
-                ))
+                "%s, %s"
+                % ("ID " + str(event["event_id"]), "mask=" + str(event["mask"]))
+            )
             self.ui.listWidgetEvents.addItem(item)
 
     def _collect_parameter_values(self):
@@ -71,29 +67,34 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         grad = self.ui.checkBoxGrad.isChecked()
         eeg = self.ui.checkBoxEeg.isChecked()
 
-        collection_name = validate_name(
-            str(self.ui.lineEditCollectionName.text()))
+        collection_name = validate_name(str(self.ui.lineEditCollectionName.text()))
 
         reject = dict()
         if mag:
-            reject['mag'] = self.ui.doubleSpinBoxMagReject.value()
+            reject["mag"] = self.ui.doubleSpinBoxMagReject.value()
         if grad:
-            reject['grad'] = self.ui.doubleSpinBoxGradReject.value()
+            reject["grad"] = self.ui.doubleSpinBoxGradReject.value()
         if eeg:
-            reject['eeg'] = self.ui.doubleSpinBoxEEGReject.value()
+            reject["eeg"] = self.ui.doubleSpinBoxEEGReject.value()
 
-        params = {'mag': mag, 'grad': grad, 'eeg': eeg,
-                  'reject': reject,
-                  'tmin': tmin, 'tmax': tmax,
-                  'bstart': bstart, 'bend': bend,
-                  'delay': delay,
-                  'collection_name': collection_name,
-                  'events': self.events}
+        params = {
+            "mag": mag,
+            "grad": grad,
+            "eeg": eeg,
+            "reject": reject,
+            "tmin": tmin,
+            "tmax": tmax,
+            "bstart": bstart,
+            "bend": bend,
+            "delay": delay,
+            "collection_name": collection_name,
+            "events": self.events,
+        }
         return params
 
     def accept(self):
         if self.ui.listWidgetEvents.count() == 0:
-            message = 'Cannot create epochs from empty list.'
+            message = "Cannot create epochs from empty list."
             messagebox(self.parent, message)
             return
 
@@ -117,10 +118,9 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        experiment = self.experiment
 
         if self.ui.listWidgetEvents.count() == 0:
-            message = 'Cannot create epochs from empty list.'
+            message = "Cannot create epochs from empty list."
             messagebox(self.parent, message)
             return
 
@@ -137,9 +137,8 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
                     self.handler(subject, params)
                     subject.release_memory()
                 except Exception as exc:
-                    self.batching_widget.failed_subjects.append((subject,
-                                                                 str(exc)))
-                    logging.getLogger('ui_logger').exception('')
+                    self.batching_widget.failed_subjects.append((subject, str(exc)))
+                    logging.getLogger("ui_logger").exception("")
 
         self.batching_widget.cleanup()
 
@@ -155,8 +154,9 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        self.bitDialog = BitSelectionDialog(self,
-                                            self.ui.spinBoxMask, self.ui.spinBoxEventID)
+        self.bitDialog = BitSelectionDialog(
+            self, self.ui.spinBoxMask, self.ui.spinBoxEventID
+        )
 
         self.bitDialog.show()
 
@@ -178,17 +178,18 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
             "two digits can be 1 or 0, but anything else must be exactly as "
             "in the event id. Thus events with following id's would be allowed:"
             "\n\n0000010000010000 = 1040\n0000010000010001 = 1041\n"
-            "0000010000010010 = 1042\n0000010000010011 = 1043")
+            "0000010000010010 = 1042\n0000010000010011 = 1043"
+        )
 
-        messagebox(self.parent, help_message, 'Mask help')
+        messagebox(self.parent, help_message, "Mask help")
 
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None:
             return
 
         event_params = {
-            'mask': self.ui.spinBoxMask.value(),
-            'event_id': self.ui.spinBoxEventID.value(),
+            "mask": self.ui.spinBoxMask.value(),
+            "event_id": self.ui.spinBoxEventID.value(),
         }
 
         if event_params not in self.events:
@@ -201,4 +202,3 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
 
         self.events = []
         self._update_events()
-

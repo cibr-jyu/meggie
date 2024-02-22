@@ -1,9 +1,5 @@
 """ Contains implementation for raw plot projections
 """
-import logging
-
-import matplotlib.pyplot as plt
-import numpy as np
 
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
@@ -14,8 +10,8 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class PlotProjections(Action):
-    """ Shows a plot of existing projection vectors.
-    """
+    """Shows a plot of existing projection vectors."""
+
     def run(self):
 
         subject = self.experiment.active_subject
@@ -27,12 +23,11 @@ class PlotProjections(Action):
     @subject_action
     def handler(self, subject, params):
         raw = subject.get_raw()
-        if not raw.info['projs']:
+        if not raw.info["projs"]:
             messagebox(self.window, "Data does not contain any projection vectors")
             return
         fig = raw.plot_projs_topomap()
 
-        elems = ['projections', subject.name]
-        set_figure_title(fig, '_'.join(elems))
-        fig.suptitle(' '.join(elems))
-
+        elems = ["projections", subject.name]
+        set_figure_title(fig, "_".join(elems))
+        fig.suptitle(" ".join(elems))

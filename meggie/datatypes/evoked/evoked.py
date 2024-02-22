@@ -2,7 +2,6 @@
 """
 
 import os
-import logging
 
 import mne
 
@@ -10,7 +9,7 @@ from meggie.utilities.datatype import Datatype
 
 
 class Evoked(Datatype):
-    """ A wrapper for mne.Evoked objects.
+    """A wrapper for mne.Evoked objects.
 
     Parameters
     ----------
@@ -26,8 +25,8 @@ class Evoked(Datatype):
     """
 
     def __init__(self, name, directory, params, content=None):
-        self._name = name.strip('.fif')
-        self._path = os.path.join(directory, name + '.fif')
+        self._name = name.strip(".fif")
+        self._path = os.path.join(directory, name + ".fif")
         self._params = params
 
         # ensure comments are set to match the keys / conditions
@@ -38,9 +37,10 @@ class Evoked(Datatype):
 
         # for backwards compatbility,
         # evokeds used to be stored in epochs/average
-        if 'bwc_path' in self._params:
-            self._bwc_path = os.path.join(self._params.pop('bwc_path'),
-                                          self._name + '.fif')
+        if "bwc_path" in self._params:
+            self._bwc_path = os.path.join(
+                self._params.pop("bwc_path"), self._name + ".fif"
+            )
 
     @property
     def content(self):
@@ -61,7 +61,7 @@ class Evoked(Datatype):
             try:
                 evokeds = mne.read_evokeds(self._bwc_path)
             except Exception:
-                raise IOError('Reading evokeds failed.')
+                raise IOError("Reading evokeds failed.")
 
         for evoked in evokeds:
             self._content[evoked.comment] = evoked
@@ -70,14 +70,12 @@ class Evoked(Datatype):
 
     @property
     def name(self):
-        """Returns name of the evoked object.
-        """
+        """Returns name of the evoked object."""
         return self._name
 
     @property
     def params(self):
-        """Returns additional information stored.
-        """
+        """Returns additional information stored."""
         return self._params
 
     @property
@@ -85,7 +83,7 @@ class Evoked(Datatype):
         """Returns names of the data channels, must read the
         evoked to memory.
         """
-        return list(self.content.values())[0].info['ch_names']
+        return list(self.content.values())[0].info["ch_names"]
 
     @property
     def times(self):
@@ -103,23 +101,22 @@ class Evoked(Datatype):
 
     @property
     def data(self):
-        """Returns dict of the data (numpy arrays).
-        """
+        """Returns dict of the data (numpy arrays)."""
         data = {}
         for key in self.content.keys():
             data[key] = self.content[key].data
         return data
 
     def save_content(self):
-        """Saves the mne.Evoked to a fif file in the evoked directory.
-        """
+        """Saves the mne.Evoked to a fif file in the evoked directory."""
         try:
             mne.write_evokeds(self._path, list(self.content.values()))
-        except Exception as exc:
-            raise Exception("Writing evokeds failed. Please check that the "
-                            "entire experiment folder has write permissions.")
+        except Exception:
+            raise Exception(
+                "Writing evokeds failed. Please check that the "
+                "entire experiment folder has write permissions."
+            )
 
     def delete_content(self):
-        """Deletes the fif file from the file system.
-        """
+        """Deletes the fif file from the file system."""
         os.remove(self._path)

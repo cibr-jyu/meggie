@@ -1,5 +1,6 @@
 """ Contains a class for logic of TFR creation dialog.
 """
+
 import logging
 
 import numpy as np
@@ -11,16 +12,13 @@ from meggie.actions.tfr_create.dialogs.TFRDialogUi import Ui_TFRDialog
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.utilities.validators import validate_name
-from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 
 
 class TFRDialog(QtWidgets.QDialog):
-    """ Contains logic for the TFR creation dialog.
-    """
+    """Contains logic for the TFR creation dialog."""
 
-    def __init__(self, experiment, parent, epoch_names, 
-                 default_name, handler):
+    def __init__(self, experiment, parent, epoch_names, default_name, handler):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_TFRDialog()
         self.ui.setupUi(self)
@@ -33,17 +31,23 @@ class TFRDialog(QtWidgets.QDialog):
         subject = experiment.active_subject
         epochs = subject.epochs[epoch_names[0]].content
 
-        self.ui.lineEditEpochName.setText(', '.join(epoch_names))
+        self.ui.lineEditEpochName.setText(", ".join(epoch_names))
 
-        if epochs.info.get('highpass'):
+        if epochs.info.get("highpass"):
             self.ui.doubleSpinBoxMinFreq.setValue(
-                max(int(np.ceil(epochs.info['highpass'])),
-                    self.ui.doubleSpinBoxMinFreq.value()))
+                max(
+                    int(np.ceil(epochs.info["highpass"])),
+                    self.ui.doubleSpinBoxMinFreq.value(),
+                )
+            )
 
-        if epochs.info.get('lowpass'):
+        if epochs.info.get("lowpass"):
             self.ui.doubleSpinBoxMaxFreq.setValue(
-                min(int(np.floor(epochs.info['lowpass'])),
-                    self.ui.doubleSpinBoxMaxFreq.value()))
+                min(
+                    int(np.floor(epochs.info["lowpass"])),
+                    self.ui.doubleSpinBoxMaxFreq.value(),
+                )
+            )
 
         epoch_length = epochs.times[-1] - epochs.times[0]
 
@@ -64,7 +68,8 @@ class TFRDialog(QtWidgets.QDialog):
             experiment_getter=self._experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
-            geometry=self.ui.batchingWidgetPlaceholder.geometry())
+            geometry=self.ui.batchingWidgetPlaceholder.geometry(),
+        )
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
         self.ui.lineEditTFRName.setText(default_name)
@@ -96,12 +101,12 @@ class TFRDialog(QtWidgets.QDialog):
             n_cycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()
 
         params = {}
-        params['freqs'] = freqs
-        params['decim'] = decim
-        params['subtract_evoked'] = subtract_evoked
-        params['n_cycles'] = n_cycles
-        params['name'] = tfr_name
-        params['conditions'] = self.epoch_names
+        params["freqs"] = freqs
+        params["decim"] = decim
+        params["subtract_evoked"] = subtract_evoked
+        params["n_cycles"] = n_cycles
+        params["name"] = tfr_name
+        params["conditions"] = self.epoch_names
 
         experiment = self.experiment
         subject = experiment.active_subject
@@ -140,12 +145,12 @@ class TFRDialog(QtWidgets.QDialog):
             n_cycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()
 
         params = {}
-        params['freqs'] = freqs
-        params['decim'] = decim
-        params['subtract_evoked'] = subtract_evoked
-        params['n_cycles'] = n_cycles
-        params['name'] = tfr_name
-        params['conditions'] = self.epoch_names
+        params["freqs"] = freqs
+        params["decim"] = decim
+        params["subtract_evoked"] = subtract_evoked
+        params["n_cycles"] = n_cycles
+        params["name"] = tfr_name
+        params["conditions"] = self.epoch_names
 
         experiment = self.experiment
 
@@ -156,9 +161,8 @@ class TFRDialog(QtWidgets.QDialog):
                     self.handler(subject, params)
                     subject.release_memory()
                 except Exception as exc:
-                    self.batching_widget.failed_subjects.append(
-                        (subject, str(exc)))
-                    logging.getLogger('ui_logger').exception('')
+                    self.batching_widget.failed_subjects.append((subject, str(exc)))
+                    logging.getLogger("ui_logger").exception("")
 
         self.batching_widget.cleanup()
 

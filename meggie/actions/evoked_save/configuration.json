@@ -1,5 +1,6 @@
 {
     "id": "evoked_save",
     "name": "Save to csv",
-    "entry": "SaveEvoked"
+    "entry": "SaveEvoked",
+    "description": "Export the numerical data from the evoked response object for all matching subjects into a CSV file."
 }

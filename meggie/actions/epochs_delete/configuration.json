@@ -1,5 +1,6 @@
 {
     "id": "epochs_delete",
     "name": "Delete",
-    "entry": "DeleteEpochs"
+    "entry": "DeleteEpochs",
+    "description": "Permanently remove the selected epoch collection from the current subject."
 }

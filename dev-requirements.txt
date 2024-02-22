@@ -1,0 +1,4 @@
+black
+pylama
+nose
+mkdocs

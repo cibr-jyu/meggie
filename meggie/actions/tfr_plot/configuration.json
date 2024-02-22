@@ -1,5 +1,6 @@
 {
     "id": "tfr_plot",
     "name": "Plot TFR",
-    "entry": "PlotTFR"
+    "entry": "PlotTFR",
+    "description": "Visualize the selected TFR object as a heatmap, with options for individual channel visualization or averaging across channel groups."
 }

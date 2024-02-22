@@ -9,32 +9,19 @@
 """
 
 UNITS = {
-    'mag': {
-        'scaling': 1e15,
-        'unit': 'fT',
-        'power_unit': 'T^2/Hz',
+    "mag": {
+        "scaling": 1e15,
+        "unit": "fT",
+        "power_unit": "T^2/Hz",
     },
-    'grad': {
-        'scaling': 1e13,
-        'unit': 'fT/cm',
-        'power_unit': '(T/m)^2/Hz',
+    "grad": {
+        "scaling": 1e13,
+        "unit": "fT/cm",
+        "power_unit": "(T/m)^2/Hz",
     },
-    'eeg': {
-        'scaling': 1e6,
-        'unit': 'uV',
-        'power_unit': 'V^2/Hz'
-    },
-    'eog': {
-        'scaling': 1e6,
-        'unit': 'uV',
-        'power_unit': 'V^2/Hz'
-    },
-
-    'ecg': {
-        'scaling': 1e6,
-        'unit': 'uV',
-        'power_unit': 'V^2/Hz'
-    }
+    "eeg": {"scaling": 1e6, "unit": "uV", "power_unit": "V^2/Hz"},
+    "eog": {"scaling": 1e6, "unit": "uV", "power_unit": "V^2/Hz"},
+    "ecg": {"scaling": 1e6, "unit": "uV", "power_unit": "V^2/Hz"},
 }
 
 
@@ -52,8 +39,8 @@ def get_scaling(type_):
         The scaling factor.
     """
     if type_ not in UNITS:
-        raise Exception('Unknown data type')
-    return UNITS[type_]['scaling']
+        raise Exception("Unknown data type")
+    return UNITS[type_]["scaling"]
 
 
 def get_unit(type_):
@@ -70,8 +57,8 @@ def get_unit(type_):
         The unit.
     """
     if type_ not in UNITS:
-        raise Exception('Unknown data type')
-    return UNITS[type_]['unit']
+        raise Exception("Unknown data type")
+    return UNITS[type_]["unit"]
 
 
 def get_power_unit(type_, log=False):
@@ -90,8 +77,8 @@ def get_power_unit(type_, log=False):
         The unit.
     """
     if type_ not in UNITS:
-        raise Exception('Unknown data type')
+        raise Exception("Unknown data type")
     if log:
-        return 'dB/Hz'
+        return "dB/Hz"
     else:
-        return UNITS[type_]['power_unit']
+        return UNITS[type_]["power_unit"]
