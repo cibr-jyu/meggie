@@ -3,7 +3,7 @@ name: Deploy gh-pages
 on:
   push:
     branches:
-      - 'update-environment'
+      - 'master'
 
 jobs:
   build:
@@ -26,6 +26,6 @@ jobs:
     - name: Build and deploy
       run: |
         make update_docs
-        mkdocs gh-deploy -b gh-pages-test --force
+        mkdocs gh-deploy -b gh-pages --force
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
