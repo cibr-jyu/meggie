@@ -19,7 +19,7 @@ class MeasurementInfo(object):
         """Returns the high-pass filter value."""
         try:
             return round(self._info.get("highpass"), 2)
-        except Exception as exc:
+        except Exception:
             pass
 
     @property
@@ -27,7 +27,7 @@ class MeasurementInfo(object):
         """Returns the low-pass filter value."""
         try:
             return round(self._info.get("lowpass"), 2)
-        except Exception as exc:
+        except Exception:
             return ""
 
     @property
@@ -35,7 +35,7 @@ class MeasurementInfo(object):
         """Returns the sampling frequency."""
         try:
             return round(self._info.get("sfreq"), 2)
-        except Exception as exc:
+        except Exception:
             return ""
 
     @property
@@ -43,7 +43,7 @@ class MeasurementInfo(object):
         """Returns the measurement date."""
         try:
             return str(self._info["meas_date"].date())
-        except Exception as exc:
+        except Exception:
             return ""
 
     @property

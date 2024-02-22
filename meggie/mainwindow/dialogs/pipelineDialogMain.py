@@ -1,18 +1,12 @@
 """ Contains a class for logic of pipeline dialog.
 """
 
-import os
-import json
-import pkg_resources
-
 from PyQt5 import QtWidgets
 
-from meggie.mainwindow.dynamic import find_all_sources
 from meggie.mainwindow.dynamic import find_all_package_specs
 
 from meggie.mainwindow.dialogs.pipelineDialogUi import Ui_pipelineDialog
 
-from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 
 
@@ -43,7 +37,7 @@ class PipelineDialog(QtWidgets.QDialog):
                     for pipeline in package_spec["pipelines"]:
                         try:
                             id_ = pipeline["id"]
-                        except Exception as exc:
+                        except Exception:
                             raise Exception("Every pipeline should have id.")
 
                         name = pipeline.get("name", "")

@@ -2,7 +2,6 @@
 """
 
 import os
-import logging
 
 import mne
 
@@ -70,7 +69,7 @@ class Epochs(Datatype):
         directory"""
         try:
             self._content.save(self._path, overwrite=True)
-        except Exception as exc:
+        except Exception:
             raise Exception(
                 "Writing epochs failed. Please ensure that "
                 "the entire experiment folder has write permissions"

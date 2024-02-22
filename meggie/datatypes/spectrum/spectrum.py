@@ -3,7 +3,6 @@
 
 import os
 import re
-import logging
 
 import numpy as np
 import mne
@@ -83,7 +82,7 @@ class Spectrum(Datatype):
             if match:
                 try:
                     key = str(match.group(1))
-                except Exception as exc:
+                except Exception:
                     raise Exception("Unknown file name format.")
 
                 # if proper condition parameters set,
@@ -131,7 +130,7 @@ class Spectrum(Datatype):
                 )
 
                 filemanager.save_csv(path, data, column_names, row_descs)
-        except Exception as exc:
+        except Exception:
             raise Exception(
                 "Writing spectrums failed. Please check that the "
                 "entire experiment folder has write permissions."
@@ -154,7 +153,7 @@ class Spectrum(Datatype):
             if match:
                 try:
                     key = str(match.group(1))
-                except Exception as exc:
+                except Exception:
                     continue
 
                 # if proper condition parameters set,

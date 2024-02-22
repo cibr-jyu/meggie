@@ -9,11 +9,9 @@ import tempfile
 import mne
 import numpy as np
 
-from meggie.subject import Subject
 from meggie.mainwindow.preferences import PreferencesHandler
 
 from meggie.experiment import initialize_new_experiment
-from meggie.experiment import open_existing_experiment
 
 
 def create_experiment(
@@ -119,13 +117,13 @@ def create_evoked_conditions_experiment(
             try:
                 ev_before = [ev for ev in events if ev[0] < tidx][-1]
                 tmin = (ev_before[0] - raw.first_samp + 20) / raw.info["sfreq"]
-            except:
+            except Exception:
                 tmin = 0.0
 
             try:
                 ev_after = [ev for ev in events if ev[0] > tidx][0]
                 tmax = (ev_after[0] - raw.first_samp - 20) / raw.info["sfreq"]
-            except:
+            except Exception:
                 tmax = None
 
             data.append(raw.copy().crop(tmin, tmax)._data)

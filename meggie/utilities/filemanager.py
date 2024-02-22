@@ -36,7 +36,7 @@ def open_raw(fname, preload=True, verbose="info"):
         else:
             raw = mne.io.read_raw(fname, preload=preload, verbose=verbose)
         return raw
-    except Exception as exc:
+    except Exception:
         logging.getLogger("ui_logger").exception("")
         raise Exception("Could not read the raw file: " + str(fname))
 
@@ -157,7 +157,7 @@ def save_csv(path, data, column_names, row_descs):
     # gather all the data to list of rows
     all_data = []
 
-    if type(data) == np.ndarray:
+    if isinstance(data, np.ndarray):
         data = data.tolist()
 
     # freqs data, assume same lengths

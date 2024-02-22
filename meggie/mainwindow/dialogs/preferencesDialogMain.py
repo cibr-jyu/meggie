@@ -2,13 +2,9 @@
 """
 
 import os
-import json
-import logging
-import pkg_resources
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import pyqtSignal
 
 from meggie.mainwindow.dialogs.preferencesDialogUi import Ui_DialogPreferences
 

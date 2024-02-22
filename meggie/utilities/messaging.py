@@ -26,7 +26,7 @@ def exc_messagebox(parent, exc, exec_=False):
             error_message = str(exc)
             if not error_message:
                 error_message = "(empty message of type " + str(exc.__repr__()) + ")"
-    except Exception as e:
+    except Exception:
         error_message = ""
 
     # print traceback to console

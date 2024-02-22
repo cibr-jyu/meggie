@@ -2,7 +2,6 @@
 """
 
 import os
-import logging
 
 import mne
 
@@ -112,7 +111,7 @@ class Evoked(Datatype):
         """Saves the mne.Evoked to a fif file in the evoked directory."""
         try:
             mne.write_evokeds(self._path, list(self.content.values()))
-        except Exception as exc:
+        except Exception:
             raise Exception(
                 "Writing evokeds failed. Please check that the "
                 "entire experiment folder has write permissions."

@@ -1,19 +1,15 @@
 """ Contains a class for logic of channel groups dialog.
 """
 
-import os
 import logging
 
 from copy import deepcopy
 
-from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 import mne
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-
-import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox

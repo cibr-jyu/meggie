@@ -95,7 +95,7 @@ def find_stim_channel(raw):
     # Use mne's own function to find out the stim channel
     try:
         return mne.utils.config._get_stim_channel(None, raw.info)[0]
-    except Exception as exc:
+    except Exception:
         pass
 
 

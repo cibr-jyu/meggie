@@ -88,7 +88,7 @@ class Experiment:
                 raw = self.active_subject.get_raw(preload=False)
                 try:
                     channel_groups["eeg"] = get_default_channel_groups(raw, "eeg")
-                except Exception as exc:
+                except Exception:
                     pass
 
         if not channel_groups.get("meg"):
@@ -96,7 +96,7 @@ class Experiment:
                 raw = self.active_subject.get_raw(preload=False)
                 try:
                     channel_groups["meg"] = get_default_channel_groups(raw, "meg")
-                except Exception as exc:
+                except Exception:
                     pass
 
         return channel_groups
@@ -161,7 +161,7 @@ class Experiment:
 
         try:
             shutil.rmtree(subject.path)
-        except Exception as exc:
+        except Exception:
             raise Exception("Could not remove the contents of the subject folder.")
 
     def activate_subject(self, subject_name):
@@ -283,7 +283,7 @@ class Experiment:
                 )
 
                 shutil.copy(path, backup_path)
-        except Exception as exc:
+        except Exception:
             message = (
                 "Could not backup experiment file to {0}. "
                 "Please check that the experiment folder "
@@ -295,7 +295,7 @@ class Experiment:
         try:
             with open(path, "w") as f:
                 json.dump(save_dict, f, sort_keys=True, indent=4)
-        except Exception as exc:
+        except Exception:
             message = (
                 "Could not save experiment file {0}. "
                 "Please check that the experiment folder "
@@ -367,7 +367,7 @@ def open_existing_experiment(prefs, path=None):
     try:
         with open(exp_file, "r") as f:
             data = json.load(f)
-    except ValueError as exc:
+    except ValueError:
         logging.getLogger("ui_logger").exception("")
         raise ValueError(
             "Experiment from "

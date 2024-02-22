@@ -138,14 +138,13 @@ class ActionDialog(QtWidgets.QDialog):
                 if not match:
                     return
 
-                key = match.group(1)
                 val = match.group(2)
                 try:
                     obj = json.loads(val)
-                except Exception as exc:
+                except Exception:
                     obj = val
                 message = pformat(obj)
                 messagebox(self, message)
-            except Exception as exc:
+            except Exception:
                 logging.getLogger("ui_logger").exception("")
                 return

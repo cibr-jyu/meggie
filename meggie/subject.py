@@ -3,8 +3,6 @@
 
 import os
 import logging
-import json
-import pkg_resources
 
 import mne
 
@@ -85,7 +83,7 @@ class Subject:
         dataobject = container.pop(name, None)
         try:
             dataobject.delete_content()
-        except Exception as exc:
+        except Exception:
             logging.getLogger("ui_logger").exception("")
             raise IOError("Could not delete " + str(datatype) + " from folders")
 
@@ -130,7 +128,7 @@ class Subject:
         """Saves the data to the existing path."""
         try:
             filemanager.save_raw(self._raw, self.raw_path)
-        except Exception as exc:
+        except Exception:
             raise Exception(
                 "Could not save the raw file. Please ensure "
                 "that the entire experiment folder has "
@@ -160,7 +158,7 @@ class Subject:
             for item in raw.info["proc_history"]:
                 if "maxfilter" in item.get("creator", []):
                     return True
-        except Exception as exc:
+        except Exception:
             return False
 
         return False

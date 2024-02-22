@@ -1,7 +1,5 @@
 """Contains functions to compare two raws."""
 
-from copy import deepcopy
-
 import mne
 import numpy as np
 

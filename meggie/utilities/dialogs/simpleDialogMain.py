@@ -3,8 +3,6 @@
 
 import logging
 
-import numpy as np
-
 from PyQt5 import QtWidgets
 
 from meggie.utilities.dialogs.simpleDialogUi import Ui_SimpleDialog
@@ -12,9 +10,7 @@ from meggie.utilities.dialogs.simpleDialogUi import Ui_SimpleDialog
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.utilities.validators import validate_name
-from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.messaging import messagebox
 
 
 class SimpleDialog(QtWidgets.QDialog):
@@ -77,8 +73,6 @@ class SimpleDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-
-        experiment = self.experiment
 
         try:
             evoked_name = validate_name(self.ui.lineEditName.text())

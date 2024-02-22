@@ -1,7 +1,6 @@
 """Contains functions that help with channel-related tasks.
 """
 
-import scipy
 import numpy as np
 import mne
 
@@ -238,7 +237,7 @@ def iterate_topography(fig, info, ch_names, on_pick):
         try:
             names_idx = ch_names.index(info_names[info_idx])
             yield ax, info_idx, names_idx
-        except ValueError as exc:
+        except ValueError:
             continue
 
 

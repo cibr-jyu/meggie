@@ -2,7 +2,6 @@
 """
 
 import os
-import traceback
 import logging
 
 import mne
@@ -49,7 +48,7 @@ class AddSubjectDialog(QtWidgets.QDialog):
                 _create_subject(do_meanwhile=self.parent.update_ui)
                 n_successful += 1
 
-            except Exception as exc:
+            except Exception:
                 logging.getLogger("ui_logger").exception("")
 
         try:

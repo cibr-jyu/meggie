@@ -1,5 +1,5 @@
-"""Contains a class for handling reading and storing of 
-global preferences such as the previous experiment and 
+"""Contains a class for handling reading and storing of
+global preferences such as the previous experiment and
 the tab settings. Normally saved to ~/.meggieprefs.
 """
 
@@ -37,7 +37,7 @@ class PreferencesHandler(object):
         try:
             config.add_section("MiscOptions")
             config.add_section("Workspace")
-        except configparser.DuplicateSectionError as exc:
+        except configparser.DuplicateSectionError:
             pass
 
         # Sanity of these values is assumed to be checked by the calling method
@@ -79,25 +79,25 @@ class PreferencesHandler(object):
 
         try:
             self.workspace = config.get("Workspace", "workspaceDir")
-        except Exception as exc:
+        except Exception:
             pass
 
         try:
             auto_reload = config.get("MiscOptions", "autoReloadPreviousExperiment")
             if auto_reload == "True":
                 self.auto_load_last_open_experiment = True
-        except Exception as exc:
+        except Exception:
             pass
 
         try:
             self.previous_experiment_name = config.get(
                 "MiscOptions", "previousExperimentName"
             )
-        except Exception as exc:
+        except Exception:
             pass
 
         try:
             active_plugins = config.get("MiscOptions", "activePlugins")
             self.active_plugins = active_plugins.split(",")
-        except Exception as exc:
+        except Exception:
             pass

@@ -1,4 +1,4 @@
-"""Contains functions that are used in the dynamic location and creation 
+"""Contains functions that are used in the dynamic location and creation
 of tabs and datatypes. Can be used both internally and externally.
 """
 
@@ -30,7 +30,7 @@ def find_all_plugins():
                 ):
                     continue
                 plugins.append(key)
-        except Exception as exc:
+        except Exception:
             logging.getLogger("ui_logger").exception("")
     return plugins
 
@@ -491,7 +491,6 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
 
             data["tab_id"] = self.tab_spec["id"]
 
-            inputs = []
             for idx, name in enumerate(self.tab_spec["inputs"]):
                 ui_element = getattr(self, "listWidgetInputElement_" + str(idx + 1))
                 try:

@@ -5,7 +5,6 @@ import mne
 
 from meggie.datatypes.spectrum.spectrum import Spectrum
 
-from meggie.utilities.events import find_events
 from meggie.utilities.filemanager import ensure_folders
 
 
@@ -21,7 +20,6 @@ def test_spectrum():
         mne_spectrum = raw.compute_psd(fmin=1, fmax=40, tmin=1, tmax=10)
         psds = mne_spectrum.get_data()
         freqs = mne_spectrum.freqs
-        ch_names = raw.info["ch_names"]
 
         name = "TestSpectrum"
         cond_name = "1"

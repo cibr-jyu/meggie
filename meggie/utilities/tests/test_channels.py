@@ -74,7 +74,6 @@ def test_average_to_channel_groups():
 
     raw = mne.io.read_raw_fif(sample_fname, preload=True)
     info = raw.info
-    data = raw._data
 
     ch_names = info["ch_names"][:20]
 

@@ -3,7 +3,6 @@
 
 import os
 import re
-import logging
 
 import mne
 
@@ -53,7 +52,7 @@ class TFR(Datatype):
             for tfr_name, tfr in self._content.items():
                 fname = self._get_fname(tfr_name)
                 tfr.save(fname, overwrite=True)
-        except Exception as exc:
+        except Exception:
             raise Exception(
                 "Writing TFRs failed. Please ensure that the "
                 "entire experiment folder has write permissions."
@@ -68,7 +67,7 @@ class TFR(Datatype):
             if match:
                 try:
                     key = str(match.group(1))
-                except Exception as exc:
+                except Exception:
                     continue
 
                 # if proper condition parameters set,
@@ -93,7 +92,7 @@ class TFR(Datatype):
                 if match:
                     try:
                         key = str(match.group(1))
-                    except Exception as exc:
+                    except Exception:
                         raise Exception("Unknown file name format.")
 
                     # if proper condition parameters set,

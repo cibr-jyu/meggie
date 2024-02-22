@@ -1,10 +1,6 @@
 """ Contains a logic for setting active plugins.
 """
 
-import logging
-import pkg_resources
-import json
-
 from PyQt5 import QtWidgets
 
 from meggie.mainwindow.dynamic import find_all_plugins

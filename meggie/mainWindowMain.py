@@ -3,10 +3,8 @@
 
 import os
 import sys
-import json
 import logging
 import warnings
-import pkg_resources
 
 from pythonjsonlogger import jsonlogger
 
@@ -257,7 +255,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self.reconstruct_tabs()
 
-        except Exception as exc:
+        except Exception:
             self.experiment.active_subject = None
             messagebox(self, "Could not activate the subject.")
 
@@ -420,7 +418,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 formatter = jsonlogger.JsonFormatter(timestamp=True)
                 file_handler.setFormatter(formatter)
                 action_logger.addHandler(file_handler)
-            except PermissionError as exc:
+            except PermissionError:
                 raise Exception(logger_error_message)
 
 

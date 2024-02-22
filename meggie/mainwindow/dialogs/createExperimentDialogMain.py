@@ -1,10 +1,6 @@
 """ Contains a class for logic of experiment creation dialog.
 """
 
-import os
-import pkg_resources
-import json
-
 from PyQt5 import QtWidgets
 
 from meggie.mainwindow.dialogs.createExperimentDialogUi import Ui_CreateExperimentDialog
@@ -42,7 +38,7 @@ class CreateExperimentDialog(QtWidgets.QDialog):
                     for pipeline in package_spec["pipelines"]:
                         try:
                             id_ = pipeline["id"]
-                        except Exception as exc:
+                        except Exception:
                             raise Exception("Every pipeline should have id.")
 
                         name = pipeline.get("name", "")

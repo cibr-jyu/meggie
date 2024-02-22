@@ -13,7 +13,6 @@ def test_find_events():
     sample_fname = os.path.join(sample_folder, "MEG", "sample", "sample_audvis_raw.fif")
     raw = mne.io.read_raw_fif(sample_fname, preload=True)
 
-    id_ = 1
     mask = 32 + 16 + 8 + 4 + 2 + 1
     events_all_with_mask = find_events(raw, mask=mask, id_=1)
 

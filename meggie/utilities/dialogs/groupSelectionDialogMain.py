@@ -1,15 +1,10 @@
 """ Contains a class for logic of the group selection dialog.
 """
 
-import logging
-
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
 from meggie.utilities.dialogs.groupSelectionDialogUi import Ui_groupSelectionDialog
-
-from meggie.utilities.messaging import exc_messagebox
-from meggie.utilities.validators import validate_name
 
 
 class GroupSelectionDialog(QtWidgets.QDialog):
@@ -23,7 +18,6 @@ class GroupSelectionDialog(QtWidgets.QDialog):
         self.handler = handler
 
         subjects = experiment.subjects.keys()
-        subject_count = len(subjects)
 
         # fill the dialog with subjects
         for idx, subject_name in enumerate(subjects):

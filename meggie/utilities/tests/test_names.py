@@ -1,7 +1,3 @@
-import os
-
-import matplotlib.pyplot as plt
-
 from meggie.utilities.names import next_available_name
 
 

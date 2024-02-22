@@ -1,7 +1,6 @@
 import os
 
 import mne
-import numpy as np
 
 from meggie.utilities.measurement_info import MeasurementInfo
 

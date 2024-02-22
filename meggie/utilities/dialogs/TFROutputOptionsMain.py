@@ -58,8 +58,6 @@ class TFROutputOptions(QtWidgets.QDialog):
             self.ui.comboBoxCondition.setEnabled(False)
 
     def accept(self):
-        subject = self.experiment.active_subject
-
         if self.ask_condition:
             condition = self.ui.comboBoxCondition.currentText()
         else:

@@ -1,16 +1,12 @@
 """ Contains a class for logic of the add advanced dialog.
 """
 
-import logging
-
 from PyQt5 import QtWidgets
 
 from meggie.utilities.dialogs.powerSpectrumAddAdvancedDialogUi import (
     Ui_PowerSpectrumAddAdvancedDialog,
 )
 from meggie.utilities.dialogs.bitSelectionDialogMain import BitSelectionDialog
-
-from meggie.utilities.messaging import messagebox
 
 
 class PowerSpectrumAddAdvancedDialog(QtWidgets.QDialog):
