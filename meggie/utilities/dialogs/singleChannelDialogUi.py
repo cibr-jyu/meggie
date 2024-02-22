@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_singleChannelDialog(object):
     def setupUi(self, singleChannelDialog):
         singleChannelDialog.setObjectName("singleChannelDialog")
@@ -18,7 +19,9 @@ class Ui_singleChannelDialog(object):
         self.scrollArea.setMinimumSize(QtCore.QSize(0, 0))
         self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.scrollArea.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+        self.scrollArea.setSizeAdjustPolicy(
+            QtWidgets.QAbstractScrollArea.AdjustToContents
+        )
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
@@ -27,7 +30,9 @@ class Ui_singleChannelDialog(object):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout_2.addItem(spacerItem, 4, 0, 1, 1)
         self.groupBoxLegend = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxLegend.setObjectName("groupBoxLegend")
@@ -49,7 +54,9 @@ class Ui_singleChannelDialog(object):
         self.doubleSpinBoxMax.setSingleStep(0.01)
         self.doubleSpinBoxMax.setProperty("value", 0.0)
         self.doubleSpinBoxMax.setObjectName("doubleSpinBoxMax")
-        self.formLayout_3.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxMax)
+        self.formLayout_3.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxMax
+        )
         self.labelMin = QtWidgets.QLabel(self.groupBoxValueRange)
         self.labelMin.setObjectName("labelMin")
         self.formLayout_3.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.labelMin)
@@ -61,7 +68,9 @@ class Ui_singleChannelDialog(object):
         self.doubleSpinBoxMin.setSingleStep(0.01)
         self.doubleSpinBoxMin.setProperty("value", 0.0)
         self.doubleSpinBoxMin.setObjectName("doubleSpinBoxMin")
-        self.formLayout_3.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxMin)
+        self.formLayout_3.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxMin
+        )
         self.gridLayout_2.addWidget(self.groupBoxValueRange, 2, 0, 1, 1)
         self.groupBoxGeneral = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxGeneral.setObjectName("groupBoxGeneral")
@@ -69,16 +78,22 @@ class Ui_singleChannelDialog(object):
         self.formLayout_4.setObjectName("formLayout_4")
         self.labelChannel = QtWidgets.QLabel(self.groupBoxGeneral)
         self.labelChannel.setObjectName("labelChannel")
-        self.formLayout_4.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.labelChannel)
+        self.formLayout_4.setWidget(
+            0, QtWidgets.QFormLayout.LabelRole, self.labelChannel
+        )
         self.comboBoxChannel = QtWidgets.QComboBox(self.groupBoxGeneral)
         self.comboBoxChannel.setObjectName("comboBoxChannel")
-        self.formLayout_4.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.comboBoxChannel)
+        self.formLayout_4.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.comboBoxChannel
+        )
         self.labelTitle = QtWidgets.QLabel(self.groupBoxGeneral)
         self.labelTitle.setObjectName("labelTitle")
         self.formLayout_4.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.labelTitle)
         self.lineEditTitle = QtWidgets.QLineEdit(self.groupBoxGeneral)
         self.lineEditTitle.setObjectName("lineEditTitle")
-        self.formLayout_4.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.lineEditTitle)
+        self.formLayout_4.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.lineEditTitle
+        )
         self.gridLayout_2.addWidget(self.groupBoxGeneral, 0, 0, 1, 1)
         self.groupBoxSmoothing = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxSmoothing.setObjectName("groupBoxSmoothing")
@@ -86,12 +101,16 @@ class Ui_singleChannelDialog(object):
         self.formLayout.setObjectName("formLayout")
         self.labelWindowLength = QtWidgets.QLabel(self.groupBoxSmoothing)
         self.labelWindowLength.setObjectName("labelWindowLength")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.labelWindowLength)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.LabelRole, self.labelWindowLength
+        )
         self.spinBoxWindowLength = QtWidgets.QSpinBox(self.groupBoxSmoothing)
         self.spinBoxWindowLength.setMaximum(10000000)
         self.spinBoxWindowLength.setProperty("value", 11)
         self.spinBoxWindowLength.setObjectName("spinBoxWindowLength")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.spinBoxWindowLength)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.spinBoxWindowLength
+        )
         self.labelWindow = QtWidgets.QLabel(self.groupBoxSmoothing)
         self.labelWindow.setObjectName("labelWindow")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.labelWindow)
@@ -101,13 +120,17 @@ class Ui_singleChannelDialog(object):
         self.comboBoxWindow.setItemText(0, "")
         self.comboBoxWindow.addItem("")
         self.comboBoxWindow.addItem("")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.comboBoxWindow)
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.comboBoxWindow
+        )
         self.gridLayout_2.addWidget(self.groupBoxSmoothing, 1, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem1)
         self.pushButtonCancel = QtWidgets.QPushButton(singleChannelDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -124,19 +147,26 @@ class Ui_singleChannelDialog(object):
 
     def retranslateUi(self, singleChannelDialog):
         _translate = QtCore.QCoreApplication.translate
-        singleChannelDialog.setWindowTitle(_translate("singleChannelDialog", "Meggie - Single channel"))
+        singleChannelDialog.setWindowTitle(
+            _translate("singleChannelDialog", "Meggie - Single channel")
+        )
         self.groupBoxLegend.setTitle(_translate("singleChannelDialog", "Legend:"))
-        self.groupBoxValueRange.setTitle(_translate("singleChannelDialog", "Value range:"))
+        self.groupBoxValueRange.setTitle(
+            _translate("singleChannelDialog", "Value range:")
+        )
         self.labelMax.setText(_translate("singleChannelDialog", "Max value:"))
         self.labelMin.setText(_translate("singleChannelDialog", "Min value:"))
         self.groupBoxGeneral.setTitle(_translate("singleChannelDialog", "General:"))
         self.labelChannel.setText(_translate("singleChannelDialog", "Channel:"))
         self.labelTitle.setText(_translate("singleChannelDialog", "Title:"))
-        self.groupBoxSmoothing.setTitle(_translate("singleChannelDialog", "Smoothing settings:"))
-        self.labelWindowLength.setText(_translate("singleChannelDialog", "Window length:"))
+        self.groupBoxSmoothing.setTitle(
+            _translate("singleChannelDialog", "Smoothing settings:")
+        )
+        self.labelWindowLength.setText(
+            _translate("singleChannelDialog", "Window length:")
+        )
         self.labelWindow.setText(_translate("singleChannelDialog", "Window:"))
         self.comboBoxWindow.setItemText(1, _translate("singleChannelDialog", "hanning"))
         self.comboBoxWindow.setItemText(2, _translate("singleChannelDialog", "flat"))
         self.pushButtonCancel.setText(_translate("singleChannelDialog", "Cancel"))
         self.pushButtonApply.setText(_translate("singleChannelDialog", "Apply"))
-

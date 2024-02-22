@@ -9,7 +9,7 @@ from mne.channels import _divide_to_regions
 
 
 def is_montage_set(raw, ch_type):
-    """ Checks whether channel locations are found in the info for given channel type.
+    """Checks whether channel locations are found in the info for given channel type.
 
     Parameters
     ----------
@@ -24,27 +24,29 @@ def is_montage_set(raw, ch_type):
         Whether the channel locations were found.
     """
 
-    if ch_type == 'meg':
+    if ch_type == "meg":
         picks = mne.pick_types(raw.info, meg=True, eeg=False)
     else:
         picks = mne.pick_types(raw.info, meg=False, eeg=True)
 
-    ch_names = [ch_name for idx, ch_name in enumerate(raw.info['ch_names'])
-                if idx in picks]
+    ch_names = [
+        ch_name for idx, ch_name in enumerate(raw.info["ch_names"]) if idx in picks
+    ]
 
     if not ch_names:
-        raise Exception('Data does not contain channels of type ' + str(ch_type))
+        raise Exception("Data does not contain channels of type " + str(ch_type))
 
     info_filt = filter_info(raw.info, ch_names)
 
     # check if there is no montage set..
     ch_norms = []
-    for ch in info_filt['chs']:
-        ch_norms.append(np.linalg.norm(ch['loc']))
+    for ch in info_filt["chs"]:
+        ch_norms.append(np.linalg.norm(ch["loc"]))
     if np.all(np.isclose(ch_norms, ch_norms[0])):
         return False
 
     return True
+
 
 def get_default_channel_groups(raw, ch_type):
     """Returns channels grouped by standard locations
@@ -62,18 +64,19 @@ def get_default_channel_groups(raw, ch_type):
     Returns
     -------
     dict
-        A dictionary with groups (Left-temporal, etc.) as keys and 
+        A dictionary with groups (Left-temporal, etc.) as keys and
         lists of channels as values.
 
     """
 
-    if ch_type == 'meg':
+    if ch_type == "meg":
         picks = mne.pick_types(raw.info, meg=True, eeg=False)
     else:
         picks = mne.pick_types(raw.info, meg=False, eeg=True)
 
-    ch_names = [ch_name for idx, ch_name in enumerate(raw.info['ch_names'])
-                if idx in picks]
+    ch_names = [
+        ch_name for idx, ch_name in enumerate(raw.info["ch_names"]) if idx in picks
+    ]
     if not ch_names:
         return {}
 
@@ -87,8 +90,7 @@ def get_default_channel_groups(raw, ch_type):
 
     ch_groups = {}
     for region_key, region in regions.items():
-        region_ch_names = [info_filt['ch_names'][ch_idx] for ch_idx 
-                           in region]
+        region_ch_names = [info_filt["ch_names"][ch_idx] for ch_idx in region]
         ch_groups[region_key] = region_ch_names
 
     return ch_groups
@@ -111,21 +113,21 @@ def get_channels_by_type(info):
         A dict of channels organized by type.
     """
     channels = {}
-    grad_idxs = mne.pick_types(info, meg='grad', eeg=False)
+    grad_idxs = mne.pick_types(info, meg="grad", eeg=False)
     if grad_idxs.size > 0:
-        channels['grad'] = [ch_name for idx, ch_name 
-                            in enumerate(info['ch_names'])
-                            if idx in grad_idxs]
-    mag_idxs = mne.pick_types(info, meg='mag', eeg=False)
+        channels["grad"] = [
+            ch_name for idx, ch_name in enumerate(info["ch_names"]) if idx in grad_idxs
+        ]
+    mag_idxs = mne.pick_types(info, meg="mag", eeg=False)
     if mag_idxs.size > 0:
-        channels['mag'] = [ch_name for idx, ch_name 
-                           in enumerate(info['ch_names'])
-                           if idx in mag_idxs]
+        channels["mag"] = [
+            ch_name for idx, ch_name in enumerate(info["ch_names"]) if idx in mag_idxs
+        ]
     eeg_idxs = mne.pick_types(info, meg=False, eeg=True)
     if eeg_idxs.size > 0:
-        channels['eeg'] = [ch_name for idx, ch_name 
-                           in enumerate(info['ch_names'])
-                           if idx in eeg_idxs]
+        channels["eeg"] = [
+            ch_name for idx, ch_name in enumerate(info["ch_names"]) if idx in eeg_idxs
+        ]
 
     return channels
 
@@ -142,13 +144,13 @@ def get_triplet_from_mag(ch_name):
     -------
     list
         List of three channels, e.g ['MEG 1231', 'MEG 1232', 'MEG 1233']
-    """ 
-    return [ch_name, ch_name[:-1] + '2', ch_name[:-1] + '3']
+    """
+    return [ch_name, ch_name[:-1] + "2", ch_name[:-1] + "3"]
 
 
 def pairless_grads(ch_names):
     """Returns indexes of channels for which the first three numbers of the name
-    are present only once. 
+    are present only once.
 
     This means that if ['MEG 1232', 'MEG 1332', 'MEG 1333'] is given,
     then [0] should be returned.
@@ -166,7 +168,9 @@ def pairless_grads(ch_names):
     """
     stems = [name[:-1] for name in ch_names]
     only_once = [stem for stem in stems if stems.count(stem) == 1]
-    ch_idxs = [name_idx for name_idx, name in enumerate(ch_names) if name[:-1] in only_once]
+    ch_idxs = [
+        name_idx for name_idx, name in enumerate(ch_names) if name[:-1] in only_once
+    ]
     return ch_idxs
 
 
@@ -185,15 +189,15 @@ def clean_names(names):
         Returns list of channel names without any whitespace.
 
     """
-    return [name.replace(' ', '') for name in names]
+    return [name.replace(" ", "") for name in names]
 
 
 def iterate_topography(fig, info, ch_names, on_pick):
     """Iterator that wraps the mne.viz.iter_topography and yields a axes in correct
     location for each channel.
 
-    The main reason for this function is historical, as info['ch_names'] did not 
-    necessarily match with ch_names stored in a data object before. Thus this returns 
+    The main reason for this function is historical, as info['ch_names'] did not
+    necessarily match with ch_names stored in a data object before. Thus this returns
     idx in ch_names in addition to idx in info['ch_names']. Nowadays
     the info is stored with data objects, and thus this feature is not needed.
 
@@ -211,24 +215,27 @@ def iterate_topography(fig, info, ch_names, on_pick):
     on_pick : function
         A function that is called if a subplot is clicked.
 
-    Yields 
+    Yields
     ------
     tuple
         A tuple of (axes, idx in info['ch_names'], idx in ch_names)
     """
     ch_names = clean_names(ch_names)
-    info_names = clean_names(info['ch_names'])
+    info_names = clean_names(info["ch_names"])
 
     def handler(ax, info_idx):
         names_idx = ch_names.index(info_names[info_idx])
         on_pick(ax, info_idx, names_idx)
 
-    for ax, info_idx in mne.viz.iter_topography(info, fig=fig,
-                                           fig_facecolor='white',
-                                           axis_spinecolor='white',
-                                           axis_facecolor='white',
-                                           on_pick=handler):
-        try: 
+    for ax, info_idx in mne.viz.iter_topography(
+        info,
+        fig=fig,
+        fig_facecolor="white",
+        axis_spinecolor="white",
+        axis_facecolor="white",
+        on_pick=handler,
+    ):
+        try:
             names_idx = ch_names.index(info_names[info_idx])
             yield ax, info_idx, names_idx
         except ValueError as exc:
@@ -236,7 +243,7 @@ def iterate_topography(fig, info, ch_names, on_pick):
 
 
 def average_to_channel_groups(data, info, ch_names, channel_groups):
-    """Averages data (first dimension representing the channels) to channel groups. 
+    """Averages data (first dimension representing the channels) to channel groups.
 
     Gets types from info but indices from ch_names.
 
@@ -250,12 +257,12 @@ def average_to_channel_groups(data, info, ch_names, channel_groups):
         List of channel names, dimension should match data.
     channel_groups : dict
         A nested dictionary containing, where the first level is 'meg' or 'eeg', and the
-        second level has the channel group names, e.g 'Left-frontal', as keys and 
+        second level has the channel group names, e.g 'Left-frontal', as keys and
         lists of channels are values.
 
     Returns
     -------
-    list 
+    list
         A list of tuple-labels (such as ('eeg', 'Left-frontal')).
     np.array
         The matching averaged data.
@@ -271,28 +278,29 @@ def average_to_channel_groups(data, info, ch_names, channel_groups):
         chs = clean_names(ch_names)
         ch_names_in_chs = [ch_name for ch_name in ch_names if ch_name in chs]
 
-        if ch_type in ['grad', 'mag']:
-            ch_groups = channel_groups['meg']
+        if ch_type in ["grad", "mag"]:
+            ch_groups = channel_groups["meg"]
         else:
-            ch_groups = channel_groups['eeg']
+            ch_groups = channel_groups["eeg"]
 
         for ch_group, ch_group_channels in ch_groups.items():
             ch_group_channels = clean_names(ch_group_channels)
-            final_ch_names = [ch_name for ch_name in ch_names_in_chs if ch_name 
-                              in ch_group_channels]
+            final_ch_names = [
+                ch_name for ch_name in ch_names_in_chs if ch_name in ch_group_channels
+            ]
 
             # leave here if for example ch names in ch_groups and info don't match
             if not final_ch_names:
                 continue
 
-            ch_idxs = [idx for idx, ch_name in enumerate(ch_names) if 
-                       ch_name in final_ch_names]
+            ch_idxs = [
+                idx for idx, ch_name in enumerate(ch_names) if ch_name in final_ch_names
+            ]
 
             # calculate average
             data_in_chs = [data[ch_idx] for ch_idx in ch_idxs]
-            if ch_type == 'grad':
-                ch_average = np.sqrt(
-                    np.sum(np.array(data_in_chs)**2, axis=0))
+            if ch_type == "grad":
+                ch_average = np.sqrt(np.sum(np.array(data_in_chs) ** 2, axis=0))
             else:
                 ch_average = np.mean(data_in_chs, axis=0)
 
@@ -305,7 +313,7 @@ def average_to_channel_groups(data, info, ch_names, channel_groups):
 
 
 def filter_info(info, channels):
-    """ At some point mne removed .pick_channels from Info class.
+    """At some point mne removed .pick_channels from Info class.
     This tries to restore that functionality.
 
     Parameters
@@ -316,8 +324,9 @@ def filter_info(info, channels):
         List of channels to filter to
 
     """
-    ch_idxs = [idx for idx, ch_name in enumerate(info['ch_names'])
-               if ch_name in channels]
+    ch_idxs = [
+        idx for idx, ch_name in enumerate(info["ch_names"]) if ch_name in channels
+    ]
 
     filt_info = mne.pick_info(info, ch_idxs)
 

@@ -17,11 +17,11 @@ from meggie.actions.tfr_save_tse.controller.tfr import save_tse_all_channels
 
 
 class SaveTSE(Action):
-    """ Saves TSE's to csv files """
+    """Saves TSE's to csv files"""
 
     def run(self):
         try:
-            selected_name = self.data['outputs']['tfr'][0]
+            selected_name = self.data["outputs"]["tfr"][0]
         except IndexError as exc:
             return
 
@@ -34,35 +34,49 @@ class SaveTSE(Action):
             time_arrays.append(tfr.times)
             freq_arrays.append(tfr.freqs)
         assert_arrays_same(time_arrays)
-        assert_arrays_same(freq_arrays, 'Freqs do no match')
+        assert_arrays_same(freq_arrays, "Freqs do no match")
 
         def option_handler(params):
-            params['channel_groups'] = self.experiment.channel_groups
-            params['name'] = selected_name
+            params["channel_groups"] = self.experiment.channel_groups
+            params["name"] = selected_name
 
             try:
                 self.handler(self.experiment.active_subject, params)
             except Exception as exc:
                 exc_messagebox(self.window, exc)
 
-        dialog = TFROutputOptions(self.window, self.experiment,
-                                  selected_name, handler=option_handler)
+        dialog = TFROutputOptions(
+            self.window, self.experiment, selected_name, handler=option_handler
+        )
         dialog.show()
 
     @subject_action
     def handler(self, subject, params):
-        """
-        """
-        if params['output_option'] == 'all_channels':
+        """ """
+        if params["output_option"] == "all_channels":
             save_tse_all_channels(
-                self.experiment, params['name'],
-                params['blmode'], params['blstart'], params['blend'],
-                params['tmin'], params['tmax'], params['fmin'], params['fmax'],
-                do_meanwhile=self.window.update_ui)
+                self.experiment,
+                params["name"],
+                params["blmode"],
+                params["blstart"],
+                params["blend"],
+                params["tmin"],
+                params["tmax"],
+                params["fmin"],
+                params["fmax"],
+                do_meanwhile=self.window.update_ui,
+            )
         else:
             save_tse_channel_averages(
-                self.experiment, params['name'],
-                params['blmode'], params['blstart'], params['blend'],
-                params['tmin'], params['tmax'], params['fmin'], params['fmax'],
-                params['channel_groups'], do_meanwhile=self.window.update_ui)
-
+                self.experiment,
+                params["name"],
+                params["blmode"],
+                params["blstart"],
+                params["blend"],
+                params["tmin"],
+                params["tmax"],
+                params["fmin"],
+                params["fmax"],
+                params["channel_groups"],
+                do_meanwhile=self.window.update_ui,
+            )

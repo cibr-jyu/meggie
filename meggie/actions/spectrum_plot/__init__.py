@@ -16,19 +16,20 @@ from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 
 
 class PlotSpectrum(Action):
-    """ Plots spectrums.
-    """
+    """Plots spectrums."""
 
     def run(self):
         try:
-            selected_name = self.data['outputs']['spectrum'][0]
+            selected_name = self.data["outputs"]["spectrum"][0]
         except IndexError as exc:
             return
 
         def option_handler(selected_option):
-            params = {'name': selected_name, 
-                      'output_option': selected_option,
-                      'channel_groups': self.experiment.channel_groups}
+            params = {
+                "name": selected_name,
+                "output_option": selected_option,
+                "channel_groups": self.experiment.channel_groups,
+            }
             try:
                 self.handler(self.experiment.active_subject, params)
             except Exception as exc:
@@ -39,15 +40,13 @@ class PlotSpectrum(Action):
 
     @subject_action
     def handler(self, subject, params):
-        """
-        """
-        if params['output_option'] == 'channel_averages':
-            plot_spectrum_averages(subject, params['channel_groups'], params['name'])
+        """ """
+        if params["output_option"] == "channel_averages":
+            plot_spectrum_averages(subject, params["channel_groups"], params["name"])
         else:
             info = subject.get_raw().info
             chs = list(get_channels_by_type(info).keys())
-            if 'eeg' in chs:
-                plot_spectrum_topo(subject, params['name'], ch_type='eeg')
-            if 'grad' in chs or 'mag' in chs:
-                plot_spectrum_topo(subject, params['name'], ch_type='meg')
-
+            if "eeg" in chs:
+                plot_spectrum_topo(subject, params["name"], ch_type="eeg")
+            if "grad" in chs or "mag" in chs:
+                plot_spectrum_topo(subject, params["name"], ch_type="meg")

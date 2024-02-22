@@ -9,14 +9,18 @@ from meggie.utilities.messaging import messagebox
 
 
 class BatchingWidget(QtWidgets.QWidget):
-    """ Contains logic for batching widget.
-    """
+    """Contains logic for batching widget."""
 
-    def __init__(self, experiment_getter, parent, geometry,
-                 container=None,
-                 pushButtonApply=None,
-                 pushButtonBatch=None,
-                 hideHook=None):
+    def __init__(
+        self,
+        experiment_getter,
+        parent,
+        geometry,
+        container=None,
+        pushButtonApply=None,
+        pushButtonBatch=None,
+        hideHook=None,
+    ):
         super(BatchingWidget, self).__init__(container)
         self.ui = Ui_BatchingWidget()
         self.ui.setupUi(self)
@@ -88,8 +92,7 @@ class BatchingWidget(QtWidgets.QWidget):
             self._update(enabled)
 
     def on_pushButtonApplyAll_clicked(self, checked=None):
-        """
-        """
+        """ """
         if checked is None:
             return
 
@@ -99,8 +102,7 @@ class BatchingWidget(QtWidgets.QWidget):
 
     @property
     def selected_subjects(self):
-        """ Returns the subjects that are selected in the UI.
-        """
+        """Returns the subjects that are selected in the UI."""
         subject_names = []
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
@@ -110,20 +112,18 @@ class BatchingWidget(QtWidgets.QWidget):
         return subject_names
 
     def cleanup(self):
-        """ Cleans the batching widget after use.
-        """
+        """Cleans the batching widget after use."""
         if len(self.failed_subjects) > 0:
             rows = []
-            rows.append('Failed calculation for subjects:')
+            rows.append("Failed calculation for subjects:")
 
             for subject, message in self.failed_subjects:
-                rows.append(subject.name + ' (' + message + ')')
+                rows.append(subject.name + " (" + message + ")")
 
             parent = self.parent.parent
 
-            messagebox(parent, '\n'.join(rows))
+            messagebox(parent, "\n".join(rows))
 
         self.failed_subjects = []
         self.ui.checkBoxBatch.setChecked(False)
         self.ui.functionalityWidget.hide()
-

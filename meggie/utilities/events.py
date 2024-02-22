@@ -10,11 +10,10 @@ from collections import OrderedDict
 
 
 def _should_take(id_, mask, event):
-    """Check if event has same non-masked bits as id_.
-    """
-    id_bin = '{0:016b}'.format(id_)
-    mask_bin = '{0:016b}'.format(mask)
-    event_bin = '{0:016b}'.format(event[2])
+    """Check if event has same non-masked bits as id_."""
+    id_bin = "{0:016b}".format(id_)
+    mask_bin = "{0:016b}".format(mask)
+    event_bin = "{0:016b}".format(event[2])
 
     take_event = True
     for i in range(len(mask_bin)):
@@ -32,7 +31,7 @@ def find_events(raw, stim_ch=None, mask=0, id_=None):
     own masking procedure.
 
     The masking procedure is simple. Event is ok if it has the same
-    bits as the id everywhere where the mask is zero. Thus mask 
+    bits as the id everywhere where the mask is zero. Thus mask
     specifies bits that are not cared about.
 
     Parameters
@@ -53,12 +52,12 @@ def find_events(raw, stim_ch=None, mask=0, id_=None):
 
     """
 
-    events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1,
-                             uint_cast=True)
+    events = mne.find_events(
+        raw, stim_channel=stim_ch, shortest_event=1, uint_cast=True
+    )
 
     if mask or id_:
-        events = list(filter(
-            lambda event: _should_take(id_, mask, event), events))
+        events = list(filter(lambda event: _should_take(id_, mask, event), events))
         events = np.array(events)
 
     # remove spurious events (only one sample difference to next event)
@@ -69,17 +68,18 @@ def find_events(raw, stim_ch=None, mask=0, id_=None):
             counter += 1
 
     if counter > 0:
-        message = (str(counter) +
-                   " events dropped because they seem spurious "
-                   "(only one sample difference to next event). "
-                   "This is normal and should not be worried about.")
-        logging.getLogger('ui_logger').warning(message)
+        message = (
+            str(counter) + " events dropped because they seem spurious "
+            "(only one sample difference to next event). "
+            "This is normal and should not be worried about."
+        )
+        logging.getLogger("ui_logger").warning(message)
 
     return events
 
 
 def find_stim_channel(raw):
-    """ Finds the appropriate stim channel from raw.
+    """Finds the appropriate stim channel from raw.
 
     Parameters
     ----------
@@ -118,15 +118,15 @@ def update_stim_channel(raw, events):
 
     if not stim_channel:
         # create stim_channel
-        info = mne.create_info(['STI101'], raw.info['sfreq'], ['stim'])
+        info = mne.create_info(["STI101"], raw.info["sfreq"], ["stim"])
         stim_raw = mne.io.RawArray(np.zeros((1, len(raw.times))), info)
         raw.add_channels([stim_raw], force_update_info=True)
-        stim_channel = 'STI101'
+        stim_channel = "STI101"
 
-    ch_idx = raw.info['ch_names'].index(stim_channel)
+    ch_idx = raw.info["ch_names"].index(stim_channel)
     for event in events:
         start = event[0] - raw.first_samp
-        raw._data[ch_idx][start:start+length] = event[2]
+        raw._data[ch_idx][start : start + length] = event[2]
 
 
 def events_from_annotations(subject, conversion_info):
@@ -152,10 +152,9 @@ def events_from_annotations(subject, conversion_info):
             if use_start:
                 onset_time = raw.annotations.onset[idx]
             else:
-                onset_time = (raw.annotations.onset[idx] + 
-                              raw.annotations.duration[idx])
+                onset_time = raw.annotations.onset[idx] + raw.annotations.duration[idx]
 
-            tidx = int(onset_time*raw.info['sfreq'])
+            tidx = int(onset_time * raw.info["sfreq"])
 
             events.append([tidx, 0, event_id])
 
@@ -165,10 +164,9 @@ def events_from_annotations(subject, conversion_info):
 
 
 def _find_event_times(raw, event_id, mask):
-    """Given the event_id and mask, find the event times.
-    """
+    """Given the event_id and mask, find the event times."""
     stim_ch = find_stim_channel(raw)
-    sfreq = raw.info['sfreq']
+    sfreq = raw.info["sfreq"]
 
     events = find_events(raw, stim_ch, mask, event_id)
     times = [(event[0] - raw.first_samp) / sfreq for event in events]
@@ -176,7 +174,7 @@ def _find_event_times(raw, event_id, mask):
 
 
 def get_raw_blocks_from_intervals(subject, intervals):
-    """ Creates RawAarrays from time interval specifications.
+    """Creates RawAarrays from time interval specifications.
 
     Parameters
     ----------
@@ -205,7 +203,7 @@ def get_raw_blocks_from_intervals(subject, intervals):
             raw_blocks[avg_group] = []
             times[avg_group] = []
 
-        if ival_type == 'fixed':
+        if ival_type == "fixed":
             block = raw.copy().crop(tmin=start, tmax=end)
             raw_blocks[avg_group].append(block)
             times[avg_group].append((start, end))
@@ -213,15 +211,15 @@ def get_raw_blocks_from_intervals(subject, intervals):
             # the following code finds all start points of intervals by events or
             # start of recording. then matching end point is found by
             # (can be same) other events or end of recording.
-            if start[0] == 'events':
+            if start[0] == "events":
                 start_times = _find_event_times(raw, start[1], start[2])
-            elif start[0] == 'start':
+            elif start[0] == "start":
                 start_times = [raw_times[0]]
-            elif start[0] == 'end':
+            elif start[0] == "end":
                 start_times = [raw_times[-1]]
 
             for start_time in start_times:
-                if end[0] == 'events':
+                if end[0] == "events":
                     end_times = _find_event_times(raw, end[1], end[2])
                     found = False
                     for end_time in end_times:
@@ -236,24 +234,24 @@ def get_raw_blocks_from_intervals(subject, intervals):
                             found = True
                             break
                     if not found:
-                        logging.getLogger('ui_logger').info(
-                            'Found start event with no matching end event')
+                        logging.getLogger("ui_logger").info(
+                            "Found start event with no matching end event"
+                        )
                         continue
-                elif end[0] == 'start':
+                elif end[0] == "start":
                     end_time = raw_times[0]
-                elif end[0] == 'end':
+                elif end[0] == "end":
                     end_time = raw_times[-1]
 
                 # crop with offsets
-                times[avg_group].append((start_time + start[3],
-                                         end_time + end[3]))
-                block = raw.copy().crop(tmin=(start_time + start[3]),
-                                        tmax=(end_time + end[3]))
+                times[avg_group].append((start_time + start[3], end_time + end[3]))
+                block = raw.copy().crop(
+                    tmin=(start_time + start[3]), tmax=(end_time + end[3])
+                )
                 raw_blocks[avg_group].append(block)
 
     for key in raw_blocks:
         if len(raw_blocks[key]) == 0:
-            raise Exception('Was not able to find raw segments for all groups')
-     
-    return times, raw_blocks
+            raise Exception("Was not able to find raw segments for all groups")
 
+    return times, raw_blocks

@@ -8,15 +8,18 @@ from meggie.datatypes.evoked.evoked import Evoked
 from meggie.utilities.events import find_events
 from meggie.utilities.filemanager import ensure_folders
 
+
 def test_evoked():
     with tempfile.TemporaryDirectory() as dirpath:
 
         sample_folder = mne.datasets.sample.data_path()
-        sample_fname = os.path.join(sample_folder, 'MEG', 'sample', 'sample_audvis_raw.fif')
+        sample_fname = os.path.join(
+            sample_folder, "MEG", "sample", "sample_audvis_raw.fif"
+        )
 
-        name = 'TestEvoked'
-        cond_name = 'cond_1'
-        evoked_dir = os.path.join(dirpath, 'evoked')
+        name = "TestEvoked"
+        cond_name = "cond_1"
+        evoked_dir = os.path.join(dirpath, "evoked")
 
         raw = mne.io.read_raw_fif(sample_fname, preload=True)
         events = find_events(raw, id_=1)
@@ -38,5 +41,4 @@ def test_evoked():
         # accessing the saved content.
         loaded_evoked = Evoked(name, evoked_dir, params)
 
-        assert(loaded_evoked.content[cond_name].nave == 72)
-
+        assert loaded_evoked.content[cond_name].nave == 72

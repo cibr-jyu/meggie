@@ -1,18 +1,20 @@
 """ Contains a class for logic of events from annotations dialog.
 """
+
 import logging
 
 from PyQt5 import QtWidgets
 
-from meggie.actions.raw_events_from_annotations.dialogs.eventsFromAnnotationsDialogUi import Ui_EventsFromAnnotationsDialog
+from meggie.actions.raw_events_from_annotations.dialogs.eventsFromAnnotationsDialogUi import (
+    Ui_EventsFromAnnotationsDialog,
+)
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.utilities.messaging import exc_messagebox
 
 
 class EventsFromAnnotationsDialog(QtWidgets.QDialog):
-    """ Contains logic for events from annotations dialog.
-    """
+    """Contains logic for events from annotations dialog."""
 
     def __init__(self, parent, experiment, handler):
         QtWidgets.QDialog.__init__(self, parent)
@@ -35,7 +37,8 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
             experiment_getter=self._experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
-            geometry=self.ui.batchingWidgetPlaceholder.geometry())
+            geometry=self.ui.batchingWidgetPlaceholder.geometry(),
+        )
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
     def _experiment_getter(self):
@@ -63,11 +66,11 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
         self.ui.listWidgetItems.clear()
 
         for item in self.items:
-            text = 'Annotation: ' + str(item[0]) + ', event id: ' + str(item[1]) + ', '
+            text = "Annotation: " + str(item[0]) + ", event id: " + str(item[1]) + ", "
             if item[2]:
-                text = text + 'use start'
+                text = text + "use start"
             else:
-                text = text + 'use end'
+                text = text + "use end"
 
             item = QtWidgets.QListWidgetItem(str(text))
             self.ui.listWidgetItems.addItem(item)
@@ -75,8 +78,8 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
     def accept(self):
         subject = self.experiment.active_subject
 
-        try: 
-            params = {'items': self.items}
+        try:
+            params = {"items": self.items}
             self.handler(subject, params)
         except Exception as exc:
             exc_messagebox(self.parent, exc)
@@ -93,13 +96,12 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    params = {'items': self.items}
+                    params = {"items": self.items}
                     self.handler(subject, params)
                     subject.release_memory()
                 except Exception as exc:
-                    self.batching_widget.failed_subjects.append(
-                        (subject, str(exc)))
-                    logging.getLogger('ui_logger').exception('')
+                    self.batching_widget.failed_subjects.append((subject, str(exc)))
+                    logging.getLogger("ui_logger").exception("")
 
         self.batching_widget.cleanup()
 

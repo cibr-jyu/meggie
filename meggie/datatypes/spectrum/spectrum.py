@@ -14,7 +14,7 @@ from meggie.utilities.datatype import Datatype
 
 
 class Spectrum(Datatype):
-    """ Wraps numpy arrays of PSDs.
+    """Wraps numpy arrays of PSDs.
 
     MNE-python does not have a dedicated class for storing PSDs. However, for
     our purposes it is good to have similar interface as the evokeds, TFRs,
@@ -36,12 +36,12 @@ class Spectrum(Datatype):
         is assumed to be saved to file system earlier.
     info : mne.Info, optional
         The info structure from the raw data. Is stored because contains
-        channel names and locations. If not provided, is assumed 
+        channel names and locations. If not provided, is assumed
         to be saved to file system earlier.
 
     """
-    def __init__(self, name, directory, params,
-                 content=None, freqs=None, info=None):
+
+    def __init__(self, name, directory, params, content=None, freqs=None, info=None):
         # name has no group number and no '.fif'
         self._name = name
         self._directory = directory
@@ -51,13 +51,13 @@ class Spectrum(Datatype):
         if content is not None:
             self._content = content
 
-        self._params['info_set'] = True
+        self._params["info_set"] = True
 
         self._freqs = freqs
         self._info = info
 
     def _load_content(self):
-        """Gets content from the file system and 
+        """Gets content from the file system and
         stores it to corresponding attributes."""
         data_dict, freqs, ch_names = self._get_content()
         info = self._get_info()
@@ -66,10 +66,8 @@ class Spectrum(Datatype):
         self._content = data_dict
 
     def _get_info(self):
-        """ Gets info from file system.
-        """
-        info_path = os.path.join(self._directory,
-                                 self._name + '-info.fif')
+        """Gets info from file system."""
+        info_path = os.path.join(self._directory, self._name + "-info.fif")
         info = mne.io.meas_info.read_info(info_path)
 
         return info
@@ -79,7 +77,7 @@ class Spectrum(Datatype):
 
         # load data
         data_dict = {}
-        template = self.name + '_' + r'([a-zA-Z1-9_]+)\.csv'
+        template = self.name + "_" + r"([a-zA-Z1-9_]+)\.csv"
         for fname in os.listdir(self._directory):
             match = re.match(template, fname)
             if match:
@@ -90,21 +88,21 @@ class Spectrum(Datatype):
 
                 # if proper condition parameters set,
                 # check if the key is in there.
-                if 'conditions' in self._params:
-                    if key not in [str(elem) for elem in
-                                   self._params['conditions']]:
+                if "conditions" in self._params:
+                    if key not in [str(elem) for elem in self._params["conditions"]]:
                         continue
 
                 freqs, row_descs, psd = filemanager.load_csv(
-                    os.path.join(self._directory, fname))
+                    os.path.join(self._directory, fname)
+                )
 
                 ch_names = [desc[0] for desc in row_descs]
 
                 # for backwards compatibility
                 # (used to have possibility to have spectrum data
                 # saved as log transformed)
-                if 'log_transformed' in self._params:
-                    if self._params['log_transformed'] is True:
+                if "log_transformed" in self._params:
+                    if self._params["log_transformed"] is True:
                         if np.mean(psd) < 0:
                             psd = 10 ** (psd / 10.0)
 
@@ -114,14 +112,12 @@ class Spectrum(Datatype):
         return data_dict, freqs, ch_names
 
     def save_content(self):
-        """Saves spectral data and info structure to the spectrum directory.
-        """
+        """Saves spectral data and info structure to the spectrum directory."""
         try:
             # save info
-            info_path = os.path.join(self._directory,
-                                     self._name + '-info.fif')
+            info_path = os.path.join(self._directory, self._name + "-info.fif")
             mne.io.meas_info.write_info(info_path, self._info)
-            self._params['info_set'] = True
+            self._params["info_set"] = True
 
             # save data
             for key, psd in self._content.items():
@@ -130,13 +126,16 @@ class Spectrum(Datatype):
                 column_names = self._freqs.tolist()
                 data = psd.tolist()
 
-                path = os.path.join(self._directory,
-                                    self._name + '_' + str(key) + '.csv')
+                path = os.path.join(
+                    self._directory, self._name + "_" + str(key) + ".csv"
+                )
 
                 filemanager.save_csv(path, data, column_names, row_descs)
         except Exception as exc:
-            raise Exception("Writing spectrums failed. Please check that the "
-                            "entire experiment folder has write permissions.")
+            raise Exception(
+                "Writing spectrums failed. Please check that the "
+                "entire experiment folder has write permissions."
+            )
 
     def delete_content(self):
         """Removes spectral data and info structure from the
@@ -144,13 +143,12 @@ class Spectrum(Datatype):
         """
 
         # delete info
-        info_path = os.path.join(self._directory,
-                                 self._name + '-info.fif')
+        info_path = os.path.join(self._directory, self._name + "-info.fif")
         if os.path.exists(info_path):
             os.remove(info_path)
 
         # delete data
-        template = self.name + '_' + r'([a-zA-Z1-9_]+)\.csv'
+        template = self.name + "_" + r"([a-zA-Z1-9_]+)\.csv"
         for fname in os.listdir(self._directory):
             match = re.match(template, fname)
             if match:
@@ -161,15 +159,14 @@ class Spectrum(Datatype):
 
                 # if proper condition parameters set,
                 # check if the key is in there.
-                if 'conditions' in self._params:
-                    if key not in [str(elem) for elem in
-                                   self._params['conditions']]:
+                if "conditions" in self._params:
+                    if key not in [str(elem) for elem in self._params["conditions"]]:
                         continue
 
                 os.remove(os.path.join(self._directory, fname))
 
     def set_info(self, subject):
-        """Stores info structure to the spectrum object. 
+        """Stores info structure to the spectrum object.
 
         This is for backwards compatibility. We used to get sensor locations
         from the raw object. This was problematic as the raw could change
@@ -179,8 +176,11 @@ class Spectrum(Datatype):
 
         # filter to correct set of channels
         _, _, ch_names = self._get_content()
-        picks = [ch_idx for ch_idx, ch_name in enumerate(info['ch_names'])
-                 if ch_name in ch_names]
+        picks = [
+            ch_idx
+            for ch_idx, ch_name in enumerate(info["ch_names"])
+            if ch_name in ch_names
+        ]
         info = mne.pick_info(info, sel=picks)
 
         self._info = info
@@ -188,22 +188,19 @@ class Spectrum(Datatype):
 
     @property
     def data(self):
-        """Returns the dict of numpy arrays (conditions as keys, PSDs as values).
-        """
+        """Returns the dict of numpy arrays (conditions as keys, PSDs as values)."""
         return self.content
 
     @property
     def content(self):
-        """Returns the dict of numpy arrays (conditions as keys, PSDs as values).
-        """
+        """Returns the dict of numpy arrays (conditions as keys, PSDs as values)."""
         if not self._content:
             self._load_content()
         return self._content
 
     @property
     def freqs(self):
-        """Returns freqs, must read the data to memory first.
-        """
+        """Returns freqs, must read the data to memory first."""
         if not self._content:
             self._load_content()
         return self._freqs
@@ -212,7 +209,7 @@ class Spectrum(Datatype):
     def ch_names(self):
         """Returns channel names from the info structure, must
         read the data to memory first."""
-        return self.info['ch_names']
+        return self.info["ch_names"]
 
     @property
     def info(self):
@@ -234,4 +231,3 @@ class Spectrum(Datatype):
         directory, when loading the data.
         """
         return self._params
-

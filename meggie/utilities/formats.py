@@ -1,12 +1,13 @@
 """Useful functions for formatting outputs.
 """
 
+
 def format_floats(data):
     """Returns formatted list of floats from unformatted list of floats
 
     Parameters
     ----------
-    data : list 
+    data : list
         The list of floats to be formatted
 
     Returns
@@ -14,11 +15,11 @@ def format_floats(data):
     list
         Formatted floats (now string).
     """
-    return ['{0:.3f}'.format(elem) for elem in data]
+    return ["{0:.3f}".format(elem) for elem in data]
 
 
 def format_float(value):
-    """ Formats a float.
+    """Formats a float.
 
     Parameters
     ----------
@@ -27,9 +28,8 @@ def format_float(value):
 
     Returns
     -------
-    str 
+    str
         Formatted float.
 
     """
     return format_floats([value])[0]
-    

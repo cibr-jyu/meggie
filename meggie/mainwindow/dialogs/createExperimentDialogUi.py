@@ -27,7 +27,9 @@ class Ui_CreateExperimentDialog(object):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName("gridLayout")
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout.addItem(spacerItem, 2, 1, 1, 1)
         self.groupBoxInfo = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxInfo.setObjectName("groupBoxInfo")
@@ -55,7 +57,9 @@ class Ui_CreateExperimentDialog(object):
         self.gridLayout_3.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.horizontalLayoutButtons = QtWidgets.QHBoxLayout()
         self.horizontalLayoutButtons.setObjectName("horizontalLayoutButtons")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayoutButtons.addItem(spacerItem1)
         self.pushButtonCancel = QtWidgets.QPushButton(CreateExperimentDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -72,10 +76,20 @@ class Ui_CreateExperimentDialog(object):
 
     def retranslateUi(self, CreateExperimentDialog):
         _translate = QtCore.QCoreApplication.translate
-        CreateExperimentDialog.setWindowTitle(_translate("CreateExperimentDialog", "Meggie - Create new experiment"))
-        self.groupBoxInfo.setTitle(_translate("CreateExperimentDialog", "Experiment information"))
-        self.labelExperimentName.setText(_translate("CreateExperimentDialog", "Experiment name:"))
-        self.labelAuthor.setText(_translate("CreateExperimentDialog", "Experiment author:"))
-        self.groupBoxPipeline.setTitle(_translate("CreateExperimentDialog", "Select a pipeline for the analysis:"))
+        CreateExperimentDialog.setWindowTitle(
+            _translate("CreateExperimentDialog", "Meggie - Create new experiment")
+        )
+        self.groupBoxInfo.setTitle(
+            _translate("CreateExperimentDialog", "Experiment information")
+        )
+        self.labelExperimentName.setText(
+            _translate("CreateExperimentDialog", "Experiment name:")
+        )
+        self.labelAuthor.setText(
+            _translate("CreateExperimentDialog", "Experiment author:")
+        )
+        self.groupBoxPipeline.setTitle(
+            _translate("CreateExperimentDialog", "Select a pipeline for the analysis:")
+        )
         self.pushButtonCancel.setText(_translate("CreateExperimentDialog", "Cancel"))
         self.pushButtonAccept.setText(_translate("CreateExperimentDialog", "Ok"))

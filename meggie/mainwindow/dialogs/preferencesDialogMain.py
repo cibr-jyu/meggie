@@ -19,8 +19,7 @@ from meggie.utilities.messaging import exc_messagebox
 
 
 class PreferencesDialog(QtWidgets.QDialog):
-    """ Contains logic for preferences dialog.
-    """
+    """Contains logic for preferences dialog."""
 
     def __init__(self, parent):
         QtWidgets.QDialog.__init__(self, parent)
@@ -43,8 +42,12 @@ class PreferencesDialog(QtWidgets.QDialog):
             return
 
         workspace = QtCore.QDir.toNativeSeparators(
-            str(QtWidgets.QFileDialog.getExistingDirectory(
-                self, "Select a workspace directory")))
+            str(
+                QtWidgets.QFileDialog.getExistingDirectory(
+                    self, "Select a workspace directory"
+                )
+            )
+        )
         self.ui.LineEditFilePath.setText(workspace)
 
     def on_pushButtonPlugins_clicked(self, checked=None):
@@ -60,7 +63,7 @@ class PreferencesDialog(QtWidgets.QDialog):
     def accept(self):
         workspace = self.ui.LineEditFilePath.text()
         if not os.path.isdir(workspace):
-            message = 'Workspace must be set to proper path.'
+            message = "Workspace must be set to proper path."
             messagebox(self.parent, message)
             return
         self.prefs.workspace = workspace

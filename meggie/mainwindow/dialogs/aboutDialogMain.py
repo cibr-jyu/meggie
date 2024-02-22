@@ -8,17 +8,17 @@ from meggie.mainwindow.dialogs.aboutDialogUi import Ui_Dialog
 
 
 class AboutDialog(QtWidgets.QDialog):
-    """ Contains the main logic for about dialog.
-    """
+    """Contains the main logic for about dialog."""
 
     def __init__(self, parent):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
-        version = ''
+        version = ""
         try:
             import pkg_resources
+
             version = pkg_resources.get_distribution("meggie").version
         except BaseException:
             pass

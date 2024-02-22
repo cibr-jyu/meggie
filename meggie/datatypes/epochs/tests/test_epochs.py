@@ -8,18 +8,21 @@ from meggie.datatypes.epochs.epochs import Epochs
 from meggie.utilities.events import find_events
 from meggie.utilities.filemanager import ensure_folders
 
+
 def test_epochs():
     with tempfile.TemporaryDirectory() as dirpath:
 
         sample_folder = mne.datasets.sample.data_path()
-        sample_fname = os.path.join(sample_folder, 'MEG', 'sample', 'sample_audvis_raw.fif')
+        sample_fname = os.path.join(
+            sample_folder, "MEG", "sample", "sample_audvis_raw.fif"
+        )
 
         raw = mne.io.read_raw_fif(sample_fname, preload=True)
         events = find_events(raw, id_=1)
         mne_epochs = mne.Epochs(raw, events)
 
-        name = 'TestEpochs'
-        epochs_dir = os.path.join(dirpath, 'epochs')
+        name = "TestEpochs"
+        epochs_dir = os.path.join(dirpath, "epochs")
 
         params = {}
 
@@ -33,4 +36,4 @@ def test_epochs():
         # accessing the saved content
         loaded_epochs = Epochs(name, epochs_dir, params)
 
-        assert(epochs.count == loaded_epochs.count == 72)
+        assert epochs.count == loaded_epochs.count == 72

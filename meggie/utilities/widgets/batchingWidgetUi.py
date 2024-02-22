@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_BatchingWidget(object):
     def setupUi(self, BatchingWidget):
         BatchingWidget.setObjectName("BatchingWidget")
@@ -19,14 +20,20 @@ class Ui_BatchingWidget(object):
         self.headingLayout.setContentsMargins(0, 0, 0, 0)
         self.headingLayout.setObjectName("headingLayout")
         self.checkBoxBatch = QtWidgets.QCheckBox(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.checkBoxBatch.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.checkBoxBatch.sizePolicy().hasHeightForWidth()
+        )
         self.checkBoxBatch.setSizePolicy(sizePolicy)
         self.checkBoxBatch.setObjectName("checkBoxBatch")
         self.headingLayout.addWidget(self.checkBoxBatch)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.headingLayout.addItem(spacerItem)
         self.functionalityWidget = QtWidgets.QWidget(BatchingWidget)
         self.functionalityWidget.setGeometry(QtCore.QRect(0, 30, 289, 241))
@@ -42,10 +49,14 @@ class Ui_BatchingWidget(object):
         self.horizontalLayout_31.setObjectName("horizontalLayout_31")
         self.pushButtonApplyAll = QtWidgets.QPushButton(self.functionalityWidget)
         self.pushButtonApplyAll.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButtonApplyAll.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.pushButtonApplyAll.sizePolicy().hasHeightForWidth()
+        )
         self.pushButtonApplyAll.setSizePolicy(sizePolicy)
         self.pushButtonApplyAll.setMinimumSize(QtCore.QSize(90, 0))
         self.pushButtonApplyAll.setMaximumSize(QtCore.QSize(90, 16777215))
@@ -55,7 +66,9 @@ class Ui_BatchingWidget(object):
         self.label_7.setEnabled(True)
         self.label_7.setObjectName("label_7")
         self.horizontalLayout_31.addWidget(self.label_7)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_31.addItem(spacerItem1)
         self.applyButtonsLayout.addLayout(self.horizontalLayout_31)
         self.functionalityLayout.addLayout(self.applyButtonsLayout, 1, 0, 1, 1)
@@ -63,19 +76,27 @@ class Ui_BatchingWidget(object):
         self.subjectListLayout.setObjectName("subjectListLayout")
         self.labelSubjects = QtWidgets.QLabel(self.functionalityWidget)
         self.labelSubjects.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.labelSubjects.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.labelSubjects.sizePolicy().hasHeightForWidth()
+        )
         self.labelSubjects.setSizePolicy(sizePolicy)
         self.labelSubjects.setObjectName("labelSubjects")
         self.subjectListLayout.addWidget(self.labelSubjects)
         self.listWidgetSubjects = QtWidgets.QListWidget(self.functionalityWidget)
         self.listWidgetSubjects.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.listWidgetSubjects.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.listWidgetSubjects.sizePolicy().hasHeightForWidth()
+        )
         self.listWidgetSubjects.setSizePolicy(sizePolicy)
         self.listWidgetSubjects.setObjectName("listWidgetSubjects")
         self.subjectListLayout.addWidget(self.listWidgetSubjects)
@@ -86,14 +107,17 @@ class Ui_BatchingWidget(object):
         self.verticalLayout.addLayout(self.functionalityLayout)
 
         self.retranslateUi(BatchingWidget)
-        self.checkBoxBatch.toggled['bool'].connect(BatchingWidget.showWidget)
+        self.checkBoxBatch.toggled["bool"].connect(BatchingWidget.showWidget)
         QtCore.QMetaObject.connectSlotsByName(BatchingWidget)
 
     def retranslateUi(self, BatchingWidget):
         _translate = QtCore.QCoreApplication.translate
-        BatchingWidget.setWindowTitle(_translate("BatchingWidget", "Meggie - Batch processing"))
+        BatchingWidget.setWindowTitle(
+            _translate("BatchingWidget", "Meggie - Batch processing")
+        )
         self.checkBoxBatch.setText(_translate("BatchingWidget", "Batch processing"))
         self.pushButtonApplyAll.setText(_translate("BatchingWidget", "Select all"))
         self.label_7.setText(_translate("BatchingWidget", "subjects on the list"))
-        self.labelSubjects.setText(_translate("BatchingWidget", "Select subjects to include in batch"))
-
+        self.labelSubjects.setText(
+            _translate("BatchingWidget", "Select subjects to include in batch")
+        )

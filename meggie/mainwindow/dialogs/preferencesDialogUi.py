@@ -18,7 +18,9 @@ class Ui_DialogPreferences(object):
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_2.addItem(spacerItem)
         self.pushButtonCancel = QtWidgets.QPushButton(DialogPreferences)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -39,11 +41,19 @@ class Ui_DialogPreferences(object):
         self.groupBoxMisc.setObjectName("groupBoxMisc")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.groupBoxMisc)
         self.gridLayout_4.setObjectName("gridLayout_4")
-        self.checkBoxAutomaticOpenPreviousExperiment = QtWidgets.QCheckBox(self.groupBoxMisc)
-        self.checkBoxAutomaticOpenPreviousExperiment.setObjectName("checkBoxAutomaticOpenPreviousExperiment")
-        self.gridLayout_4.addWidget(self.checkBoxAutomaticOpenPreviousExperiment, 0, 0, 1, 1)
+        self.checkBoxAutomaticOpenPreviousExperiment = QtWidgets.QCheckBox(
+            self.groupBoxMisc
+        )
+        self.checkBoxAutomaticOpenPreviousExperiment.setObjectName(
+            "checkBoxAutomaticOpenPreviousExperiment"
+        )
+        self.gridLayout_4.addWidget(
+            self.checkBoxAutomaticOpenPreviousExperiment, 0, 0, 1, 1
+        )
         self.gridLayout_5.addWidget(self.groupBoxMisc, 2, 0, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout_5.addItem(spacerItem1, 3, 0, 1, 1)
         self.groupBoxWorkspace = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxWorkspace.setObjectName("groupBoxWorkspace")
@@ -62,7 +72,9 @@ class Ui_DialogPreferences(object):
         self.formLayout.setObjectName("formLayout")
         self.pushButtonPlugins = QtWidgets.QPushButton(self.groupBoxPlugins)
         self.pushButtonPlugins.setObjectName("pushButtonPlugins")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.SpanningRole, self.pushButtonPlugins)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.SpanningRole, self.pushButtonPlugins
+        )
         self.gridLayout_5.addWidget(self.groupBoxPlugins, 1, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_3.addWidget(self.scrollArea, 0, 0, 1, 1)
@@ -74,12 +86,23 @@ class Ui_DialogPreferences(object):
 
     def retranslateUi(self, DialogPreferences):
         _translate = QtCore.QCoreApplication.translate
-        DialogPreferences.setWindowTitle(_translate("DialogPreferences", "Meggie - Preferences"))
+        DialogPreferences.setWindowTitle(
+            _translate("DialogPreferences", "Meggie - Preferences")
+        )
         self.pushButtonCancel.setText(_translate("DialogPreferences", "Cancel"))
         self.pushButtonAccept.setText(_translate("DialogPreferences", "Ok"))
         self.groupBoxMisc.setTitle(_translate("DialogPreferences", "Miscellaneous:"))
-        self.checkBoxAutomaticOpenPreviousExperiment.setText(_translate("DialogPreferences", "Automatically open previous experiment upon application startup"))
+        self.checkBoxAutomaticOpenPreviousExperiment.setText(
+            _translate(
+                "DialogPreferences",
+                "Automatically open previous experiment upon application startup",
+            )
+        )
         self.groupBoxWorkspace.setTitle(_translate("DialogPreferences", "Workspace:"))
-        self.ButtonBrowseWorkingDir.setText(_translate("DialogPreferences", "Browse..."))
+        self.ButtonBrowseWorkingDir.setText(
+            _translate("DialogPreferences", "Browse...")
+        )
         self.groupBoxPlugins.setTitle(_translate("DialogPreferences", "Plugins:"))
-        self.pushButtonPlugins.setText(_translate("DialogPreferences", "Select active plugins..."))
+        self.pushButtonPlugins.setText(
+            _translate("DialogPreferences", "Select active plugins...")
+        )

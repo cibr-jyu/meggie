@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_CreateEpochsFromEventsDialog(object):
     def setupUi(self, CreateEpochsFromEventsDialog):
         CreateEpochsFromEventsDialog.setObjectName("CreateEpochsFromEventsDialog")
@@ -18,7 +19,9 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_10.setContentsMargins(0, 0, -1, -1)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_10.addItem(spacerItem)
         self.pushButtonCancel = QtWidgets.QPushButton(CreateEpochsFromEventsDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -60,7 +63,9 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.checkBoxGrad = QtWidgets.QCheckBox(self.groupBoxRejection)
         self.checkBoxGrad.setChecked(True)
         self.checkBoxGrad.setObjectName("checkBoxGrad")
-        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.checkBoxGrad)
+        self.formLayout_2.setWidget(
+            0, QtWidgets.QFormLayout.LabelRole, self.checkBoxGrad
+        )
         self.doubleSpinBoxGradReject = QtWidgets.QDoubleSpinBox(self.groupBoxRejection)
         self.doubleSpinBoxGradReject.setPrefix("")
         self.doubleSpinBoxGradReject.setMinimum(-1.0)
@@ -68,29 +73,39 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.doubleSpinBoxGradReject.setSingleStep(100.0)
         self.doubleSpinBoxGradReject.setProperty("value", 3000.0)
         self.doubleSpinBoxGradReject.setObjectName("doubleSpinBoxGradReject")
-        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxGradReject)
+        self.formLayout_2.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxGradReject
+        )
         self.checkBoxMag = QtWidgets.QCheckBox(self.groupBoxRejection)
         self.checkBoxMag.setChecked(True)
         self.checkBoxMag.setObjectName("checkBoxMag")
-        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.checkBoxMag)
+        self.formLayout_2.setWidget(
+            1, QtWidgets.QFormLayout.LabelRole, self.checkBoxMag
+        )
         self.doubleSpinBoxMagReject = QtWidgets.QDoubleSpinBox(self.groupBoxRejection)
         self.doubleSpinBoxMagReject.setMinimum(-1.0)
         self.doubleSpinBoxMagReject.setMaximum(1000000000.0)
         self.doubleSpinBoxMagReject.setSingleStep(100.0)
         self.doubleSpinBoxMagReject.setProperty("value", 4000.0)
         self.doubleSpinBoxMagReject.setObjectName("doubleSpinBoxMagReject")
-        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxMagReject)
+        self.formLayout_2.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxMagReject
+        )
         self.checkBoxEeg = QtWidgets.QCheckBox(self.groupBoxRejection)
         self.checkBoxEeg.setChecked(True)
         self.checkBoxEeg.setObjectName("checkBoxEeg")
-        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.checkBoxEeg)
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.LabelRole, self.checkBoxEeg
+        )
         self.doubleSpinBoxEEGReject = QtWidgets.QDoubleSpinBox(self.groupBoxRejection)
         self.doubleSpinBoxEEGReject.setEnabled(True)
         self.doubleSpinBoxEEGReject.setMinimum(-1.0)
         self.doubleSpinBoxEEGReject.setMaximum(1000000000.0)
         self.doubleSpinBoxEEGReject.setProperty("value", 70.0)
         self.doubleSpinBoxEEGReject.setObjectName("doubleSpinBoxEEGReject")
-        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxEEGReject)
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxEEGReject
+        )
         self.gridLayout_7.addWidget(self.groupBoxRejection, 0, 1, 1, 1)
         self.groupBoxEpochs = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxEpochs.setObjectName("groupBoxEpochs")
@@ -98,10 +113,14 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.formLayout.setObjectName("formLayout")
         self.labelCollectionName = QtWidgets.QLabel(self.groupBoxEpochs)
         self.labelCollectionName.setObjectName("labelCollectionName")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.labelCollectionName)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.LabelRole, self.labelCollectionName
+        )
         self.lineEditCollectionName = QtWidgets.QLineEdit(self.groupBoxEpochs)
         self.lineEditCollectionName.setObjectName("lineEditCollectionName")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.lineEditCollectionName)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.lineEditCollectionName
+        )
         self.labelTmin = QtWidgets.QLabel(self.groupBoxEpochs)
         self.labelTmin.setObjectName("labelTmin")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.labelTmin)
@@ -112,7 +131,9 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.doubleSpinBoxTmin.setSingleStep(0.1)
         self.doubleSpinBoxTmin.setProperty("value", -0.2)
         self.doubleSpinBoxTmin.setObjectName("doubleSpinBoxTmin")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxTmin)
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxTmin
+        )
         self.labelTmax = QtWidgets.QLabel(self.groupBoxEpochs)
         self.labelTmax.setObjectName("labelTmax")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.labelTmax)
@@ -123,10 +144,14 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.doubleSpinBoxTmax.setSingleStep(0.1)
         self.doubleSpinBoxTmax.setProperty("value", 0.5)
         self.doubleSpinBoxTmax.setObjectName("doubleSpinBoxTmax")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxTmax)
+        self.formLayout.setWidget(
+            2, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxTmax
+        )
         self.labelBaselineStart = QtWidgets.QLabel(self.groupBoxEpochs)
         self.labelBaselineStart.setObjectName("labelBaselineStart")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.labelBaselineStart)
+        self.formLayout.setWidget(
+            3, QtWidgets.QFormLayout.LabelRole, self.labelBaselineStart
+        )
         self.doubleSpinBoxBaselineStart = QtWidgets.QDoubleSpinBox(self.groupBoxEpochs)
         self.doubleSpinBoxBaselineStart.setDecimals(4)
         self.doubleSpinBoxBaselineStart.setMinimum(-100.0)
@@ -134,10 +159,14 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.doubleSpinBoxBaselineStart.setSingleStep(0.1)
         self.doubleSpinBoxBaselineStart.setProperty("value", -0.2)
         self.doubleSpinBoxBaselineStart.setObjectName("doubleSpinBoxBaselineStart")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxBaselineStart)
+        self.formLayout.setWidget(
+            3, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxBaselineStart
+        )
         self.labelBaselineEnd = QtWidgets.QLabel(self.groupBoxEpochs)
         self.labelBaselineEnd.setObjectName("labelBaselineEnd")
-        self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.labelBaselineEnd)
+        self.formLayout.setWidget(
+            4, QtWidgets.QFormLayout.LabelRole, self.labelBaselineEnd
+        )
         self.doubleSpinBoxBaselineEnd = QtWidgets.QDoubleSpinBox(self.groupBoxEpochs)
         self.doubleSpinBoxBaselineEnd.setDecimals(4)
         self.doubleSpinBoxBaselineEnd.setMinimum(-100.0)
@@ -145,7 +174,9 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.doubleSpinBoxBaselineEnd.setSingleStep(0.1)
         self.doubleSpinBoxBaselineEnd.setProperty("value", 0.0)
         self.doubleSpinBoxBaselineEnd.setObjectName("doubleSpinBoxBaselineEnd")
-        self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxBaselineEnd)
+        self.formLayout.setWidget(
+            4, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxBaselineEnd
+        )
         self.labelDelay = QtWidgets.QLabel(self.groupBoxEpochs)
         self.labelDelay.setObjectName("labelDelay")
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.labelDelay)
@@ -155,7 +186,9 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.doubleSpinBoxDelay.setMaximum(100.0)
         self.doubleSpinBoxDelay.setSingleStep(0.1)
         self.doubleSpinBoxDelay.setObjectName("doubleSpinBoxDelay")
-        self.formLayout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxDelay)
+        self.formLayout.setWidget(
+            5, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxDelay
+        )
         self.gridLayout_7.addWidget(self.groupBoxEpochs, 0, 0, 1, 1)
         self.groupBoxBatching = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxBatching.setObjectName("groupBoxBatching")
@@ -166,7 +199,9 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.batchingWidgetPlaceholder.setObjectName("batchingWidgetPlaceholder")
         self.gridLayoutBatching.addWidget(self.batchingWidgetPlaceholder, 0, 0, 1, 1)
         self.gridLayout_7.addWidget(self.groupBoxBatching, 3, 0, 1, 2)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout_7.addItem(spacerItem1, 4, 0, 1, 1)
         self.groupBoxEvent = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxEvent.setObjectName("groupBoxEvent")
@@ -206,70 +241,180 @@ class Ui_CreateEpochsFromEventsDialog(object):
         self.retranslateUi(CreateEpochsFromEventsDialog)
         self.pushButtonApply.clicked.connect(CreateEpochsFromEventsDialog.accept)
         self.pushButtonCancel.clicked.connect(CreateEpochsFromEventsDialog.reject)
-        self.checkBoxGrad.toggled['bool'].connect(self.doubleSpinBoxGradReject.setEnabled)
-        self.checkBoxMag.toggled['bool'].connect(self.doubleSpinBoxMagReject.setEnabled)
-        self.checkBoxEeg.toggled['bool'].connect(self.doubleSpinBoxEEGReject.setEnabled)
+        self.checkBoxGrad.toggled["bool"].connect(
+            self.doubleSpinBoxGradReject.setEnabled
+        )
+        self.checkBoxMag.toggled["bool"].connect(self.doubleSpinBoxMagReject.setEnabled)
+        self.checkBoxEeg.toggled["bool"].connect(self.doubleSpinBoxEEGReject.setEnabled)
         self.pushButtonBatch.clicked.connect(CreateEpochsFromEventsDialog.acceptBatch)
         QtCore.QMetaObject.connectSlotsByName(CreateEpochsFromEventsDialog)
-        CreateEpochsFromEventsDialog.setTabOrder(self.pushButtonCancel, self.pushButtonBatch)
-        CreateEpochsFromEventsDialog.setTabOrder(self.pushButtonBatch, self.pushButtonApply)
-        CreateEpochsFromEventsDialog.setTabOrder(self.pushButtonApply, self.lineEditCollectionName)
-        CreateEpochsFromEventsDialog.setTabOrder(self.lineEditCollectionName, self.doubleSpinBoxTmin)
-        CreateEpochsFromEventsDialog.setTabOrder(self.doubleSpinBoxTmin, self.doubleSpinBoxTmax)
-        CreateEpochsFromEventsDialog.setTabOrder(self.doubleSpinBoxTmax, self.doubleSpinBoxBaselineStart)
-        CreateEpochsFromEventsDialog.setTabOrder(self.doubleSpinBoxBaselineStart, self.doubleSpinBoxBaselineEnd)
-        CreateEpochsFromEventsDialog.setTabOrder(self.doubleSpinBoxBaselineEnd, self.doubleSpinBoxDelay)
-        CreateEpochsFromEventsDialog.setTabOrder(self.doubleSpinBoxDelay, self.checkBoxGrad)
-        CreateEpochsFromEventsDialog.setTabOrder(self.checkBoxGrad, self.doubleSpinBoxGradReject)
-        CreateEpochsFromEventsDialog.setTabOrder(self.doubleSpinBoxGradReject, self.checkBoxMag)
-        CreateEpochsFromEventsDialog.setTabOrder(self.checkBoxMag, self.doubleSpinBoxMagReject)
-        CreateEpochsFromEventsDialog.setTabOrder(self.doubleSpinBoxMagReject, self.checkBoxEeg)
-        CreateEpochsFromEventsDialog.setTabOrder(self.checkBoxEeg, self.doubleSpinBoxEEGReject)
-        CreateEpochsFromEventsDialog.setTabOrder(self.doubleSpinBoxEEGReject, self.spinBoxEventID)
-        CreateEpochsFromEventsDialog.setTabOrder(self.spinBoxEventID, self.pushButtonEdit)
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.pushButtonCancel, self.pushButtonBatch
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.pushButtonBatch, self.pushButtonApply
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.pushButtonApply, self.lineEditCollectionName
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.lineEditCollectionName, self.doubleSpinBoxTmin
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.doubleSpinBoxTmin, self.doubleSpinBoxTmax
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.doubleSpinBoxTmax, self.doubleSpinBoxBaselineStart
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.doubleSpinBoxBaselineStart, self.doubleSpinBoxBaselineEnd
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.doubleSpinBoxBaselineEnd, self.doubleSpinBoxDelay
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.doubleSpinBoxDelay, self.checkBoxGrad
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.checkBoxGrad, self.doubleSpinBoxGradReject
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.doubleSpinBoxGradReject, self.checkBoxMag
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.checkBoxMag, self.doubleSpinBoxMagReject
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.doubleSpinBoxMagReject, self.checkBoxEeg
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.checkBoxEeg, self.doubleSpinBoxEEGReject
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.doubleSpinBoxEEGReject, self.spinBoxEventID
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.spinBoxEventID, self.pushButtonEdit
+        )
         CreateEpochsFromEventsDialog.setTabOrder(self.pushButtonEdit, self.spinBoxMask)
         CreateEpochsFromEventsDialog.setTabOrder(self.spinBoxMask, self.pushButtonHelp)
-        CreateEpochsFromEventsDialog.setTabOrder(self.pushButtonHelp, self.listWidgetEvents)
-        CreateEpochsFromEventsDialog.setTabOrder(self.listWidgetEvents, self.pushButtonAdd)
-        CreateEpochsFromEventsDialog.setTabOrder(self.pushButtonAdd, self.pushButtonClear)
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.pushButtonHelp, self.listWidgetEvents
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.listWidgetEvents, self.pushButtonAdd
+        )
+        CreateEpochsFromEventsDialog.setTabOrder(
+            self.pushButtonAdd, self.pushButtonClear
+        )
         CreateEpochsFromEventsDialog.setTabOrder(self.pushButtonClear, self.scrollArea)
 
     def retranslateUi(self, CreateEpochsFromEventsDialog):
         _translate = QtCore.QCoreApplication.translate
-        CreateEpochsFromEventsDialog.setWindowTitle(_translate("CreateEpochsFromEventsDialog", "Meggie - Create epochs from events"))
-        self.pushButtonCancel.setText(_translate("CreateEpochsFromEventsDialog", "Cancel"))
-        self.pushButtonBatch.setText(_translate("CreateEpochsFromEventsDialog", "Batch"))
-        self.pushButtonApply.setText(_translate("CreateEpochsFromEventsDialog", "Apply"))
-        self.groupBoxEventsList.setTitle(_translate("CreateEpochsFromEventsDialog", "List of event specifications"))
-        self.groupBoxRejection.setTitle(_translate("CreateEpochsFromEventsDialog", "Rejection limits"))
-        self.checkBoxGrad.setToolTip(_translate("CreateEpochsFromEventsDialog", "Include or exclude grad channels"))
+        CreateEpochsFromEventsDialog.setWindowTitle(
+            _translate(
+                "CreateEpochsFromEventsDialog", "Meggie - Create epochs from events"
+            )
+        )
+        self.pushButtonCancel.setText(
+            _translate("CreateEpochsFromEventsDialog", "Cancel")
+        )
+        self.pushButtonBatch.setText(
+            _translate("CreateEpochsFromEventsDialog", "Batch")
+        )
+        self.pushButtonApply.setText(
+            _translate("CreateEpochsFromEventsDialog", "Apply")
+        )
+        self.groupBoxEventsList.setTitle(
+            _translate("CreateEpochsFromEventsDialog", "List of event specifications")
+        )
+        self.groupBoxRejection.setTitle(
+            _translate("CreateEpochsFromEventsDialog", "Rejection limits")
+        )
+        self.checkBoxGrad.setToolTip(
+            _translate(
+                "CreateEpochsFromEventsDialog", "Include or exclude grad channels"
+            )
+        )
         self.checkBoxGrad.setText(_translate("CreateEpochsFromEventsDialog", "Grad"))
-        self.doubleSpinBoxGradReject.setSuffix(_translate("CreateEpochsFromEventsDialog", " fT/cm"))
-        self.checkBoxMag.setToolTip(_translate("CreateEpochsFromEventsDialog", "Include or exclude mag channels"))
+        self.doubleSpinBoxGradReject.setSuffix(
+            _translate("CreateEpochsFromEventsDialog", " fT/cm")
+        )
+        self.checkBoxMag.setToolTip(
+            _translate(
+                "CreateEpochsFromEventsDialog", "Include or exclude mag channels"
+            )
+        )
         self.checkBoxMag.setText(_translate("CreateEpochsFromEventsDialog", "Mag"))
-        self.doubleSpinBoxMagReject.setSuffix(_translate("CreateEpochsFromEventsDialog", " fT"))
-        self.checkBoxEeg.setToolTip(_translate("CreateEpochsFromEventsDialog", "Include or exclude eeg channels"))
+        self.doubleSpinBoxMagReject.setSuffix(
+            _translate("CreateEpochsFromEventsDialog", " fT")
+        )
+        self.checkBoxEeg.setToolTip(
+            _translate(
+                "CreateEpochsFromEventsDialog", "Include or exclude eeg channels"
+            )
+        )
         self.checkBoxEeg.setText(_translate("CreateEpochsFromEventsDialog", "EEG"))
-        self.doubleSpinBoxEEGReject.setSuffix(_translate("CreateEpochsFromEventsDialog", " uV"))
-        self.groupBoxEpochs.setTitle(_translate("CreateEpochsFromEventsDialog", "Epoch collection"))
-        self.labelCollectionName.setText(_translate("CreateEpochsFromEventsDialog", "Collection name:"))
-        self.lineEditCollectionName.setText(_translate("CreateEpochsFromEventsDialog", "Epochs"))
-        self.labelTmin.setText(_translate("CreateEpochsFromEventsDialog", "Start time:"))
-        self.doubleSpinBoxTmin.setSuffix(_translate("CreateEpochsFromEventsDialog", " s"))
+        self.doubleSpinBoxEEGReject.setSuffix(
+            _translate("CreateEpochsFromEventsDialog", " uV")
+        )
+        self.groupBoxEpochs.setTitle(
+            _translate("CreateEpochsFromEventsDialog", "Epoch collection")
+        )
+        self.labelCollectionName.setText(
+            _translate("CreateEpochsFromEventsDialog", "Collection name:")
+        )
+        self.lineEditCollectionName.setText(
+            _translate("CreateEpochsFromEventsDialog", "Epochs")
+        )
+        self.labelTmin.setText(
+            _translate("CreateEpochsFromEventsDialog", "Start time:")
+        )
+        self.doubleSpinBoxTmin.setSuffix(
+            _translate("CreateEpochsFromEventsDialog", " s")
+        )
         self.labelTmax.setText(_translate("CreateEpochsFromEventsDialog", "End time:"))
-        self.doubleSpinBoxTmax.setSuffix(_translate("CreateEpochsFromEventsDialog", " s"))
-        self.labelBaselineStart.setText(_translate("CreateEpochsFromEventsDialog", "Baseline start:"))
-        self.doubleSpinBoxBaselineStart.setSuffix(_translate("CreateEpochsFromEventsDialog", "s"))
-        self.labelBaselineEnd.setText(_translate("CreateEpochsFromEventsDialog", "Baseline end:"))
-        self.doubleSpinBoxBaselineEnd.setSuffix(_translate("CreateEpochsFromEventsDialog", "s"))
+        self.doubleSpinBoxTmax.setSuffix(
+            _translate("CreateEpochsFromEventsDialog", " s")
+        )
+        self.labelBaselineStart.setText(
+            _translate("CreateEpochsFromEventsDialog", "Baseline start:")
+        )
+        self.doubleSpinBoxBaselineStart.setSuffix(
+            _translate("CreateEpochsFromEventsDialog", "s")
+        )
+        self.labelBaselineEnd.setText(
+            _translate("CreateEpochsFromEventsDialog", "Baseline end:")
+        )
+        self.doubleSpinBoxBaselineEnd.setSuffix(
+            _translate("CreateEpochsFromEventsDialog", "s")
+        )
         self.labelDelay.setText(_translate("CreateEpochsFromEventsDialog", "Delay:"))
-        self.doubleSpinBoxDelay.setSuffix(_translate("CreateEpochsFromEventsDialog", "s"))
-        self.groupBoxBatching.setTitle(_translate("CreateEpochsFromEventsDialog", "Batching"))
-        self.groupBoxEvent.setTitle(_translate("CreateEpochsFromEventsDialog", "Select events to include in epoch collection"))
+        self.doubleSpinBoxDelay.setSuffix(
+            _translate("CreateEpochsFromEventsDialog", "s")
+        )
+        self.groupBoxBatching.setTitle(
+            _translate("CreateEpochsFromEventsDialog", "Batching")
+        )
+        self.groupBoxEvent.setTitle(
+            _translate(
+                "CreateEpochsFromEventsDialog",
+                "Select events to include in epoch collection",
+            )
+        )
         self.labelMask.setText(_translate("CreateEpochsFromEventsDialog", "Mask:"))
-        self.labelEventID.setText(_translate("CreateEpochsFromEventsDialog", "Event ID:"))
-        self.pushButtonEdit.setText(_translate("CreateEpochsFromEventsDialog", "Edit..."))
-        self.pushButtonHelp.setText(_translate("CreateEpochsFromEventsDialog", "Help..."))
-        self.pushButtonAdd.setText(_translate("CreateEpochsFromEventsDialog", "Add to list >>"))
-        self.pushButtonClear.setText(_translate("CreateEpochsFromEventsDialog", "Clear list <<"))
-
+        self.labelEventID.setText(
+            _translate("CreateEpochsFromEventsDialog", "Event ID:")
+        )
+        self.pushButtonEdit.setText(
+            _translate("CreateEpochsFromEventsDialog", "Edit...")
+        )
+        self.pushButtonHelp.setText(
+            _translate("CreateEpochsFromEventsDialog", "Help...")
+        )
+        self.pushButtonAdd.setText(
+            _translate("CreateEpochsFromEventsDialog", "Add to list >>")
+        )
+        self.pushButtonClear.setText(
+            _translate("CreateEpochsFromEventsDialog", "Clear list <<")
+        )

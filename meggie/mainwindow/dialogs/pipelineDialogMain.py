@@ -17,8 +17,7 @@ from meggie.utilities.messaging import exc_messagebox
 
 
 class PipelineDialog(QtWidgets.QDialog):
-    """ Contains logic for pipeline dialog.
-    """
+    """Contains logic for pipeline dialog."""
 
     def __init__(self, parent, prefs):
         QtWidgets.QDialog.__init__(self, parent)
@@ -38,19 +37,19 @@ class PipelineDialog(QtWidgets.QDialog):
         package_specs = find_all_package_specs()
 
         for source, package_spec in package_specs.items():
-            if source == 'meggie' or source in self.active_plugins:
+            if source == "meggie" or source in self.active_plugins:
 
-                if 'pipelines' in package_spec:
-                    for pipeline in package_spec['pipelines']:
+                if "pipelines" in package_spec:
+                    for pipeline in package_spec["pipelines"]:
                         try:
-                            id_ = pipeline['id']
+                            id_ = pipeline["id"]
                         except Exception as exc:
-                            raise Exception('Every pipeline should have id.')
+                            raise Exception("Every pipeline should have id.")
 
-                        name = pipeline.get('name', '')
+                        name = pipeline.get("name", "")
                         pipelines.append((id_, name))
 
-        pipelines.append(('classic', 'Include everything'))
+        pipelines.append(("classic", "Include everything"))
 
         self.pipelines = pipelines
 
@@ -60,8 +59,7 @@ class PipelineDialog(QtWidgets.QDialog):
             radio_button = QtWidgets.QRadioButton(self.ui.groupBoxPipeline)
             radio_button.setText(pipeline_name)
 
-            self.ui.gridLayoutPipeline.addWidget(
-                radio_button, idx + 1, 0, 1, 1)
+            self.ui.gridLayoutPipeline.addWidget(radio_button, idx + 1, 0, 1, 1)
 
             self.pipeline_buttons.append(radio_button)
 

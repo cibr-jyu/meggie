@@ -1,5 +1,6 @@
 """ Contains implementation for delete evoked
 """
+
 import logging
 
 import numpy as np
@@ -11,20 +12,19 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class DeleteEvoked(Action):
-    """ Deletes evoked of selected name
-    """
+    """Deletes evoked of selected name"""
 
     def run(self):
 
         subject = self.experiment.active_subject
 
         try:
-            selected_name = self.data['outputs']['evoked'][0]
+            selected_name = self.data["outputs"]["evoked"][0]
         except IndexError as exc:
             return
 
         try:
-            self.handler(subject, {'name': selected_name})
+            self.handler(subject, {"name": selected_name})
             self.experiment.save_experiment_settings()
         except Exception as exc:
             exc_messagebox(self.window, exc)
@@ -33,5 +33,4 @@ class DeleteEvoked(Action):
 
     @subject_action
     def handler(self, subject, params):
-        subject.remove(params['name'], 'evoked')
-
+        subject.remove(params["name"], "evoked")

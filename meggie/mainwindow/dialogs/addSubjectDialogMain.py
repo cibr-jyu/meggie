@@ -1,5 +1,6 @@
 """ Contains a class for logic of add subject dialog.
 """
+
 import os
 import traceback
 import logging
@@ -18,8 +19,7 @@ from meggie.utilities.names import next_available_name
 
 
 class AddSubjectDialog(QtWidgets.QDialog):
-    """ Contains the logic for add subject dialog.
-    """
+    """Contains the logic for add subject dialog."""
 
     def __init__(self, parent):
         QtWidgets.QDialog.__init__(self, parent)
@@ -28,14 +28,13 @@ class AddSubjectDialog(QtWidgets.QDialog):
 
         self.parent = parent
 
-    
     def accept(self):
         n_successful = 0
         for i in range(self.ui.listWidgetFileNames.count()):
             item = self.ui.listWidgetFileNames.item(i)
             raw_path = item.text()
             basename = os.path.basename(raw_path)
-            subject_name = basename.split('.')[0]
+            subject_name = basename.split(".")[0]
 
             experiment = self.parent.experiment
             old_names = experiment.subjects.keys()
@@ -46,12 +45,12 @@ class AddSubjectDialog(QtWidgets.QDialog):
                 @threaded
                 def _create_subject():
                     experiment.create_subject(subject_name, raw_path)
-                
+
                 _create_subject(do_meanwhile=self.parent.update_ui)
                 n_successful += 1
 
             except Exception as exc:
-                logging.getLogger('ui_logger').exception('')
+                logging.getLogger("ui_logger").exception("")
 
         try:
             self.parent.experiment.save_experiment_settings()
@@ -62,13 +61,16 @@ class AddSubjectDialog(QtWidgets.QDialog):
         n_total = self.ui.listWidgetFileNames.count()
 
         if n_total != n_successful:
-            message = ("Only {0} / {1} subjects added successfully. "
-                       "Please check console below for details.")
+            message = (
+                "Only {0} / {1} subjects added successfully. "
+                "Please check console below for details."
+            )
             messagebox(self.parent, message.format(n_successful, n_total))
 
-        message = ('{0} / {1} subjects added successfully.').format(
-            n_successful, n_total)
-        logging.getLogger('ui_logger').info(message)
+        message = ("{0} / {1} subjects added successfully.").format(
+            n_successful, n_total
+        )
+        logging.getLogger("ui_logger").info(message)
 
         self.parent.initialize_ui()
         self.close()
@@ -83,26 +85,33 @@ class AddSubjectDialog(QtWidgets.QDialog):
         all_items = []
         for row in mne_supported.items():
             ext = row[0]
-            name = row[1].__name__.split('_')[-1]
+            name = row[1].__name__.split("_")[-1]
             all_ext.append(ext)
-            all_items.append(name + ' files (*' + ext + ')')
+            all_items.append(name + " files (*" + ext + ")")
 
-        filter_string = 'All supported (*' + ' *'.join(all_ext) + ');'';'
-        filter_string = filter_string + ';'';'.join(all_items)
+        filter_string = "All supported (*" + " *".join(all_ext) + ");" ";"
+        filter_string = filter_string + ";" ";".join(all_items)
 
         self.fnames = QtWidgets.QFileDialog.getOpenFileNames(
             self,
-            'Select one or more files to open.', 
+            "Select one or more files to open.",
             os.path.expanduser("~"),
-            filter_string)[0]
+            filter_string,
+        )[0]
 
         if len(self.fnames) > 0:
             for name in self.fnames:
                 name = QtCore.QDir.toNativeSeparators(name)
                 item = QtWidgets.QListWidgetItem()
                 item.setText(name)
-                if len(self.ui.listWidgetFileNames.findItems(
-                       name, QtCore.Qt.MatchExactly)) > 0:
+                if (
+                    len(
+                        self.ui.listWidgetFileNames.findItems(
+                            name, QtCore.Qt.MatchExactly
+                        )
+                    )
+                    > 0
+                ):
                     continue
                 self.ui.listWidgetFileNames.addItem(item)
 

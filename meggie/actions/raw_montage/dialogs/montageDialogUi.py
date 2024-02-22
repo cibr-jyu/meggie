@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_montageDialog(object):
     def setupUi(self, montageDialog):
         montageDialog.setObjectName("montageDialog")
@@ -18,7 +19,9 @@ class Ui_montageDialog(object):
         self.scrollArea.setMinimumSize(QtCore.QSize(0, 0))
         self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.scrollArea.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+        self.scrollArea.setSizeAdjustPolicy(
+            QtWidgets.QAbstractScrollArea.AdjustToContents
+        )
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
@@ -27,7 +30,9 @@ class Ui_montageDialog(object):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout_2.addItem(spacerItem, 3, 1, 1, 1)
         self.groupBoxMontage = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxMontage.setObjectName("groupBoxMontage")
@@ -35,33 +40,49 @@ class Ui_montageDialog(object):
         self.formLayout_2.setObjectName("formLayout_2")
         self.radioButtonMontageFromList = QtWidgets.QRadioButton(self.groupBoxMontage)
         self.radioButtonMontageFromList.setObjectName("radioButtonMontageFromList")
-        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.radioButtonMontageFromList)
+        self.formLayout_2.setWidget(
+            0, QtWidgets.QFormLayout.LabelRole, self.radioButtonMontageFromList
+        )
         self.comboBoxSelectFromList = QtWidgets.QComboBox(self.groupBoxMontage)
         self.comboBoxSelectFromList.setObjectName("comboBoxSelectFromList")
-        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.comboBoxSelectFromList)
+        self.formLayout_2.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.comboBoxSelectFromList
+        )
         self.radioButtonMontageFromFile = QtWidgets.QRadioButton(self.groupBoxMontage)
         self.radioButtonMontageFromFile.setObjectName("radioButtonMontageFromFile")
-        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.radioButtonMontageFromFile)
+        self.formLayout_2.setWidget(
+            1, QtWidgets.QFormLayout.LabelRole, self.radioButtonMontageFromFile
+        )
         self.pushButtonSelectFromFile = QtWidgets.QPushButton(self.groupBoxMontage)
         self.pushButtonSelectFromFile.setObjectName("pushButtonSelectFromFile")
-        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.pushButtonSelectFromFile)
+        self.formLayout_2.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.pushButtonSelectFromFile
+        )
         self.labelCurrentLabel = QtWidgets.QLabel(self.groupBoxMontage)
         self.labelCurrentLabel.setObjectName("labelCurrentLabel")
-        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.labelCurrentLabel)
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.LabelRole, self.labelCurrentLabel
+        )
         self.labelCurrentContent = QtWidgets.QLabel(self.groupBoxMontage)
         self.labelCurrentContent.setText("")
         self.labelCurrentContent.setObjectName("labelCurrentContent")
-        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.labelCurrentContent)
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.FieldRole, self.labelCurrentContent
+        )
         self.labelHeadSize = QtWidgets.QLabel(self.groupBoxMontage)
         self.labelHeadSize.setObjectName("labelHeadSize")
-        self.formLayout_2.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.labelHeadSize)
+        self.formLayout_2.setWidget(
+            3, QtWidgets.QFormLayout.LabelRole, self.labelHeadSize
+        )
         self.doubleSpinBoxHeadSize = QtWidgets.QDoubleSpinBox(self.groupBoxMontage)
         self.doubleSpinBoxHeadSize.setDecimals(4)
         self.doubleSpinBoxHeadSize.setMaximum(1.0)
         self.doubleSpinBoxHeadSize.setSingleStep(0.001)
         self.doubleSpinBoxHeadSize.setProperty("value", 0.095)
         self.doubleSpinBoxHeadSize.setObjectName("doubleSpinBoxHeadSize")
-        self.formLayout_2.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxHeadSize)
+        self.formLayout_2.setWidget(
+            3, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxHeadSize
+        )
         self.gridLayout_2.addWidget(self.groupBoxMontage, 0, 0, 2, 2)
         self.groupBoxBatching = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxBatching.setObjectName("groupBoxBatching")
@@ -76,7 +97,9 @@ class Ui_montageDialog(object):
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem1)
         self.pushButtonCancel = QtWidgets.QPushButton(montageDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -98,22 +121,37 @@ class Ui_montageDialog(object):
         montageDialog.setTabOrder(self.pushButtonBatch, self.pushButtonApply)
         montageDialog.setTabOrder(self.pushButtonApply, self.scrollArea)
         montageDialog.setTabOrder(self.scrollArea, self.radioButtonMontageFromList)
-        montageDialog.setTabOrder(self.radioButtonMontageFromList, self.comboBoxSelectFromList)
-        montageDialog.setTabOrder(self.comboBoxSelectFromList, self.radioButtonMontageFromFile)
-        montageDialog.setTabOrder(self.radioButtonMontageFromFile, self.pushButtonSelectFromFile)
+        montageDialog.setTabOrder(
+            self.radioButtonMontageFromList, self.comboBoxSelectFromList
+        )
+        montageDialog.setTabOrder(
+            self.comboBoxSelectFromList, self.radioButtonMontageFromFile
+        )
+        montageDialog.setTabOrder(
+            self.radioButtonMontageFromFile, self.pushButtonSelectFromFile
+        )
 
     def retranslateUi(self, montageDialog):
         _translate = QtCore.QCoreApplication.translate
-        montageDialog.setWindowTitle(_translate("montageDialog", "Meggie - Set standard montage"))
-        self.groupBoxMontage.setTitle(_translate("montageDialog", "Select EEG montage:"))
-        self.radioButtonMontageFromList.setText(_translate("montageDialog", "Select from list:"))
-        self.radioButtonMontageFromFile.setText(_translate("montageDialog", "Select from file:"))
+        montageDialog.setWindowTitle(
+            _translate("montageDialog", "Meggie - Set standard montage")
+        )
+        self.groupBoxMontage.setTitle(
+            _translate("montageDialog", "Select EEG montage:")
+        )
+        self.radioButtonMontageFromList.setText(
+            _translate("montageDialog", "Select from list:")
+        )
+        self.radioButtonMontageFromFile.setText(
+            _translate("montageDialog", "Select from file:")
+        )
         self.pushButtonSelectFromFile.setText(_translate("montageDialog", "Browse..."))
-        self.labelCurrentLabel.setText(_translate("montageDialog", "Current selection:"))
+        self.labelCurrentLabel.setText(
+            _translate("montageDialog", "Current selection:")
+        )
         self.labelHeadSize.setText(_translate("montageDialog", "Head size:"))
         self.doubleSpinBoxHeadSize.setSuffix(_translate("montageDialog", "m"))
         self.groupBoxBatching.setTitle(_translate("montageDialog", "Batching"))
         self.pushButtonCancel.setText(_translate("montageDialog", "Cancel"))
         self.pushButtonBatch.setText(_translate("montageDialog", "Batch"))
         self.pushButtonApply.setText(_translate("montageDialog", "Apply"))
-

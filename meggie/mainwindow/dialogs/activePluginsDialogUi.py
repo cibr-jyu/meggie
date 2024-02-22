@@ -19,12 +19,16 @@ class Ui_activePluginsDialog(object):
         self.listWidgetPlugins = QtWidgets.QListWidget(activePluginsDialog)
         self.listWidgetPlugins.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
         self.listWidgetPlugins.setDefaultDropAction(QtCore.Qt.IgnoreAction)
-        self.listWidgetPlugins.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        self.listWidgetPlugins.setSelectionMode(
+            QtWidgets.QAbstractItemView.MultiSelection
+        )
         self.listWidgetPlugins.setObjectName("listWidgetPlugins")
         self.gridLayout.addWidget(self.listWidgetPlugins, 0, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.pushButtonCancel = QtWidgets.QPushButton(activePluginsDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -43,6 +47,8 @@ class Ui_activePluginsDialog(object):
 
     def retranslateUi(self, activePluginsDialog):
         _translate = QtCore.QCoreApplication.translate
-        activePluginsDialog.setWindowTitle(_translate("activePluginsDialog", "Meggie - Active plugins"))
+        activePluginsDialog.setWindowTitle(
+            _translate("activePluginsDialog", "Meggie - Active plugins")
+        )
         self.pushButtonCancel.setText(_translate("activePluginsDialog", "Cancel"))
         self.pushButtonAccept.setText(_translate("activePluginsDialog", "Accept"))

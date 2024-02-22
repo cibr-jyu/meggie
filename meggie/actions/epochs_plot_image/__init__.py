@@ -1,5 +1,6 @@
 """ Contains implementation for epochs plot
 """
+
 import logging
 
 import matplotlib.pyplot as plt
@@ -14,29 +15,26 @@ from meggie.mainwindow.dynamic import subject_action
 
 
 class PlotEpochsImage(Action):
-    """ Opens MNE's image plot.
-    """
+    """Opens MNE's image plot."""
 
     def run(self):
 
         try:
-            selected_name = self.data['outputs']['epochs'][0]
+            selected_name = self.data["outputs"]["epochs"][0]
         except IndexError as exc:
             return
 
         subject = self.experiment.active_subject
         try:
-            self.handler(subject, {'name': selected_name})
+            self.handler(subject, {"name": selected_name})
         except Exception as exc:
             exc_messagebox(self.window, exc)
 
-
     @subject_action
     def handler(self, subject, params):
-        epochs = subject.epochs.get(params['name'])
+        epochs = subject.epochs.get(params["name"])
         figs = epochs.content.plot_image()
         for fig in figs:
             ch_type = get_figure_title(fig)
-            title = '{0}_{1}'.format(params['name'], ch_type)
+            title = "{0}_{1}".format(params["name"], ch_type)
             set_figure_title(fig, title)
-

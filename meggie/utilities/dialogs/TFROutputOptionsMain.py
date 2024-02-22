@@ -1,13 +1,13 @@
 """ Contains a class for the tfr output options dialog.
 """
+
 from PyQt5 import QtWidgets
 
 from meggie.utilities.dialogs.TFROutputOptionsUi import Ui_TFROutputOptions
 
 
 class TFROutputOptions(QtWidgets.QDialog):
-    """ Contains logic for the tfr output options dialog.
-    """
+    """Contains logic for the tfr output options dialog."""
 
     def __init__(self, parent, experiment, tfr_name, handler, ask_condition=False):
         QtWidgets.QDialog.__init__(self, parent)
@@ -43,7 +43,7 @@ class TFROutputOptions(QtWidgets.QDialog):
         self.ui.doubleSpinBoxFrequencyMax.setMaximum(maxfreq)
         self.ui.doubleSpinBoxFrequencyMin.setMinimum(minfreq)
         self.ui.doubleSpinBoxFrequencyMax.setMaximum(maxfreq)
- 
+
         self.ui.doubleSpinBoxBaselineStart.setValue(start)
         self.ui.doubleSpinBoxBaselineEnd.setValue(0)
         self.ui.doubleSpinBoxTimeStart.setValue(start)
@@ -78,20 +78,20 @@ class TFROutputOptions(QtWidgets.QDialog):
         fmax = self.ui.doubleSpinBoxFrequencyMax.value()
 
         if self.ui.radioButtonAllChannels.isChecked():
-            output = 'all_channels'
+            output = "all_channels"
         else:
-            output = 'channel_averages'
+            output = "channel_averages"
 
         params = {}
-        params['output_option'] = output
-        params['condition'] = condition
-        params['blmode'] = blmode
-        params['blstart'] = blstart
-        params['blend'] = blend
-        params['tmin'] = tmin
-        params['tmax'] = tmax
-        params['fmin'] = fmin
-        params['fmax'] = fmax
+        params["output_option"] = output
+        params["condition"] = condition
+        params["blmode"] = blmode
+        params["blstart"] = blstart
+        params["blend"] = blend
+        params["tmin"] = tmin
+        params["tmax"] = tmax
+        params["fmin"] = fmin
+        params["fmax"] = fmax
 
         self.handler(params)
 

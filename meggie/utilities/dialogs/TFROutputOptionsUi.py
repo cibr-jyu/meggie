@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_TFROutputOptions(object):
     def setupUi(self, TFROutputOptions):
         TFROutputOptions.setObjectName("TFROutputOptions")
@@ -52,7 +53,9 @@ class Ui_TFROutputOptions(object):
         self.labelBaselineCorrection = QtWidgets.QLabel(self.groupBoxBaseline)
         self.labelBaselineCorrection.setObjectName("labelBaselineCorrection")
         self.gridLayout_9.addWidget(self.labelBaselineCorrection, 0, 0, 1, 1)
-        self.doubleSpinBoxBaselineStart = QtWidgets.QDoubleSpinBox(self.groupBoxBaseline)
+        self.doubleSpinBoxBaselineStart = QtWidgets.QDoubleSpinBox(
+            self.groupBoxBaseline
+        )
         self.doubleSpinBoxBaselineStart.setSingleStep(0.1)
         self.doubleSpinBoxBaselineStart.setObjectName("doubleSpinBoxBaselineStart")
         self.gridLayout_9.addWidget(self.doubleSpinBoxBaselineStart, 2, 1, 1, 1)
@@ -90,16 +93,24 @@ class Ui_TFROutputOptions(object):
         self.formLayout.setObjectName("formLayout")
         self.labelChannels = QtWidgets.QLabel(self.groupBoxGrouping)
         self.labelChannels.setObjectName("labelChannels")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.labelChannels)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.LabelRole, self.labelChannels
+        )
         self.radioButtonAllChannels = QtWidgets.QRadioButton(self.groupBoxGrouping)
         self.radioButtonAllChannels.setChecked(True)
         self.radioButtonAllChannels.setObjectName("radioButtonAllChannels")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.radioButtonAllChannels)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.radioButtonAllChannels
+        )
         self.radioButtonChannelAverages = QtWidgets.QRadioButton(self.groupBoxGrouping)
         self.radioButtonChannelAverages.setObjectName("radioButtonChannelAverages")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.radioButtonChannelAverages)
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.radioButtonChannelAverages
+        )
         self.gridLayout_4.addWidget(self.groupBoxGrouping, 6, 0, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout_4.addItem(spacerItem, 7, 0, 1, 1)
         self.groupBoxFrequency = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxFrequency.setObjectName("groupBoxFrequency")
@@ -111,11 +122,15 @@ class Ui_TFROutputOptions(object):
         self.labelFrequencyMin = QtWidgets.QLabel(self.groupBoxFrequency)
         self.labelFrequencyMin.setObjectName("labelFrequencyMin")
         self.gridLayout.addWidget(self.labelFrequencyMin, 0, 0, 1, 1)
-        self.doubleSpinBoxFrequencyMin = QtWidgets.QDoubleSpinBox(self.groupBoxFrequency)
+        self.doubleSpinBoxFrequencyMin = QtWidgets.QDoubleSpinBox(
+            self.groupBoxFrequency
+        )
         self.doubleSpinBoxFrequencyMin.setSingleStep(0.1)
         self.doubleSpinBoxFrequencyMin.setObjectName("doubleSpinBoxFrequencyMin")
         self.gridLayout.addWidget(self.doubleSpinBoxFrequencyMin, 0, 1, 1, 1)
-        self.doubleSpinBoxFrequencyMax = QtWidgets.QDoubleSpinBox(self.groupBoxFrequency)
+        self.doubleSpinBoxFrequencyMax = QtWidgets.QDoubleSpinBox(
+            self.groupBoxFrequency
+        )
         self.doubleSpinBoxFrequencyMax.setSingleStep(0.1)
         self.doubleSpinBoxFrequencyMax.setObjectName("doubleSpinBoxFrequencyMax")
         self.gridLayout.addWidget(self.doubleSpinBoxFrequencyMax, 1, 1, 1, 1)
@@ -135,7 +150,9 @@ class Ui_TFROutputOptions(object):
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem1)
         self.pushButtonCancel = QtWidgets.QPushButton(TFROutputOptions)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -146,51 +163,102 @@ class Ui_TFROutputOptions(object):
         self.gridLayout_2.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
         self.retranslateUi(TFROutputOptions)
-        self.checkBoxBaselineCorrection.toggled['bool'].connect(self.comboBoxBaselineMode.setEnabled)
-        self.checkBoxBaselineCorrection.toggled['bool'].connect(self.doubleSpinBoxBaselineStart.setEnabled)
-        self.checkBoxBaselineCorrection.toggled['bool'].connect(self.doubleSpinBoxBaselineEnd.setEnabled)
+        self.checkBoxBaselineCorrection.toggled["bool"].connect(
+            self.comboBoxBaselineMode.setEnabled
+        )
+        self.checkBoxBaselineCorrection.toggled["bool"].connect(
+            self.doubleSpinBoxBaselineStart.setEnabled
+        )
+        self.checkBoxBaselineCorrection.toggled["bool"].connect(
+            self.doubleSpinBoxBaselineEnd.setEnabled
+        )
         self.pushButtonCancel.clicked.connect(TFROutputOptions.reject)
         self.pushButtonOk.clicked.connect(TFROutputOptions.accept)
         QtCore.QMetaObject.connectSlotsByName(TFROutputOptions)
         TFROutputOptions.setTabOrder(self.scrollArea, self.checkBoxBaselineCorrection)
-        TFROutputOptions.setTabOrder(self.checkBoxBaselineCorrection, self.comboBoxBaselineMode)
-        TFROutputOptions.setTabOrder(self.comboBoxBaselineMode, self.doubleSpinBoxBaselineStart)
-        TFROutputOptions.setTabOrder(self.doubleSpinBoxBaselineStart, self.doubleSpinBoxBaselineEnd)
-        TFROutputOptions.setTabOrder(self.doubleSpinBoxBaselineEnd, self.doubleSpinBoxFrequencyMin)
-        TFROutputOptions.setTabOrder(self.doubleSpinBoxFrequencyMin, self.doubleSpinBoxFrequencyMax)
-        TFROutputOptions.setTabOrder(self.doubleSpinBoxFrequencyMax, self.doubleSpinBoxTimeStart)
-        TFROutputOptions.setTabOrder(self.doubleSpinBoxTimeStart, self.doubleSpinBoxTimeEnd)
+        TFROutputOptions.setTabOrder(
+            self.checkBoxBaselineCorrection, self.comboBoxBaselineMode
+        )
+        TFROutputOptions.setTabOrder(
+            self.comboBoxBaselineMode, self.doubleSpinBoxBaselineStart
+        )
+        TFROutputOptions.setTabOrder(
+            self.doubleSpinBoxBaselineStart, self.doubleSpinBoxBaselineEnd
+        )
+        TFROutputOptions.setTabOrder(
+            self.doubleSpinBoxBaselineEnd, self.doubleSpinBoxFrequencyMin
+        )
+        TFROutputOptions.setTabOrder(
+            self.doubleSpinBoxFrequencyMin, self.doubleSpinBoxFrequencyMax
+        )
+        TFROutputOptions.setTabOrder(
+            self.doubleSpinBoxFrequencyMax, self.doubleSpinBoxTimeStart
+        )
+        TFROutputOptions.setTabOrder(
+            self.doubleSpinBoxTimeStart, self.doubleSpinBoxTimeEnd
+        )
         TFROutputOptions.setTabOrder(self.doubleSpinBoxTimeEnd, self.comboBoxCondition)
-        TFROutputOptions.setTabOrder(self.comboBoxCondition, self.radioButtonAllChannels)
-        TFROutputOptions.setTabOrder(self.radioButtonAllChannels, self.radioButtonChannelAverages)
-        TFROutputOptions.setTabOrder(self.radioButtonChannelAverages, self.pushButtonCancel)
+        TFROutputOptions.setTabOrder(
+            self.comboBoxCondition, self.radioButtonAllChannels
+        )
+        TFROutputOptions.setTabOrder(
+            self.radioButtonAllChannels, self.radioButtonChannelAverages
+        )
+        TFROutputOptions.setTabOrder(
+            self.radioButtonChannelAverages, self.pushButtonCancel
+        )
         TFROutputOptions.setTabOrder(self.pushButtonCancel, self.pushButtonOk)
 
     def retranslateUi(self, TFROutputOptions):
         _translate = QtCore.QCoreApplication.translate
-        TFROutputOptions.setWindowTitle(_translate("TFROutputOptions", "Meggie - Output options"))
+        TFROutputOptions.setWindowTitle(
+            _translate("TFROutputOptions", "Meggie - Output options")
+        )
         self.groupBox.setTitle(_translate("TFROutputOptions", "Time settings:"))
         self.labelTimeStart.setText(_translate("TFROutputOptions", "Start (s):"))
         self.labelTimeEnd.setText(_translate("TFROutputOptions", "End (s):"))
         self.groupBoxBaseline.setTitle(_translate("TFROutputOptions", "Baseline:"))
-        self.labelBaselineCorrection.setText(_translate("TFROutputOptions", "Baseline correction:"))
+        self.labelBaselineCorrection.setText(
+            _translate("TFROutputOptions", "Baseline correction:")
+        )
         self.comboBoxBaselineMode.setItemText(0, _translate("TFROutputOptions", "mean"))
-        self.comboBoxBaselineMode.setItemText(1, _translate("TFROutputOptions", "ratio"))
-        self.comboBoxBaselineMode.setItemText(2, _translate("TFROutputOptions", "logratio"))
-        self.comboBoxBaselineMode.setItemText(3, _translate("TFROutputOptions", "percent"))
-        self.comboBoxBaselineMode.setItemText(4, _translate("TFROutputOptions", "zscore"))
-        self.labelBaselineStart.setText(_translate("TFROutputOptions", "Baseline start (s):"))
-        self.labelBaselineEnd.setText(_translate("TFROutputOptions", "Baseline end (s):"))
+        self.comboBoxBaselineMode.setItemText(
+            1, _translate("TFROutputOptions", "ratio")
+        )
+        self.comboBoxBaselineMode.setItemText(
+            2, _translate("TFROutputOptions", "logratio")
+        )
+        self.comboBoxBaselineMode.setItemText(
+            3, _translate("TFROutputOptions", "percent")
+        )
+        self.comboBoxBaselineMode.setItemText(
+            4, _translate("TFROutputOptions", "zscore")
+        )
+        self.labelBaselineStart.setText(
+            _translate("TFROutputOptions", "Baseline start (s):")
+        )
+        self.labelBaselineEnd.setText(
+            _translate("TFROutputOptions", "Baseline end (s):")
+        )
         self.labelBaselineMode.setText(_translate("TFROutputOptions", "Baseline mode:"))
         self.groupBoxGrouping.setTitle(_translate("TFROutputOptions", "Grouping:"))
         self.labelChannels.setText(_translate("TFROutputOptions", "Type:"))
-        self.radioButtonAllChannels.setText(_translate("TFROutputOptions", "All channels"))
-        self.radioButtonChannelAverages.setText(_translate("TFROutputOptions", "Channel averages"))
-        self.groupBoxFrequency.setTitle(_translate("TFROutputOptions", "Frequency settings:"))
-        self.labelFrequencyMax.setText(_translate("TFROutputOptions", "Maximum frequency (Hz):"))
-        self.labelFrequencyMin.setText(_translate("TFROutputOptions", "Minimum frequency (Hz):"))
+        self.radioButtonAllChannels.setText(
+            _translate("TFROutputOptions", "All channels")
+        )
+        self.radioButtonChannelAverages.setText(
+            _translate("TFROutputOptions", "Channel averages")
+        )
+        self.groupBoxFrequency.setTitle(
+            _translate("TFROutputOptions", "Frequency settings:")
+        )
+        self.labelFrequencyMax.setText(
+            _translate("TFROutputOptions", "Maximum frequency (Hz):")
+        )
+        self.labelFrequencyMin.setText(
+            _translate("TFROutputOptions", "Minimum frequency (Hz):")
+        )
         self.groupBoxCondition.setTitle(_translate("TFROutputOptions", "Condition:"))
         self.labelCondition.setText(_translate("TFROutputOptions", "Select condition:"))
         self.pushButtonCancel.setText(_translate("TFROutputOptions", "Cancel"))
         self.pushButtonOk.setText(_translate("TFROutputOptions", "Accept"))
-

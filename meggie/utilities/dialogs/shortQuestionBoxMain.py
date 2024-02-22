@@ -7,15 +7,14 @@ from meggie.utilities.dialogs.shortQuestionBoxUi import Ui_shortQuestionBox
 
 
 class shortQuestionBox(QtWidgets.QDialog):
-    """ Contains logic for the short question box.
-    """
+    """Contains logic for the short question box."""
 
     def __init__(self, message, parent, handler):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_shortQuestionBox()
         self.ui.setupUi(self)
 
-        self.setWindowTitle('Meggie - Question')
+        self.setWindowTitle("Meggie - Question")
         self.ui.labelMessage.setText(message)
 
         self.handler = handler

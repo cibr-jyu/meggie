@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_DialogFilter(object):
     def setupUi(self, DialogFilter):
         DialogFilter.setObjectName("DialogFilter")
@@ -16,7 +17,9 @@ class Ui_DialogFilter(object):
         self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.pushButtonCancel = QtWidgets.QPushButton(DialogFilter)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -45,59 +48,93 @@ class Ui_DialogFilter(object):
         self.checkBoxBandstop = QtWidgets.QCheckBox(self.groupBoxBandstop)
         self.checkBoxBandstop.setChecked(False)
         self.checkBoxBandstop.setObjectName("checkBoxBandstop")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.checkBoxBandstop)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.LabelRole, self.checkBoxBandstop
+        )
         self.doubleSpinBoxBandstopFreq = QtWidgets.QDoubleSpinBox(self.groupBoxBandstop)
         self.doubleSpinBoxBandstopFreq.setEnabled(False)
-        self.doubleSpinBoxBandstopFreq.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.doubleSpinBoxBandstopFreq.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.doubleSpinBoxBandstopFreq.setDecimals(3)
         self.doubleSpinBoxBandstopFreq.setMaximum(10000.0)
         self.doubleSpinBoxBandstopFreq.setSingleStep(1.0)
         self.doubleSpinBoxBandstopFreq.setProperty("value", 50.0)
         self.doubleSpinBoxBandstopFreq.setObjectName("doubleSpinBoxBandstopFreq")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxBandstopFreq)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxBandstopFreq
+        )
         self.checkBoxBandstop2 = QtWidgets.QCheckBox(self.groupBoxBandstop)
         self.checkBoxBandstop2.setObjectName("checkBoxBandstop2")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.checkBoxBandstop2)
-        self.doubleSpinBoxBandstopFreq2 = QtWidgets.QDoubleSpinBox(self.groupBoxBandstop)
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.LabelRole, self.checkBoxBandstop2
+        )
+        self.doubleSpinBoxBandstopFreq2 = QtWidgets.QDoubleSpinBox(
+            self.groupBoxBandstop
+        )
         self.doubleSpinBoxBandstopFreq2.setEnabled(False)
-        self.doubleSpinBoxBandstopFreq2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.doubleSpinBoxBandstopFreq2.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.doubleSpinBoxBandstopFreq2.setDecimals(3)
         self.doubleSpinBoxBandstopFreq2.setMaximum(10000.0)
         self.doubleSpinBoxBandstopFreq2.setSingleStep(1.0)
         self.doubleSpinBoxBandstopFreq2.setProperty("value", 100.0)
         self.doubleSpinBoxBandstopFreq2.setObjectName("doubleSpinBoxBandstopFreq2")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxBandstopFreq2)
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxBandstopFreq2
+        )
         self.labelBandStopNotchWidth = QtWidgets.QLabel(self.groupBoxBandstop)
         self.labelBandStopNotchWidth.setObjectName("labelBandStopNotchWidth")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.labelBandStopNotchWidth)
-        self.doubleSpinBoxBandstopWidth = QtWidgets.QDoubleSpinBox(self.groupBoxBandstop)
-        self.doubleSpinBoxBandstopWidth.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.formLayout.setWidget(
+            2, QtWidgets.QFormLayout.LabelRole, self.labelBandStopNotchWidth
+        )
+        self.doubleSpinBoxBandstopWidth = QtWidgets.QDoubleSpinBox(
+            self.groupBoxBandstop
+        )
+        self.doubleSpinBoxBandstopWidth.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.doubleSpinBoxBandstopWidth.setDecimals(3)
         self.doubleSpinBoxBandstopWidth.setMaximum(10000.0)
         self.doubleSpinBoxBandstopWidth.setSingleStep(1.0)
         self.doubleSpinBoxBandstopWidth.setProperty("value", 1.0)
         self.doubleSpinBoxBandstopWidth.setObjectName("doubleSpinBoxBandstopWidth")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxBandstopWidth)
+        self.formLayout.setWidget(
+            2, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxBandstopWidth
+        )
         self.labelTransBw = QtWidgets.QLabel(self.groupBoxBandstop)
         self.labelTransBw.setObjectName("labelTransBw")
         self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.labelTransBw)
         self.doubleSpinBoxNotchTransBw = QtWidgets.QDoubleSpinBox(self.groupBoxBandstop)
-        self.doubleSpinBoxNotchTransBw.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.doubleSpinBoxNotchTransBw.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.doubleSpinBoxNotchTransBw.setDecimals(3)
         self.doubleSpinBoxNotchTransBw.setMinimum(0.1)
         self.doubleSpinBoxNotchTransBw.setSingleStep(0.1)
         self.doubleSpinBoxNotchTransBw.setProperty("value", 0.5)
         self.doubleSpinBoxNotchTransBw.setObjectName("doubleSpinBoxNotchTransBw")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxNotchTransBw)
+        self.formLayout.setWidget(
+            3, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxNotchTransBw
+        )
         self.labelBandstopFilterLength = QtWidgets.QLabel(self.groupBoxBandstop)
         self.labelBandstopFilterLength.setObjectName("labelBandstopFilterLength")
-        self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.labelBandstopFilterLength)
-        self.doubleSpinBoxBandStopLength = QtWidgets.QDoubleSpinBox(self.groupBoxBandstop)
-        self.doubleSpinBoxBandStopLength.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.formLayout.setWidget(
+            4, QtWidgets.QFormLayout.LabelRole, self.labelBandstopFilterLength
+        )
+        self.doubleSpinBoxBandStopLength = QtWidgets.QDoubleSpinBox(
+            self.groupBoxBandstop
+        )
+        self.doubleSpinBoxBandStopLength.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.doubleSpinBoxBandStopLength.setSingleStep(0.1)
         self.doubleSpinBoxBandStopLength.setProperty("value", 10.0)
         self.doubleSpinBoxBandStopLength.setObjectName("doubleSpinBoxBandStopLength")
-        self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxBandStopLength)
+        self.formLayout.setWidget(
+            4, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxBandStopLength
+        )
         self.gridLayout_6.addWidget(self.groupBoxBandstop, 1, 0, 1, 1)
         self.groupBoxBandpass = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxBandpass.setObjectName("groupBoxBandpass")
@@ -106,57 +143,95 @@ class Ui_DialogFilter(object):
         self.checkBoxHighpass = QtWidgets.QCheckBox(self.groupBoxBandpass)
         self.checkBoxHighpass.setChecked(True)
         self.checkBoxHighpass.setObjectName("checkBoxHighpass")
-        self.formLayout_5.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.checkBoxHighpass)
-        self.doubleSpinBoxHighpassCutoff = QtWidgets.QDoubleSpinBox(self.groupBoxBandpass)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.formLayout_5.setWidget(
+            0, QtWidgets.QFormLayout.LabelRole, self.checkBoxHighpass
+        )
+        self.doubleSpinBoxHighpassCutoff = QtWidgets.QDoubleSpinBox(
+            self.groupBoxBandpass
+        )
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.doubleSpinBoxHighpassCutoff.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.doubleSpinBoxHighpassCutoff.sizePolicy().hasHeightForWidth()
+        )
         self.doubleSpinBoxHighpassCutoff.setSizePolicy(sizePolicy)
-        self.doubleSpinBoxHighpassCutoff.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.doubleSpinBoxHighpassCutoff.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.doubleSpinBoxHighpassCutoff.setDecimals(3)
         self.doubleSpinBoxHighpassCutoff.setMaximum(1000000000.0)
         self.doubleSpinBoxHighpassCutoff.setSingleStep(1.0)
         self.doubleSpinBoxHighpassCutoff.setProperty("value", 1.0)
         self.doubleSpinBoxHighpassCutoff.setObjectName("doubleSpinBoxHighpassCutoff")
-        self.formLayout_5.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxHighpassCutoff)
+        self.formLayout_5.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxHighpassCutoff
+        )
         self.checkBoxLowpass = QtWidgets.QCheckBox(self.groupBoxBandpass)
         self.checkBoxLowpass.setChecked(True)
         self.checkBoxLowpass.setObjectName("checkBoxLowpass")
-        self.formLayout_5.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.checkBoxLowpass)
-        self.doubleSpinBoxLowpassCutoff = QtWidgets.QDoubleSpinBox(self.groupBoxBandpass)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.formLayout_5.setWidget(
+            1, QtWidgets.QFormLayout.LabelRole, self.checkBoxLowpass
+        )
+        self.doubleSpinBoxLowpassCutoff = QtWidgets.QDoubleSpinBox(
+            self.groupBoxBandpass
+        )
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.doubleSpinBoxLowpassCutoff.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.doubleSpinBoxLowpassCutoff.sizePolicy().hasHeightForWidth()
+        )
         self.doubleSpinBoxLowpassCutoff.setSizePolicy(sizePolicy)
-        self.doubleSpinBoxLowpassCutoff.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.doubleSpinBoxLowpassCutoff.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.doubleSpinBoxLowpassCutoff.setDecimals(3)
         self.doubleSpinBoxLowpassCutoff.setMaximum(10000.0)
         self.doubleSpinBoxLowpassCutoff.setSingleStep(1.0)
         self.doubleSpinBoxLowpassCutoff.setProperty("value", 40.0)
         self.doubleSpinBoxLowpassCutoff.setObjectName("doubleSpinBoxLowpassCutoff")
-        self.formLayout_5.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxLowpassCutoff)
+        self.formLayout_5.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxLowpassCutoff
+        )
         self.labelTransitionWidth = QtWidgets.QLabel(self.groupBoxBandpass)
         self.labelTransitionWidth.setObjectName("labelTransitionWidth")
-        self.formLayout_5.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.labelTransitionWidth)
-        self.doubleSpinBoxTransBandwidth = QtWidgets.QDoubleSpinBox(self.groupBoxBandpass)
-        self.doubleSpinBoxTransBandwidth.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.formLayout_5.setWidget(
+            2, QtWidgets.QFormLayout.LabelRole, self.labelTransitionWidth
+        )
+        self.doubleSpinBoxTransBandwidth = QtWidgets.QDoubleSpinBox(
+            self.groupBoxBandpass
+        )
+        self.doubleSpinBoxTransBandwidth.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.doubleSpinBoxTransBandwidth.setDecimals(3)
         self.doubleSpinBoxTransBandwidth.setMaximum(10000.0)
         self.doubleSpinBoxTransBandwidth.setSingleStep(0.1)
         self.doubleSpinBoxTransBandwidth.setProperty("value", 0.5)
         self.doubleSpinBoxTransBandwidth.setObjectName("doubleSpinBoxTransBandwidth")
-        self.formLayout_5.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxTransBandwidth)
+        self.formLayout_5.setWidget(
+            2, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxTransBandwidth
+        )
         self.labelFilterLength = QtWidgets.QLabel(self.groupBoxBandpass)
         self.labelFilterLength.setObjectName("labelFilterLength")
-        self.formLayout_5.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.labelFilterLength)
+        self.formLayout_5.setWidget(
+            3, QtWidgets.QFormLayout.LabelRole, self.labelFilterLength
+        )
         self.doubleSpinBoxLength = QtWidgets.QDoubleSpinBox(self.groupBoxBandpass)
-        self.doubleSpinBoxLength.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.doubleSpinBoxLength.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.doubleSpinBoxLength.setSingleStep(0.1)
         self.doubleSpinBoxLength.setProperty("value", 10.0)
         self.doubleSpinBoxLength.setObjectName("doubleSpinBoxLength")
-        self.formLayout_5.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxLength)
+        self.formLayout_5.setWidget(
+            3, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxLength
+        )
         self.gridLayout_6.addWidget(self.groupBoxBandpass, 0, 0, 1, 1)
         self.groupBoxPreview = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxPreview.setObjectName("groupBoxPreview")
@@ -183,10 +258,18 @@ class Ui_DialogFilter(object):
         self.pushButtonApply.clicked.connect(DialogFilter.accept)
         self.pushButtonCancel.clicked.connect(DialogFilter.reject)
         self.pushButtonBatch.clicked.connect(DialogFilter.acceptBatch)
-        self.checkBoxBandstop.toggled['bool'].connect(self.doubleSpinBoxBandstopFreq.setEnabled)
-        self.checkBoxBandstop2.toggled['bool'].connect(self.doubleSpinBoxBandstopFreq2.setEnabled)
-        self.checkBoxHighpass.toggled['bool'].connect(self.doubleSpinBoxHighpassCutoff.setEnabled)
-        self.checkBoxLowpass.toggled['bool'].connect(self.doubleSpinBoxLowpassCutoff.setEnabled)
+        self.checkBoxBandstop.toggled["bool"].connect(
+            self.doubleSpinBoxBandstopFreq.setEnabled
+        )
+        self.checkBoxBandstop2.toggled["bool"].connect(
+            self.doubleSpinBoxBandstopFreq2.setEnabled
+        )
+        self.checkBoxHighpass.toggled["bool"].connect(
+            self.doubleSpinBoxHighpassCutoff.setEnabled
+        )
+        self.checkBoxLowpass.toggled["bool"].connect(
+            self.doubleSpinBoxLowpassCutoff.setEnabled
+        )
         QtCore.QMetaObject.connectSlotsByName(DialogFilter)
 
     def retranslateUi(self, DialogFilter):
@@ -196,26 +279,37 @@ class Ui_DialogFilter(object):
         self.pushButtonBatch.setText(_translate("DialogFilter", "Batch"))
         self.pushButtonApply.setText(_translate("DialogFilter", "Apply"))
         self.groupBoxBandstop.setTitle(_translate("DialogFilter", "Bandstop filter"))
-        self.checkBoxBandstop.setText(_translate("DialogFilter", "BandStop filter (notch)"))
+        self.checkBoxBandstop.setText(
+            _translate("DialogFilter", "BandStop filter (notch)")
+        )
         self.doubleSpinBoxBandstopFreq.setSuffix(_translate("DialogFilter", " Hz"))
-        self.checkBoxBandstop2.setText(_translate("DialogFilter", "BandStop filter (notch)"))
+        self.checkBoxBandstop2.setText(
+            _translate("DialogFilter", "BandStop filter (notch)")
+        )
         self.doubleSpinBoxBandstopFreq2.setSuffix(_translate("DialogFilter", " Hz"))
-        self.labelBandStopNotchWidth.setText(_translate("DialogFilter", "Notch band width:"))
+        self.labelBandStopNotchWidth.setText(
+            _translate("DialogFilter", "Notch band width:")
+        )
         self.doubleSpinBoxBandstopWidth.setSuffix(_translate("DialogFilter", " Hz"))
         self.labelTransBw.setText(_translate("DialogFilter", "Transition band width:"))
         self.doubleSpinBoxNotchTransBw.setSuffix(_translate("DialogFilter", " Hz"))
-        self.labelBandstopFilterLength.setText(_translate("DialogFilter", "Filter length:"))
+        self.labelBandstopFilterLength.setText(
+            _translate("DialogFilter", "Filter length:")
+        )
         self.doubleSpinBoxBandStopLength.setSuffix(_translate("DialogFilter", "s"))
         self.groupBoxBandpass.setTitle(_translate("DialogFilter", "Bandpass filter"))
         self.checkBoxHighpass.setText(_translate("DialogFilter", "Highpass filter"))
         self.doubleSpinBoxHighpassCutoff.setSuffix(_translate("DialogFilter", " Hz"))
         self.checkBoxLowpass.setText(_translate("DialogFilter", "Lowpass filter"))
         self.doubleSpinBoxLowpassCutoff.setSuffix(_translate("DialogFilter", " Hz"))
-        self.labelTransitionWidth.setText(_translate("DialogFilter", "Transition band width:"))
+        self.labelTransitionWidth.setText(
+            _translate("DialogFilter", "Transition band width:")
+        )
         self.doubleSpinBoxTransBandwidth.setSuffix(_translate("DialogFilter", " Hz"))
         self.labelFilterLength.setText(_translate("DialogFilter", "Filter length:"))
         self.doubleSpinBoxLength.setSuffix(_translate("DialogFilter", "s"))
         self.groupBoxPreview.setTitle(_translate("DialogFilter", "Preview"))
-        self.pushButtonPreview.setText(_translate("DialogFilter", "Preview with given filters"))
+        self.pushButtonPreview.setText(
+            _translate("DialogFilter", "Preview with given filters")
+        )
         self.groupBoxBatching.setTitle(_translate("DialogFilter", "Batching"))
-

@@ -17,7 +17,7 @@ from meggie.utilities.threading import threaded
 
 @threaded
 def save_all_channels(experiment, selected_name):
-    """ Saves all channesl of a spectrum item to a csv file. """
+    """Saves all channesl of a spectrum item to a csv file."""
     column_names = []
     row_descs = []
     csv_data = []
@@ -35,15 +35,18 @@ def save_all_channels(experiment, selected_name):
                 row_descs.append(row_desc)
 
     folder = filemanager.create_timestamped_folder(experiment)
-    fname = selected_name + '_all_subjects_all_channels_spectrum.csv'
+    fname = selected_name + "_all_subjects_all_channels_spectrum.csv"
     path = os.path.join(folder, fname)
 
     filemanager.save_csv(path, csv_data, column_names, row_descs)
-    logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
+    logging.getLogger("ui_logger").info("Saved the csv file to " + path)
+
 
 @threaded
-def save_channel_averages(experiment, selected_name, channel_groups, log_transformed=False):
-    """ Saves channel averages of a spectrum item to a csv file. """
+def save_channel_averages(
+    experiment, selected_name, channel_groups, log_transformed=False
+):
+    """Saves channel averages of a spectrum item to a csv file."""
     column_names = []
     row_descs = []
     csv_data = []
@@ -61,7 +64,8 @@ def save_channel_averages(experiment, selected_name, channel_groups, log_transfo
         for key, psd in spectrum.content.items():
 
             data_labels, averaged_data = average_to_channel_groups(
-                psd, info, ch_names, channel_groups)
+                psd, info, ch_names, channel_groups
+            )
 
             if log_transformed:
                 csv_data.extend(10 * np.log10(averaged_data.tolist()))
@@ -75,9 +79,8 @@ def save_channel_averages(experiment, selected_name, channel_groups, log_transfo
                 row_descs.append(row_desc)
 
     folder = filemanager.create_timestamped_folder(experiment)
-    fname = selected_name + '_all_subjects_channel_averages_spectrum.csv'
+    fname = selected_name + "_all_subjects_channel_averages_spectrum.csv"
     path = os.path.join(folder, fname)
 
     filemanager.save_csv(path, csv_data, column_names, row_descs)
-    logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
-
+    logging.getLogger("ui_logger").info("Saved the csv file to " + path)

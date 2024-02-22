@@ -16,11 +16,11 @@ from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 
 
 class SaveEvoked(Action):
-    """ Saved evoked items to csv files """
+    """Saved evoked items to csv files"""
 
     def run(self):
         try:
-            selected_name = self.data['outputs']['evoked'][0]
+            selected_name = self.data["outputs"]["evoked"][0]
         except IndexError as exc:
             return
 
@@ -33,12 +33,14 @@ class SaveEvoked(Action):
             for mne_evoked in evoked.content.values():
                 time_arrays.append(mne_evoked.times)
 
-        assert_arrays_same(time_arrays, 'Times do not match')
+        assert_arrays_same(time_arrays, "Times do not match")
 
         def option_handler(selected_option):
-            params = {'name': selected_name, 
-                      'output_option': selected_option,
-                      'channel_groups': self.experiment.channel_groups}
+            params = {
+                "name": selected_name,
+                "output_option": selected_option,
+                "channel_groups": self.experiment.channel_groups,
+            }
             try:
                 self.handler(self.experiment.active_subject, params)
             except Exception as exc:
@@ -49,14 +51,15 @@ class SaveEvoked(Action):
 
     @subject_action
     def handler(self, subject, params):
-        """
-        """
-        if params['output_option'] == 'channel_averages':
-            save_channel_averages(self.experiment, 
-                                  params['name'], 
-                                  params['channel_groups'],
-                                  do_meanwhile=self.window.update_ui)
+        """ """
+        if params["output_option"] == "channel_averages":
+            save_channel_averages(
+                self.experiment,
+                params["name"],
+                params["channel_groups"],
+                do_meanwhile=self.window.update_ui,
+            )
         else:
-            save_all_channels(self.experiment, params['name'],
-                              do_meanwhile=self.window.update_ui)
-
+            save_all_channels(
+                self.experiment, params["name"], do_meanwhile=self.window.update_ui
+            )

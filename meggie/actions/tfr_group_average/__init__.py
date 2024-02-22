@@ -14,25 +14,21 @@ from meggie.utilities.dialogs.groupSelectionDialogMain import GroupSelectionDial
 
 
 class GroupAverage(Action):
-    """ Creates group average items
-    """
+    """Creates group average items"""
 
     def run(self):
-        """
-        """
+        """ """
         try:
-            selected_name = self.data['outputs']['tfr'][0]
+            selected_name = self.data["outputs"]["tfr"][0]
         except IndexError as exc:
             return
 
         name = next_available_name(
-            self.experiment.active_subject.tfr.keys(),
-            'group_' + selected_name)
+            self.experiment.active_subject.tfr.keys(), "group_" + selected_name
+        )
 
         def group_handler(groups):
-            params = {'based_on': selected_name, 
-                      'name': name,
-                      'groups': groups}
+            params = {"based_on": selected_name, "name": name, "groups": groups}
             try:
                 self.handler(self.experiment.active_subject, params)
                 self.experiment.save_experiment_settings()
@@ -40,17 +36,18 @@ class GroupAverage(Action):
             except Exception as exc:
                 exc_messagebox(self.window, exc)
 
-        dialog = GroupSelectionDialog(self.experiment, self.window, handler=group_handler)
+        dialog = GroupSelectionDialog(
+            self.experiment, self.window, handler=group_handler
+        )
         dialog.show()
 
     @subject_action
     def handler(self, subject, params):
-        """
-        """
-        group_average_tfr(self.experiment, 
-                             params['based_on'],
-                             params['groups'],
-                             params['name'],
-                             do_meanwhile=self.window.update_ui)
-
-
+        """ """
+        group_average_tfr(
+            self.experiment,
+            params["based_on"],
+            params["groups"],
+            params["name"],
+            do_meanwhile=self.window.update_ui,
+        )
