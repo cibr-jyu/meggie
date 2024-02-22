@@ -1,5 +1,6 @@
 {
     "id": "tfr_plot_tse",
     "name": "Plot TSE",
-    "entry": "PlotTSE"
+    "entry": "PlotTSE",
+    "description": "Visualize the Temporal Spectral Evolution (TSE) of the selected TFR object, collapsing the frequency dimension over a specified interval, for individual channels or averaged across channel groups."
 }

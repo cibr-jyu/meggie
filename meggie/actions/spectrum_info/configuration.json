@@ -1,5 +1,6 @@
 {
     "id": "spectrum_info",
     "name": "Spectrum info",
-    "entry": "Info"
+    "entry": "Info",
+    "description": "Extract information about the selected spectrum object."
 }

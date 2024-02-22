@@ -1,5 +1,6 @@
 {
     "id": "tfr_save_tse",
     "name": "Save TSE to csv",
-    "entry": "SaveTSE"
+    "entry": "SaveTSE",
+    "description": "Export the TSE data from the TFR object, collapsing the frequency dimension over a specified interval, into a CSV file for all matching subjects."
 }

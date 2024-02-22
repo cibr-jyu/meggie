@@ -1,23 +1,23 @@
 # Installation
 
 Meggie does not have standalone installers, but it can be easily installed on Windows, macOS, or Linux systems with Python 3.9 or higher using either of the following methods:
-  
+
 ## Using conda
 
 Install meggie to a conda environment:
 ```bash
 $ conda create -n meggie-env -c conda-forge meggie=={{VERSION}}
 ```
-  
+
 ### Using pip:
 
-Create a virtual environment:
+Create a virtual environment folder:
 ```bash
 $ python -m venv meggie-env
 ```
 Activate the environment:
 ```bash
-$ source .meggie-env/bin/activate
+$ source meggie-env/bin/activate
 ```
 Install dependencies:
 ```bash
@@ -32,7 +32,7 @@ Activate the environment in which Meggie was installed. For conda:
 ```bash
 conda activate meggie-env
 ```
-For pip:
+Or, for pip:
 ```bash
 source meggie-env/bin/activate
 ```

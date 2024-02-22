@@ -1,5 +1,6 @@
 {
     "id": "tfr_delete",
     "name": "Delete",
-    "entry": "DeleteTFR"
+    "entry": "DeleteTFR",
+    "description": "Permanently remove the selected TFR object from the current subject."
 }

@@ -1,5 +1,6 @@
 {
     "id": "tfr_save",
     "name": "Save TFR to csv",
-    "entry": "SaveTFR"
+    "entry": "SaveTFR",
+    "description": "Export the numerical data from the TFR object for all matching subjects into a CSV file."
 }

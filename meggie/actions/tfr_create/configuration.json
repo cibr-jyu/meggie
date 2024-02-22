@@ -1,5 +1,6 @@
 {
     "id": "tfr_create",
     "name": "Create TFR",
-    "entry": "CreateTFR"
+    "entry": "CreateTFR",
+    "description": "Calculate time-frequency representations (TFRs) for selected epoch collections independently, with each collection yielding a unique TFR."
 }

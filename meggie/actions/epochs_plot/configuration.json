@@ -1,5 +1,6 @@
 {
     "id": "epochs_plot",
     "name": "Plot",
-    "entry": "PlotEpochs"
+    "entry": "PlotEpochs",
+    "description": "Generate a simple plot for the selected epoch collection."
 }

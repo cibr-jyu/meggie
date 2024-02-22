@@ -10,9 +10,10 @@ nav:
         - Experiments: user-guide/experiments.md
         - Actions: user-guide/actions.md
     - Developer Guide:
-        - Setting up: developer-guide/setting-up.md
         - Architecture: developer-guide/architecture.md
         - Development: developer-guide/development.md
+    - External Resources:
+        - Meggie Tutorial: https://meggie.teekuningas.net
 
 theme:
     name: readthedocs

@@ -1,5 +1,6 @@
 {
     "id": "evoked_group_average",
     "name": "Average over subjects",
-    "entry": "GroupAverage"
+    "entry": "GroupAverage",
+    "description": "Calculate the average of the selected evoked response object across subjects, with options to group subjects before averaging."
 }

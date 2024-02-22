@@ -1,5 +1,6 @@
 {
     "id": "tfr_info",
     "name": "TFR info",
-    "entry": "Info"
+    "entry": "Info",
+    "description": "Extract information about the selected TFR object."
 }

@@ -2,5 +2,5 @@
     "id": "epochs_create",
     "name": "Create epochs",
     "entry": "CreateEpochs",
-    "description": "This action is used to create new epoch collections for the selected subject."
+    "description": "Create a new epoch collection for the current subject."
 }

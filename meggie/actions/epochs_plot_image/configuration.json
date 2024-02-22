@@ -1,5 +1,6 @@
 {
     "id": "epochs_plot_image",
     "name": "Plot image",
-    "entry": "PlotEpochsImage"
+    "entry": "PlotEpochsImage",
+    "description": "Generate an image plot for the selected epoch collection."
 }

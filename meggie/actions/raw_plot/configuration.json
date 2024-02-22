@@ -1,5 +1,6 @@
 {
     "id": "raw_plot",
     "name": "Plot raw",
-    "entry": "PlotRaw"
+    "entry": "PlotRaw",
+    "description": "Produce a time series plot of the raw data."
 }

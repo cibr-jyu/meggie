@@ -43,10 +43,18 @@ def get_actions(prefix):
     # Create the formatted string
     formatted_strings = []
     for action in sorted_actions:
+        if not action[1]:
+            continue
+
+        if not action[0].startswith(prefix):
+            continue
+
+        if action[0].endswith("_info"):
+            continue
+
         title = f"{action[1]} ({action[0]})"
         desc = action[2] or "To be added."
-        if action[0].startswith(prefix) and action[1]:
-            formatted_strings.append(f"### {title}\n\n{desc}\n")
+        formatted_strings.append(f"### {title}\n\n{desc}\n")
 
     # Join all formatted strings into one final string
     final_actions_output = "\n".join(formatted_strings)

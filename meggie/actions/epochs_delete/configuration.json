@@ -2,5 +2,5 @@
     "id": "epochs_delete",
     "name": "Delete",
     "entry": "DeleteEpochs",
-    "description": "This action is used to delete epoch collections from the selected subject."
+    "description": "Permanently remove the selected epoch collection from the current subject."
 }

@@ -15,4 +15,4 @@ Compared to other tools like FieldTrip, MNE-Python, EEGLAB, Brainstorm, and mnel
 
 Meggie can be changed and added to with plugins. If you know Python, you can create new features. This helps Meggie grow and helps everyone who uses it.
 
-To learn more, see our [Developer Documentation](./developer-guide/development.md).
+To learn more, see our [Developer Documentation](./developer-guide/architecture.md).

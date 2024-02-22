@@ -1,5 +1,6 @@
 {
     "id": "evoked_create",
     "name": "Create evoked",
-    "entry": "CreateEvoked"
+    "entry": "CreateEvoked",
+    "description": "Compute the average of selected epoch collections independently. Each collection is averaged separately, resulting in a distinct average curve for each."
 }
