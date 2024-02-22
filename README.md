@@ -2,7 +2,7 @@
 
 ## Documentation
 
-See *https://cibr-jyu.github.io/meggie* for installation and usage.
+See https://cibr-jyu.github.io/meggie for installation and usage.
 
 ## License
 
