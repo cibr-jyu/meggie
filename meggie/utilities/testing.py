@@ -31,6 +31,14 @@ def load_action_spec(action_name):
     return action_spec
 
 
+def patched_messagebox(parent, message):
+    raise Exception(message)
+
+
+def patched_exc_messagebox(parent, exc, exec_=False):
+    raise exc
+
+
 class BaseTestAction:
     @pytest.fixture(autouse=True)
     def setup_common(self, qtbot, monkeypatch):
@@ -49,7 +57,16 @@ class BaseTestAction:
         )
         self.experiment.activate_subject("sample_01-raw")
 
-    def run_action(self, tab_id, action_name, handler):
+    def run_action(self, tab_id, action_name, handler, dialog_path):
+
+        self.monkeypatch.setattr(
+            ".".join([dialog_path, "exc_messagebox"]),
+            patched_exc_messagebox,
+        )
+        self.monkeypatch.setattr(
+            ".".join([dialog_path, "messagebox"]),
+            patched_messagebox,
+        )
         data = {"tab_id": tab_id}
         action_spec = load_action_spec(action_name)
         self.action_instance = handler(
