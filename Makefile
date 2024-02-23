@@ -7,6 +7,10 @@ check:
 	black --check -t py39 meggie
 	pylama meggie
 
+.PHONY: test
+test:
+	pytest -s
+
 .PHONY: update_docs
 update_docs:
 	rm -fr docs_updated
