@@ -24,6 +24,10 @@ jobs:
         pip install -r requirements.txt
         pip install -r dev-requirements.txt
 
+    - name: Install meggie for tests
+      run: |
+        pip install .
+
     - name: Check styles
       run: |
         make check
