@@ -1,6 +1,3 @@
-import os
-os.environ['QT_QPA_PLATFORM'] = 'offscreen'
-
 import tempfile
 import pytest
 import json
@@ -10,6 +7,8 @@ import pkg_resources
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from meggie.utilities.generate_experiments import create_evoked_conditions_experiment
+
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
 
 
 class MockMainWindow(QMainWindow):
@@ -35,7 +34,7 @@ def load_action_spec(action_name):
 class BaseTestAction:
     @pytest.fixture(autouse=True)
     def setup_common(self, qtbot, monkeypatch):
-        os.environ['QT_QPA_PLATFORM'] = 'offscreen'
+        os.environ["QT_QPA_PLATFORM"] = "offscreen"
         self.qtbot = qtbot
         self.monkeypatch = monkeypatch
         self.mock_main_window = MockMainWindow()

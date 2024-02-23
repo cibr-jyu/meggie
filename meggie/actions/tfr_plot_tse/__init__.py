@@ -14,7 +14,6 @@ from meggie.actions.tfr_plot_tse.controller.tfr import plot_tse_topo
 
 
 class PlotTSE(Action):
-
     def run(self):
         """Plots a TSE from TFR object."""
         try:

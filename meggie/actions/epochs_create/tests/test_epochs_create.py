@@ -8,9 +8,7 @@ from meggie.actions.epochs_create.dialogs.createEpochsFromEventsDialogMain impor
 
 
 class TestEpochsCreate(BaseTestAction):
-
     def test_create_epochs_dialog(self):
-
         def patched_exc_messagebox(parent, exc, exec_=False):
             raise exc
 
