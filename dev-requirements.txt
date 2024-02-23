@@ -1,4 +1,5 @@
 black
 pylama
-nose
+pytest
+pytest-qt
 mkdocs
