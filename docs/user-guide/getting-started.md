@@ -21,7 +21,7 @@ $ source meggie-env/bin/activate
 ```
 Install dependencies:
 ```bash
-$ pip install -r https://github.com/cibr-jyu/meggie/blob/v{{VERSION}}/requirements.txt
+$ pip install -r https://raw.githubusercontent.com/cibr-jyu/meggie/v{{VERSION}}/requirements.txt
 ```
 Install meggie:
 ```bash
