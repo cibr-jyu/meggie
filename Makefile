@@ -20,3 +20,7 @@ update_docs:
 .PHONY: serve_docs
 serve_docs: update_docs
 	mkdocs serve
+
+.PHONY: cov
+cov:
+	coverage run --source=meggie -m pytest && coverage report

@@ -5,6 +5,7 @@ meggie.egg-info
 preferences.cfg
 site
 docs_updated
+htmlcov
 *.swm
 *.pyc
 *.swm
@@ -19,3 +20,4 @@ docs_updated
 .settings/
 .eggs
 .meggie-env
+.coverage

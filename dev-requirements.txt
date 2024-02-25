@@ -3,3 +3,4 @@ pylama
 pytest
 pytest-qt
 mkdocs
+coverage
