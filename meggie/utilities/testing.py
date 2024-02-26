@@ -1,4 +1,5 @@
 import tempfile
+import importlib
 import pytest
 import json
 import os
@@ -6,7 +7,7 @@ import pkg_resources
 
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
-from meggie.utilities.generate_experiments import create_evoked_conditions_experiment
+from meggie.utilities.generate_experiments import create_test_experiment
 
 os.environ["QT_QPA_PLATFORM"] = "offscreen"
 
@@ -52,25 +53,31 @@ class BaseTestAction:
             yield
 
     def setup_experiment(self):
-        self.experiment = create_evoked_conditions_experiment(
-            self.dirpath, "test_experiment", n_subjects=1
-        )
+        self.experiment = create_test_experiment(self.dirpath, "test_experiment")
         self.experiment.activate_subject("sample_01-raw")
 
-    def run_action(self, tab_id, action_name, handler, dialog_path):
+    def run_action(self, action_name, handler, data={}, patch_paths=[]):
 
-        self.monkeypatch.setattr(
-            ".".join([dialog_path, "exc_messagebox"]),
-            patched_exc_messagebox,
-        )
-        self.monkeypatch.setattr(
-            ".".join([dialog_path, "messagebox"]),
-            patched_messagebox,
-        )
-        data = {"tab_id": tab_id}
+        for patch_path in patch_paths:
+            module = importlib.import_module(patch_path)
+
+            if getattr(module, "exc_messagebox", None):
+                self.monkeypatch.setattr(
+                    ".".join([patch_path, "exc_messagebox"]),
+                    patched_exc_messagebox,
+                )
+
+            if getattr(module, "messagebox", None):
+                self.monkeypatch.setattr(
+                    ".".join([patch_path, "messagebox"]),
+                    patched_messagebox,
+                )
+
+        merged_data = {"tab_id": "test_tab"}
+        merged_data.update(data)
         action_spec = load_action_spec(action_name)
         self.action_instance = handler(
-            self.experiment, data, self.mock_main_window, action_spec
+            self.experiment, merged_data, self.mock_main_window, action_spec
         )
         self.action_instance.run()
 

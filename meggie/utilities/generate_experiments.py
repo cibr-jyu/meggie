@@ -12,6 +12,9 @@ import numpy as np
 from meggie.mainwindow.preferences import PreferencesHandler
 
 from meggie.experiment import initialize_new_experiment
+from meggie.utilities.events import find_events
+from meggie.utilities.events import find_stim_channel
+from meggie.datatypes.epochs.epochs import Epochs
 
 
 def create_experiment(
@@ -139,9 +142,35 @@ def create_evoked_conditions_experiment(
     )
 
 
+def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
+    """Generate experiment with data for testing."""
+
+    experiment = create_evoked_conditions_experiment(
+        experiment_folder, experiment_name, n_subjects=n_subjects
+    )
+
+    # create trivial epochs
+    for subject in experiment.subjects.values():
+        raw = subject.get_raw()
+        stim_channel = find_stim_channel(raw)
+        events = find_events(raw, stim_channel)
+
+        mne_epochs = mne.Epochs(raw, events, {"1": 1, "2": 2}, -0.1, 0.2)
+
+        epochs_directory = subject.epochs_directory
+        epochs = Epochs("Epochs", epochs_directory, {}, content=mne_epochs)
+        epochs.save_content()
+        subject.add(epochs, "epochs")
+
+    return experiment
+
+
 # allow creating experiment from the command line
 if __name__ == "__main__":
     type_, experiment_folder, experiment_name = sys.argv[1:]
+
+    if type_ == "test_experiment":
+        create_test_experiment(experiment_folder, experiment_name)
 
     if type_ == "evoked_conditions":
         create_evoked_conditions_experiment(experiment_folder, experiment_name)
