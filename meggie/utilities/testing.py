@@ -1,4 +1,5 @@
 import tempfile
+import logging
 import importlib
 import pytest
 import json
@@ -40,6 +41,10 @@ def patched_exc_messagebox(parent, exc, exec_=False):
     raise exc
 
 
+def patched_logger_exception(msg):
+    raise Exception(msg)
+
+
 class BaseTestAction:
     @pytest.fixture(autouse=True)
     def setup_common(self, qtbot, monkeypatch):
@@ -58,6 +63,20 @@ class BaseTestAction:
 
     def run_action(self, action_name, handler, data={}, patch_paths=[]):
 
+        # patch mne's plt_show to not show plots
+        utils = importlib.import_module("mne.viz.utils")
+        epochs = importlib.import_module("mne.viz.epochs")
+
+        def patched_plt_show(*args, **kwargs):
+            utils.plt_show(show=False, fig=None, **kwargs)
+
+        self.monkeypatch.setattr(epochs, "plt_show", patched_plt_show)
+
+        # patch logger to raise exceptions
+        logger = logging.getLogger("ui_logger")
+        self.monkeypatch.setattr(logger, "exception", patched_logger_exception)
+
+        # patch messageboxes to raise exceptions
         for patch_path in patch_paths:
             module = importlib.import_module(patch_path)
 
@@ -73,13 +92,14 @@ class BaseTestAction:
                     patched_messagebox,
                 )
 
+        # call the action handler
         merged_data = {"tab_id": "test_tab"}
         merged_data.update(data)
         action_spec = load_action_spec(action_name)
         self.action_instance = handler(
             self.experiment, merged_data, self.mock_main_window, action_spec
         )
-        self.action_instance.run()
+        return self.action_instance.run()
 
     def find_dialog(self, dialog_class):
         dialog = None

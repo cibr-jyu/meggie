@@ -155,10 +155,25 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
         stim_channel = find_stim_channel(raw)
         events = find_events(raw, stim_channel)
 
-        mne_epochs = mne.Epochs(raw, events, {"1": 1, "2": 2}, -0.1, 0.2)
+        params = {
+            "tmin": -0.1,
+            "tmax": 0.2,
+            "bstart": -0.1,
+            "bend": 0.2,
+        }
+        category = {"1": 1, "2": 2}
+
+        mne_epochs = mne.Epochs(
+            raw,
+            events,
+            category,
+            tmin=params["tmin"],
+            tmax=params["tmax"],
+            baseline=(params["bstart"], params["bend"]),
+        )
 
         epochs_directory = subject.epochs_directory
-        epochs = Epochs("Epochs", epochs_directory, {}, content=mne_epochs)
+        epochs = Epochs("Epochs", epochs_directory, params, content=mne_epochs)
         epochs.save_content()
         subject.add(epochs, "epochs")
 
