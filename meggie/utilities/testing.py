@@ -5,12 +5,14 @@ import pytest
 import json
 import os
 import pkg_resources
+import mne
 
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from meggie.utilities.generate_experiments import create_test_experiment
 
 os.environ["QT_QPA_PLATFORM"] = "offscreen"
+mne.viz.set_browser_backend("matplotlib")
 
 
 class MockMainWindow(QMainWindow):
