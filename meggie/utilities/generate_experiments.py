@@ -15,6 +15,7 @@ from meggie.experiment import initialize_new_experiment
 from meggie.utilities.events import find_events
 from meggie.utilities.events import find_stim_channel
 from meggie.datatypes.epochs.epochs import Epochs
+from meggie.datatypes.evoked.evoked import Evoked
 
 
 def create_experiment(
@@ -149,7 +150,7 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
         experiment_folder, experiment_name, n_subjects=n_subjects
     )
 
-    # create trivial epochs
+    # create trivial content
     for subject in experiment.subjects.values():
         raw = subject.get_raw()
         stim_channel = find_stim_channel(raw)
@@ -163,6 +164,7 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
         }
         category = {"1": 1, "2": 2}
 
+        # create epochs
         mne_epochs = mne.Epochs(
             raw,
             events,
@@ -171,11 +173,19 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
             tmax=params["tmax"],
             baseline=(params["bstart"], params["bend"]),
         )
-
         epochs_directory = subject.epochs_directory
         epochs = Epochs("Epochs", epochs_directory, params, content=mne_epochs)
         epochs.save_content()
         subject.add(epochs, "epochs")
+
+        # create evoked
+        mne_evoked = mne_epochs.average()
+        params = {"conditions": ["epochs"]}
+        content = {"epochs": mne_evoked}
+        evoked_directory = subject.evoked_directory
+        evoked = Evoked("Evoked", evoked_directory, params, content=content)
+        evoked.save_content()
+        subject.add(evoked, "evoked")
 
     return experiment
 
