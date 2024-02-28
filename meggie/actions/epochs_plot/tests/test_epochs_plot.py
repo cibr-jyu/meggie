@@ -2,7 +2,7 @@ from meggie.utilities.testing import BaseTestAction
 from meggie.actions.epochs_plot import PlotEpochs
 
 
-class TestPlotEpochs(BaseTestAction):
+class TestEpochsPlot(BaseTestAction):
     def test_epochs_plot(self):
 
         data = {"outputs": {"epochs": ["Epochs"]}}

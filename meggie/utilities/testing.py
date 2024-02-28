@@ -1,6 +1,7 @@
 import tempfile
 import logging
 import importlib
+import matplotlib
 import pytest
 import json
 import os
@@ -13,6 +14,7 @@ from meggie.utilities.generate_experiments import create_test_experiment
 
 os.environ["QT_QPA_PLATFORM"] = "offscreen"
 mne.viz.set_browser_backend("matplotlib")
+matplotlib.use("Agg")
 
 
 class MockMainWindow(QMainWindow):
