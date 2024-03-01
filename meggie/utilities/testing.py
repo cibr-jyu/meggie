@@ -292,14 +292,21 @@ def patched_logger_exception(msg):
 class BaseTestAction:
     @pytest.fixture(autouse=True)
     def setup_common(self, qtbot, monkeypatch):
+        # before each test
         os.environ["QT_QPA_PLATFORM"] = "offscreen"
         self.qtbot = qtbot
         self.monkeypatch = monkeypatch
         self.mock_main_window = MockMainWindow()
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            self.dirpath = tmpdirname
-            self.setup_experiment()
-            yield
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.dirpath = self.temp_dir.name
+        self.setup_experiment()
+        yield
+        # after each test
+        self.temp_dir.cleanup()
+        for widget in QApplication.topLevelWidgets():
+            if widget.isWindow():
+                widget.close()
+                widget.deleteLater()
 
     def setup_experiment(self):
         self.experiment = create_test_experiment(self.dirpath, "test_experiment")
@@ -337,19 +344,21 @@ class BaseTestAction:
                 )
 
         # call the action handler
-        merged_data = {"tab_id": "test_tab"}
-        merged_data.update(data)
+        data = data.copy()
+        data.update({"tab_id": "test_tab"})
         action_spec = load_action_spec(action_name)
         self.action_instance = handler(
-            self.experiment, merged_data, self.mock_main_window, action_spec
+            self.experiment, data, self.mock_main_window, action_spec
         )
         return self.action_instance.run()
 
     def find_dialog(self, dialog_class):
-        dialog = None
+        count = 0
         for widget in QApplication.topLevelWidgets():
             if isinstance(widget, dialog_class):
+                count += 1
                 dialog = widget
-                break
+        assert count == 1
+
         assert dialog is not None
         return dialog

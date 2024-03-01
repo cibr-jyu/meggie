@@ -9,7 +9,7 @@ check:
 
 .PHONY: test
 test:
-	pytest --forked
+	pytest
 
 .PHONY: update_docs
 update_docs:
