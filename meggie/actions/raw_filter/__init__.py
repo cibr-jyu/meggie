@@ -15,6 +15,10 @@ class Filter(Action):
     filtering the raw data.
     """
 
+    def run(self):
+        filter_dialog = FilterDialog(self.window, self.experiment, self.handler)
+        filter_dialog.show()
+
     @subject_action
     def handler(self, subject, params):
         """ """
@@ -24,7 +28,3 @@ class Filter(Action):
             filter_data(subject, params)
 
         filter_fun(do_meanwhile=self.window.update_ui)
-
-    def run(self):
-        filter_dialog = FilterDialog(self.window, self.experiment, self.handler)
-        filter_dialog.show()

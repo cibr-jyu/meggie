@@ -14,6 +14,10 @@ class Resample(Action):
     resampling data of the subject.
     """
 
+    def run(self):
+        resampling_dialog = ResamplingDialog(self.window, self.experiment, self.handler)
+        resampling_dialog.show()
+
     @subject_action
     def handler(self, subject, params):
         """ """
@@ -24,7 +28,3 @@ class Resample(Action):
 
         resample_fun(do_meanwhile=self.window.update_ui)
         subject.save()
-
-    def run(self):
-        resampling_dialog = ResamplingDialog(self.window, self.experiment, self.handler)
-        resampling_dialog.show()

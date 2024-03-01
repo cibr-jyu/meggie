@@ -39,8 +39,6 @@ class MontageDialog(QtWidgets.QDialog):
         self.current_montage_fname = None
         self.ui.radioButtonMontageFromList.setChecked(True)
 
-        # find out if montage already set.
-
         self.batching_widget = BatchingWidget(
             experiment_getter=self._experiment_getter,
             parent=self,
