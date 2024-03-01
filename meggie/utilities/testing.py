@@ -17,6 +17,7 @@ from meggie.utilities.events import find_stim_channel
 from meggie.datatypes.epochs.epochs import Epochs
 from meggie.datatypes.evoked.evoked import Evoked
 from meggie.datatypes.spectrum.spectrum import Spectrum
+from meggie.datatypes.tfr.tfr import TFR
 
 os.environ["QT_QPA_PLATFORM"] = "offscreen"
 mne.viz.set_browser_backend("matplotlib")
@@ -158,6 +159,8 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
     # create trivial content
     for subject in experiment.subjects.values():
         raw = subject.get_raw()
+
+        # create epochs
         stim_channel = find_stim_channel(raw)
         events = find_events(raw, stim_channel)
 
@@ -169,7 +172,6 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
         }
         category = {"1": 1, "2": 2}
 
-        # create epochs
         mne_epochs = mne.Epochs(
             raw,
             events,
@@ -192,25 +194,27 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
         evoked.save_content()
         subject.add(evoked, "evoked")
 
-        # create spectrum with toy data
+        # create spectrum
+        picks = mne.pick_types(raw.info, meg=True, eeg=True)
+        info = mne.pick_info(raw.info, sel=picks)
+
         fmin = 1
         fmax = 40
         nfft = 64
         overlap = 32
 
-        picks = mne.pick_types(raw.info, meg=True, eeg=True)
-        n_channels = len(picks)
-
-        frequency_resolution = raw.info["sfreq"] / nfft
-        fmin_index = int(np.ceil(fmin / frequency_resolution))
-        fmax_index = int(np.floor(fmax / frequency_resolution))
-        n_freqs = fmax_index - fmin_index + 1
-
-        psd_data = {"1": np.abs(np.random.rand(n_channels, n_freqs))}
-
-        freqs = np.array(
-            [(i * frequency_resolution) for i in range(fmin_index, fmax_index + 1)]
+        mne_spectrum = raw.compute_psd(
+            method="welch",
+            fmin=fmin,
+            fmax=fmax,
+            n_fft=nfft,
+            n_overlap=overlap,
+            picks=picks,
         )
+        psds = mne_spectrum.get_data()
+        psd_data = {"1": psds}
+        freqs = mne_spectrum.freqs
+
         params = {
             "fmin": fmin,
             "fmax": fmax,
@@ -219,13 +223,38 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
             "conditions": ["1"],
             "intervals": {"1": [(0, raw.times[-1])]},
         }
-        info = mne.pick_info(raw.info, sel=picks)
-
         spectrum = Spectrum(
             "Spectrum", subject.spectrum_directory, params, psd_data, freqs, info
         )
         spectrum.save_content()
         subject.add(spectrum, "spectrum")
+
+        # create tfr
+        minfreq = 20
+        maxfreq = 40
+        interval = 5
+        n_cycles = 1
+        decim = 1
+        freqs = np.arange(minfreq, maxfreq, interval)
+        mne_tfr = mne.time_frequency.tfr.tfr_morlet(
+            mne_epochs,
+            freqs=freqs,
+            n_cycles=n_cycles,
+            decim=decim,
+            average=True,
+            return_itc=False,
+        )
+        tfr_data = {"Epochs": mne_tfr}
+
+        params = {
+            "decim": decim,
+            "n_cycles": n_cycles,
+            "evoked_subtracted": False,
+            "conditions": ["Epochs"],
+        }
+        tfr = TFR("TFR", subject.tfr_directory, params, tfr_data)
+        tfr.save_content()
+        subject.add(tfr, "tfr")
 
     return experiment
 
