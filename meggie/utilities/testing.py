@@ -57,22 +57,20 @@ def create_experiment(
     prefs.workspace = experiment_folder
 
     # create experiment (creates experiment directory inside working directory)
-    name = experiment_name
-    author = "Test"
     experiment = initialize_new_experiment(
-        name, author, prefs, set_previous_experiment=False
+        experiment_name, "Test", prefs, set_previous_experiment=False
     )
 
     for subject_idx, raw in enumerate(subjects_raw):
-        with tempfile.TemporaryDirectory() as sample_folder:
+        sample_name = "sample_" + str(subject_idx + 1).zfill(2) + "-raw"
+        sample_folder = os.path.join(experiment_folder, experiment_name, sample_name)
+        os.makedirs(sample_folder)
+        fname = sample_name + ".fif"
 
-            fname = "sample_" + str(subject_idx + 1).zfill(2) + "-raw.fif"
+        raw_path = os.path.join(sample_folder, fname)
+        raw.save(raw_path)
 
-            raw_path = os.path.join(sample_folder, fname)
-            raw.save(raw_path)
-
-            subject_name = fname.split(".fif")[0]
-            experiment.create_subject(subject_name, raw_path)
+        experiment.create_subject(sample_name, raw_path)
 
     experiment.save_experiment_settings()
     return experiment
