@@ -1,6 +1,6 @@
 black
 pylama
-pytest
+pytest-forked
 pytest-qt
 mkdocs
 coverage
