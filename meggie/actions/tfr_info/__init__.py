@@ -27,9 +27,14 @@ class Info(InfoAction):
             if "conditions" in params:
                 message += "Conditions: " + ", ".join(params["conditions"]) + "\n"
             if "n_cycles" in params:
-                message += (
-                    "Cycles: " + ", ".join(format_floats(params["n_cycles"])) + "\n"
-                )
+                if hasattr(params["n_cycles"], "__len__"):
+                    message += (
+                        "Cycles (per frequency): "
+                        + ", ".join(format_floats(params["n_cycles"]))
+                        + "\n"
+                    )
+                else:
+                    message += f"Cycles (fixed): {params['n_cycles']}\n"
 
             if hasattr(tfr, "times"):
                 message += "Times: {0}s - {1}s\n".format(

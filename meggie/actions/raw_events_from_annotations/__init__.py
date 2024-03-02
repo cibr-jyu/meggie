@@ -18,6 +18,12 @@ class EventsFromAnnotations(Action):
     applies a conversion from annotations to events.
     """
 
+    def run(self):
+        evs_from_annots_dialog = EventsFromAnnotationsDialog(
+            self.window, self.experiment, self.handler
+        )
+        evs_from_annots_dialog.show()
+
     @subject_action
     def handler(self, subject, params):
         """ """
@@ -29,9 +35,3 @@ class EventsFromAnnotations(Action):
             subject.save()
 
         conv_fun(do_meanwhile=self.window.update_ui)
-
-    def run(self):
-        evs_from_annots_dialog = EventsFromAnnotationsDialog(
-            self.window, self.experiment, self.handler
-        )
-        evs_from_annots_dialog.show()

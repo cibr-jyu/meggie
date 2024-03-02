@@ -8,13 +8,14 @@ from meggie.actions.epochs_create.dialogs.createEpochsFromEventsDialogMain impor
 
 
 class TestEpochsCreate(BaseTestAction):
-    def test_create_epochs_dialog(self):
+    def test_epochs_create(self):
 
         self.run_action(
-            tab_id="epochs",
             action_name="epochs_create",
             handler=CreateEpochs,
-            dialog_path="meggie.actions.epochs_create.dialogs.createEpochsFromEventsDialogMain",
+            patch_paths=[
+                "meggie.actions.epochs_create.dialogs.createEpochsFromEventsDialogMain"
+            ],
         )
         dialog = self.find_dialog(CreateEpochsFromEventsDialog)
 
