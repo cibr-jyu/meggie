@@ -1,5 +1,5 @@
 black
-pylama
+pylama==8.0.1
 pytest
 pytest-qt
 mkdocs
