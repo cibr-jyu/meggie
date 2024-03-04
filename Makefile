@@ -9,7 +9,7 @@ check:
 
 .PHONY: test
 test:
-	pytest
+	pytest -s
 
 .PHONY: update_docs
 update_docs:
