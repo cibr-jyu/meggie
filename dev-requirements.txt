@@ -1,6 +1,6 @@
 black
-pylama==8.0.1
-pytest
+pylama
+pytest==8.0.1
 pytest-qt
 mkdocs
 coverage
