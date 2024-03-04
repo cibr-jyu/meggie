@@ -56,4 +56,10 @@ def test_save_and_load_raw():
     with tempfile.TemporaryDirectory() as dirpath:
         path = os.path.join(dirpath, "raw.fif")
         save_raw(raw, path)
+
+        # release memory before opening again
+        sample_raw = None
+        raw_copy = None
+        raw = None
+
         open_raw(path)
