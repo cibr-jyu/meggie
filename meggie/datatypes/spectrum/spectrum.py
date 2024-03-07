@@ -67,7 +67,7 @@ class Spectrum(Datatype):
     def _get_info(self):
         """Gets info from file system."""
         info_path = os.path.join(self._directory, self._name + "-info.fif")
-        info = mne.io.meas_info.read_info(info_path)
+        info = mne.io.read_info(info_path)
 
         return info
 
@@ -115,7 +115,7 @@ class Spectrum(Datatype):
         try:
             # save info
             info_path = os.path.join(self._directory, self._name + "-info.fif")
-            mne.io.meas_info.write_info(info_path, self._info)
+            mne.io.write_info(info_path, self._info)
             self._params["info_set"] = True
 
             # save data

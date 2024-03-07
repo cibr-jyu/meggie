@@ -11,6 +11,8 @@ import errno
 import numpy as np
 import mne
 
+from mne.io._read_raw import _get_supported as mne_get_supported
+
 
 def open_raw(fname, preload=True, verbose="info"):
     """Reads a raw from file.
@@ -266,3 +268,15 @@ def homepath():
         return "."
 
     return home
+
+
+def get_supported_formats():
+    mne_supported = mne_get_supported()
+
+    items = []
+    for ext_item in mne_supported.items():
+        ext = ext_item[0]
+        names = [val[0] for val in ext_item[1].items()]
+        items.append((ext, names))
+
+    return items

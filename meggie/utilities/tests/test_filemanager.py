@@ -9,6 +9,7 @@ from meggie.utilities.filemanager import save_csv
 from meggie.utilities.filemanager import load_csv
 from meggie.utilities.filemanager import open_raw
 from meggie.utilities.filemanager import save_raw
+from meggie.utilities.filemanager import get_supported_formats
 
 
 def test_create_timestamped_folder():
@@ -63,3 +64,11 @@ def test_save_and_load_raw():
         raw = None
 
         open_raw(path)
+
+
+def test_supported_formats():
+    supported_formats = get_supported_formats()
+    assert isinstance(supported_formats, list)
+    assert isinstance(supported_formats[0], tuple)
+    assert isinstance(supported_formats[0][0], str)
+    assert isinstance(supported_formats[0][1], list)
