@@ -4,8 +4,6 @@
 import os
 import logging
 
-import mne
-
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
