@@ -9,6 +9,7 @@ nav:
         - Getting Started: user-guide/getting-started.md
         - Experiments: user-guide/experiments.md
         - Actions: user-guide/actions.md
+        - Plugins: user-guide/plugins.md
     - Developer Guide:
         - Architecture: developer-guide/architecture.md
         - Development: developer-guide/development.md
