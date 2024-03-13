@@ -314,15 +314,6 @@ class BaseTestAction:
 
     def run_action(self, action_name, handler, data={}, patch_paths=[]):
 
-        # patch mne's plt_show to not show plots
-        utils = importlib.import_module("mne.viz.utils")
-        epochs = importlib.import_module("mne.viz.epochs")
-
-        def patched_plt_show(*args, **kwargs):
-            utils.plt_show(show=False, fig=None, **kwargs)
-
-        self.monkeypatch.setattr(epochs, "plt_show", patched_plt_show)
-
         # patch logger to raise exceptions
         logger = logging.getLogger("ui_logger")
         self.monkeypatch.setattr(logger, "exception", patched_logger_exception)

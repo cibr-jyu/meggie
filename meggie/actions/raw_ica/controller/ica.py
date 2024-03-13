@@ -25,21 +25,20 @@ def plot_topographies(ica, n_components):
     """Plots topographies from the ICA solution."""
 
     figs = ica.plot_components(title="")
+    if not isinstance(figs, list):
+        figs = [figs]
+
     for fig in figs:
         set_figure_title(fig, "ICA topographic maps")
 
-    def update_topography_texts():
-        """Change texts in the axes to match names in the dialog"""
-        idx = 0
-        for fig in figs:
-            for ax in fig.get_axes():
-                if idx > n_components:
-                    return
+    idx = 0
+    for fig in figs:
+        for ax in fig.get_axes():
+            if idx > n_components:
+                return
 
-                ax.set_title("Component " + str(idx), fontsize=12)
-                idx += 1
-
-    update_topography_texts()
+            ax.set_title("Component " + str(idx), fontsize=12)
+            idx += 1
 
 
 def plot_sources(raw, ica):

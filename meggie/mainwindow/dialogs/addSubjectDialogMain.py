@@ -4,8 +4,6 @@
 import os
 import logging
 
-import mne
-
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
@@ -15,6 +13,7 @@ from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.threading import threaded
 from meggie.utilities.names import next_available_name
+from meggie.utilities.filemanager import get_supported_formats
 
 
 class AddSubjectDialog(QtWidgets.QDialog):
@@ -78,15 +77,14 @@ class AddSubjectDialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        mne_supported = mne.io._read_raw.supported
+        mne_supported = get_supported_formats()
 
-        all_ext = []
+        all_ext = [val[0] for val in mne_supported]
+
         all_items = []
-        for row in mne_supported.items():
-            ext = row[0]
-            name = row[1].__name__.split("_")[-1]
-            all_ext.append(ext)
-            all_items.append(name + " files (*" + ext + ")")
+        for ext, names in mne_supported:
+            for name in names:
+                all_items.append(name + " files (*" + ext + ")")
 
         filter_string = "All supported (*" + " *".join(all_ext) + ");" ";"
         filter_string = filter_string + ";" ";".join(all_items)
