@@ -44,6 +44,9 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
 
         name = self.ui.lineEditAdd.text()
 
+        if not name:
+            return
+
         if self.ui.radioButtonEEG.isChecked():
             if name in self.eeg_channel_groups.keys():
                 return
