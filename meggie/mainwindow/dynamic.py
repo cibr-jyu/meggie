@@ -282,11 +282,13 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
 
                 action_spec = self.action_specs[action_name][2]
                 title = action_spec["name"]
+                description = action_spec.get("description", "")
 
                 pushButtonInputActionElement = QtWidgets.QPushButton(
                     self.groupBoxInputActions
                 )
                 pushButtonInputActionElement.setText(title)
+                pushButtonInputActionElement.setToolTip(description)
                 self.gridLayoutInputActions.addWidget(
                     pushButtonInputActionElement, idx, 0, 1, 1
                 )
@@ -310,11 +312,13 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
 
                 action_spec = self.action_specs[action_name][2]
                 title = action_spec["name"]
+                description = action_spec.get("description", "")
 
                 pushButtonOutputActionElement = QtWidgets.QPushButton(
                     self.groupBoxOutputActions
                 )
                 pushButtonOutputActionElement.setText(title)
+                pushButtonOutputActionElement.setToolTip(description)
                 self.gridLayoutOutputActions.addWidget(
                     pushButtonOutputActionElement, idx, 0, 1, 1
                 )
