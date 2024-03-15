@@ -466,6 +466,7 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
 
                     subject = experiment.active_subject
                     if not subject:
+                        messagebox(self, "You need to activate a subject first.")
                         return
 
                     data = self._get_data()
