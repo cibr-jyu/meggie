@@ -5,3 +5,5 @@ pytest-qt
 mkdocs
 coverage
 requests
+build
+twine
