@@ -51,13 +51,16 @@ def find_all_package_specs():
             continue
         with open(config_path, "r") as f:
             config = json.load(f)
-            if config:
+            if config and config.get("id"):
                 package_specs[source] = config
 
     # add possibly missing fields
     for package_spec in package_specs.values():
         if "name" not in package_spec:
-            package_spec["name"] = ""
+            package_spec["name"] = package_spec["id"]
+
+        if "description" not in package_spec:
+            package_spec["description"] = package_spec.get("name", "")
 
         if "author" not in package_spec:
             package_spec["author"] = ""
@@ -462,6 +465,7 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
                 def handler_wrapper(checked):
                     experiment = self.parent.experiment
                     if not experiment:
+                        messagebox(self, "You need to open an experiment first.")
                         return
 
                     subject = experiment.active_subject
