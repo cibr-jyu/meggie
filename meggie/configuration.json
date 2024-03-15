@@ -1,4 +1,5 @@
 {
+    "id": "meggie",
     "tabs": [
         {"id": "preprocessing",
          "name": "Preprocessing",
