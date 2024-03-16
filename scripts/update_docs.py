@@ -125,7 +125,7 @@ def search_pypi_packages(prefix):
                 "last_updated": metadata["releases"][version][0]["upload_time"].split(
                     "T"
                 )[0],
-                "name": config_data.get("name", ""),
+                "description": config_data.get("description", ""),
                 "author": config_data.get("author", ""),
             }
         except Exception as e:
@@ -146,7 +146,7 @@ def create_markdown_table(plugin_metadata):
             data.get("version", ""),
             data.get("last_updated", ""),
             data.get("author", "").replace("|", "\\|"),
-            data.get("name", "").replace("|", "\\|"),
+            data.get("description", "").replace("|", "\\|"),
         ]
         table += "| " + " | ".join(row) + " |\n"
 
