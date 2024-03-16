@@ -269,14 +269,6 @@ class MockMainWindow(QMainWindow):
         pass
 
 
-def load_action_spec(action_name):
-    action_path = pkg_resources.resource_filename("meggie", "actions")
-    config_path = os.path.join(action_path, action_name, "configuration.json")
-    with open(config_path, "r") as f:
-        action_spec = json.load(f)
-    return action_spec
-
-
 def patched_messagebox(parent, message):
     raise Exception(message)
 
@@ -337,11 +329,18 @@ class BaseTestAction:
         # call the action handler
         data = data.copy()
         data.update({"tab_id": "test_tab"})
-        action_spec = load_action_spec(action_name)
+        action_spec = self.load_action_spec(action_name)
         self.action_instance = handler(
             self.experiment, data, self.mock_main_window, action_spec
         )
         return self.action_instance.run()
+
+    def load_action_spec(self, action_name):
+        action_path = pkg_resources.resource_filename("meggie", "actions")
+        config_path = os.path.join(action_path, action_name, "configuration.json")
+        with open(config_path, "r") as f:
+            action_spec = json.load(f)
+        return action_spec
 
     def find_dialog(self, dialog_class):
         count = 0
