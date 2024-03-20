@@ -260,6 +260,7 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
 class MockMainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         self.ui = None
+        self.prefs = PreferencesHandler()
         QMainWindow.__init__(self)
 
     def update_ui(self):
