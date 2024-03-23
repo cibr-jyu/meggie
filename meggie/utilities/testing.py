@@ -164,12 +164,11 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
 
         params = {
             "tmin": -0.1,
-            "tmax": 0.2,
+            "tmax": 0.4,
             "bstart": -0.1,
-            "bend": 0.2,
+            "bend": 0.0,
         }
-        category = {"1": 1, "2": 2}
-
+        category = {"1": 1}
         mne_epochs = mne.Epochs(
             raw,
             events,
@@ -183,10 +182,31 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
         epochs.save_content()
         subject.add(epochs, "epochs")
 
+        params = {
+            "tmin": -0.1,
+            "tmax": 0.4,
+            "bstart": -0.1,
+            "bend": 0.0,
+        }
+        category = {"2": 2}
+        mne_epochs_2 = mne.Epochs(
+            raw,
+            events,
+            category,
+            tmin=params["tmin"],
+            tmax=params["tmax"],
+            baseline=(params["bstart"], params["bend"]),
+        )
+        epochs_directory = subject.epochs_directory
+        epochs_2 = Epochs("Epochs2", epochs_directory, params, content=mne_epochs_2)
+        epochs_2.save_content()
+        subject.add(epochs_2, "epochs")
+
         # create evoked
         mne_evoked = mne_epochs.average()
-        params = {"conditions": ["epochs"]}
-        content = {"epochs": mne_evoked}
+        mne_evoked_2 = mne_epochs_2.average()
+        params = {"conditions": ["Epochs", "Epochs2"]}
+        content = {"Epochs": mne_evoked, "Epochs2": mne_evoked_2}
         evoked_directory = subject.evoked_directory
         evoked = Evoked("Evoked", evoked_directory, params, content=content)
         evoked.save_content()
@@ -201,16 +221,35 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
         nfft = 64
         overlap = 32
 
+        tmin = 0
+        tmax = raw.times[-1] / 2
         mne_spectrum = raw.compute_psd(
             method="welch",
             fmin=fmin,
             fmax=fmax,
+            tmin=tmin,
+            tmax=tmax,
             n_fft=nfft,
             n_overlap=overlap,
             picks=picks,
         )
         psds = mne_spectrum.get_data()
-        psd_data = {"1": psds}
+
+        tmin_2 = raw.times[-1] / 2
+        tmax_2 = raw.times[-1]
+        mne_spectrum_2 = raw.compute_psd(
+            method="welch",
+            fmin=fmin,
+            fmax=fmax,
+            tmin=tmin_2,
+            tmax=tmax_2,
+            n_fft=nfft,
+            n_overlap=overlap,
+            picks=picks,
+        )
+        psds_2 = mne_spectrum_2.get_data()
+
+        psd_data = {"1": psds, "2": psds_2}
         freqs = mne_spectrum.freqs
 
         params = {
@@ -218,8 +257,8 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
             "fmax": fmax,
             "nfft": nfft,
             "overlap": overlap,
-            "conditions": ["1"],
-            "intervals": {"1": [(0, raw.times[-1])]},
+            "conditions": ["1", "2"],
+            "intervals": {"1": [(tmin, tmax)], "2": [(tmin_2, tmax_2)]},
         }
         spectrum = Spectrum(
             "Spectrum", subject.spectrum_directory, params, psd_data, freqs, info
@@ -234,6 +273,7 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
         n_cycles = 1
         decim = 1
         freqs = np.arange(minfreq, maxfreq, interval)
+
         mne_tfr = mne.time_frequency.tfr.tfr_morlet(
             mne_epochs,
             freqs=freqs,
@@ -242,13 +282,21 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
             average=True,
             return_itc=False,
         )
-        tfr_data = {"Epochs": mne_tfr}
+        mne_tfr_2 = mne.time_frequency.tfr.tfr_morlet(
+            mne_epochs_2,
+            freqs=freqs,
+            n_cycles=n_cycles,
+            decim=decim,
+            average=True,
+            return_itc=False,
+        )
+        tfr_data = {"Epochs": mne_tfr, "Epochs2": mne_tfr_2}
 
         params = {
             "decim": decim,
             "n_cycles": n_cycles,
             "evoked_subtracted": False,
-            "conditions": ["Epochs"],
+            "conditions": ["Epochs", "Epochs2"],
         }
         tfr = TFR("TFR", subject.tfr_directory, params, tfr_data)
         tfr.save_content()
