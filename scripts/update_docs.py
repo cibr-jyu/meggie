@@ -6,7 +6,6 @@ import zipfile
 import json
 import tempfile
 from io import BytesIO
-from pprint import pprint
 
 
 docs_dir = sys.argv[1]
@@ -119,6 +118,11 @@ def search_pypi_packages(prefix):
             response = requests.get(download_url)
             response.raise_for_status()
             config_data = extract_package(download_url, response.content)
+
+            # filter out those that are marked not to be published, i.e.
+            # that have publish == false.
+            if not config_data.get("publish", True):
+                continue
 
             package_info[package_name.replace("-", "_")] = {
                 "version": version,
