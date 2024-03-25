@@ -4,7 +4,7 @@ description = "User-friendly graphical user interface to do M/EEG analysis"
 
 setup(
     name='meggie',
-    version='1.6.3',
+    version='1.7.0',
     description=description,
     long_description=description,
     long_description_content_type="text/plain",
@@ -16,7 +16,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[],
-    python_requires='>=3.7',
+    python_requires='>=3.8',
     entry_points={
         'console_scripts': ['meggie=meggie.run:main'],
     },

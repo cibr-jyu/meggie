@@ -1,10 +1,23 @@
 Changelog
 =========
 
-1.6.4 (unreleased)
+1.7.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+
+1.7.0 (2024-03-25)
+------------------
+
+- Fix actions.log propagation problem
+- Add a lot of tests for maintainability
+- Add new partially generated readthedocs documentation
+- Add "Add MNE sample data" option to subject dialog.
+- Add tooltips to actions using configuration.json metadata
+- Add a little messagebox if no subject is active when clicking an action
+- Fix empty lines problem in channel groups dialog
+- Update to support mne==1.6.1
 
 1.6.3 (2023-12-11)
 ------------------
