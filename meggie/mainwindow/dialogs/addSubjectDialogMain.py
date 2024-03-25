@@ -2,6 +2,7 @@
 """
 
 import os
+import mne
 import logging
 
 from PyQt5 import QtWidgets
@@ -69,6 +70,38 @@ class AddSubjectDialog(QtWidgets.QDialog):
             n_successful, n_total
         )
         logging.getLogger("ui_logger").info(message)
+
+        self.parent.initialize_ui()
+        self.close()
+
+    def on_pushButtonSample_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        experiment = self.parent.experiment
+        old_names = experiment.subjects.keys()
+        subject_name = next_available_name(old_names, "sample_audvis_raw")
+
+        @threaded
+        def _create_subject():
+            raw_path = os.path.join(
+                str(mne.datasets.sample.data_path()),
+                "MEG",
+                "sample",
+                "sample_audvis_raw.fif",
+            )
+            experiment.create_subject(subject_name, raw_path)
+
+        try:
+            _create_subject(do_meanwhile=self.parent.update_ui)
+        except Exception:
+            logging.getLogger("ui_logger").exception("")
+
+        try:
+            self.parent.experiment.save_experiment_settings()
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
 
         self.parent.initialize_ui()
         self.close()
