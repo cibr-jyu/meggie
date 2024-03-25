@@ -73,20 +73,13 @@
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QPushButton" name="pushButtonRemove">
          <property name="enabled">
           <bool>false</bool>
          </property>
          <property name="text">
           <string>Remove</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QListWidget" name="listWidgetFileNames">
-         <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
         </widget>
        </item>
@@ -100,6 +93,20 @@
          </property>
          <property name="text">
           <string>Browse...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QListWidget" name="listWidgetFileNames">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="pushButtonSample">
+         <property name="text">
+          <string>Add MNE sample data</string>
          </property>
         </widget>
        </item>
