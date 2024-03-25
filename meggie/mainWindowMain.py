@@ -382,10 +382,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # setup logger for informative messages
         ui_logger = logging.getLogger("ui_logger")
+        ui_logger.propagate = False
         formatter = logging.Formatter(
             "Meggie: %(asctime)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
         )
-
         ui_logger.handlers = []
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
@@ -394,6 +394,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # setup logger for mne error messages
         mne_logger = logging.getLogger("mne")
+        mne_logger.propagate = False
         formatter = logging.Formatter(
             "MNE: %(asctime)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
         )
@@ -406,6 +407,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # setup action logger
         action_logger = logging.getLogger("action_logger")
+        action_logger.propagate = False
         action_logger.handlers = []
 
         # setup file handler
