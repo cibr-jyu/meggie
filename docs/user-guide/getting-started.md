@@ -6,7 +6,7 @@ Meggie does not have standalone installers, but it can be easily installed on Wi
 
 Install meggie to a conda environment:
 ```bash
-$ conda create -n meggie-env -c conda-forge meggie=={{VERSION}}
+$ conda create -n meggie-env -c conda-forge --solver libmamba meggie=={{VERSION}}
 ```
 
 ### Using pip:
