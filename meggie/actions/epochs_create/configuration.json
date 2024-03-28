@@ -2,5 +2,6 @@
     "id": "epochs_create",
     "name": "Create epochs",
     "entry": "CreateEpochs",
-    "description": "Create a new epoch collection for the current subject."
+    "description": "Create a new epoch collection for the current subject.",
+    "tags": ["raw"]
 }

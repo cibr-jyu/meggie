@@ -9,6 +9,8 @@ from meggie.experiment import initialize_new_experiment
 
 from meggie.mainwindow.dynamic import find_all_package_specs
 
+from meggie.utilities.threading import threaded
+from meggie.utilities.datasets import get_open_datasets
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
 
@@ -26,6 +28,11 @@ class CreateExperimentDialog(QtWidgets.QDialog):
         prefs = parent.prefs
 
         self.active_plugins = prefs.active_plugins
+
+        self.ui.comboBoxOpenData.addItem("")
+        self.datasets = sorted(get_open_datasets().items(), key=lambda x: x[1]["title"])
+        for key, dataset in self.datasets:
+            self.ui.comboBoxOpenData.addItem(dataset["title"])
 
         # read all pipeline ids and names to a list
         pipelines = []
@@ -78,12 +85,23 @@ class CreateExperimentDialog(QtWidgets.QDialog):
                 selected_pipeline = self.pipelines[button_idx][0]
                 break
 
+        name = self.ui.lineEditExperimentName.text()
+        author = self.ui.lineEditAuthor.text()
+        prefs = self.parent.prefs
+
         try:
-            experiment = initialize_new_experiment(
-                self.ui.lineEditExperimentName.text(),
-                self.ui.lineEditAuthor.text(),
-                self.parent.prefs,
-            )
+            open_data_index = self.ui.comboBoxOpenData.currentIndex()
+
+            @threaded
+            def threaded_initialize():
+                if open_data_index == 0:
+                    experiment = initialize_new_experiment(name, author, prefs)
+                else:
+                    item = self.datasets[open_data_index - 1]
+                    experiment = item[1]["constructor"](name, author, prefs)
+                return experiment
+
+            experiment = threaded_initialize(do_meanwhile=self.parent.update_ui)
 
             experiment.selected_pipeline = selected_pipeline
             experiment.save_experiment_settings()

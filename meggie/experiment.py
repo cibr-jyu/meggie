@@ -184,7 +184,8 @@ class Experiment:
         self.active_subject = self.subjects[subject_name]
 
         # test validity
-        self.active_subject.get_raw(preload=False)
+        if self.active_subject.has_raw:
+            self.active_subject.get_raw(preload=False)
 
         return self.active_subject
 
@@ -196,24 +197,40 @@ class Experiment:
         ----------
         subject_name : str
             Name of the new subject.
-        raw_path : str
+        raw_path : str | None
             Path to the data file.
+
+        Returns
+        -------
+        meggie.subject.Subject
+            The activated subject.
+
         """
-        bname = os.path.basename(raw_path)
-        stem, ext = os.path.splitext(bname)
-        new_fname = stem + ".fif"
 
         uid = generate_uid()
 
-        subject = Subject(self, subject_name, new_fname, uid)
+        # it is possible to add "placeholder" subjects with only e.g epochs data
+        if raw_path:
+            bname = os.path.basename(raw_path)
+            stem, ext = os.path.splitext(bname)
+            new_fname = stem + ".fif"
+
+            subject = Subject(self, subject_name, new_fname, uid)
+            subject.ensure_folders()
+
+            raw = open_raw(raw_path)
+
+            new_path = os.path.join(subject.path, new_fname)
+            save_raw(raw, new_path)
+
+        else:
+            subject = Subject(self, subject_name, "", uid)
+
         subject.ensure_folders()
 
-        raw = open_raw(raw_path)
-
-        new_path = os.path.join(subject.path, new_fname)
-        save_raw(raw, new_path)
-
         self.add_subject(subject)
+
+        return subject
 
     def save_experiment_settings(self):
         """
@@ -225,7 +242,7 @@ class Experiment:
         for subject in self.subjects.values():
             subject_dict = {
                 "subject_name": subject.name,
-                "raw_fname": subject.raw_fname,
+                "raw_fname": subject.raw_fname if subject.raw_fname else "",
                 "uid": subject.uid,
                 "ica_applied": subject.ica_applied,
                 "rereferenced": subject.rereferenced,
@@ -401,11 +418,10 @@ def open_existing_experiment(prefs, path=None):
         subject_name = subject_data["subject_name"]
 
         raw_fname = subject_data.get("raw_fname")
+
         # for backwards compatibility
         if not raw_fname:
             raw_fname = subject_data.get("working_file_name")
-        if not raw_fname:
-            raise Exception("raw_fname not set in the exp file")
 
         uid = subject_data.get("uid")
         if not uid:

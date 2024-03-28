@@ -2,5 +2,6 @@
     "id": "raw_resample",
     "name": "Resample",
     "entry": "Resample",
-    "description": "Adjust the dataset by resampling it to a different sampling frequency."
+    "description": "Adjust the dataset by resampling it to a different sampling frequency.",
+    "tags": ["raw"]
 }

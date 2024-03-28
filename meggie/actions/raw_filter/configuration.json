@@ -2,5 +2,6 @@
     "id": "raw_filter",
     "name": "Filter",
     "entry": "Filter",
-    "description": "Apply low-pass, high-pass, band-pass, and band-stop filters to raw data to isolate specific frequency ranges or remove unwanted frequencies."
+    "description": "Apply low-pass, high-pass, band-pass, and band-stop filters to raw data to isolate specific frequency ranges or remove unwanted frequencies.",
+    "tags": ["raw"]
 }
