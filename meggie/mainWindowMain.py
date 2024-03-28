@@ -273,18 +273,27 @@ class MainWindow(QtWidgets.QMainWindow):
     def reconstruct_tabs(self):
         """Reconstructs the tabs."""
 
-        if self.experiment and self.experiment.active_subject:
-            include_eeg = self.experiment.active_subject.has_eeg
-        else:
-            include_eeg = True
+        include_eeg = True
+        has_raw = True
+        if self.experiment:
+            active_subject = self.experiment.active_subject
+            if active_subject:
+                has_raw = active_subject.has_raw
+                if has_raw:
+                    include_eeg = active_subject.has_eeg
 
         if self.experiment:
             selected_pipeline = self.experiment.selected_pipeline
         else:
             selected_pipeline = "classic"
+
         try:
             self.tabs = construct_tabs(
-                selected_pipeline, self, self.prefs, include_eeg=include_eeg
+                selected_pipeline,
+                self,
+                self.prefs,
+                include_eeg=include_eeg,
+                has_raw=has_raw,
             )
         except Exception as exc:
             self.tabs = []

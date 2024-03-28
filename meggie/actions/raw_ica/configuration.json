@@ -2,5 +2,6 @@
     "id": "raw_ica",
     "name": "Artifact removal",
     "entry": "ICA",
-    "description": "Apply Independent Component Analysis (ICA) to raw data to identify and remove artifacts such as heartbeats and eye blinks."
+    "description": "Apply Independent Component Analysis (ICA) to raw data to identify and remove artifacts such as heartbeats and eye blinks.",
+    "tags": ["raw"]
 }

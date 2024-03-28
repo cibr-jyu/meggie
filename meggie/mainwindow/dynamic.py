@@ -137,7 +137,7 @@ def find_all_action_specs():
     return action_specs
 
 
-def construct_tab(tab_spec, action_specs, datatype_specs, parent):
+def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
     """Constructs analysis tab dynamically. Returns a QDialog
     that can be used within a QTabDialog of the main window.
 
@@ -290,6 +290,10 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
                 pushButtonInputActionElement = QtWidgets.QPushButton(
                     self.groupBoxInputActions
                 )
+
+                if "raw" in action_spec.get("tags", []) and not has_raw:
+                    pushButtonInputActionElement.setEnabled(False)
+
                 pushButtonInputActionElement.setText(title)
                 pushButtonInputActionElement.setToolTip(description)
                 self.gridLayoutInputActions.addWidget(
@@ -310,7 +314,7 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
                 )
                 self.gridLayoutInputActions.addItem(spacer, idx + 1, 0, 1, 1)
 
-            # add action buttons
+            # add output action buttons
             for idx, action_name in enumerate(self.tab_spec["output_actions"]):
 
                 action_spec = self.action_specs[action_name][2]
@@ -320,6 +324,10 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
                 pushButtonOutputActionElement = QtWidgets.QPushButton(
                     self.groupBoxOutputActions
                 )
+
+                if "raw" in action_spec.get("tags", []) and not has_raw:
+                    pushButtonOutputActionElement.setEnabled(False)
+
                 pushButtonOutputActionElement.setText(title)
                 pushButtonOutputActionElement.setToolTip(description)
                 self.gridLayoutOutputActions.addWidget(
@@ -418,6 +426,9 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
                         return
                     subject = experiment.active_subject
                     if not subject:
+                        return
+
+                    if "raw" in action_spec.get("tags", []) and not has_raw:
                         return
 
                     data = self._get_data()
@@ -603,7 +614,7 @@ def construct_tab(tab_spec, action_specs, datatype_specs, parent):
     return tab
 
 
-def construct_tabs(selected_pipeline, window, prefs, include_eeg):
+def construct_tabs(selected_pipeline, window, prefs, include_eeg, has_raw):
     """Constructs as set of tabs based on specifications and the
     selected pipeline.
 
@@ -757,7 +768,9 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg):
     # If everything is fine, construct each of the tabs
     tabs = []
     for tab_spec in combined_tabs:
-        tabs.append(construct_tab(tab_spec, action_specs, datatype_specs, window))
+        tabs.append(
+            construct_tab(tab_spec, action_specs, datatype_specs, has_raw, window)
+        )
 
     return tabs
 

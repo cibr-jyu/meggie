@@ -150,6 +150,14 @@ class Subject:
         return True
 
     @property
+    def has_raw(self):
+        """Checks if is a 'placeholder' subject."""
+        if self.raw_fname:
+            return True
+        else:
+            return False
+
+    @property
     def sss_applied(self):
         """Checks if sss applied."""
 

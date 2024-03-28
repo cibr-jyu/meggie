@@ -2,5 +2,6 @@
     "id": "raw_plot_projections",
     "name": "Plot projections",
     "entry": "PlotProjections",
-    "description": "Generate a plot to visualize the projection vectors contained within the raw data."
+    "description": "Generate a plot to visualize the projection vectors contained within the raw data.",
+    "tags": ["raw"]
 }

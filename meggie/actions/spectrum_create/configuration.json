@@ -2,5 +2,6 @@
     "id": "spectrum_create",
     "name": "Create spectrum",
     "entry": "CreateSpectrum",
-    "description": "Calculate the spectral data at specified time intervals for the current subject."
+    "description": "Calculate the spectral data at specified time intervals for the current subject.",
+    "tags": ["raw"]
 }

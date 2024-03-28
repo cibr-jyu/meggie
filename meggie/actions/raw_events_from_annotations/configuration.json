@@ -2,5 +2,6 @@
     "id": "raw_events_from_annotations",
     "name": "Events from annotations",
     "entry": "EventsFromAnnotations",
-    "description": "Create events from annotations for further analysis."
+    "description": "Create events from annotations for further analysis.",
+    "tags": ["raw"]
 }

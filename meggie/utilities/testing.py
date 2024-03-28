@@ -24,7 +24,7 @@ mne.viz.set_browser_backend("matplotlib")
 matplotlib.use("Agg")
 
 
-def create_experiment(
+def create_multi_sample_experiment(
     experiment_folder, experiment_name, subjects_raw, overwrite=False
 ):
     """Creates experiment from list of raw objects.
@@ -142,7 +142,7 @@ def create_evoked_conditions_experiment(
 
         subjects_raw.append(subject_raw)
 
-    return create_experiment(
+    return create_multi_sample_experiment(
         experiment_folder, experiment_name, subjects_raw, overwrite=overwrite
     )
 
@@ -354,7 +354,6 @@ class BaseTestAction:
         self.experiment.activate_subject("sample_01-raw")
 
     def run_action(self, action_name, handler, data={}, patch_paths=[]):
-
         # patch logger to raise exceptions
         logger = logging.getLogger("ui_logger")
         self.monkeypatch.setattr(logger, "exception", patched_logger_exception)
