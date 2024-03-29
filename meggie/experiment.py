@@ -84,7 +84,7 @@ class Experiment:
 
         # if channel groups not found, use defaults..
         if not channel_groups.get("eeg"):
-            if self.active_subject:
+            if self.active_subject and self.active_subject.has_raw:
                 raw = self.active_subject.get_raw(preload=False)
                 try:
                     channel_groups["eeg"] = get_default_channel_groups(raw, "eeg")
@@ -92,7 +92,7 @@ class Experiment:
                     pass
 
         if not channel_groups.get("meg"):
-            if self.active_subject:
+            if self.active_subject and self.active_subject.has_raw:
                 raw = self.active_subject.get_raw(preload=False)
                 try:
                     channel_groups["meg"] = get_default_channel_groups(raw, "meg")

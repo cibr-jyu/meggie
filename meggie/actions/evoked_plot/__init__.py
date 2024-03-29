@@ -49,8 +49,8 @@ class PlotEvoked(Action):
             else:
                 chs = list(get_channels_by_type(info).keys())
                 if "eeg" in chs:
-                    plot_evoked_topo(evoked, ch_type="eeg")
+                    plot_evoked_topo(subject, evoked, ch_type="eeg")
                 if "grad" in chs or "mag" in chs:
-                    plot_evoked_topo(evoked, ch_type="meg")
+                    plot_evoked_topo(subject, evoked, ch_type="meg")
         except Exception as exc:
             exc_messagebox(self.window, exc)

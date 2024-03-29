@@ -23,8 +23,6 @@ class Montage(Action):
         @threaded
         def montage_fun():
             """ """
-            raw = subject.get_raw()
-
             head_size = params["head_size"]
 
             if params["custom"] is True:
@@ -38,7 +36,11 @@ class Montage(Action):
                     montage_name, head_size=head_size
                 )
 
-            raw.set_montage(montage)
+            if subject.has_raw:
+                raw = subject.get_raw()
+                raw.set_montage(montage)
+
+            subject.save_montage(montage)
             subject.save()
 
         montage_fun(do_meanwhile=self.window.update_ui)

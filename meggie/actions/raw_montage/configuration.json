@@ -3,5 +3,5 @@
     "name": "Montage",
     "entry": "Montage",
     "description": "Apply a montage to the EEG dataset, enabling the creation of topographical plots.",
-    "tags": ["eeg", "raw"]
+    "tags": ["eeg"]
 }

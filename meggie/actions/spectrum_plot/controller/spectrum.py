@@ -11,6 +11,7 @@ from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
 from meggie.utilities.channels import iterate_topography
 from meggie.utilities.channels import filter_info
+from meggie.utilities.channels import ensure_montage
 from meggie.utilities.plotting import set_figure_title
 from meggie.utilities.units import get_power_unit
 
@@ -87,6 +88,8 @@ def plot_spectrum_topo(subject, name, log_transformed=True, ch_type="meg"):
         ]
 
     info = filter_info(info, picked_channels)
+
+    ensure_montage(subject, info, ch_type)
 
     colors = color_cycle(len(data))
 

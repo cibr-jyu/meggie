@@ -7,13 +7,13 @@ import mne
 from mne.channels import _divide_to_regions
 
 
-def is_montage_set(raw, ch_type):
+def is_montage_set(info, ch_type):
     """Checks whether channel locations are found in the info for given channel type.
 
     Parameters
     ----------
-    raw : mne.io.Raw
-        Raw containing info which contains channel information.
+    info : mne.Info
+        Info containing channel information.
     ch_type : str
         Should be 'meg' or 'eeg'.
 
@@ -24,18 +24,16 @@ def is_montage_set(raw, ch_type):
     """
 
     if ch_type == "meg":
-        picks = mne.pick_types(raw.info, meg=True, eeg=False)
+        picks = mne.pick_types(info, meg=True, eeg=False)
     else:
-        picks = mne.pick_types(raw.info, meg=False, eeg=True)
+        picks = mne.pick_types(info, meg=False, eeg=True)
 
-    ch_names = [
-        ch_name for idx, ch_name in enumerate(raw.info["ch_names"]) if idx in picks
-    ]
+    ch_names = [ch_name for idx, ch_name in enumerate(info["ch_names"]) if idx in picks]
 
     if not ch_names:
         raise Exception("Data does not contain channels of type " + str(ch_type))
 
-    info_filt = filter_info(raw.info, ch_names)
+    info_filt = filter_info(info, ch_names)
 
     # check if there is no montage set..
     ch_norms = []
@@ -45,6 +43,13 @@ def is_montage_set(raw, ch_type):
         return False
 
     return True
+
+
+def ensure_montage(subject, inst, ch_type):
+    """Checks if the subject contains a montage that could be used for inst."""
+    montage = subject.read_montage()
+    if montage:
+        inst.set_montage(montage)
 
 
 def get_default_channel_groups(raw, ch_type):
@@ -80,7 +85,7 @@ def get_default_channel_groups(raw, ch_type):
         return {}
 
     # check if there is no montage set..
-    if not is_montage_set(raw, ch_type):
+    if not is_montage_set(raw.info, ch_type):
         return {}
 
     info_filt = filter_info(raw.info, ch_names)
