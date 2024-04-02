@@ -586,6 +586,12 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
                 module = importlib.import_module(".".join([source, "actions", package]))
                 entry = action_spec["entry"]
 
+                if not subject:
+                    continue
+
+                if "raw" in action_spec.get("tags", []) and not has_raw:
+                    return
+
                 @threaded
                 def handler(*args):
                     return getattr(module, entry)(*args).run()
