@@ -75,10 +75,11 @@ def group_average_tfr(experiment, tfr_name, groups, new_name):
 
                 # get common channels in "subject specific space"
                 subject_ch_names = tfr_item.info["ch_names"]
-                for ch_idx, ch_name in enumerate(clean_names(subject_ch_names)):
-                    drop_names = []
-                    if ch_name not in common_ch_names:
-                        drop_names.append(subject_ch_names[ch_idx])
+                drop_names = [
+                    name
+                    for idx, name in enumerate(clean_names(subject_ch_names))
+                    if name not in common_ch_names
+                ]
                 tfr_item = tfr_item.copy().drop_channels(drop_names)
 
                 # sanity check
