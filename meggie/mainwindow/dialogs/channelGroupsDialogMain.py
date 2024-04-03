@@ -15,6 +15,8 @@ from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.channels import get_default_channel_groups
 from meggie.utilities.channels import get_triplet_from_mag
+from meggie.utilities.channels import find_montage_info
+from meggie.mainwindow.dynamic import find_all_datatype_specs
 
 from meggie.mainwindow.dialogs.channelGroupsDialogUi import Ui_channelGroupsDialog
 
@@ -93,17 +95,18 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
             messagebox(self.parent, "To reset, active subject is needed")
             return
 
-        raw = subject.get_raw()
+        specs = find_all_datatype_specs()
 
         if self.ui.radioButtonEEG.isChecked():
-            self.eeg_channel_groups = get_default_channel_groups(raw, "eeg")
+            info = find_montage_info(subject, specs.keys(), "eeg")
+            self.eeg_channel_groups = get_default_channel_groups(info, "eeg")
             self.ui.listWidgetChannelGroups.clear()
             for ch_name in sorted(self.eeg_channel_groups.keys()):
                 self.ui.listWidgetChannelGroups.addItem(ch_name)
 
         else:
-            meg_defaults = get_default_channel_groups(raw, "meg")
-            self.meg_channel_groups = meg_defaults
+            info = find_montage_info(subject, specs.keys(), "meg")
+            self.meg_channel_groups = get_default_channel_groups(info, "meg")
             self.ui.listWidgetChannelGroups.clear()
             for ch_name in sorted(self.meg_channel_groups.keys()):
                 self.ui.listWidgetChannelGroups.addItem(ch_name)
@@ -123,16 +126,17 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
             messagebox(self.parent, "Select a channel group first")
             return
 
-        raw = subject.get_raw()
+        specs = find_all_datatype_specs()
 
         if self.ui.radioButtonEEG.isChecked():
-            if mne.pick_types(raw.info, meg=False, eeg=True).size == 0:
+            info = find_montage_info(subject, specs.keys(), "eeg")
+            if mne.pick_types(info, meg=False, eeg=True).size == 0:
                 messagebox(self.parent, "No EEG channels found")
                 return
 
             ch_names = self.eeg_channel_groups[selected_item.text()]
             try:
-                ch_idxs = [raw.info["ch_names"].index(ch_name) for ch_name in ch_names]
+                ch_idxs = [info["ch_names"].index(ch_name) for ch_name in ch_names]
             except ValueError:
                 messagebox(
                     self.parent,
@@ -144,7 +148,7 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
 
             try:
                 fig, selection = mne.viz.plot_sensors(
-                    raw.info,
+                    info,
                     kind="select",
                     ch_type="eeg",
                     ch_groups=ch_groups,
@@ -156,13 +160,14 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
                 return
 
         else:
-            if mne.pick_types(raw.info, meg=True, eeg=False).size == 0:
+            info = find_montage_info(subject, specs.keys(), "meg")
+            if mne.pick_types(info, meg=True, eeg=False).size == 0:
                 messagebox(self.parent, "No MEG channels found")
                 return
 
             ch_names = self.meg_channel_groups[selected_item.text()]
             try:
-                ch_idxs = [raw.info["ch_names"].index(ch_name) for ch_name in ch_names]
+                ch_idxs = [info["ch_names"].index(ch_name) for ch_name in ch_names]
             except ValueError:
                 messagebox(
                     self.parent,
@@ -173,7 +178,7 @@ class ChannelGroupsDialog(QtWidgets.QDialog):
             ch_groups = [[], ch_idxs]
 
             fig, selection = mne.viz.plot_sensors(
-                raw.info,
+                info,
                 kind="select",
                 ch_type="mag",
                 ch_groups=ch_groups,

@@ -13,6 +13,7 @@ from meggie.subject import Subject
 from meggie.utilities.filemanager import open_raw
 from meggie.utilities.filemanager import save_raw
 from meggie.utilities.channels import get_default_channel_groups
+from meggie.utilities.channels import find_montage_info
 from meggie.utilities.validators import validate_name
 from meggie.utilities.uid import generate_uid
 
@@ -81,23 +82,26 @@ class Experiment:
         """Returns channel groups for experiment. If not set,
         uses defaults."""
         channel_groups = self._channel_groups.copy()
+        specs = find_all_datatype_specs()
 
-        # if channel groups not found, use defaults..
+        # if channel groups not found, look for defaults..
         if not channel_groups.get("eeg"):
-            if self.active_subject and self.active_subject.has_raw:
-                raw = self.active_subject.get_raw(preload=False)
-                try:
-                    channel_groups["eeg"] = get_default_channel_groups(raw, "eeg")
-                except Exception:
-                    pass
+            if self.active_subject:
+                info = find_montage_info(self.active_subject, specs.keys(), "eeg")
+                if info:
+                    try:
+                        channel_groups["eeg"] = get_default_channel_groups(info, "eeg")
+                    except Exception:
+                        pass
 
         if not channel_groups.get("meg"):
-            if self.active_subject and self.active_subject.has_raw:
-                raw = self.active_subject.get_raw(preload=False)
-                try:
-                    channel_groups["meg"] = get_default_channel_groups(raw, "meg")
-                except Exception:
-                    pass
+            if self.active_subject:
+                info = find_montage_info(self.active_subject, specs.keys(), "meg")
+                if info:
+                    try:
+                        channel_groups["meg"] = get_default_channel_groups(info, "meg")
+                    except Exception:
+                        pass
 
         return channel_groups
 
