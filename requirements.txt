@@ -7,3 +7,4 @@ python-json-logger
 h5io
 mne-qt-browser
 pyqt5
+appdirs
