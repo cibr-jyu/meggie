@@ -60,6 +60,11 @@ class Epochs(Datatype):
         """Returns additional information stored."""
         return self._params
 
+    @property
+    def info(self):
+        """Returns info."""
+        return self.content.info
+
     def delete_content(self):
         """Deletes the fif file from the files system"""
         os.remove(self._path)

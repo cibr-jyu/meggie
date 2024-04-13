@@ -7,6 +7,7 @@ import mne
 
 from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
+from meggie.utilities.channels import ensure_montage
 from meggie.utilities.plotting import set_figure_title
 
 
@@ -138,6 +139,8 @@ def plot_tfr_topo(
 
     # apply baseline here to get better vmin and vmax values
     tfr.apply_baseline(baseline=bline, mode=mode)
+
+    ensure_montage(subject, tfr, ch_type)
 
     values = tfr.data.flatten()
     vmax = np.percentile(np.abs(values), 99)

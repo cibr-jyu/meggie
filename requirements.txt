@@ -1,8 +1,10 @@
 mne==1.6.1
 numpy==1.26.4
 matplotlib==3.8.3
+pandas
 scikit-learn
 python-json-logger
 h5io
 mne-qt-browser
 pyqt5
+appdirs

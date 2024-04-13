@@ -43,13 +43,13 @@
     ],
     "pipelines": [
         {"id": "spectrum_sensor",
-         "name": "Sensor-level continuous data analysis",
+         "name": "Continuous data analysis",
          "include_tabs": ["preprocessing", "spectrum"]},
         {"id": "evoked_sensor",
-         "name": "Sensor-level evoked response analysis",
+         "name": "Evoked response analysis",
          "include_tabs": ["preprocessing", "epochs", "evoked"]},
         {"id": "induced_sensor",
-         "name": "Sensor-level induced response analysis",
+         "name": "Induced response analysis",
          "include_tabs": ["preprocessing", "epochs", "tfr"]}
     ]
 }

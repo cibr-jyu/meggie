@@ -1,21 +1,28 @@
 """Contains a class for handling reading and storing of
 global preferences such as the previous experiment and
-the tab settings. Normally saved to ~/.meggieprefs.
+the tab settings.
 """
 
 import os
 import configparser
 import logging
 
-from meggie.utilities.filemanager import homepath
+from meggie.utilities.filemanager import configpath
+from meggie.utilities.filemanager import datapath
 
 
 class PreferencesHandler(object):
     """Class for storing and setting preferences."""
 
-    def __init__(self):
-        self.prefs_path = ""
-        self.workspace = ""
+    def __init__(self, prefs_path=""):
+
+        if prefs_path:
+            self.prefs_path = prefs_path
+        else:
+            self.prefs_path = os.path.join(configpath(), "preferences.cfg")
+
+        self.workspace = datapath()
+
         self.previous_experiment_name = ""
         self.auto_load_last_open_experiment = False
         self.active_plugins = []
@@ -24,10 +31,9 @@ class PreferencesHandler(object):
 
     def read_config(self):
         """Reads the config file from file system"""
-        filename = os.path.join(homepath(), ".meggieprefs")
         config = configparser.RawConfigParser()
-        if os.path.isfile(filename):
-            config.read(filename)
+        if os.path.isfile(self.prefs_path):
+            config.read(self.prefs_path)
         return config
 
     def write_preferences_to_disk(self):
@@ -66,11 +72,16 @@ class PreferencesHandler(object):
             "Active plugins: " + str(self.active_plugins)
         )
 
-        path = self.prefs_path
-        if not path:
-            path = os.path.join(homepath(), ".meggieprefs")
+        try:
+            os.makedirs(os.path.dirname(self.prefs_path))
+        except PermissionError:
+            logging.getLogger("ui_logger").exception(
+                "Could not save the configuration file."
+            )
+        except FileExistsError:
+            pass
 
-        with open(path, "w") as configfile:
+        with open(self.prefs_path, "w") as configfile:
             config.write(configfile)
 
     def read_preferences_from_disk(self):

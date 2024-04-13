@@ -33,7 +33,7 @@ def test_default_channel_groups():
 
     raw = mne.io.read_raw_fif(sample_fname)
 
-    assert get_default_channel_groups(raw, "eeg")["Left-frontal"] == [
+    assert get_default_channel_groups(raw.info, "eeg")["Left-frontal"] == [
         "EEG 001",
         "EEG 004",
         "EEG 005",
@@ -77,8 +77,8 @@ def test_average_to_channel_groups():
 
     ch_names = info["ch_names"][:20]
 
-    meg_channel_groups = get_default_channel_groups(raw, "meg")
-    eeg_channel_groups = get_default_channel_groups(raw, "eeg")
+    meg_channel_groups = get_default_channel_groups(raw.info, "meg")
+    eeg_channel_groups = get_default_channel_groups(raw.info, "eeg")
 
     # find out to which channel group each of the channels belongs to
     results = []

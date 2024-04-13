@@ -23,10 +23,7 @@ class CreateEvoked(Action):
         if not selected_names:
             return
 
-        if len(selected_names) == 1:
-            stem = selected_names[0]
-        else:
-            stem = "Evoked"
+        stem = "Evoked"
 
         default_name = next_available_name(
             self.experiment.active_subject.evoked.keys(), stem

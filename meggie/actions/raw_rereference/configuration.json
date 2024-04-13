@@ -3,5 +3,5 @@
     "name": "Rereference",
     "entry": "Rereference",
     "description": "Re-reference the raw data to an average reference, which can be computed from one or more selected channels or all channels.",
-    "tags": ["eeg"]
+    "tags": ["eeg", "raw"]
 }

@@ -9,6 +9,7 @@ from matplotlib.lines import Line2D
 from meggie.utilities.plotting import color_cycle
 from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
+from meggie.utilities.channels import ensure_montage
 from meggie.utilities.plotting import set_figure_title
 
 from meggie.utilities.units import get_unit
@@ -66,7 +67,7 @@ def plot_evoked_averages(evoked, channel_groups):
     plt.show()
 
 
-def plot_evoked_topo(evoked, ch_type):
+def plot_evoked_topo(subject, evoked, ch_type):
     """Plots evoked time courses arranged as a topography"""
     evokeds = []
     labels = []
@@ -88,6 +89,8 @@ def plot_evoked_topo(evoked, ch_type):
 
         evok = evok.copy().drop_channels(dropped_names)
 
+        ensure_montage(subject, evok, ch_type)
+
         evokeds.append(evok)
         labels.append(key)
 
@@ -100,6 +103,7 @@ def plot_evoked_topo(evoked, ch_type):
     ]
 
     fig, axes = plt.subplots()
+
     mne.viz.plot_evoked_topo(evokeds, color=colors, legend=False, show=False, axes=axes)
     axes.legend(handles=lines, loc="upper right")
     title = "{0}_{1}".format(evoked.name, ch_type)

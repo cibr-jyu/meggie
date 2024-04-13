@@ -126,14 +126,15 @@ class Subject:
 
     def save(self):
         """Saves the data to the existing path."""
-        try:
-            filemanager.save_raw(self._raw, self.raw_path)
-        except Exception:
-            raise Exception(
-                "Could not save the raw file. Please ensure "
-                "that the entire experiment folder has "
-                "write permissions."
-            )
+        if self.has_raw:
+            try:
+                filemanager.save_raw(self._raw, self.raw_path)
+            except Exception:
+                raise Exception(
+                    "Could not save the raw file. Please ensure "
+                    "that the entire experiment folder has "
+                    "write permissions."
+                )
 
     def release_memory(self):
         """Releases data from the memory."""
@@ -148,6 +149,14 @@ class Subject:
         if len(channels) == 0:
             return False
         return True
+
+    @property
+    def has_raw(self):
+        """Checks if is a 'placeholder' subject."""
+        if self.raw_fname:
+            return True
+        else:
+            return False
 
     @property
     def sss_applied(self):
@@ -183,3 +192,31 @@ class Subject:
                 "Please ensure that the experiment folder "
                 "has write permissions everywhere."
             )
+
+    def save_montage(self, montage):
+
+        ch_names = montage.ch_names
+        with open(os.path.join(self.path, "montage_channels.txt"), "w") as f:
+            for ch_name in ch_names:
+                f.write(ch_name + "\n")
+
+        montage.save(os.path.join(self.path, "montage.fif"), overwrite=True)
+
+    def read_montage(self):
+        montage_path = os.path.join(self.path, "montage.fif")
+        channels_path = os.path.join(self.path, "montage_channels.txt")
+        if os.path.exists(montage_path) and os.path.exists(channels_path):
+            ch_names = []
+            with open(channels_path, "r") as f:
+                for line in f:
+                    ch_names.append(line.strip())
+
+            montage = mne.channels.read_dig_fif(montage_path)
+
+            mapping = {}
+            for idx, name in enumerate(montage.ch_names):
+                mapping[name] = ch_names[idx]
+
+            montage.rename_channels(mapping)
+
+            return montage

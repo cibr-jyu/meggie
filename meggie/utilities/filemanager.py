@@ -1,6 +1,7 @@
 """Contains functions for tasks related to file system.
 """
 
+import appdirs
 import os
 import shutil
 import re
@@ -260,14 +261,37 @@ def homepath():
         Path to home directory.
 
     """
-    from os.path import expanduser
 
-    home = expanduser("~")
+    home = os.path.expanduser("~")
 
     if not home:
         return "."
 
     return home
+
+
+def configpath():
+    """Find a path for configuration files.
+
+    Returns
+    -------
+    str
+        Path to config directory
+
+    """
+    return appdirs.user_config_dir("meggie")
+
+
+def datapath():
+    """Find a path for data files.
+
+    Returns
+    -------
+    str
+        Path to data directory
+
+    """
+    return os.path.join(appdirs.user_data_dir("meggie"), "experiments")
 
 
 def get_supported_formats():
