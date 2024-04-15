@@ -8,4 +8,3 @@ h5io
 mne-qt-browser
 pyqt5
 appdirs
-joblib
