@@ -6,6 +6,7 @@ import zipfile
 import json
 import tempfile
 from io import BytesIO
+from scripts.trace_mne_calls import mne_functions_by_actions
 
 
 docs_dir = sys.argv[1]
@@ -41,26 +42,42 @@ def get_actions(prefix):
         key = config["id"]
         description = config.get("description", "")
 
-        actions.append((key, name, description))
+        if not key.startswith(prefix):
+            continue
 
-    # Sort the list by the first element of each tuple
-    sorted_actions = sorted(actions, key=lambda x: x[0])
+        if not name:
+            continue
+
+        if key.endswith("_info"):
+            continue
+
+        actions.append({"key": key, "name": name, "description": description})
+
+    sorted_actions = sorted(actions, key=lambda x: x["key"])
+
+    return sorted_actions
+
+
+def format_actions(actions):
 
     # Create the formatted string
     formatted_strings = []
-    for action in sorted_actions:
-        if not action[1]:
-            continue
+    for action in actions:
 
-        if not action[0].startswith(prefix):
-            continue
+        title = f"{action['name']} ({action['key']})"
+        desc = action["description"] or "To be added."
 
-        if action[0].endswith("_info"):
-            continue
+        if action["mne_functions"]:
+            mne_functions_list = "\n".join(
+                f"- {func}  " for func in action["mne_functions"]
+            )
+            mne_functions = (
+                f"\nThe following MNE functions are used:  \n{mne_functions_list}\n"
+            )
+        else:
+            mne_functions = ""
 
-        title = f"{action[1]} ({action[0]})"
-        desc = action[2] or "To be added."
-        formatted_strings.append(f"### {title}\n\n{desc}\n")
+        formatted_strings.append(f"### {title}\n\n{desc}\n{mne_functions}")
 
     # Join all formatted strings into one final string
     final_actions_output = "\n".join(formatted_strings)
@@ -157,16 +174,22 @@ def create_markdown_table(plugin_metadata):
     return table
 
 
+def enrich_actions(actions, mne_functions):
+    action_names = [val["key"] for val in actions]
+
+    for action in actions:
+        action["mne_functions"] = sorted(mne_functions.get(action["key"], []))
+
+    return actions
+
+
 if __name__ == "__main__":
     version = get_version()
-    actions_raw = get_actions("raw")
-    actions_spectrum = get_actions("spectrum")
-    actions_epochs = get_actions("epochs")
-    actions_evoked = get_actions("evoked")
-    actions_tfr = get_actions("tfr")
 
     plugin_metadata = search_pypi_packages("meggie_")
     plugin_info = create_markdown_table(plugin_metadata)
+
+    mne_functions = mne_functions_by_actions()
 
     for file_path in list_files(docs_dir):
         if not file_path.endswith(".md"):
@@ -180,18 +203,29 @@ if __name__ == "__main__":
         file_contents = file_contents.replace("{{VERSION}}", version)
 
         # Replace '{{ACTIONS_RAW}}' with the extrated action information
+        actions_raw = format_actions(enrich_actions(get_actions("raw"), mne_functions))
         file_contents = file_contents.replace("{{ACTIONS_RAW}}", actions_raw)
 
         # Replace '{{ACTIONS_SPECTRUM}}' with the extrated action information
+        actions_spectrum = format_actions(
+            enrich_actions(get_actions("spectrum"), mne_functions)
+        )
         file_contents = file_contents.replace("{{ACTIONS_SPECTRUM}}", actions_spectrum)
 
         # Replace '{{ACTIONS_EPOCHS}}' with the extrated action information
+        actions_epochs = format_actions(
+            enrich_actions(get_actions("epochs"), mne_functions)
+        )
         file_contents = file_contents.replace("{{ACTIONS_EPOCHS}}", actions_epochs)
 
         # Replace '{{ACTIONS_EVOKED}}' with the extrated action information
+        actions_evoked = format_actions(
+            enrich_actions(get_actions("evoked"), mne_functions)
+        )
         file_contents = file_contents.replace("{{ACTIONS_EVOKED}}", actions_evoked)
 
         # Replace '{{ACTIONS_TFR}}' with the extrated action information
+        actions_tfr = format_actions(enrich_actions(get_actions("tfr"), mne_functions))
         file_contents = file_contents.replace("{{ACTIONS_TFR}}", actions_tfr)
 
         # Replace '{{PLUGIN_INFO}}' with the pypi information

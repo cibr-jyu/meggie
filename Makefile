@@ -15,10 +15,10 @@ test:
 update_docs:
 	rm -fr docs_updated
 	cp -fr docs docs_updated
-	python scripts/update_docs.py docs_updated
+	python -m scripts.update_docs docs_updated
 
 .PHONY: serve_docs
-serve_docs: update_docs
+serve_docs:
 	mkdocs serve
 
 .PHONY: cov

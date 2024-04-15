@@ -49,5 +49,5 @@ def compare_raws(raw_from, raw_to):
         The changed raw.
 
     """
-    changes_raw = _prepare_raw_for_changes(raw_from, raw_to)
-    changes_raw.plot(color="red", bad_color="blue", title="Comparison plot")
+    raw = _prepare_raw_for_changes(raw_from, raw_to)
+    raw.plot(color="red", bad_color="blue", title="Comparison plot")

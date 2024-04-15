@@ -9,5 +9,4 @@ class TestRawPlot(BaseTestAction):
         self.run_action(
             action_name="raw_plot",
             handler=PlotRaw,
-            patch_paths=["meggie.actions.raw_plot"],
         )

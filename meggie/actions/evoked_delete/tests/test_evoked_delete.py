@@ -11,5 +11,4 @@ class TestEvokedDelete(BaseTestAction):
             action_name="evoked_delete",
             handler=DeleteEvoked,
             data=data,
-            patch_paths=["meggie.actions.evoked_delete"],
         )

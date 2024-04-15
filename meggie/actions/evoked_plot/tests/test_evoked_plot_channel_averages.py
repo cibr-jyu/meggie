@@ -12,7 +12,6 @@ class TestEvokedPlotChannelAverages(BaseTestAction):
             action_name="evoked_plot",
             handler=PlotEvoked,
             data=data,
-            patch_paths=["meggie.actions.evoked_plot"],
         )
         dialog = self.find_dialog(OutputOptions)
         dialog.ui.radioButtonChannelAverages.setChecked(True)

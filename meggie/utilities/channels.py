@@ -4,8 +4,6 @@
 import numpy as np
 import mne
 
-from mne.channels import _divide_to_regions
-
 
 def is_montage_set(info, ch_type):
     """Checks whether channel locations are found in the info for given channel type.
@@ -126,7 +124,7 @@ def get_default_channel_groups(info, ch_type):
 
     info_filt = filter_info(info, ch_names)
 
-    regions = _divide_to_regions(info_filt, add_stim=False)
+    regions = mne.channels._divide_to_regions(info_filt, add_stim=False)
 
     ch_groups = {}
     for region_key, region in regions.items():

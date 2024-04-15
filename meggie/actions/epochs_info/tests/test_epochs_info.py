@@ -11,6 +11,5 @@ class TestEpochsInfo(BaseTestAction):
             action_name="epochs_info",
             handler=Info,
             data=data,
-            patch_paths=["meggie.actions.epochs_info"],
         )
         assert content

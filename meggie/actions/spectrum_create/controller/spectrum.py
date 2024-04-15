@@ -16,6 +16,7 @@ from meggie.utilities.events import get_raw_blocks_from_intervals
 @threaded
 def create_power_spectrum(subject, spectrum_name, intervals, fmin, fmax, nfft, overlap):
     """Creates a power spectrum item."""
+
     # get raw objects organized with average groups as keys
     ival_times, raw_block_groups = get_raw_blocks_from_intervals(subject, intervals)
 

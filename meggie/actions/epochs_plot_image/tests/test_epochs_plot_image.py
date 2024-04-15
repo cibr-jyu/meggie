@@ -11,5 +11,4 @@ class TestEpochsPlotImage(BaseTestAction):
             action_name="epochs_plot_image",
             handler=PlotEpochsImage,
             data=data,
-            patch_paths=["meggie.actions.epochs_plot_image"],
         )

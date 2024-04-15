@@ -28,7 +28,8 @@ class PlotEpochsImage(Action):
     @subject_action
     def handler(self, subject, params):
         epochs = subject.epochs.get(params["name"])
-        figs = epochs.content.plot_image()
+        mne_epochs = epochs.content
+        figs = mne_epochs.plot_image()
         for fig in figs:
             ch_type = get_figure_title(fig)
             title = "{0}_{1}".format(params["name"], ch_type)

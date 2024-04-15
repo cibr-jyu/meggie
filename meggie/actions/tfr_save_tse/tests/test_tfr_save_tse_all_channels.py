@@ -12,7 +12,6 @@ class TestTFRSaveTSEAllChannels(BaseTestAction):
             action_name="tfr_save_tse",
             handler=SaveTSE,
             data=data,
-            patch_paths=["meggie.actions.tfr_save_tse"],
         )
         dialog = self.find_dialog(TFROutputOptions)
         dialog.ui.radioButtonChannelAverages.setChecked(False)

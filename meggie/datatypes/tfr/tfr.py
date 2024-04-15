@@ -49,9 +49,9 @@ class TFR(Datatype):
     def save_content(self):
         """Saves the mne.AverageTFR to h5 files in the tfr directory."""
         try:
-            for tfr_name, tfr in self._content.items():
+            for tfr_name, mne_tfr in self._content.items():
                 fname = self._get_fname(tfr_name)
-                tfr.save(fname, overwrite=True)
+                mne_tfr.save(fname, overwrite=True)
         except Exception:
             raise Exception(
                 "Writing TFRs failed. Please ensure that the "

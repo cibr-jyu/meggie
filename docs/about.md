@@ -9,7 +9,7 @@ Meggie focuses on:
 1. **Multi-Subject Management**: It makes it easy to work with many subjects' data at once.
 2. **Clear Analysis Steps**: It helps users go step by step from starting data to results.
 
-Compared to other tools like FieldTrip, MNE-Python, EEGLAB, Brainstorm, and mnelab, Meggie is unique because it's built with Python, it's easy for anyone to use, and it's designed for handling multiple subjects' data efficiently.
+Compared to other tools like FieldTrip, MNE-Python, EEGLAB, Brainstorm, and MNELAB, Meggie is unique because it's built with Python, it's easy for anyone to use, and it's designed for handling multiple subjects' data efficiently.
 
 ## Plugins
 

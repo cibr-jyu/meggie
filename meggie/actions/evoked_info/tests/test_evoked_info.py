@@ -11,6 +11,5 @@ class TestEvokedInfo(BaseTestAction):
             action_name="evoked_info",
             handler=Info,
             data=data,
-            patch_paths=["meggie.actions.evoked_info"],
         )
         assert content

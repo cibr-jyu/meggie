@@ -11,5 +11,4 @@ class TestTFRDelete(BaseTestAction):
             action_name="tfr_delete",
             handler=DeleteTFR,
             data=data,
-            patch_paths=["meggie.actions.tfr_delete"],
         )

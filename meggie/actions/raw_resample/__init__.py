@@ -24,7 +24,8 @@ class Resample(Action):
 
         @threaded
         def resample_fun():
-            subject.get_raw().resample(params["rate"])
+            raw = subject.get_raw()
+            raw.resample(params["rate"])
 
         resample_fun(do_meanwhile=self.window.update_ui)
         subject.save()

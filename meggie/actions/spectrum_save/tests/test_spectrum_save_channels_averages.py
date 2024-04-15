@@ -12,7 +12,6 @@ class TestSpectrumSaveChannelAverages(BaseTestAction):
             action_name="spectrum_save",
             handler=SaveSpectrum,
             data=data,
-            patch_paths=["meggie.actions.spectrum_save"],
         )
         dialog = self.find_dialog(OutputOptions)
         dialog.ui.radioButtonChannelAverages.setChecked(True)

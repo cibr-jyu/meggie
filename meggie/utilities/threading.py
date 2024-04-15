@@ -34,10 +34,6 @@ def threaded(func):
     def decorated(*args, **kwargs):
         """Inner function for threaded-decoration"""
 
-        # allow bypassing threads for testing
-        if kwargs.pop("no_threading", None):
-            return func(*args, **kwargs)
-
         # worker threads should be used on time consuming
         # tasks so add a indicator for user
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))

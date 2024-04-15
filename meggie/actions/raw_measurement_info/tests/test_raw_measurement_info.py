@@ -8,6 +8,5 @@ class TestRawMeasurementInfo(BaseTestAction):
         content = self.run_action(
             action_name="raw_measurement_info",
             handler=Info,
-            patch_paths=["meggie.actions.raw_measurement_info"],
         )
         assert content

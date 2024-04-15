@@ -12,7 +12,6 @@ class TestEvokedSaveChannelAverages(BaseTestAction):
             action_name="evoked_save",
             handler=SaveEvoked,
             data=data,
-            patch_paths=["meggie.actions.evoked_save"],
         )
         dialog = self.find_dialog(OutputOptions)
         dialog.ui.radioButtonChannelAverages.setChecked(True)

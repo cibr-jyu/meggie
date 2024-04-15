@@ -358,6 +358,10 @@ class BaseTestAction:
         logger = logging.getLogger("ui_logger")
         self.monkeypatch.setattr(logger, "exception", patched_logger_exception)
 
+        basepath = "meggie.actions." + action_name
+        if basepath not in patch_paths:
+            patch_paths.append(basepath)
+
         # patch messageboxes to raise exceptions
         for patch_path in patch_paths:
             module = importlib.import_module(patch_path)

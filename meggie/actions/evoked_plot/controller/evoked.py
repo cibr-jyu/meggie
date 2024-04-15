@@ -71,9 +71,9 @@ def plot_evoked_topo(subject, evoked, ch_type):
     """Plots evoked time courses arranged as a topography"""
     evokeds = []
     labels = []
-    for key, evok in sorted(evoked.content.items()):
+    for key, mne_evoked in sorted(evoked.content.items()):
 
-        info = evok.info
+        info = mne_evoked.info
         if ch_type == "eeg":
             dropped_names = [
                 ch_name
@@ -87,11 +87,12 @@ def plot_evoked_topo(subject, evoked, ch_type):
                 if ch_idx not in mne.pick_types(info, eeg=False, meg=True)
             ]
 
-        evok = evok.copy().drop_channels(dropped_names)
+        mne_evoked = mne_evoked.copy().drop_channels(dropped_names)
 
-        ensure_montage(subject, evok, ch_type)
+        ensure_montage(subject, mne_evoked, ch_type)
 
-        evokeds.append(evok)
+        evokeds.append(mne_evoked)
+
         labels.append(key)
 
     colors = color_cycle(len(evoked.content.keys()))

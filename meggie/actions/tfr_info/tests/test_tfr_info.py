@@ -11,6 +11,5 @@ class TestTFRInfo(BaseTestAction):
             action_name="tfr_info",
             handler=Info,
             data=data,
-            patch_paths=["meggie.actions.tfr_info"],
         )
         assert content

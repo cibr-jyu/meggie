@@ -11,6 +11,5 @@ class TestSpectrumInfo(BaseTestAction):
             action_name="spectrum_info",
             handler=Info,
             data=data,
-            patch_paths=["meggie.actions.spectrum_info"],
         )
         assert content

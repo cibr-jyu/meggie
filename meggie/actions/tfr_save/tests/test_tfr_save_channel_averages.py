@@ -12,7 +12,6 @@ class TestTFRSaveChannelAverages(BaseTestAction):
             action_name="tfr_save",
             handler=SaveTFR,
             data=data,
-            patch_paths=["meggie.actions.tfr_save"],
         )
         dialog = self.find_dialog(TFROutputOptions)
         dialog.ui.radioButtonChannelAverages.setChecked(True)

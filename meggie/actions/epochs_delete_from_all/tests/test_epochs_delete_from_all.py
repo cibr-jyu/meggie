@@ -11,5 +11,4 @@ class TestEpochsDeleteFromAll(BaseTestAction):
             action_name="epochs_delete_from_all",
             handler=DeleteEpochsFromAll,
             data=data,
-            patch_paths=["meggie.actions.epochs_delete_from_all"],
         )

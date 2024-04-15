@@ -11,5 +11,4 @@ class TestSpectrumDelete(BaseTestAction):
             action_name="spectrum_delete",
             handler=DeleteSpectrum,
             data=data,
-            patch_paths=["meggie.actions.spectrum_delete"],
         )

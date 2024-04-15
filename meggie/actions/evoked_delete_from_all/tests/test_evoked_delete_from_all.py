@@ -11,5 +11,4 @@ class TestEvokedDeleteFromAll(BaseTestAction):
             action_name="evoked_delete_from_all",
             handler=DeleteEvokedFromAll,
             data=data,
-            patch_paths=["meggie.actions.evoked_delete_from_all"],
         )

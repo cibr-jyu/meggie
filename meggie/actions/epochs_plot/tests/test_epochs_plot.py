@@ -7,9 +7,4 @@ class TestEpochsPlot(BaseTestAction):
 
         data = {"outputs": {"epochs": ["Epochs"]}}
 
-        self.run_action(
-            action_name="epochs_plot",
-            handler=PlotEpochs,
-            data=data,
-            patch_paths=["meggie.actions.epochs_plot"],
-        )
+        self.run_action(action_name="epochs_plot", handler=PlotEpochs, data=data)

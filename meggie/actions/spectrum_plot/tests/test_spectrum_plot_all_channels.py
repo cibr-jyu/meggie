@@ -12,7 +12,6 @@ class TestSpectrumPlotAllChannels(BaseTestAction):
             action_name="spectrum_plot",
             handler=PlotSpectrum,
             data=data,
-            patch_paths=["meggie.actions.spectrum_plot"],
         )
         dialog = self.find_dialog(OutputOptions)
         dialog.ui.radioButtonChannelAverages.setChecked(False)

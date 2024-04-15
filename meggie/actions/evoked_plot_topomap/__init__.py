@@ -52,8 +52,8 @@ class PlotEvokedTopomap(Action):
         radius = params["radius"]
         evoked = subject.evoked.get(name)
 
-        for key, evok in sorted(evoked.content.items()):
-            channels = get_channels_by_type(evok.info)
+        for key, mne_evoked in sorted(evoked.content.items()):
+            channels = get_channels_by_type(mne_evoked.info)
             for ch_type in channels.keys():
                 title_elems = [name, key, ch_type]
                 times = np.arange(tmin, tmax, step)
@@ -80,7 +80,7 @@ class PlotEvokedTopomap(Action):
                 if ch_type in ["mag", "grad"]:
                     sphere = radius
 
-                fig = evok.plot_topomap(
+                fig = mne_evoked.plot_topomap(
                     times=times, ch_type=ch_type, axes=axes, sphere=sphere
                 )
                 set_figure_title(fig, "_".join(title_elems))

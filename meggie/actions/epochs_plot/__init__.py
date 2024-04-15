@@ -26,4 +26,5 @@ class PlotEpochs(Action):
     @subject_action
     def handler(self, subject, params):
         epochs = subject.epochs.get(params["name"])
-        epochs.content.plot()
+        mne_epochs = epochs.content
+        mne_epochs.plot()
