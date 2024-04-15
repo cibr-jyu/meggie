@@ -20,8 +20,8 @@ mne.viz.set_browser_backend("matplotlib")
 def patched_progress(self):
     return
 
-joblib.parallel.Parallel.print_progress = patched_progress
 
+joblib.parallel.Parallel.print_progress = patched_progress
 
 
 def main():
