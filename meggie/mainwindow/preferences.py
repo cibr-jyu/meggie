@@ -86,6 +86,11 @@ class PreferencesHandler(object):
 
     def read_preferences_from_disk(self):
         """Reads the preferences from file system into attributes."""
+
+        logging.getLogger("ui_logger").info(
+            f"Reading preferences from: {self.prefs_path}"
+        )
+
         config = self.read_config()
 
         try:
