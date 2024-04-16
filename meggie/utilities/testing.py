@@ -340,6 +340,7 @@ class BaseTestAction:
         self.mock_main_window = MockMainWindow()
         self.temp_dir = tempfile.TemporaryDirectory()
         self.dirpath = self.temp_dir.name
+        self.package = "meggie.actions"
         self.setup_experiment()
         yield
         # after each test
@@ -358,13 +359,17 @@ class BaseTestAction:
         logger = logging.getLogger("ui_logger")
         self.monkeypatch.setattr(logger, "exception", patched_logger_exception)
 
-        basepath = "meggie.actions." + action_name
+        basepath = f"{self.package}.{action_name}"
         if basepath not in patch_paths:
             patch_paths.append(basepath)
 
         # patch messageboxes to raise exceptions
         for patch_path in patch_paths:
-            module = importlib.import_module(patch_path)
+            try:
+                module = importlib.import_module(patch_path)
+            except ModuleNotFoundError:
+                # the action is probably not within self.package
+                continue
 
             if getattr(module, "exc_messagebox", None):
                 self.monkeypatch.setattr(
