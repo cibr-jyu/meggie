@@ -1,11 +1,20 @@
 Changelog
 =========
 
-1.7.1 (unreleased)
+1.8.1 (unreleased)
 ------------------
 
 - nothing changed yet.
 
+1.8.0 (2024-04-16)
+------------------
+
+- Update documentation to include what mne functions are used by the actions
+- Make it possible to create experiment based on a open datasets
+- Update evoked and tfr default names
+- Use standard locations for config and data files
+- Make it possible to have dataobjects without raw
+- Fix identifying common channels in tfr group average
 
 1.7.0 (2024-03-25)
 ------------------
