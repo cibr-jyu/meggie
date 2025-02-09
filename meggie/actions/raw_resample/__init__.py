@@ -1,5 +1,4 @@
-""" Contains implementation for raw resample.
-"""
+"""Contains implementation for raw resample."""
 
 from meggie.utilities.threading import threaded
 

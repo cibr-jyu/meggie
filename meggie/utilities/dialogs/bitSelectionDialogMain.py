@@ -1,5 +1,4 @@
-""" Contains a class for logic of the bit selection dialog.
-"""
+"""Contains a class for logic of the bit selection dialog."""
 
 from PyQt5 import QtWidgets
 from PyQt5.Qt import QPushButton, pyqtSlot

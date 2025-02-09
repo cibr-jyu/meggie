@@ -1,5 +1,4 @@
-""" Contains implementation for delete epochs from all
-"""
+"""Contains implementation for delete epochs from all"""
 
 import logging
 

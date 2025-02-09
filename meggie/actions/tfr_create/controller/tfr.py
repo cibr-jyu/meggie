@@ -1,5 +1,4 @@
-""" Contains controlling logic for tfr create
-"""
+"""Contains controlling logic for tfr create"""
 
 import mne
 

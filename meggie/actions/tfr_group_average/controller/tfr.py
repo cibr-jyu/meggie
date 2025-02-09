@@ -1,5 +1,4 @@
-""" Contains controlling logic for the tfr group average
-"""
+"""Contains controlling logic for the tfr group average"""
 
 import logging
 

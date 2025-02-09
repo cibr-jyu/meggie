@@ -1,5 +1,4 @@
-"""Contains useful functions for developers.
-"""
+"""Contains useful functions for developers."""
 
 
 def debug_trace():

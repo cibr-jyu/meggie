@@ -1,5 +1,4 @@
-""" Contains implementation for delete spectrum from all
-"""
+"""Contains implementation for delete spectrum from all"""
 
 import logging
 

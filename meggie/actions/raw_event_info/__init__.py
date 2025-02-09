@@ -1,5 +1,4 @@
-""" Contains implementation for raw event info
-"""
+"""Contains implementation for raw event info"""
 
 import numpy as np
 

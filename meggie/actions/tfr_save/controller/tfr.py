@@ -1,5 +1,4 @@
-""" Contains controlling logic for the tfr implementation
-"""
+"""Contains controlling logic for the tfr implementation"""
 
 import os
 import logging

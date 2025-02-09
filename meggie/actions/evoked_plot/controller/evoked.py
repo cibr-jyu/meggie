@@ -1,5 +1,4 @@
-""" Contains controlling logic for the evoked plot
-"""
+"""Contains controlling logic for the evoked plot"""
 
 import mne
 import matplotlib.pyplot as plt

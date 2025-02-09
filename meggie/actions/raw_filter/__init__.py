@@ -1,5 +1,4 @@
-""" Contains implementation for raw filter
-"""
+"""Contains implementation for raw filter"""
 
 from meggie.utilities.threading import threaded
 

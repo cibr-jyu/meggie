@@ -1,5 +1,4 @@
-""" Contains implementation for raw plot
-"""
+"""Contains implementation for raw plot"""
 
 import logging
 

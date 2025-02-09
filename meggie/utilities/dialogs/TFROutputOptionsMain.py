@@ -1,5 +1,4 @@
-""" Contains a class for the tfr output options dialog.
-"""
+"""Contains a class for the tfr output options dialog."""
 
 from PyQt5 import QtWidgets
 

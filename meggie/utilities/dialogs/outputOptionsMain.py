@@ -1,5 +1,4 @@
-""" Contains a class for logic of the output options dialog.
-"""
+"""Contains a class for logic of the output options dialog."""
 
 from PyQt5 import QtWidgets
 

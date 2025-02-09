@@ -1,5 +1,4 @@
-""" Contains a class for logic of about dialog.
-"""
+"""Contains a class for logic of about dialog."""
 
 from PyQt5 import QtWidgets
 

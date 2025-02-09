@@ -1,5 +1,4 @@
-""" Contains a class for logic of pipeline dialog.
-"""
+"""Contains a class for logic of pipeline dialog."""
 
 from PyQt5 import QtWidgets
 

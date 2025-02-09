@@ -1,5 +1,4 @@
-""" Contains a class for logic of montage dialog.
-"""
+"""Contains a class for logic of montage dialog."""
 
 import os
 import pkg_resources

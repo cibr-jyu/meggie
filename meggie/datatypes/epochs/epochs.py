@@ -1,5 +1,4 @@
-""" Defines Epochs class, wraps mne.Epochs objects.
-"""
+"""Defines Epochs class, wraps mne.Epochs objects."""
 
 import os
 

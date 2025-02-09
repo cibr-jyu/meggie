@@ -1,5 +1,4 @@
-""" Contains controlling logic for the ICA.
-"""
+"""Contains controlling logic for the ICA."""
 
 import mne
 

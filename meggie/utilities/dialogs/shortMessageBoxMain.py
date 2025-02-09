@@ -1,5 +1,4 @@
-""" Contains a class for logic of the short message box.
-"""
+"""Contains a class for logic of the short message box."""
 
 from PyQt5 import QtWidgets
 

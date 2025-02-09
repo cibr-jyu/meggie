@@ -1,5 +1,4 @@
-""" Contains implementation for raw rereference
-"""
+"""Contains implementation for raw rereference"""
 
 from meggie.utilities.threading import threaded
 

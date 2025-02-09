@@ -1,5 +1,4 @@
-""" Contains logic for the epoch creation dialog.
-"""
+"""Contains logic for the epoch creation dialog."""
 
 import logging
 

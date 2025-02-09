@@ -1,5 +1,4 @@
-""" Contains implementation for delete evoked
-"""
+"""Contains implementation for delete evoked"""
 
 from meggie.utilities.messaging import exc_messagebox
 

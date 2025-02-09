@@ -1,5 +1,4 @@
-""" Contains a class for logic of action dialog.
-"""
+"""Contains a class for logic of action dialog."""
 
 import os
 import json

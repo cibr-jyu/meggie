@@ -1,5 +1,4 @@
-""" Contains plot evoked action handling.
-"""
+"""Contains plot evoked action handling."""
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.channels import get_channels_by_type

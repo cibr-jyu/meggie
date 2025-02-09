@@ -1,5 +1,4 @@
-""" Contains spectrum creation logic.
-"""
+"""Contains spectrum creation logic."""
 
 from collections import OrderedDict
 

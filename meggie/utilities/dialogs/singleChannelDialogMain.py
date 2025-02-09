@@ -1,5 +1,4 @@
-""" Contains a class for logic of the single channel plot dialog.
-"""
+"""Contains a class for logic of the single channel plot dialog."""
 
 from PyQt5 import QtWidgets
 

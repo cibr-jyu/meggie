@@ -1,5 +1,4 @@
-""" Handles the logic of simple reusable dialogs
-"""
+"""Handles the logic of simple reusable dialogs"""
 
 import logging
 

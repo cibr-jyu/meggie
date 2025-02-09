@@ -1,5 +1,4 @@
-""" Contains implementation for tfr info
-"""
+"""Contains implementation for tfr info"""
 
 from meggie.mainwindow.dynamic import InfoAction
 

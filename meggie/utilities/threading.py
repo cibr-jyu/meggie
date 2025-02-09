@@ -1,5 +1,4 @@
-""" Contains threading related utilities.
-"""
+"""Contains threading related utilities."""
 
 from queue import Queue
 from queue import Empty

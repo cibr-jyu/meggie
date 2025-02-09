@@ -1,5 +1,4 @@
-""" Contains a class for logic of the rereferencing dialog.
-"""
+"""Contains a class for logic of the rereferencing dialog."""
 
 import logging
 

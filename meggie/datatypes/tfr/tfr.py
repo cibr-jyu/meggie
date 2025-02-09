@@ -1,5 +1,4 @@
-""" Defines TFR class, wraps mne.AverageTFR objects.
-"""
+"""Defines TFR class, wraps mne.AverageTFR objects."""
 
 import os
 import re

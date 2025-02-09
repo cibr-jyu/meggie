@@ -1,5 +1,4 @@
-""" UI layout for simple dialog
-"""
+"""UI layout for simple dialog"""
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets

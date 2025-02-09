@@ -1,5 +1,4 @@
-""" Contains a class for logic of filter dialog.
-"""
+"""Contains a class for logic of filter dialog."""
 
 import logging
 

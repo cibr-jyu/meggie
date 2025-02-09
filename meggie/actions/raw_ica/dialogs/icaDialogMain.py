@@ -1,5 +1,4 @@
-""" Contains a class for logic of ica dialog.
-"""
+"""Contains a class for logic of ica dialog."""
 
 import logging
 

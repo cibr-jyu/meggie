@@ -1,5 +1,4 @@
-""" Helpers related to identifiers
-"""
+"""Helpers related to identifiers"""
 
 import uuid
 

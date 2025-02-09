@@ -1,5 +1,4 @@
-""" Contains implementation for raw montage
-"""
+"""Contains implementation for raw montage"""
 
 import mne
 

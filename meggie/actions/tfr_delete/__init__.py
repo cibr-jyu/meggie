@@ -1,5 +1,4 @@
-""" Contains implementation for delete tfr
-"""
+"""Contains implementation for delete tfr"""
 
 from meggie.utilities.messaging import exc_messagebox
 

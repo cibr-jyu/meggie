@@ -1,5 +1,4 @@
-""" Defines Evoked class, wraps mne.Evoked objects.
-"""
+"""Defines Evoked class, wraps mne.Evoked objects."""
 
 import os
 

@@ -1,5 +1,4 @@
-""" Contains controlling logic for the spectrum saving.
-"""
+"""Contains controlling logic for the spectrum saving."""
 
 import os
 import logging

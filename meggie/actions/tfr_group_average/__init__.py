@@ -1,5 +1,4 @@
-""" Contains tfr group average action handling.
-"""
+"""Contains tfr group average action handling."""
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.names import next_available_name

@@ -1,5 +1,4 @@
-""" Contains the class for main window logic.
-"""
+"""Contains the class for main window logic."""
 
 import os
 import sys

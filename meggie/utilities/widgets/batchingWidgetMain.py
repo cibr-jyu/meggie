@@ -1,5 +1,4 @@
-""" Contains a class for logic of the batching widget.
-"""
+"""Contains a class for logic of the batching widget."""
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets

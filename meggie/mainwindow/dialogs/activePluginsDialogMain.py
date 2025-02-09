@@ -1,5 +1,4 @@
-""" Contains a logic for setting active plugins.
-"""
+"""Contains a logic for setting active plugins."""
 
 from PyQt5 import QtWidgets
 

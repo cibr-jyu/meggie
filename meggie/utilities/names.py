@@ -1,5 +1,4 @@
-""" Contains functions for name-related tasks.
-"""
+"""Contains functions for name-related tasks."""
 
 import re
 

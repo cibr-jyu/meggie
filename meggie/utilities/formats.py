@@ -1,5 +1,4 @@
-"""Useful functions for formatting outputs.
-"""
+"""Useful functions for formatting outputs."""
 
 
 def format_floats(data):

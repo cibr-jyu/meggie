@@ -1,5 +1,4 @@
-""" Contains group average spectrum action handling.
-"""
+"""Contains group average spectrum action handling."""
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.names import next_available_name

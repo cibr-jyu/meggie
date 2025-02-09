@@ -1,5 +1,4 @@
-""" Provides functions for popping up different kind of messageboxes.
-"""
+"""Provides functions for popping up different kind of messageboxes."""
 
 import logging
 from meggie.utilities.dialogs.shortMessageBoxMain import shortMessageBox

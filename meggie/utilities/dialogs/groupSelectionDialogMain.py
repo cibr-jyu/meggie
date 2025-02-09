@@ -1,5 +1,4 @@
-""" Contains a class for logic of the group selection dialog.
-"""
+"""Contains a class for logic of the group selection dialog."""
 
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore

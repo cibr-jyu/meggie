@@ -1,5 +1,4 @@
-""" Contains plot tfr action handling.
-"""
+"""Contains plot tfr action handling."""
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.channels import get_channels_by_type

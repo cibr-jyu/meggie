@@ -1,5 +1,4 @@
-""" Contains a class for logic of events from annotations dialog.
-"""
+"""Contains a class for logic of events from annotations dialog."""
 
 import logging
 

@@ -1,5 +1,4 @@
-""" Contains plot spectrum action handling.
-"""
+"""Contains plot spectrum action handling."""
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.channels import get_channels_by_type

@@ -1,5 +1,4 @@
-""" Contains implementation for events from annotations
-"""
+"""Contains implementation for events from annotations"""
 
 from meggie.utilities.threading import threaded
 

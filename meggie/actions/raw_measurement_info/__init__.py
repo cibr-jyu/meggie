@@ -1,5 +1,4 @@
-""" Contains implementation for raw measurement info
-"""
+"""Contains implementation for raw measurement info"""
 
 from meggie.mainwindow.dynamic import InfoAction
 
