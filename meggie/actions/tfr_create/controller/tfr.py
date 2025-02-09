@@ -1,7 +1,5 @@
 """Contains controlling logic for tfr create"""
 
-import mne
-
 from meggie.utilities.threading import threaded
 from meggie.utilities.validators import assert_arrays_same
 
@@ -27,9 +25,9 @@ def create_tfr(
         if subtract_evoked:
             epochs = epochs.copy().subtract_evoked()
 
-        tfr = mne.time_frequency.tfr.tfr_morlet(
-            epochs,
-            freqs=freqs,
+        tfr = epochs.compute_tfr(
+            "morlet",
+            freqs,
             n_cycles=n_cycles,
             decim=decim,
             average=True,

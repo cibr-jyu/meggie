@@ -274,17 +274,17 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
         decim = 1
         freqs = np.arange(minfreq, maxfreq, interval)
 
-        mne_tfr = mne.time_frequency.tfr.tfr_morlet(
-            mne_epochs,
-            freqs=freqs,
+        mne_tfr = mne_epochs.compute_tfr(
+            "morlet",
+            freqs,
             n_cycles=n_cycles,
             decim=decim,
             average=True,
             return_itc=False,
         )
-        mne_tfr_2 = mne.time_frequency.tfr.tfr_morlet(
-            mne_epochs_2,
-            freqs=freqs,
+        mne_tfr_2 = mne_epochs_2.compute_tfr(
+            "morlet",
+            freqs,
             n_cycles=n_cycles,
             decim=decim,
             average=True,
@@ -343,12 +343,16 @@ class BaseTestAction:
         self.package = "meggie.actions"
         self.setup_experiment()
         yield
-        # after each test
-        self.temp_dir.cleanup()
+
+        # after each test to try clean up to not contaminate others
         for widget in QApplication.topLevelWidgets():
             if widget.isWindow():
                 widget.close()
                 widget.deleteLater()
+
+        QApplication.processEvents()
+
+        self.temp_dir.cleanup()
 
     def setup_experiment(self):
         self.experiment = create_test_experiment(self.dirpath, "test_experiment")
