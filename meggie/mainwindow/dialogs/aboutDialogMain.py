@@ -1,6 +1,6 @@
 """Contains a class for logic of about dialog."""
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from meggie.mainwindow.dialogs.aboutDialogUi import Ui_Dialog
 

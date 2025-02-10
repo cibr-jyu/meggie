@@ -6,9 +6,9 @@ from time import sleep
 from sys import exc_info
 from multiprocessing.pool import ThreadPool
 
-from PyQt5 import QtGui
-from PyQt5 import QtCore
-from PyQt5 import QtWidgets
+from PyQt6 import QtGui
+from PyQt6 import QtCore
+from PyQt6 import QtWidgets
 
 
 def threaded(func):
@@ -35,7 +35,9 @@ def threaded(func):
 
         # worker threads should be used on time consuming
         # tasks so add a indicator for user
-        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        QtWidgets.QApplication.setOverrideCursor(
+            QtGui.QCursor(QtCore.Qt.CursorShape.WaitCursor)
+        )
 
         pool = ThreadPool(processes=1)
         do_meanwhile = kwargs.pop("do_meanwhile", None)

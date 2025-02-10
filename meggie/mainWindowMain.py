@@ -7,10 +7,10 @@ import warnings
 
 from pythonjsonlogger import jsonlogger
 
-from PyQt5.QtWidgets import QApplication
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
-from PyQt5 import QtCore
+from PyQt6.QtWidgets import QApplication
+from PyQt6 import QtGui
+from PyQt6 import QtWidgets
+from PyQt6 import QtCore
 
 from meggie.mainwindow.dynamic import construct_tabs
 
@@ -453,4 +453,4 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow(app)
     window.showMaximized()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

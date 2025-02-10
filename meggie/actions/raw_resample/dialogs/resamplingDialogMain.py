@@ -2,7 +2,7 @@
 
 import logging
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from meggie.actions.raw_resample.dialogs.resamplingDialogUi import Ui_resamplingDialog
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget

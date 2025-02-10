@@ -13,7 +13,7 @@ def debug_trace():
     After debugging should call PyQt4.QtCore.pyqtRestoreInputHook, though
     often one just quits and restarts.
     """
-    from PyQt5.QtCore import pyqtRemoveInputHook
+    from PyQt6.QtCore import pyqtRemoveInputHook
 
     pyqtRemoveInputHook()
 

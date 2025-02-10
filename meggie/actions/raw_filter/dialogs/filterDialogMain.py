@@ -2,7 +2,7 @@
 
 import logging
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from meggie.actions.raw_filter.dialogs.filterDialogUi import Ui_DialogFilter
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget

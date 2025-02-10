@@ -1,7 +1,7 @@
 """Contains a class for logic of the group selection dialog."""
 
-from PyQt5 import QtWidgets
-from PyQt5 import QtCore
+from PyQt6 import QtWidgets
+from PyQt6 import QtCore
 
 from meggie.utilities.dialogs.groupSelectionDialogUi import Ui_groupSelectionDialog
 
@@ -40,7 +40,9 @@ class GroupSelectionDialog(QtWidgets.QDialog):
         )
         getattr(self.ui, "checkBoxGroup_" + str(idx)).setText("")
         getattr(self.ui, "checkBoxGroup_" + str(idx)).setMaximumSize(20, 20)
-        getattr(self.ui, "checkBoxGroup_" + str(idx)).setCheckState(QtCore.Qt.Checked)
+        getattr(self.ui, "checkBoxGroup_" + str(idx)).setCheckState(
+            QtCore.Qt.CheckState.Checked
+        )
         getattr(self.ui, "horizontalLayoutGroup_" + str(idx)).addWidget(
             getattr(self.ui, "checkBoxGroup_" + str(idx))
         )
@@ -78,7 +80,7 @@ class GroupSelectionDialog(QtWidgets.QDialog):
         groups = {}
         for idx, subject in enumerate(self.subjects):
             selected = getattr(self.ui, "checkBoxGroup_" + str(idx)).checkState()
-            if selected != QtCore.Qt.Checked:
+            if selected != QtCore.Qt.CheckState.Checked:
                 continue
             group_id = getattr(self.ui, "spinBoxGroup_" + str(idx)).value()
             if group_id in groups:

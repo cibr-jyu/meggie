@@ -1,6 +1,6 @@
 """Contains a class for logic of the single channel plot dialog."""
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from meggie.utilities.dialogs.singleChannelDialogUi import Ui_singleChannelDialog
 
@@ -41,14 +41,14 @@ class SingleChannelDialog(QtWidgets.QDialog):
             label_item = QtWidgets.QLabel(self.ui.groupBoxLegend)
             label_item.setText(legend_name)
             self.ui.formLayoutLegend.setWidget(
-                legend_idx, QtWidgets.QFormLayout.LabelRole, label_item
+                legend_idx, QtWidgets.QFormLayout.ItemRole.LabelRole, label_item
             )
 
             line_edit_item = QtWidgets.QLineEdit(self.ui.groupBoxLegend)
             setattr(self.ui, "lineEditItem_" + str(legend_idx), line_edit_item)
             line_edit_item.setText(legend_name)
             self.ui.formLayoutLegend.setWidget(
-                legend_idx, QtWidgets.QFormLayout.FieldRole, line_edit_item
+                legend_idx, QtWidgets.QFormLayout.ItemRole.FieldRole, line_edit_item
             )
 
     def on_comboBoxChannel_currentTextChanged(self, item):

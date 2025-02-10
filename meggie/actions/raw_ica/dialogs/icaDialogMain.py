@@ -2,7 +2,7 @@
 
 import logging
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from meggie.actions.raw_ica.dialogs.icaDialogUi import Ui_Dialog
 
@@ -31,10 +31,10 @@ class ICADialog(QtWidgets.QDialog):
 
         # change normal list widgets to multiselect widgets
         self.ui.listWidgetNotRemoved.setSelectionMode(
-            QtWidgets.QAbstractItemView.ExtendedSelection
+            QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
         )
         self.ui.listWidgetRemoved.setSelectionMode(
-            QtWidgets.QAbstractItemView.ExtendedSelection
+            QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
         )
 
         self._reset()

@@ -5,7 +5,7 @@ from meggie.utilities.dialogs.shortMessageBoxMain import shortMessageBox
 from meggie.utilities.dialogs.shortQuestionBoxMain import shortQuestionBox
 
 
-def exc_messagebox(parent, exc, exec_=False):
+def exc_messagebox(parent, exc):
     """Pops up a messagebox for a exception.
 
     Parameters
@@ -14,8 +14,6 @@ def exc_messagebox(parent, exc, exec_=False):
         Parent dialog, that is set as a parent.
     exc : instance of Exception
         The exception that is presented.
-    exec_ : bool
-        Whether to make the messagebox modal.
     """
 
     try:
@@ -41,13 +39,10 @@ def exc_messagebox(parent, exc, exec_=False):
     )
 
     messagebox = shortMessageBox(message, parent)
-    if exec_:
-        messagebox.exec_()
-    else:
-        messagebox.show()
+    messagebox.show()
 
 
-def messagebox(parent, msg, exec_=False):
+def messagebox(parent, msg):
     """Pops up a messagebox with a message.
 
     Parameters
@@ -56,15 +51,9 @@ def messagebox(parent, msg, exec_=False):
         Parent dialog, that is set as a parent.
     msg : str
         The message that is presented.
-    exec_ : bool
-        Whether to make the messagebox modal.
-
     """
     messagebox = shortMessageBox(msg, parent)
-    if exec_:
-        messagebox.exec_()
-    else:
-        messagebox.show()
+    messagebox.show()
 
 
 def questionbox(parent, question, handler):
@@ -82,4 +71,4 @@ def questionbox(parent, question, handler):
     """
 
     questionbox = shortQuestionBox(question, parent, handler)
-    questionbox.exec_()
+    questionbox.exec()

@@ -16,7 +16,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[],
-    python_requires='>=3.8',
+    python_requires='>=3.10',
     entry_points={
         'console_scripts': ['meggie=meggie.run:main'],
     },

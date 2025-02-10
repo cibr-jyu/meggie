@@ -2,7 +2,7 @@
 
 import logging
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from meggie.actions.epochs_create.dialogs.createEpochsFromEventsDialogUi import (
     Ui_CreateEpochsFromEventsDialog,

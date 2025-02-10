@@ -1,6 +1,6 @@
 """Contains a logic for setting active plugins."""
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from meggie.mainwindow.dynamic import find_all_plugins
 from meggie.mainwindow.dynamic import find_all_package_specs

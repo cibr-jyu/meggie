@@ -4,7 +4,7 @@ import logging
 
 from copy import deepcopy
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 import mne
 import matplotlib as mpl

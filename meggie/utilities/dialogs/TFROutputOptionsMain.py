@@ -1,6 +1,6 @@
 """Contains a class for the tfr output options dialog."""
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from meggie.utilities.dialogs.TFROutputOptionsUi import Ui_TFROutputOptions
 

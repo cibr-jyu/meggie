@@ -1,6 +1,6 @@
 """Contains a class for logic of the evoked topomap dialog."""
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from meggie.actions.evoked_plot_topomap.dialogs.evokedTopomapDialogUi import (
     Ui_evokedTopomapDialog,

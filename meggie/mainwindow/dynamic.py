@@ -8,7 +8,7 @@ import pkg_resources
 import importlib
 import logging
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from meggie.utilities.uid import generate_uid
 from meggie.utilities.messaging import exc_messagebox
@@ -225,7 +225,7 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
                 listWidgetInputElement = QtWidgets.QListWidget(groupBoxInputElement)
 
                 listWidgetInputElement.setSelectionMode(
-                    QtWidgets.QAbstractItemView.ExtendedSelection
+                    QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
                 )
 
                 gridLayoutInputElement.addWidget(listWidgetInputElement, idx, 0, 1, 1)
@@ -260,7 +260,7 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
                 listWidgetOutputElement = QtWidgets.QListWidget(groupBoxOutputElement)
 
                 listWidgetOutputElement.setSelectionMode(
-                    QtWidgets.QAbstractItemView.ExtendedSelection
+                    QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
                 )
 
                 gridLayoutOutputElement.addWidget(listWidgetOutputElement, idx, 0, 1, 1)
@@ -309,8 +309,8 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
                 spacer = QtWidgets.QSpacerItem(
                     20,
                     10,
-                    QtWidgets.QSizePolicy.Minimum,
-                    QtWidgets.QSizePolicy.Expanding,
+                    QtWidgets.QSizePolicy.Policy.Minimum,
+                    QtWidgets.QSizePolicy.Policy.Expanding,
                 )
                 self.gridLayoutInputActions.addItem(spacer, idx + 1, 0, 1, 1)
 
@@ -343,8 +343,8 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
                 spacer = QtWidgets.QSpacerItem(
                     20,
                     10,
-                    QtWidgets.QSizePolicy.Minimum,
-                    QtWidgets.QSizePolicy.Expanding,
+                    QtWidgets.QSizePolicy.Policy.Minimum,
+                    QtWidgets.QSizePolicy.Policy.Expanding,
                 )
                 self.gridLayoutOutputActions.addItem(spacer, idx + 1, 0, 1, 1)
 
@@ -401,11 +401,17 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
 
             # add spacers to bottom and right to keep the window concise
             spacerItemVertical = QtWidgets.QSpacerItem(
-                20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+                20,
+                10,
+                QtWidgets.QSizePolicy.Policy.Minimum,
+                QtWidgets.QSizePolicy.Policy.Expanding,
             )
             self.gridLayoutContainer.addItem(spacerItemVertical, 1, 0, 1, 1)
             spacerItemHorizontal = QtWidgets.QSpacerItem(
-                10, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+                10,
+                20,
+                QtWidgets.QSizePolicy.Policy.Expanding,
+                QtWidgets.QSizePolicy.Policy.Minimum,
             )
             self.gridLayoutContainer.addItem(spacerItemHorizontal, 0, 1, 1, 1)
 

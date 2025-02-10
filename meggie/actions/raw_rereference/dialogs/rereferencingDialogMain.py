@@ -4,7 +4,7 @@ import logging
 
 import mne
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from meggie.actions.raw_rereference.dialogs.rereferencingDialogUi import (
     Ui_rereferencingDialog,
