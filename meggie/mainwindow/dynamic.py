@@ -138,7 +138,7 @@ def find_all_action_specs():
 
 
 def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
-    """Constructs analysis tab dynamically. Returns a QDialog
+    """Constructs analysis tab dynamically. Returns a QWidget
     that can be used within a QTabDialog of the main window.
 
     Parameters
@@ -154,12 +154,12 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
 
     Returns
     -------
-    instance of QDialog
+    instance of QWidget
         The constructed tab than can be added to
         main window.
     """
 
-    class DynamicTab(QtWidgets.QDialog):
+    class DynamicTab(QtWidgets.QWidget):
         """Class defining a tab.
 
         Parameters
@@ -169,7 +169,7 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
         """
 
         def __init__(self, parent):
-            QtWidgets.QDialog.__init__(self)
+            QtWidgets.QWidget.__init__(self)
             self.parent = parent
             self.tab_spec = tab_spec
             self.action_specs = action_specs
@@ -643,7 +643,7 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg, has_raw):
 
     Returns
     -------
-    list of QDialog
+    list of QWidget
         Contains the constructed tabs relevant to the pipeline
     """
 

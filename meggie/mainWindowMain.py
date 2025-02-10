@@ -8,7 +8,6 @@ import warnings
 from pythonjsonlogger import jsonlogger
 
 from PyQt6.QtWidgets import QApplication
-from PyQt6 import QtGui
 from PyQt6 import QtWidgets
 from PyQt6 import QtCore
 
@@ -362,14 +361,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _normal_output_written(self, text):
         cursor = self.ui.textEditConsole.textCursor()
-        cursor.movePosition(QtGui.QTextCursor.End)
+        cursor.movePosition(cursor.MoveOperation.End)
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
 
     def _error_output_written(self, text):
         cursor = self.ui.textEditConsole.textCursor()
-        cursor.movePosition(QtGui.QTextCursor.End)
+        cursor.movePosition(cursor.MoveOperation.End)
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
