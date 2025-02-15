@@ -61,8 +61,8 @@ class BatchingWidget(QtWidgets.QWidget):
 
             for name in subject_names:
                 item = QtWidgets.QListWidgetItem(name)
-                item.setCheckState(QtCore.Qt.Unchecked)
-                item.setFlags(QtCore.Qt.ItemIsEnabled)
+                item.setCheckState(QtCore.Qt.CheckState.Unchecked)
+                item.setFlags(QtCore.Qt.ItemFlag.ItemIsEnabled)
                 self.ui.listWidgetSubjects.addItem(item)
 
         else:
@@ -82,7 +82,7 @@ class BatchingWidget(QtWidgets.QWidget):
         if item.checkState() != QtCore.Qt.CheckState.Checked:
             item.setCheckState(QtCore.Qt.CheckState.Checked)
         else:
-            item.setCheckState(QtCore.Qt.Unchecked)
+            item.setCheckState(QtCore.Qt.CheckState.Unchecked)
 
     def showWidget(self, enabled):
         self.experiment = self.experiment_getter()
