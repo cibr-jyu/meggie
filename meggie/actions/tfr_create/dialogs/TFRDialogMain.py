@@ -4,7 +4,7 @@ import logging
 
 import numpy as np
 
-from PyQt6 import QtWidgets
+from PyQt5 import QtWidgets
 
 from meggie.actions.tfr_create.dialogs.TFRDialogUi import Ui_TFRDialog
 

@@ -1,6 +1,6 @@
 """Contains a class for logic of experiment creation dialog."""
 
-from PyQt6 import QtWidgets
+from PyQt5 import QtWidgets
 
 from meggie.mainwindow.dialogs.createExperimentDialogUi import Ui_CreateExperimentDialog
 

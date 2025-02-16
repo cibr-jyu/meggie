@@ -4,8 +4,8 @@ import os
 import pkg_resources
 import logging
 
-from PyQt6 import QtCore
-from PyQt6 import QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 import meggie.utilities.filemanager as filemanager
 

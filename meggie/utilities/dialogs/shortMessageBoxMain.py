@@ -1,6 +1,6 @@
 """Contains a class for logic of the short message box."""
 
-from PyQt6 import QtWidgets
+from PyQt5 import QtWidgets
 
 from meggie.utilities.dialogs.shortMessageBoxUi import Ui_shortMessageBox
 

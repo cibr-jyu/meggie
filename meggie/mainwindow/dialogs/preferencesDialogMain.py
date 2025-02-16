@@ -2,8 +2,8 @@
 
 import os
 
-from PyQt6 import QtCore
-from PyQt6 import QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 from meggie.mainwindow.dialogs.preferencesDialogUi import Ui_DialogPreferences
 

@@ -2,7 +2,7 @@
 
 import logging
 
-from PyQt6 import QtWidgets
+from PyQt5 import QtWidgets
 
 from meggie.actions.raw_events_from_annotations.dialogs.eventsFromAnnotationsDialogUi import (
     Ui_EventsFromAnnotationsDialog,

@@ -1,7 +1,7 @@
 """UI layout for simple dialog"""
 
-from PyQt6 import QtCore
-from PyQt6 import QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 
 class Ui_SimpleDialog(object):

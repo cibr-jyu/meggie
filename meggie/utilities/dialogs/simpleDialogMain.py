@@ -2,7 +2,7 @@
 
 import logging
 
-from PyQt6 import QtWidgets
+from PyQt5 import QtWidgets
 
 from meggie.utilities.dialogs.simpleDialogUi import Ui_SimpleDialog
 

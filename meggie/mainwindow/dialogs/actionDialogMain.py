@@ -7,7 +7,7 @@ import re
 
 from pprint import pformat
 
-from PyQt6 import QtWidgets
+from PyQt5 import QtWidgets
 
 from meggie.mainwindow.dynamic import find_all_action_specs
 from meggie.utilities.messaging import exc_messagebox

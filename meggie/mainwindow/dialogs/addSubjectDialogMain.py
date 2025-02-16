@@ -4,8 +4,8 @@ import os
 import mne
 import logging
 
-from PyQt6 import QtWidgets
-from PyQt6 import QtCore
+from PyQt5 import QtWidgets
+from PyQt5 import QtCore
 
 from meggie.mainwindow.dialogs.addSubjectDialogUi import Ui_AddSubject
 

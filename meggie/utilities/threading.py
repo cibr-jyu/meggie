@@ -6,9 +6,9 @@ from time import sleep
 from sys import exc_info
 from multiprocessing.pool import ThreadPool
 
-from PyQt6 import QtGui
-from PyQt6 import QtCore
-from PyQt6 import QtWidgets
+from PyQt5 import QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 
 def threaded(func):

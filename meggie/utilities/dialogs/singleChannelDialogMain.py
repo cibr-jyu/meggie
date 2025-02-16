@@ -1,6 +1,6 @@
 """Contains a class for logic of the single channel plot dialog."""
 
-from PyQt6 import QtWidgets
+from PyQt5 import QtWidgets
 
 from meggie.utilities.dialogs.singleChannelDialogUi import Ui_singleChannelDialog
 

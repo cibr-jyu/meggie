@@ -8,7 +8,7 @@ import pkg_resources
 import importlib
 import logging
 
-from PyQt6 import QtWidgets
+from PyQt5 import QtWidgets
 
 from meggie.utilities.uid import generate_uid
 from meggie.utilities.messaging import exc_messagebox

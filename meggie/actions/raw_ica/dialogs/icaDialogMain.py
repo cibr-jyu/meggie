@@ -2,7 +2,7 @@
 
 import logging
 
-from PyQt6 import QtWidgets
+from PyQt5 import QtWidgets
 
 from meggie.actions.raw_ica.dialogs.icaDialogUi import Ui_Dialog
 

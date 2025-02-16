@@ -1,7 +1,7 @@
 """Contains a class for logic of the batching widget."""
 
-from PyQt6 import QtCore
-from PyQt6 import QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 from meggie.utilities.widgets.batchingWidgetUi import Ui_BatchingWidget
 from meggie.utilities.messaging import messagebox

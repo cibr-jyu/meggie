@@ -1,7 +1,7 @@
 """Contains a class for logic of the bit selection dialog."""
 
-from PyQt6 import QtWidgets
-from PyQt6.QtCore import pyqtSlot
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import pyqtSlot
 
 from meggie.utilities.dialogs.bitSelectionDialogUi import Ui_Dialog
 

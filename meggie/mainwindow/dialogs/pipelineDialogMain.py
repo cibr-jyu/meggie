@@ -1,6 +1,6 @@
 """Contains a class for logic of pipeline dialog."""
 
-from PyQt6 import QtWidgets
+from PyQt5 import QtWidgets
 
 from meggie.mainwindow.dynamic import find_all_package_specs
 

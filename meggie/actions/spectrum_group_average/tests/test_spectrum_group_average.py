@@ -1,4 +1,4 @@
-from PyQt6 import QtCore
+from PyQt5 import QtCore
 
 from meggie.utilities.testing import BaseTestAction
 from meggie.actions.spectrum_group_average import GroupAverage

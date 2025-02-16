@@ -7,9 +7,9 @@ import warnings
 
 from pythonjsonlogger import jsonlogger
 
-from PyQt6.QtWidgets import QApplication
-from PyQt6 import QtWidgets
-from PyQt6 import QtCore
+from PyQt5.QtWidgets import QApplication
+from PyQt5 import QtWidgets
+from PyQt5 import QtCore
 
 from meggie.mainwindow.dynamic import construct_tabs
 

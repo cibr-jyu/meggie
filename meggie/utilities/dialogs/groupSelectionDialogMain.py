@@ -1,7 +1,7 @@
 """Contains a class for logic of the group selection dialog."""
 
-from PyQt6 import QtWidgets
-from PyQt6 import QtCore
+from PyQt5 import QtWidgets
+from PyQt5 import QtCore
 
 from meggie.utilities.dialogs.groupSelectionDialogUi import Ui_groupSelectionDialog
 

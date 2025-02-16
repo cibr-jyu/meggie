@@ -9,7 +9,7 @@ import pkg_resources
 import mne
 import shutil
 import numpy as np
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow
 from meggie.mainwindow.preferences import PreferencesHandler
 from meggie.experiment import initialize_new_experiment
 from meggie.utilities.events import find_events

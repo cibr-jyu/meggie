@@ -1,6 +1,6 @@
 """Contains a class for logic of the output options dialog."""
 
-from PyQt6 import QtWidgets
+from PyQt5 import QtWidgets
 
 from meggie.utilities.dialogs.outputOptionsUi import Ui_outputOptions
 
