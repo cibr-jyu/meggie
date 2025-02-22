@@ -3,6 +3,9 @@
 import matplotlib
 import joblib
 import mne
+
+import colorama
+
 from meggie import mainWindowMain
 
 # use Qt5Agg as TkAgg really hates threads
@@ -12,6 +15,10 @@ matplotlib.use("Qt5Agg")
 # as it is difficult to bind to qt close events and
 # because the functionality is still the same
 mne.viz.set_browser_backend("matplotlib")
+
+# Silence the failing of reset_all in colorama:
+# RuntimeError: wrapped C/C++ object of type EmittingStream has been deleted
+colorama.initialise.reset_all = lambda: None
 
 
 # Joblib is so very verbose,
