@@ -197,6 +197,8 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params["intervals"] = intervals
         params["name"] = spectrum_name
 
+        params["run_in_batch"] = True
+
         selected_subject_names = self.batching_widget.selected_subjects
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:

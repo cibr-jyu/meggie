@@ -54,14 +54,14 @@ class ResamplingDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        selected_subject_names = self.batching_widget.selected_subjects
 
+        rate = self.ui.doubleSpinBoxNewRate.value()
+        params = {"rate": rate, "run_in_batch": True}
+
+        selected_subject_names = self.batching_widget.selected_subjects
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    rate = self.ui.doubleSpinBoxNewRate.value()
-
-                    params = {"rate": rate}
                     self.handler(subject, params)
                     subject.release_memory()
                 except Exception as exc:

@@ -693,25 +693,30 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg, has_raw):
         if "name" not in pipeline:
             pipeline["name"] = pipeline["id"]
 
-    found = False
-    pipeline_spec = None
+    pipeline_specs = []
     for pipeline in pipelines:
+        # there might be multiple configuration for the same pipeline from addons
         if pipeline["id"] == selected_pipeline:
-            found = True
-            pipeline_spec = pipeline
-            break
-    if not found:
+            pipeline_specs.append(pipeline)
+
+    if not pipeline_specs:
         # Use classic
-        pipeline_spec = {"id": "classic", "name": "Include everything"}
+        pipeline_specs = [{"id": "classic", "name": "Include everything"}]
 
     # merges tab specification from others to first and
     # filters to tabs specified by the pipeline
     combined_tabs = []
     for tab_spec in tabs:
+
         # Include only tabs relevant to the pipeline
-        if pipeline_spec.get("include_tabs"):
-            if tab_spec["id"] not in pipeline_spec["include_tabs"]:
-                continue
+        if all(
+            [
+                spec["id"] != "classic"
+                and tab_spec["id"] not in spec.get("include_tabs", [])
+                for spec in pipeline_specs
+            ]
+        ):
+            continue
 
         # if a completely new tab, initialize it
         if tab_spec["id"] not in [tab["id"] for tab in combined_tabs]:

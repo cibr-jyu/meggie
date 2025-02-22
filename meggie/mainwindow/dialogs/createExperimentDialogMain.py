@@ -38,8 +38,8 @@ class CreateExperimentDialog(QtWidgets.QDialog):
         package_specs = find_all_package_specs()
 
         for source, package_spec in package_specs.items():
-
             if source == "meggie" or source in self.active_plugins:
+
                 if "pipelines" in package_spec:
                     for pipeline in package_spec["pipelines"]:
                         try:
@@ -47,10 +47,18 @@ class CreateExperimentDialog(QtWidgets.QDialog):
                         except Exception:
                             raise Exception("Every pipeline should have id.")
 
-                        name = pipeline.get("name", "")
-                        pipelines.append((id_, name))
+                        for pline_idx, pline in enumerate(pipelines):
+                            # if exists already, update the name to allow overriding
+                            if pipeline["id"] == pline[0]:
+                                pipelines[pline_idx] = (
+                                    pline[0],
+                                    pipeline.get("name", pline[1]),
+                                )
+                                break
+                        else:
+                            # otherwise add new
+                            pipelines.append((id_, pipeline.get("name", "")))
 
-        # Add classic
         pipelines.append(("classic", "Include everything"))
 
         self.pipelines = pipelines

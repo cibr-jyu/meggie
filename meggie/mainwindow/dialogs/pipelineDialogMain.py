@@ -39,8 +39,17 @@ class PipelineDialog(QtWidgets.QDialog):
                         except Exception:
                             raise Exception("Every pipeline should have id.")
 
-                        name = pipeline.get("name", "")
-                        pipelines.append((id_, name))
+                        for pline_idx, pline in enumerate(pipelines):
+                            # if exists already, update the name to allow overriding
+                            if pipeline["id"] == pline[0]:
+                                pipelines[pline_idx] = (
+                                    pline[0],
+                                    pipeline.get("name", pline[1]),
+                                )
+                                break
+                        else:
+                            # otherwise add new
+                            pipelines.append((id_, pipeline.get("name", "")))
 
         pipelines.append(("classic", "Include everything"))
 

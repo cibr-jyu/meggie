@@ -4,7 +4,6 @@ from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.channels import get_channels_by_type
 
 from meggie.mainwindow.dynamic import Action
-from meggie.mainwindow.dynamic import subject_action
 
 from meggie.utilities.dialogs.TFROutputOptionsMain import TFROutputOptions
 
@@ -39,7 +38,6 @@ class PlotTFR(Action):
         )
         dialog.show()
 
-    @subject_action
     def handler(self, subject, params):
         """ """
         info = subject.tfr[params["name"]].info

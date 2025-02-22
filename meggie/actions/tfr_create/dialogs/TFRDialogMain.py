@@ -151,7 +151,7 @@ class TFRDialog(QtWidgets.QDialog):
         params["name"] = tfr_name
         params["conditions"] = self.epoch_names
 
-        experiment = self.experiment
+        params["run_in_batch"] = True
 
         selected_subject_names = self.batching_widget.selected_subjects
         for name, subject in self.experiment.subjects.items():
@@ -166,7 +166,7 @@ class TFRDialog(QtWidgets.QDialog):
         self.batching_widget.cleanup()
 
         try:
-            experiment.save_experiment_settings()
+            self.experiment.save_experiment_settings()
         except Exception as exc:
             exc_messagebox(self.parent, exc)
 

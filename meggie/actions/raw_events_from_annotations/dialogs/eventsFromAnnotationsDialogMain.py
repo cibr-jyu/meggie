@@ -91,10 +91,11 @@ class EventsFromAnnotationsDialog(QtWidgets.QDialog):
 
         selected_subject_names = self.batching_widget.selected_subjects
 
+        params = {"items": self.items, "run_in_batch": True}
+
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    params = {"items": self.items}
                     self.handler(subject, params)
                     subject.release_memory()
                 except Exception as exc:

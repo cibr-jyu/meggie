@@ -129,6 +129,8 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
             exc_messagebox(self, exc)
             return
 
+        params["run_in_batch"] = True
+
         selected_subject_names = self.batching_widget.selected_subjects
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:

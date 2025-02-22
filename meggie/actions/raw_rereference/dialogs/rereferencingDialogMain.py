@@ -84,12 +84,12 @@ class RereferencingDialog(QtWidgets.QDialog):
                 item.text() for item in self.ui.listWidgetChannels.selectedItems()
             ]
 
-        selected_subject_names = self.batching_widget.selected_subjects
+        params = {"selection": selection, "run_in_batch": True}
 
+        selected_subject_names = self.batching_widget.selected_subjects
         for name, subject in experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    params = {"selection": selection}
                     self.handler(subject, params)
                     subject.release_memory()
                 except Exception as exc:

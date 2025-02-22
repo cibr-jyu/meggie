@@ -5,7 +5,6 @@ from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.plotting import set_figure_title
 
 from meggie.mainwindow.dynamic import Action
-from meggie.mainwindow.dynamic import subject_action
 
 
 class PlotProjections(Action):
@@ -19,7 +18,6 @@ class PlotProjections(Action):
         except Exception as exc:
             exc_messagebox(self.window, exc)
 
-    @subject_action
     def handler(self, subject, params):
         raw = subject.get_raw()
         if not raw.info["projs"]:

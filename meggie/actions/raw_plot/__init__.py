@@ -51,7 +51,9 @@ class PlotRaw(Action):
             params["annotations_changed"] = annotations_changed
 
             try:
-                self.handler(subject, params)
+                # only run logged action if there are changes
+                if bads_changed or annotations_changed:
+                    self.handler(subject, params)
             except Exception as exc:
                 exc_messagebox(self.window, exc)
 
