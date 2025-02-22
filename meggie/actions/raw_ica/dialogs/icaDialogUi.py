@@ -19,16 +19,22 @@ class Ui_Dialog(object):
         self.gridLayout.setObjectName("gridLayout")
         self.bottomLayout = QtWidgets.QHBoxLayout()
         self.bottomLayout.setObjectName("bottomLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.bottomLayout.addItem(spacerItem)
         self.pushButtonCancel = QtWidgets.QPushButton(Dialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
         self.bottomLayout.addWidget(self.pushButtonCancel)
         self.pushButtonApply = QtWidgets.QPushButton(Dialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButtonApply.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.pushButtonApply.sizePolicy().hasHeightForWidth()
+        )
         self.pushButtonApply.setSizePolicy(sizePolicy)
         self.pushButtonApply.setObjectName("pushButtonApply")
         self.bottomLayout.addWidget(self.pushButtonApply)
@@ -58,7 +64,9 @@ class Ui_Dialog(object):
         self.labelNComponents = QtWidgets.QLabel(self.groupBoxComputation)
         self.labelNComponents.setObjectName("labelNComponents")
         self.parametersLayout.addWidget(self.labelNComponents, 0, 0, 1, 1)
-        self.doubleSpinBoxNComponents = QtWidgets.QDoubleSpinBox(self.groupBoxComputation)
+        self.doubleSpinBoxNComponents = QtWidgets.QDoubleSpinBox(
+            self.groupBoxComputation
+        )
         self.doubleSpinBoxNComponents.setSuffix("")
         self.doubleSpinBoxNComponents.setDecimals(3)
         self.doubleSpinBoxNComponents.setMaximum(1000.0)
@@ -120,8 +128,8 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
 
         self.retranslateUi(Dialog)
-        self.pushButtonCancel.clicked.connect(Dialog.reject) # type: ignore
-        self.pushButtonApply.clicked.connect(Dialog.accept) # type: ignore
+        self.pushButtonCancel.clicked.connect(Dialog.reject)  # type: ignore
+        self.pushButtonApply.clicked.connect(Dialog.accept)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -131,7 +139,9 @@ class Ui_Dialog(object):
         self.pushButtonApply.setText(_translate("Dialog", "Apply"))
         self.groupBoxComputation.setTitle(_translate("Dialog", "ICA computation"))
         self.labelNComponents.setText(_translate("Dialog", "Explained variance:"))
-        self.labelMaxIter.setText(_translate("Dialog", "Maximum number of iterations: "))
+        self.labelMaxIter.setText(
+            _translate("Dialog", "Maximum number of iterations: ")
+        )
         self.pushButtonCompute.setText(_translate("Dialog", "Compute"))
         self.groupBoxComponents.setTitle(_translate("Dialog", "ICA components"))
         self.labelNotRemoved.setText(_translate("Dialog", "Not removed"))
@@ -140,4 +150,6 @@ class Ui_Dialog(object):
         self.pushButtonPlotProperties.setText(_translate("Dialog", "Plot properties"))
         self.pushButtonPlotChanges.setText(_translate("Dialog", "Plot changes"))
         self.pushButtonPlotSources.setText(_translate("Dialog", "Plot time courses"))
-        self.pushButtonPlotTopographies.setText(_translate("Dialog", "Plot topographies"))
+        self.pushButtonPlotTopographies.setText(
+            _translate("Dialog", "Plot topographies")
+        )

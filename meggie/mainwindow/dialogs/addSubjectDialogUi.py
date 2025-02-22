@@ -26,7 +26,9 @@ class Ui_AddSubject(object):
         self.gridLayout.addWidget(self.labelAddSubjects, 0, 0, 1, 2)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_2.addItem(spacerItem)
         self.pushButtonCancel = QtWidgets.QPushButton(AddSubject)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -48,15 +50,21 @@ class Ui_AddSubject(object):
         self.pushButtonRemove.setObjectName("pushButtonRemove")
         self.gridLayout_2.addWidget(self.pushButtonRemove, 3, 0, 1, 1)
         self.pushButtonBrowse = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButtonBrowse.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.pushButtonBrowse.sizePolicy().hasHeightForWidth()
+        )
         self.pushButtonBrowse.setSizePolicy(sizePolicy)
         self.pushButtonBrowse.setObjectName("pushButtonBrowse")
         self.gridLayout_2.addWidget(self.pushButtonBrowse, 1, 0, 1, 1)
         self.listWidgetFileNames = QtWidgets.QListWidget(self.scrollAreaWidgetContents)
-        self.listWidgetFileNames.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.listWidgetFileNames.setSelectionMode(
+            QtWidgets.QAbstractItemView.ExtendedSelection
+        )
         self.listWidgetFileNames.setObjectName("listWidgetFileNames")
         self.gridLayout_2.addWidget(self.listWidgetFileNames, 0, 0, 1, 1)
         self.pushButtonSample = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
@@ -66,14 +74,16 @@ class Ui_AddSubject(object):
         self.gridLayout.addWidget(self.scrollArea, 1, 0, 1, 3)
 
         self.retranslateUi(AddSubject)
-        self.pushButtonCancel.clicked.connect(AddSubject.reject) # type: ignore
-        self.pushButtonOk.clicked.connect(AddSubject.accept) # type: ignore
+        self.pushButtonCancel.clicked.connect(AddSubject.reject)  # type: ignore
+        self.pushButtonOk.clicked.connect(AddSubject.accept)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(AddSubject)
 
     def retranslateUi(self, AddSubject):
         _translate = QtCore.QCoreApplication.translate
         AddSubject.setWindowTitle(_translate("AddSubject", "Meggie - Add subjects"))
-        self.labelAddSubjects.setText(_translate("AddSubject", "Add subjects (raw files) to the experiment:"))
+        self.labelAddSubjects.setText(
+            _translate("AddSubject", "Add subjects (raw files) to the experiment:")
+        )
         self.pushButtonCancel.setText(_translate("AddSubject", "Cancel"))
         self.pushButtonOk.setText(_translate("AddSubject", "Ok"))
         self.pushButtonRemove.setText(_translate("AddSubject", "Remove"))

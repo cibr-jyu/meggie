@@ -21,7 +21,9 @@ class Ui_EventsFromAnnotationsDialog(object):
         self.scrollArea.setMinimumSize(QtCore.QSize(0, 0))
         self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.scrollArea.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+        self.scrollArea.setSizeAdjustPolicy(
+            QtWidgets.QAbstractScrollArea.AdjustToContents
+        )
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
@@ -77,13 +79,17 @@ class Ui_EventsFromAnnotationsDialog(object):
         self.batchingWidgetPlaceholder.setObjectName("batchingWidgetPlaceholder")
         self.gridLayoutBatching.addWidget(self.batchingWidgetPlaceholder, 0, 0, 1, 1)
         self.gridLayout_2.addWidget(self.groupBoxBatching, 1, 0, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout_2.addItem(spacerItem, 2, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem1)
         self.pushButtonCancel = QtWidgets.QPushButton(EventsFromAnnotationsDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -97,23 +103,41 @@ class Ui_EventsFromAnnotationsDialog(object):
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
         self.retranslateUi(EventsFromAnnotationsDialog)
-        self.pushButtonCancel.clicked.connect(EventsFromAnnotationsDialog.reject) # type: ignore
-        self.pushButtonApply.clicked.connect(EventsFromAnnotationsDialog.accept) # type: ignore
-        self.pushButtonBatch.clicked.connect(EventsFromAnnotationsDialog.acceptBatch) # type: ignore
+        self.pushButtonCancel.clicked.connect(EventsFromAnnotationsDialog.reject)  # type: ignore
+        self.pushButtonApply.clicked.connect(EventsFromAnnotationsDialog.accept)  # type: ignore
+        self.pushButtonBatch.clicked.connect(EventsFromAnnotationsDialog.acceptBatch)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(EventsFromAnnotationsDialog)
 
     def retranslateUi(self, EventsFromAnnotationsDialog):
         _translate = QtCore.QCoreApplication.translate
-        EventsFromAnnotationsDialog.setWindowTitle(_translate("EventsFromAnnotationsDialog", "Meggie - Events from annotations"))
-        self.groupBoxConfiguration.setTitle(_translate("EventsFromAnnotationsDialog", "Configuration:"))
-        self.labelAnnotation.setText(_translate("EventsFromAnnotationsDialog", "Annotation:"))
+        EventsFromAnnotationsDialog.setWindowTitle(
+            _translate(
+                "EventsFromAnnotationsDialog", "Meggie - Events from annotations"
+            )
+        )
+        self.groupBoxConfiguration.setTitle(
+            _translate("EventsFromAnnotationsDialog", "Configuration:")
+        )
+        self.labelAnnotation.setText(
+            _translate("EventsFromAnnotationsDialog", "Annotation:")
+        )
         self.labelLocation.setText(_translate("EventsFromAnnotationsDialog", "Use:"))
-        self.pushButtonAdd.setText(_translate("EventsFromAnnotationsDialog", "Add to list"))
+        self.pushButtonAdd.setText(
+            _translate("EventsFromAnnotationsDialog", "Add to list")
+        )
         self.radioButtonEnd.setText(_translate("EventsFromAnnotationsDialog", "End"))
-        self.radioButtonStart.setText(_translate("EventsFromAnnotationsDialog", "Start"))
-        self.labelEventID.setText(_translate("EventsFromAnnotationsDialog", "Event id:"))
+        self.radioButtonStart.setText(
+            _translate("EventsFromAnnotationsDialog", "Start")
+        )
+        self.labelEventID.setText(
+            _translate("EventsFromAnnotationsDialog", "Event id:")
+        )
         self.pushButtonClear.setText(_translate("EventsFromAnnotationsDialog", "Clear"))
-        self.groupBoxBatching.setTitle(_translate("EventsFromAnnotationsDialog", "Batching:"))
-        self.pushButtonCancel.setText(_translate("EventsFromAnnotationsDialog", "Cancel"))
+        self.groupBoxBatching.setTitle(
+            _translate("EventsFromAnnotationsDialog", "Batching:")
+        )
+        self.pushButtonCancel.setText(
+            _translate("EventsFromAnnotationsDialog", "Cancel")
+        )
         self.pushButtonBatch.setText(_translate("EventsFromAnnotationsDialog", "Batch"))
         self.pushButtonApply.setText(_translate("EventsFromAnnotationsDialog", "Apply"))

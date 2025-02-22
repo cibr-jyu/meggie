@@ -50,7 +50,9 @@ class Ui_CreateExperimentDialog(object):
         self.gridLayoutPipeline = QtWidgets.QGridLayout(self.groupBoxPipeline)
         self.gridLayoutPipeline.setObjectName("gridLayoutPipeline")
         self.gridLayout.addWidget(self.groupBoxPipeline, 1, 1, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout.addItem(spacerItem, 3, 1, 1, 1)
         self.groupBoxOpenData = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxOpenData.setObjectName("groupBoxOpenData")
@@ -67,7 +69,9 @@ class Ui_CreateExperimentDialog(object):
         self.gridLayout_3.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.horizontalLayoutButtons = QtWidgets.QHBoxLayout()
         self.horizontalLayoutButtons.setObjectName("horizontalLayoutButtons")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayoutButtons.addItem(spacerItem1)
         self.pushButtonCancel = QtWidgets.QPushButton(CreateExperimentDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -78,18 +82,30 @@ class Ui_CreateExperimentDialog(object):
         self.gridLayout_3.addLayout(self.horizontalLayoutButtons, 2, 0, 1, 1)
 
         self.retranslateUi(CreateExperimentDialog)
-        self.pushButtonAccept.clicked.connect(CreateExperimentDialog.accept) # type: ignore
-        self.pushButtonCancel.clicked.connect(CreateExperimentDialog.reject) # type: ignore
+        self.pushButtonAccept.clicked.connect(CreateExperimentDialog.accept)  # type: ignore
+        self.pushButtonCancel.clicked.connect(CreateExperimentDialog.reject)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(CreateExperimentDialog)
 
     def retranslateUi(self, CreateExperimentDialog):
         _translate = QtCore.QCoreApplication.translate
-        CreateExperimentDialog.setWindowTitle(_translate("CreateExperimentDialog", "Meggie - Create new experiment"))
-        self.groupBoxInfo.setTitle(_translate("CreateExperimentDialog", "Experiment information"))
-        self.labelExperimentName.setText(_translate("CreateExperimentDialog", "Experiment name:"))
-        self.labelAuthor.setText(_translate("CreateExperimentDialog", "Experiment author:"))
-        self.groupBoxPipeline.setTitle(_translate("CreateExperimentDialog", "Select a pipeline for the analysis:"))
-        self.groupBoxOpenData.setTitle(_translate("CreateExperimentDialog", "Create from open data:"))
+        CreateExperimentDialog.setWindowTitle(
+            _translate("CreateExperimentDialog", "Meggie - Create new experiment")
+        )
+        self.groupBoxInfo.setTitle(
+            _translate("CreateExperimentDialog", "Experiment information")
+        )
+        self.labelExperimentName.setText(
+            _translate("CreateExperimentDialog", "Experiment name:")
+        )
+        self.labelAuthor.setText(
+            _translate("CreateExperimentDialog", "Experiment author:")
+        )
+        self.groupBoxPipeline.setTitle(
+            _translate("CreateExperimentDialog", "Select a pipeline for the analysis:")
+        )
+        self.groupBoxOpenData.setTitle(
+            _translate("CreateExperimentDialog", "Create from open data:")
+        )
         self.labelOpenData.setText(_translate("CreateExperimentDialog", "Dataset:"))
         self.pushButtonCancel.setText(_translate("CreateExperimentDialog", "Cancel"))
         self.pushButtonAccept.setText(_translate("CreateExperimentDialog", "Ok"))

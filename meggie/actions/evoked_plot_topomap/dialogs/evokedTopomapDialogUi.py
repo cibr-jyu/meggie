@@ -21,7 +21,9 @@ class Ui_evokedTopomapDialog(object):
         self.scrollArea.setMinimumSize(QtCore.QSize(0, 0))
         self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.scrollArea.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+        self.scrollArea.setSizeAdjustPolicy(
+            QtWidgets.QAbstractScrollArea.AdjustToContents
+        )
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
@@ -42,7 +44,9 @@ class Ui_evokedTopomapDialog(object):
         self.doubleSpinBoxStart.setSingleStep(0.05)
         self.doubleSpinBoxStart.setProperty("value", -0.2)
         self.doubleSpinBoxStart.setObjectName("doubleSpinBoxStart")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxStart)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxStart
+        )
         self.labelEnd = QtWidgets.QLabel(self.groupBoxSettings)
         self.labelEnd.setObjectName("labelEnd")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.labelEnd)
@@ -51,7 +55,9 @@ class Ui_evokedTopomapDialog(object):
         self.doubleSpinBoxEnd.setSingleStep(0.05)
         self.doubleSpinBoxEnd.setProperty("value", 0.5)
         self.doubleSpinBoxEnd.setObjectName("doubleSpinBoxEnd")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxEnd)
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxEnd
+        )
         self.labelStep = QtWidgets.QLabel(self.groupBoxSettings)
         self.labelStep.setObjectName("labelStep")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.labelStep)
@@ -60,10 +66,14 @@ class Ui_evokedTopomapDialog(object):
         self.doubleSpinBoxStep.setSingleStep(0.05)
         self.doubleSpinBoxStep.setProperty("value", 0.1)
         self.doubleSpinBoxStep.setObjectName("doubleSpinBoxStep")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxStep)
+        self.formLayout.setWidget(
+            2, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxStep
+        )
         self.checkBoxRadius = QtWidgets.QCheckBox(self.groupBoxSettings)
         self.checkBoxRadius.setObjectName("checkBoxRadius")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.checkBoxRadius)
+        self.formLayout.setWidget(
+            3, QtWidgets.QFormLayout.LabelRole, self.checkBoxRadius
+        )
         self.doubleSpinBoxRadius = QtWidgets.QDoubleSpinBox(self.groupBoxSettings)
         self.doubleSpinBoxRadius.setEnabled(False)
         self.doubleSpinBoxRadius.setDecimals(3)
@@ -71,15 +81,21 @@ class Ui_evokedTopomapDialog(object):
         self.doubleSpinBoxRadius.setSingleStep(0.01)
         self.doubleSpinBoxRadius.setProperty("value", 0.15)
         self.doubleSpinBoxRadius.setObjectName("doubleSpinBoxRadius")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxRadius)
+        self.formLayout.setWidget(
+            3, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxRadius
+        )
         self.gridLayout_2.addWidget(self.groupBoxSettings, 0, 0, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout_2.addItem(spacerItem, 1, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem1)
         self.pushButtonCancel = QtWidgets.QPushButton(evokedTopomapDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -90,14 +106,16 @@ class Ui_evokedTopomapDialog(object):
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
         self.retranslateUi(evokedTopomapDialog)
-        self.pushButtonCancel.clicked.connect(evokedTopomapDialog.reject) # type: ignore
-        self.pushButtonApply.clicked.connect(evokedTopomapDialog.accept) # type: ignore
-        self.checkBoxRadius.toggled['bool'].connect(self.doubleSpinBoxRadius.setEnabled) # type: ignore
+        self.pushButtonCancel.clicked.connect(evokedTopomapDialog.reject)  # type: ignore
+        self.pushButtonApply.clicked.connect(evokedTopomapDialog.accept)  # type: ignore
+        self.checkBoxRadius.toggled["bool"].connect(self.doubleSpinBoxRadius.setEnabled)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(evokedTopomapDialog)
 
     def retranslateUi(self, evokedTopomapDialog):
         _translate = QtCore.QCoreApplication.translate
-        evokedTopomapDialog.setWindowTitle(_translate("evokedTopomapDialog", "Meggie - Evoked topomaps"))
+        evokedTopomapDialog.setWindowTitle(
+            _translate("evokedTopomapDialog", "Meggie - Evoked topomaps")
+        )
         self.groupBoxSettings.setTitle(_translate("evokedTopomapDialog", "Settings:"))
         self.labelStart.setText(_translate("evokedTopomapDialog", "Start:"))
         self.doubleSpinBoxStart.setSuffix(_translate("evokedTopomapDialog", "s"))

@@ -48,7 +48,9 @@ class Ui_MainWindow(object):
         self.pushButtonAddSubjects.setObjectName("pushButtonAddSubjects")
         self.gridLayout_12.addWidget(self.pushButtonAddSubjects, 4, 0, 1, 1)
         self.listWidgetSubjects = QtWidgets.QListWidget(self.groupBoxSubjects)
-        self.listWidgetSubjects.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.listWidgetSubjects.setSelectionMode(
+            QtWidgets.QAbstractItemView.ExtendedSelection
+        )
         self.listWidgetSubjects.setObjectName("listWidgetSubjects")
         self.gridLayout_12.addWidget(self.listWidgetSubjects, 1, 0, 1, 1)
         self.pushButtonRemoveSubject = QtWidgets.QPushButton(self.groupBoxSubjects)
@@ -97,7 +99,9 @@ class Ui_MainWindow(object):
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.tabWidget = QtWidgets.QTabWidget(self.scrollAreaWidgetContents_2)
         self.tabWidget.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
@@ -159,7 +163,9 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.scrollAreaLeft, self.pushButtonChannelGroups)
         MainWindow.setTabOrder(self.pushButtonChannelGroups, self.listWidgetSubjects)
         MainWindow.setTabOrder(self.listWidgetSubjects, self.pushButtonActivateSubject)
-        MainWindow.setTabOrder(self.pushButtonActivateSubject, self.pushButtonRemoveSubject)
+        MainWindow.setTabOrder(
+            self.pushButtonActivateSubject, self.pushButtonRemoveSubject
+        )
         MainWindow.setTabOrder(self.pushButtonRemoveSubject, self.pushButtonAddSubjects)
         MainWindow.setTabOrder(self.pushButtonAddSubjects, self.scrollAreaRight)
         MainWindow.setTabOrder(self.scrollAreaRight, self.tabWidget)
@@ -170,19 +176,31 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "Meggie"))
         self.groupBoxSubjects.setTitle(_translate("MainWindow", "Subjects"))
         self.pushButtonAddSubjects.setText(_translate("MainWindow", "Add new..."))
-        self.pushButtonRemoveSubject.setText(_translate("MainWindow", "Remove selected"))
-        self.pushButtonActivateSubject.setText(_translate("MainWindow", "Activate selected"))
+        self.pushButtonRemoveSubject.setText(
+            _translate("MainWindow", "Remove selected")
+        )
+        self.pushButtonActivateSubject.setText(
+            _translate("MainWindow", "Activate selected")
+        )
         self.groupBoxExperiment.setTitle(_translate("MainWindow", "Experiment"))
         self.labelExperimentAuthor.setText(_translate("MainWindow", "Author:"))
         self.labelExperimentName.setText(_translate("MainWindow", "Name:"))
-        self.pushButtonChannelGroups.setText(_translate("MainWindow", "Channel groups..."))
+        self.pushButtonChannelGroups.setText(
+            _translate("MainWindow", "Channel groups...")
+        )
         self.pushButtonPipelines.setText(_translate("MainWindow", "Change pipeline..."))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuTools.setTitle(_translate("MainWindow", "Tools"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
-        self.actionCreateExperiment.setText(_translate("MainWindow", "Create new experiment..."))
-        self.actionOpenExperiment.setText(_translate("MainWindow", "Open experiment..."))
-        self.actionShowExperimentInfo.setText(_translate("MainWindow", "Show experiment info..."))
+        self.actionCreateExperiment.setText(
+            _translate("MainWindow", "Create new experiment...")
+        )
+        self.actionOpenExperiment.setText(
+            _translate("MainWindow", "Open experiment...")
+        )
+        self.actionShowExperimentInfo.setText(
+            _translate("MainWindow", "Show experiment info...")
+        )
         self.actionQuit.setText(_translate("MainWindow", "Quit"))
         self.actionShowLog.setText(_translate("MainWindow", "Show mne log..."))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences..."))

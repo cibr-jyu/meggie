@@ -36,14 +36,20 @@ class Ui_PowerSpectrumDialog(object):
         self.lineEditName = QtWidgets.QLineEdit(self.groupBoxGeneral)
         self.lineEditName.setObjectName("lineEditName")
         self.gridLayout_3.addWidget(self.lineEditName, 0, 2, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(10, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            10, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.gridLayout_3.addItem(spacerItem, 0, 1, 1, 1)
         self.gridLayout_4.addWidget(self.groupBoxGeneral, 0, 0, 1, 1)
         self.groupBoxIntervals = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.groupBoxIntervals.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.groupBoxIntervals.sizePolicy().hasHeightForWidth()
+        )
         self.groupBoxIntervals.setSizePolicy(sizePolicy)
         self.groupBoxIntervals.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.groupBoxIntervals.setObjectName("groupBoxIntervals")
@@ -90,10 +96,14 @@ class Ui_PowerSpectrumDialog(object):
         self.pushButtonClear.setObjectName("pushButtonClear")
         self.gridLayout_2.addWidget(self.pushButtonClear, 6, 0, 1, 2)
         self.listWidgetIntervals = QtWidgets.QListWidget(self.groupBoxIntervals)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.listWidgetIntervals.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.listWidgetIntervals.sizePolicy().hasHeightForWidth()
+        )
         self.listWidgetIntervals.setSizePolicy(sizePolicy)
         self.listWidgetIntervals.setObjectName("listWidgetIntervals")
         self.gridLayout_2.addWidget(self.listWidgetIntervals, 0, 2, 7, 1)
@@ -127,7 +137,9 @@ class Ui_PowerSpectrumDialog(object):
         self.spinBoxOverlap.setMaximum(100000)
         self.spinBoxOverlap.setProperty("value", 256)
         self.spinBoxOverlap.setObjectName("spinBoxOverlap")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.spinBoxOverlap)
+        self.formLayout.setWidget(
+            2, QtWidgets.QFormLayout.FieldRole, self.spinBoxOverlap
+        )
         self.labelNfft = QtWidgets.QLabel(self.groupBoxConditions)
         self.labelNfft.setObjectName("labelNfft")
         self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.labelNfft)
@@ -151,7 +163,9 @@ class Ui_PowerSpectrumDialog(object):
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.horizontalLayoutButtons = QtWidgets.QHBoxLayout()
         self.horizontalLayoutButtons.setObjectName("horizontalLayoutButtons")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayoutButtons.addItem(spacerItem1)
         self.pushButtonCancel = QtWidgets.QPushButton(PowerSpectrumDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -165,17 +179,21 @@ class Ui_PowerSpectrumDialog(object):
         self.gridLayout.addLayout(self.horizontalLayoutButtons, 1, 0, 1, 1)
 
         self.retranslateUi(PowerSpectrumDialog)
-        self.pushButtonApply.clicked.connect(PowerSpectrumDialog.accept) # type: ignore
-        self.pushButtonCancel.clicked.connect(PowerSpectrumDialog.reject) # type: ignore
-        self.pushButtonBatch.clicked.connect(PowerSpectrumDialog.acceptBatch) # type: ignore
+        self.pushButtonApply.clicked.connect(PowerSpectrumDialog.accept)  # type: ignore
+        self.pushButtonCancel.clicked.connect(PowerSpectrumDialog.reject)  # type: ignore
+        self.pushButtonBatch.clicked.connect(PowerSpectrumDialog.acceptBatch)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(PowerSpectrumDialog)
 
     def retranslateUi(self, PowerSpectrumDialog):
         _translate = QtCore.QCoreApplication.translate
-        PowerSpectrumDialog.setWindowTitle(_translate("PowerSpectrumDialog", "Meggie - Create spectrums"))
+        PowerSpectrumDialog.setWindowTitle(
+            _translate("PowerSpectrumDialog", "Meggie - Create spectrums")
+        )
         self.groupBoxGeneral.setTitle(_translate("PowerSpectrumDialog", "General"))
         self.labelName.setText(_translate("PowerSpectrumDialog", "Spectrum name:"))
-        self.groupBoxIntervals.setTitle(_translate("PowerSpectrumDialog", "Select time intervals"))
+        self.groupBoxIntervals.setTitle(
+            _translate("PowerSpectrumDialog", "Select time intervals")
+        )
         self.labelGroup.setText(_translate("PowerSpectrumDialog", "Average group:"))
         self.labelTmax.setText(_translate("PowerSpectrumDialog", "End time:"))
         self.doubleSpinBoxTmin.setSuffix(_translate("PowerSpectrumDialog", " s"))
@@ -190,13 +208,21 @@ class Ui_PowerSpectrumDialog(object):
         self.comboBoxAvgGroup.setItemText(7, _translate("PowerSpectrumDialog", "8"))
         self.doubleSpinBoxTmax.setSuffix(_translate("PowerSpectrumDialog", " s"))
         self.labelTmin.setText(_translate("PowerSpectrumDialog", "Start time:"))
-        self.pushButtonAddAdvanced.setText(_translate("PowerSpectrumDialog", "Add advanced..."))
+        self.pushButtonAddAdvanced.setText(
+            _translate("PowerSpectrumDialog", "Add advanced...")
+        )
         self.pushButtonClearRow.setText(_translate("PowerSpectrumDialog", "Clear row"))
         self.pushButtonClear.setText(_translate("PowerSpectrumDialog", "Clear list"))
-        self.groupBoxConditions.setTitle(_translate("PowerSpectrumDialog", "Conditions"))
-        self.labelFmin.setText(_translate("PowerSpectrumDialog", "Min frequency of interest:"))
+        self.groupBoxConditions.setTitle(
+            _translate("PowerSpectrumDialog", "Conditions")
+        )
+        self.labelFmin.setText(
+            _translate("PowerSpectrumDialog", "Min frequency of interest:")
+        )
         self.spinBoxFmin.setSuffix(_translate("PowerSpectrumDialog", "Hz"))
-        self.labelFmax.setText(_translate("PowerSpectrumDialog", "Max frequency of interest:"))
+        self.labelFmax.setText(
+            _translate("PowerSpectrumDialog", "Max frequency of interest:")
+        )
         self.spinBoxFmax.setSuffix(_translate("PowerSpectrumDialog", "Hz"))
         self.labelOverlap.setText(_translate("PowerSpectrumDialog", "Overlap:"))
         self.labelNfft.setText(_translate("PowerSpectrumDialog", "Length of window:"))

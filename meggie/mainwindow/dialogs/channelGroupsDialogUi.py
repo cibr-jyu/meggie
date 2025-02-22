@@ -21,7 +21,9 @@ class Ui_channelGroupsDialog(object):
         self.scrollArea.setMinimumSize(QtCore.QSize(0, 0))
         self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.scrollArea.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+        self.scrollArea.setSizeAdjustPolicy(
+            QtWidgets.QAbstractScrollArea.AdjustToContents
+        )
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
@@ -68,13 +70,17 @@ class Ui_channelGroupsDialog(object):
         self.horizontalLayout_2.addWidget(self.radioButtonEEG)
         self.gridLayout_5.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
         self.gridLayout_2.addWidget(self.groupBoxChannelType, 0, 0, 1, 2)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout_2.addItem(spacerItem, 2, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem1)
         self.pushButtonCancel = QtWidgets.QPushButton(channelGroupsDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -85,8 +91,8 @@ class Ui_channelGroupsDialog(object):
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
         self.retranslateUi(channelGroupsDialog)
-        self.pushButtonCancel.clicked.connect(channelGroupsDialog.reject) # type: ignore
-        self.pushButtonApply.clicked.connect(channelGroupsDialog.accept) # type: ignore
+        self.pushButtonCancel.clicked.connect(channelGroupsDialog.reject)  # type: ignore
+        self.pushButtonApply.clicked.connect(channelGroupsDialog.accept)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(channelGroupsDialog)
         channelGroupsDialog.setTabOrder(self.pushButtonCancel, self.pushButtonApply)
         channelGroupsDialog.setTabOrder(self.pushButtonApply, self.scrollArea)
@@ -94,20 +100,38 @@ class Ui_channelGroupsDialog(object):
         channelGroupsDialog.setTabOrder(self.radioButtonMEG, self.radioButtonEEG)
         channelGroupsDialog.setTabOrder(self.radioButtonEEG, self.lineEditAdd)
         channelGroupsDialog.setTabOrder(self.lineEditAdd, self.pushButtonAdd)
-        channelGroupsDialog.setTabOrder(self.pushButtonAdd, self.listWidgetChannelGroups)
-        channelGroupsDialog.setTabOrder(self.listWidgetChannelGroups, self.pushButtonRemove)
+        channelGroupsDialog.setTabOrder(
+            self.pushButtonAdd, self.listWidgetChannelGroups
+        )
+        channelGroupsDialog.setTabOrder(
+            self.listWidgetChannelGroups, self.pushButtonRemove
+        )
         channelGroupsDialog.setTabOrder(self.pushButtonRemove, self.pushButtonReset)
-        channelGroupsDialog.setTabOrder(self.pushButtonReset, self.pushButtonSetChannels)
+        channelGroupsDialog.setTabOrder(
+            self.pushButtonReset, self.pushButtonSetChannels
+        )
 
     def retranslateUi(self, channelGroupsDialog):
         _translate = QtCore.QCoreApplication.translate
-        channelGroupsDialog.setWindowTitle(_translate("channelGroupsDialog", "Meggie - Channel groups"))
-        self.groupBoxChannelGroups.setTitle(_translate("channelGroupsDialog", "Channel groups:"))
-        self.pushButtonSetChannels.setText(_translate("channelGroupsDialog", "Set channels"))
+        channelGroupsDialog.setWindowTitle(
+            _translate("channelGroupsDialog", "Meggie - Channel groups")
+        )
+        self.groupBoxChannelGroups.setTitle(
+            _translate("channelGroupsDialog", "Channel groups:")
+        )
+        self.pushButtonSetChannels.setText(
+            _translate("channelGroupsDialog", "Set channels")
+        )
         self.pushButtonAdd.setText(_translate("channelGroupsDialog", "Add"))
-        self.pushButtonRemove.setText(_translate("channelGroupsDialog", "Remove selected"))
-        self.pushButtonReset.setText(_translate("channelGroupsDialog", "Reset to defaults"))
-        self.groupBoxChannelType.setTitle(_translate("channelGroupsDialog", "Select channel type:"))
+        self.pushButtonRemove.setText(
+            _translate("channelGroupsDialog", "Remove selected")
+        )
+        self.pushButtonReset.setText(
+            _translate("channelGroupsDialog", "Reset to defaults")
+        )
+        self.groupBoxChannelType.setTitle(
+            _translate("channelGroupsDialog", "Select channel type:")
+        )
         self.radioButtonMEG.setText(_translate("channelGroupsDialog", "MEG"))
         self.radioButtonEEG.setText(_translate("channelGroupsDialog", "EEG"))
         self.pushButtonCancel.setText(_translate("channelGroupsDialog", "Cancel"))

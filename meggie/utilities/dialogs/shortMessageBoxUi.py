@@ -15,7 +15,9 @@ class Ui_shortMessageBox(object):
     def setupUi(self, shortMessageBox):
         shortMessageBox.setObjectName("shortMessageBox")
         shortMessageBox.resize(582, 117)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(shortMessageBox.sizePolicy().hasHeightForWidth())
@@ -23,7 +25,9 @@ class Ui_shortMessageBox(object):
         self.gridLayout = QtWidgets.QGridLayout(shortMessageBox)
         self.gridLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.gridLayout.setObjectName("gridLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.gridLayout.addItem(spacerItem, 1, 0, 1, 1)
         self.pushButtonClose = QtWidgets.QPushButton(shortMessageBox)
         self.pushButtonClose.setObjectName("pushButtonClose")
@@ -37,12 +41,16 @@ class Ui_shortMessageBox(object):
         self.gridLayout_2 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.labelMessage = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.labelMessage.sizePolicy().hasHeightForWidth())
         self.labelMessage.setSizePolicy(sizePolicy)
-        self.labelMessage.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.labelMessage.setAlignment(
+            QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter
+        )
         self.labelMessage.setWordWrap(True)
         self.labelMessage.setObjectName("labelMessage")
         self.gridLayout_2.addWidget(self.labelMessage, 0, 0, 1, 1)
@@ -50,11 +58,16 @@ class Ui_shortMessageBox(object):
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 2)
 
         self.retranslateUi(shortMessageBox)
-        self.pushButtonClose.clicked.connect(shortMessageBox.close) # type: ignore
+        self.pushButtonClose.clicked.connect(shortMessageBox.close)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(shortMessageBox)
 
     def retranslateUi(self, shortMessageBox):
         _translate = QtCore.QCoreApplication.translate
         shortMessageBox.setWindowTitle(_translate("shortMessageBox", "Meggie"))
         self.pushButtonClose.setText(_translate("shortMessageBox", "Close"))
-        self.labelMessage.setText(_translate("shortMessageBox", "The was a cat behind the all mighty bird singing hallelujah. Who knew it would be so devastating if not all of us? The cries in the woods, howls of the never ending human culture vanishing into thin q numbers."))
+        self.labelMessage.setText(
+            _translate(
+                "shortMessageBox",
+                "The was a cat behind the all mighty bird singing hallelujah. Who knew it would be so devastating if not all of us? The cries in the woods, howls of the never ending human culture vanishing into thin q numbers.",
+            )
+        )

@@ -34,11 +34,15 @@ class Ui_PowerSpectrumAddAdvancedDialog(object):
         self.comboBoxAvgGroup.addItem("")
         self.comboBoxAvgGroup.addItem("")
         self.comboBoxAvgGroup.addItem("")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.comboBoxAvgGroup)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.comboBoxAvgGroup
+        )
         self.gridLayout_2.addWidget(self.groupBoxGeneral, 0, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.pushButtonCancel = QtWidgets.QPushButton(PowerSpectrumAddAdvancedDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -47,7 +51,9 @@ class Ui_PowerSpectrumAddAdvancedDialog(object):
         self.pushButtonAccept.setObjectName("pushButtonAccept")
         self.horizontalLayout.addWidget(self.pushButtonAccept)
         self.gridLayout_2.addLayout(self.horizontalLayout, 4, 0, 1, 1)
-        self.groupBoxStartingPoints = QtWidgets.QGroupBox(PowerSpectrumAddAdvancedDialog)
+        self.groupBoxStartingPoints = QtWidgets.QGroupBox(
+            PowerSpectrumAddAdvancedDialog
+        )
         self.groupBoxStartingPoints.setObjectName("groupBoxStartingPoints")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.groupBoxStartingPoints)
         self.gridLayout_3.setObjectName("gridLayout_3")
@@ -64,14 +70,20 @@ class Ui_PowerSpectrumAddAdvancedDialog(object):
         self.pushButtonStartEdit.setEnabled(False)
         self.pushButtonStartEdit.setObjectName("pushButtonStartEdit")
         self.gridLayout_3.addWidget(self.pushButtonStartEdit, 1, 3, 1, 1)
-        self.radioButtonStartUseEvents = QtWidgets.QRadioButton(self.groupBoxStartingPoints)
+        self.radioButtonStartUseEvents = QtWidgets.QRadioButton(
+            self.groupBoxStartingPoints
+        )
         self.radioButtonStartUseEvents.setObjectName("radioButtonStartUseEvents")
         self.gridLayout_3.addWidget(self.radioButtonStartUseEvents, 0, 0, 1, 4)
-        self.radioButtonStartUseStart = QtWidgets.QRadioButton(self.groupBoxStartingPoints)
+        self.radioButtonStartUseStart = QtWidgets.QRadioButton(
+            self.groupBoxStartingPoints
+        )
         self.radioButtonStartUseStart.setChecked(True)
         self.radioButtonStartUseStart.setObjectName("radioButtonStartUseStart")
         self.gridLayout_3.addWidget(self.radioButtonStartUseStart, 3, 0, 1, 4)
-        self.doubleSpinBoxStartOffset = QtWidgets.QDoubleSpinBox(self.groupBoxStartingPoints)
+        self.doubleSpinBoxStartOffset = QtWidgets.QDoubleSpinBox(
+            self.groupBoxStartingPoints
+        )
         self.doubleSpinBoxStartOffset.setMinimum(-100000000.0)
         self.doubleSpinBoxStartOffset.setMaximum(100000000.0)
         self.doubleSpinBoxStartOffset.setProperty("value", 5.0)
@@ -88,7 +100,9 @@ class Ui_PowerSpectrumAddAdvancedDialog(object):
         self.spinBoxStartMask.setMaximum(1000000000)
         self.spinBoxStartMask.setObjectName("spinBoxStartMask")
         self.gridLayout_3.addWidget(self.spinBoxStartMask, 2, 2, 1, 1)
-        self.radioButtonStartUseEnd = QtWidgets.QRadioButton(self.groupBoxStartingPoints)
+        self.radioButtonStartUseEnd = QtWidgets.QRadioButton(
+            self.groupBoxStartingPoints
+        )
         self.radioButtonStartUseEnd.setObjectName("radioButtonStartUseEnd")
         self.gridLayout_3.addWidget(self.radioButtonStartUseEnd, 4, 0, 1, 4)
         self.gridLayout_2.addWidget(self.groupBoxStartingPoints, 1, 0, 1, 1)
@@ -96,7 +110,9 @@ class Ui_PowerSpectrumAddAdvancedDialog(object):
         self.groupBoxEndingPoints.setObjectName("groupBoxEndingPoints")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.groupBoxEndingPoints)
         self.gridLayout_4.setObjectName("gridLayout_4")
-        self.doubleSpinBoxEndOffset = QtWidgets.QDoubleSpinBox(self.groupBoxEndingPoints)
+        self.doubleSpinBoxEndOffset = QtWidgets.QDoubleSpinBox(
+            self.groupBoxEndingPoints
+        )
         self.doubleSpinBoxEndOffset.setMinimum(-10000000.0)
         self.doubleSpinBoxEndOffset.setMaximum(10000000.99)
         self.doubleSpinBoxEndOffset.setProperty("value", -5.0)
@@ -137,50 +153,116 @@ class Ui_PowerSpectrumAddAdvancedDialog(object):
         self.radioButtonEndUseStart.setObjectName("radioButtonEndUseStart")
         self.gridLayout_4.addWidget(self.radioButtonEndUseStart, 3, 0, 1, 4)
         self.gridLayout_2.addWidget(self.groupBoxEndingPoints, 2, 0, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout_2.addItem(spacerItem1, 3, 0, 1, 1)
 
         self.retranslateUi(PowerSpectrumAddAdvancedDialog)
-        self.pushButtonCancel.clicked.connect(PowerSpectrumAddAdvancedDialog.reject) # type: ignore
-        self.pushButtonAccept.clicked.connect(PowerSpectrumAddAdvancedDialog.accept) # type: ignore
-        self.radioButtonEndUseEvents.toggled['bool'].connect(self.spinBoxEndId.setEnabled) # type: ignore
-        self.radioButtonEndUseEvents.toggled['bool'].connect(self.spinBoxEndMask.setEnabled) # type: ignore
-        self.radioButtonEndUseEvents.toggled['bool'].connect(self.pushButtonEndEdit.setEnabled) # type: ignore
-        self.radioButtonStartUseEvents.toggled['bool'].connect(self.spinBoxStartId.setEnabled) # type: ignore
-        self.radioButtonStartUseEvents.toggled['bool'].connect(self.spinBoxStartMask.setEnabled) # type: ignore
-        self.radioButtonStartUseEvents.toggled['bool'].connect(self.pushButtonStartEdit.setEnabled) # type: ignore
+        self.pushButtonCancel.clicked.connect(PowerSpectrumAddAdvancedDialog.reject)  # type: ignore
+        self.pushButtonAccept.clicked.connect(PowerSpectrumAddAdvancedDialog.accept)  # type: ignore
+        self.radioButtonEndUseEvents.toggled["bool"].connect(self.spinBoxEndId.setEnabled)  # type: ignore
+        self.radioButtonEndUseEvents.toggled["bool"].connect(self.spinBoxEndMask.setEnabled)  # type: ignore
+        self.radioButtonEndUseEvents.toggled["bool"].connect(self.pushButtonEndEdit.setEnabled)  # type: ignore
+        self.radioButtonStartUseEvents.toggled["bool"].connect(self.spinBoxStartId.setEnabled)  # type: ignore
+        self.radioButtonStartUseEvents.toggled["bool"].connect(self.spinBoxStartMask.setEnabled)  # type: ignore
+        self.radioButtonStartUseEvents.toggled["bool"].connect(self.pushButtonStartEdit.setEnabled)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(PowerSpectrumAddAdvancedDialog)
 
     def retranslateUi(self, PowerSpectrumAddAdvancedDialog):
         _translate = QtCore.QCoreApplication.translate
-        PowerSpectrumAddAdvancedDialog.setWindowTitle(_translate("PowerSpectrumAddAdvancedDialog", "Meggie - Add advanced"))
-        self.groupBoxGeneral.setTitle(_translate("PowerSpectrumAddAdvancedDialog", "General:"))
-        self.labelGroup.setText(_translate("PowerSpectrumAddAdvancedDialog", "Average group:"))
-        self.comboBoxAvgGroup.setItemText(0, _translate("PowerSpectrumAddAdvancedDialog", "1"))
-        self.comboBoxAvgGroup.setItemText(1, _translate("PowerSpectrumAddAdvancedDialog", "2"))
-        self.comboBoxAvgGroup.setItemText(2, _translate("PowerSpectrumAddAdvancedDialog", "3"))
-        self.comboBoxAvgGroup.setItemText(3, _translate("PowerSpectrumAddAdvancedDialog", "4"))
-        self.comboBoxAvgGroup.setItemText(4, _translate("PowerSpectrumAddAdvancedDialog", "5"))
-        self.comboBoxAvgGroup.setItemText(5, _translate("PowerSpectrumAddAdvancedDialog", "6"))
-        self.comboBoxAvgGroup.setItemText(6, _translate("PowerSpectrumAddAdvancedDialog", "7"))
-        self.comboBoxAvgGroup.setItemText(7, _translate("PowerSpectrumAddAdvancedDialog", "8"))
-        self.pushButtonCancel.setText(_translate("PowerSpectrumAddAdvancedDialog", "Cancel"))
-        self.pushButtonAccept.setText(_translate("PowerSpectrumAddAdvancedDialog", "Add"))
-        self.groupBoxStartingPoints.setTitle(_translate("PowerSpectrumAddAdvancedDialog", "Starting points:"))
-        self.labelStartId.setText(_translate("PowerSpectrumAddAdvancedDialog", "Event id:"))
-        self.labelStartOffset.setText(_translate("PowerSpectrumAddAdvancedDialog", "Offset:"))
-        self.labelStartMask.setText(_translate("PowerSpectrumAddAdvancedDialog", "Mask:"))
-        self.pushButtonStartEdit.setText(_translate("PowerSpectrumAddAdvancedDialog", "Edit..."))
-        self.radioButtonStartUseEvents.setText(_translate("PowerSpectrumAddAdvancedDialog", "Get starting points from events:"))
-        self.radioButtonStartUseStart.setText(_translate("PowerSpectrumAddAdvancedDialog", "Use start of recording"))
-        self.doubleSpinBoxStartOffset.setSuffix(_translate("PowerSpectrumAddAdvancedDialog", "s"))
-        self.radioButtonStartUseEnd.setText(_translate("PowerSpectrumAddAdvancedDialog", "Use end of recording"))
-        self.groupBoxEndingPoints.setTitle(_translate("PowerSpectrumAddAdvancedDialog", "Ending points:"))
-        self.doubleSpinBoxEndOffset.setSuffix(_translate("PowerSpectrumAddAdvancedDialog", "s"))
+        PowerSpectrumAddAdvancedDialog.setWindowTitle(
+            _translate("PowerSpectrumAddAdvancedDialog", "Meggie - Add advanced")
+        )
+        self.groupBoxGeneral.setTitle(
+            _translate("PowerSpectrumAddAdvancedDialog", "General:")
+        )
+        self.labelGroup.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Average group:")
+        )
+        self.comboBoxAvgGroup.setItemText(
+            0, _translate("PowerSpectrumAddAdvancedDialog", "1")
+        )
+        self.comboBoxAvgGroup.setItemText(
+            1, _translate("PowerSpectrumAddAdvancedDialog", "2")
+        )
+        self.comboBoxAvgGroup.setItemText(
+            2, _translate("PowerSpectrumAddAdvancedDialog", "3")
+        )
+        self.comboBoxAvgGroup.setItemText(
+            3, _translate("PowerSpectrumAddAdvancedDialog", "4")
+        )
+        self.comboBoxAvgGroup.setItemText(
+            4, _translate("PowerSpectrumAddAdvancedDialog", "5")
+        )
+        self.comboBoxAvgGroup.setItemText(
+            5, _translate("PowerSpectrumAddAdvancedDialog", "6")
+        )
+        self.comboBoxAvgGroup.setItemText(
+            6, _translate("PowerSpectrumAddAdvancedDialog", "7")
+        )
+        self.comboBoxAvgGroup.setItemText(
+            7, _translate("PowerSpectrumAddAdvancedDialog", "8")
+        )
+        self.pushButtonCancel.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Cancel")
+        )
+        self.pushButtonAccept.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Add")
+        )
+        self.groupBoxStartingPoints.setTitle(
+            _translate("PowerSpectrumAddAdvancedDialog", "Starting points:")
+        )
+        self.labelStartId.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Event id:")
+        )
+        self.labelStartOffset.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Offset:")
+        )
+        self.labelStartMask.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Mask:")
+        )
+        self.pushButtonStartEdit.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Edit...")
+        )
+        self.radioButtonStartUseEvents.setText(
+            _translate(
+                "PowerSpectrumAddAdvancedDialog", "Get starting points from events:"
+            )
+        )
+        self.radioButtonStartUseStart.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Use start of recording")
+        )
+        self.doubleSpinBoxStartOffset.setSuffix(
+            _translate("PowerSpectrumAddAdvancedDialog", "s")
+        )
+        self.radioButtonStartUseEnd.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Use end of recording")
+        )
+        self.groupBoxEndingPoints.setTitle(
+            _translate("PowerSpectrumAddAdvancedDialog", "Ending points:")
+        )
+        self.doubleSpinBoxEndOffset.setSuffix(
+            _translate("PowerSpectrumAddAdvancedDialog", "s")
+        )
         self.labelEndMask.setText(_translate("PowerSpectrumAddAdvancedDialog", "Mask:"))
-        self.labelEndId.setText(_translate("PowerSpectrumAddAdvancedDialog", "Event id:"))
-        self.labelEndOffset.setText(_translate("PowerSpectrumAddAdvancedDialog", "Offset:"))
-        self.pushButtonEndEdit.setText(_translate("PowerSpectrumAddAdvancedDialog", "Edit..."))
-        self.radioButtonEndUseEvents.setText(_translate("PowerSpectrumAddAdvancedDialog", "Get starting points from events:"))
-        self.radioButtonEndUseEnd.setText(_translate("PowerSpectrumAddAdvancedDialog", "Use end of recording"))
-        self.radioButtonEndUseStart.setText(_translate("PowerSpectrumAddAdvancedDialog", "Use start of recording"))
+        self.labelEndId.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Event id:")
+        )
+        self.labelEndOffset.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Offset:")
+        )
+        self.pushButtonEndEdit.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Edit...")
+        )
+        self.radioButtonEndUseEvents.setText(
+            _translate(
+                "PowerSpectrumAddAdvancedDialog", "Get starting points from events:"
+            )
+        )
+        self.radioButtonEndUseEnd.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Use end of recording")
+        )
+        self.radioButtonEndUseStart.setText(
+            _translate("PowerSpectrumAddAdvancedDialog", "Use start of recording")
+        )

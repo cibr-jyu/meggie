@@ -19,7 +19,9 @@ class Ui_rereferencingDialog(object):
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.pushButtonCancel = QtWidgets.QPushButton(rereferencingDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -46,13 +48,19 @@ class Ui_rereferencingDialog(object):
         self.radioButtonUseAverage = QtWidgets.QRadioButton(self.groupBoxRereference)
         self.radioButtonUseAverage.setChecked(True)
         self.radioButtonUseAverage.setObjectName("radioButtonUseAverage")
-        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.radioButtonUseAverage)
+        self.formLayout_2.setWidget(
+            1, QtWidgets.QFormLayout.LabelRole, self.radioButtonUseAverage
+        )
         self.radioButtonUseChannels = QtWidgets.QRadioButton(self.groupBoxRereference)
         self.radioButtonUseChannels.setObjectName("radioButtonUseChannels")
-        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.radioButtonUseChannels)
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.LabelRole, self.radioButtonUseChannels
+        )
         self.listWidgetChannels = QtWidgets.QListWidget(self.groupBoxRereference)
         self.listWidgetChannels.setEnabled(False)
-        self.listWidgetChannels.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.listWidgetChannels.setSelectionMode(
+            QtWidgets.QAbstractItemView.ExtendedSelection
+        )
         self.listWidgetChannels.setObjectName("listWidgetChannels")
         item = QtWidgets.QListWidgetItem()
         self.listWidgetChannels.addItem(item)
@@ -66,9 +74,13 @@ class Ui_rereferencingDialog(object):
         self.listWidgetChannels.addItem(item)
         item = QtWidgets.QListWidgetItem()
         self.listWidgetChannels.addItem(item)
-        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.listWidgetChannels)
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.FieldRole, self.listWidgetChannels
+        )
         self.gridLayout.addWidget(self.groupBoxRereference, 0, 0, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout.addItem(spacerItem1, 2, 0, 1, 1)
         self.groupBoxBatching = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxBatching.setObjectName("groupBoxBatching")
@@ -83,21 +95,29 @@ class Ui_rereferencingDialog(object):
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
 
         self.retranslateUi(rereferencingDialog)
-        self.pushButtonCancel.clicked.connect(rereferencingDialog.reject) # type: ignore
-        self.pushButtonApply.clicked.connect(rereferencingDialog.accept) # type: ignore
-        self.pushButtonBatch.clicked.connect(rereferencingDialog.acceptBatch) # type: ignore
-        self.radioButtonUseChannels.toggled['bool'].connect(self.listWidgetChannels.setEnabled) # type: ignore
+        self.pushButtonCancel.clicked.connect(rereferencingDialog.reject)  # type: ignore
+        self.pushButtonApply.clicked.connect(rereferencingDialog.accept)  # type: ignore
+        self.pushButtonBatch.clicked.connect(rereferencingDialog.acceptBatch)  # type: ignore
+        self.radioButtonUseChannels.toggled["bool"].connect(self.listWidgetChannels.setEnabled)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(rereferencingDialog)
 
     def retranslateUi(self, rereferencingDialog):
         _translate = QtCore.QCoreApplication.translate
-        rereferencingDialog.setWindowTitle(_translate("rereferencingDialog", "Meggie - Rereferencing"))
+        rereferencingDialog.setWindowTitle(
+            _translate("rereferencingDialog", "Meggie - Rereferencing")
+        )
         self.pushButtonCancel.setText(_translate("rereferencingDialog", "Cancel"))
         self.pushButtonBatch.setText(_translate("rereferencingDialog", "Batch"))
         self.pushButtonApply.setText(_translate("rereferencingDialog", "Apply"))
-        self.groupBoxRereference.setTitle(_translate("rereferencingDialog", "Rereferencing options"))
-        self.radioButtonUseAverage.setText(_translate("rereferencingDialog", "Use average reference"))
-        self.radioButtonUseChannels.setText(_translate("rereferencingDialog", "Select channel(s):"))
+        self.groupBoxRereference.setTitle(
+            _translate("rereferencingDialog", "Rereferencing options")
+        )
+        self.radioButtonUseAverage.setText(
+            _translate("rereferencingDialog", "Use average reference")
+        )
+        self.radioButtonUseChannels.setText(
+            _translate("rereferencingDialog", "Select channel(s):")
+        )
         __sortingEnabled = self.listWidgetChannels.isSortingEnabled()
         self.listWidgetChannels.setSortingEnabled(False)
         item = self.listWidgetChannels.item(0)

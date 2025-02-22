@@ -31,7 +31,9 @@ class Ui_outputOptions(object):
         self.gridLayout.addWidget(self.groupBoxType, 0, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.pushButtonCancel = QtWidgets.QPushButton(outputOptions)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -40,19 +42,25 @@ class Ui_outputOptions(object):
         self.pushButtonAccept.setObjectName("pushButtonAccept")
         self.horizontalLayout.addWidget(self.pushButtonAccept)
         self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout.addItem(spacerItem1, 1, 0, 1, 1)
 
         self.retranslateUi(outputOptions)
-        self.pushButtonCancel.clicked.connect(outputOptions.reject) # type: ignore
-        self.pushButtonAccept.clicked.connect(outputOptions.accept) # type: ignore
+        self.pushButtonCancel.clicked.connect(outputOptions.reject)  # type: ignore
+        self.pushButtonAccept.clicked.connect(outputOptions.accept)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(outputOptions)
 
     def retranslateUi(self, outputOptions):
         _translate = QtCore.QCoreApplication.translate
-        outputOptions.setWindowTitle(_translate("outputOptions", "Meggie - Output options"))
+        outputOptions.setWindowTitle(
+            _translate("outputOptions", "Meggie - Output options")
+        )
         self.groupBoxType.setTitle(_translate("outputOptions", "Type"))
         self.radioButtonAllChannels.setText(_translate("outputOptions", "All channels"))
-        self.radioButtonChannelAverages.setText(_translate("outputOptions", "Channel averages"))
+        self.radioButtonChannelAverages.setText(
+            _translate("outputOptions", "Channel averages")
+        )
         self.pushButtonCancel.setText(_translate("outputOptions", "Cancel"))
         self.pushButtonAccept.setText(_translate("outputOptions", "Accept"))
