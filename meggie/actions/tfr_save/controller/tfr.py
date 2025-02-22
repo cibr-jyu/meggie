@@ -1,6 +1,5 @@
 """Contains controlling logic for the tfr implementation"""
 
-import os
 import logging
 
 import mne
@@ -14,7 +13,7 @@ from meggie.utilities.threading import threaded
 
 @threaded
 def save_tfr_all_channels(
-    experiment, tfr_name, blmode, blstart, blend, tmin, tmax, fmin, fmax
+    experiment, tfr_name, blmode, blstart, blend, tmin, tmax, fmin, fmax, path
 ):
     """Saves all channels of tfr item to a csv file."""
     column_names = []
@@ -53,17 +52,23 @@ def save_tfr_all_channels(
                     row_desc = (subject.name, key, ch_names[ix], freqs[iy])
                     row_descs.append(row_desc)
 
-    folder = filemanager.create_timestamped_folder(experiment)
-    fname = tfr_name + "_all_subjects_all_channels_tfr.csv"
-    path = os.path.join(folder, fname)
-
     filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger("ui_logger").info("Saved the csv file to " + path)
 
 
 @threaded
 def save_tfr_channel_averages(
-    experiment, tfr_name, blmode, blstart, blend, tmin, tmax, fmin, fmax, channel_groups
+    experiment,
+    tfr_name,
+    blmode,
+    blstart,
+    blend,
+    tmin,
+    tmax,
+    fmin,
+    fmax,
+    channel_groups,
+    path,
 ):
     """Saves channel averages of tfr item to a csv file."""
     column_names = []
@@ -109,10 +114,6 @@ def save_tfr_channel_averages(
 
                     row_desc = (subject.name, key, ch_type, area, freqs[iy])
                     row_descs.append(row_desc)
-
-    folder = filemanager.create_timestamped_folder(experiment)
-    fname = tfr_name + "_all_subjects_channel_averages_tfr.csv"
-    path = os.path.join(folder, fname)
 
     filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger("ui_logger").info("Saved the csv file to " + path)

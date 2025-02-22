@@ -4,9 +4,7 @@ import appdirs
 import os
 import shutil
 import re
-import datetime
 import logging
-import errno
 
 import numpy as np
 import mne
@@ -111,33 +109,6 @@ def ensure_folders(paths):
     for path in paths:
         if not os.path.exists(path):
             os.makedirs(path)
-
-
-def create_timestamped_folder(experiment):
-    """Creates folder with a timestamp inside the output folder in the
-    experiment folder.
-
-    Parameters
-    ----------
-    experiment : meggie.experiment.Experiment
-        The experiment where to create the folder.
-
-    Returns
-    -------
-    str
-        The path to the folder.
-    """
-    current_time_str = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    path = os.path.join(experiment.path, "output")
-    timestamped_folder = os.path.join(path, current_time_str)
-
-    try:
-        os.makedirs(timestamped_folder)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-
-    return timestamped_folder
 
 
 def save_csv(path, data, column_names, row_descs):

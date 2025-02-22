@@ -1,10 +1,14 @@
 """Contains save tse action handling."""
 
+import os
+
+from PyQt5 import QtWidgets
+
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.validators import assert_arrays_same
+from meggie.utilities.filemanager import homepath
 
 from meggie.mainwindow.dynamic import Action
-from meggie.mainwindow.dynamic import subject_action
 
 from meggie.utilities.dialogs.TFROutputOptionsMain import TFROutputOptions
 
@@ -36,8 +40,23 @@ class SaveTSE(Action):
             params["channel_groups"] = self.experiment.channel_groups
             params["name"] = selected_name
 
+            default_filename = (
+                selected_name + "_all_subjects_channel_averages_tse.csv"
+                if params["output_option"] == "channel_averages"
+                else selected_name + "_all_subjects_all_channels_tse.csv"
+            )
+            filepath, _ = QtWidgets.QFileDialog.getSaveFileName(
+                self.window,
+                "Save TSE to CSV",
+                os.path.join(homepath(), default_filename),
+                "CSV Files (*.csv);;All Files (*)",
+            )
+
+            if not filepath:
+                return
+
             try:
-                self.handler(self.experiment.active_subject, params)
+                self.handler(self.experiment.active_subject, filepath, params)
             except Exception as exc:
                 exc_messagebox(self.window, exc)
 
@@ -46,8 +65,7 @@ class SaveTSE(Action):
         )
         dialog.show()
 
-    @subject_action
-    def handler(self, subject, params):
+    def handler(self, subject, filepath, params):
         """ """
         if params["output_option"] == "all_channels":
             save_tse_all_channels(
@@ -60,6 +78,7 @@ class SaveTSE(Action):
                 params["tmax"],
                 params["fmin"],
                 params["fmax"],
+                filepath,
                 do_meanwhile=self.window.update_ui,
             )
         else:
@@ -74,5 +93,6 @@ class SaveTSE(Action):
                 params["fmin"],
                 params["fmax"],
                 params["channel_groups"],
+                filepath,
                 do_meanwhile=self.window.update_ui,
             )

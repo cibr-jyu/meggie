@@ -1,6 +1,5 @@
 """Contains controlling logic for the spectrum saving."""
 
-import os
 import logging
 
 import numpy as np
@@ -14,7 +13,7 @@ from meggie.utilities.threading import threaded
 
 
 @threaded
-def save_all_channels(experiment, selected_name):
+def save_all_channels(experiment, selected_name, path):
     """Saves all channesl of a spectrum item to a csv file."""
     column_names = []
     row_descs = []
@@ -32,17 +31,13 @@ def save_all_channels(experiment, selected_name):
                 row_desc = (subject.name, key, ch_name)
                 row_descs.append(row_desc)
 
-    folder = filemanager.create_timestamped_folder(experiment)
-    fname = selected_name + "_all_subjects_all_channels_spectrum.csv"
-    path = os.path.join(folder, fname)
-
     filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger("ui_logger").info("Saved the csv file to " + path)
 
 
 @threaded
 def save_channel_averages(
-    experiment, selected_name, channel_groups, log_transformed=False
+    experiment, selected_name, channel_groups, path, log_transformed=False
 ):
     """Saves channel averages of a spectrum item to a csv file."""
     column_names = []
@@ -75,10 +70,6 @@ def save_channel_averages(
             for ch_type, area in data_labels:
                 row_desc = (subject.name, key, ch_type, area)
                 row_descs.append(row_desc)
-
-    folder = filemanager.create_timestamped_folder(experiment)
-    fname = selected_name + "_all_subjects_channel_averages_spectrum.csv"
-    path = os.path.join(folder, fname)
 
     filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger("ui_logger").info("Saved the csv file to " + path)

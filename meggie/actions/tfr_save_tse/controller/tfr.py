@@ -1,6 +1,5 @@
 """Contains controlling logic for saving tse"""
 
-import os
 import logging
 
 import numpy as np
@@ -52,7 +51,7 @@ def _crop_and_correct_to_baseline(tse, blmode, blstart, blend, tmin, tmax, times
 
 @threaded
 def save_tse_all_channels(
-    experiment, tfr_name, blmode, blstart, blend, tmin, tmax, fmin, fmax
+    experiment, tfr_name, blmode, blstart, blend, tmin, tmax, fmin, fmax, path
 ):
     """Saves all channels of a tse to a csv file."""
     column_names = []
@@ -80,17 +79,23 @@ def save_tse_all_channels(
 
         column_names = format_floats(times)
 
-    folder = filemanager.create_timestamped_folder(experiment)
-    fname = tfr_name + "_all_subjects_all_channels_tse.csv"
-    path = os.path.join(folder, fname)
-
     filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger("ui_logger").info("Saved the csv file to " + path)
 
 
 @threaded
 def save_tse_channel_averages(
-    experiment, tfr_name, blmode, blstart, blend, tmin, tmax, fmin, fmax, channel_groups
+    experiment,
+    tfr_name,
+    blmode,
+    blstart,
+    blend,
+    tmin,
+    tmax,
+    fmin,
+    fmax,
+    channel_groups,
+    path,
 ):
     """Saves channel averages of tse to a csv file."""
     column_names = []
@@ -123,10 +128,6 @@ def save_tse_channel_averages(
                 row_descs.append(row_desc)
 
         column_names = format_floats(times)
-
-    folder = filemanager.create_timestamped_folder(experiment)
-    fname = tfr_name + "_all_subjects_channel_averages_tse.csv"
-    path = os.path.join(folder, fname)
 
     filemanager.save_csv(path, csv_data, column_names, row_descs)
     logging.getLogger("ui_logger").info("Saved the csv file to " + path)

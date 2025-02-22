@@ -9,6 +9,7 @@ import pkg_resources
 import mne
 import shutil
 import numpy as np
+import PyQt5.QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from meggie.mainwindow.preferences import PreferencesHandler
 from meggie.experiment import initialize_new_experiment
@@ -390,6 +391,12 @@ class BaseTestAction:
                     ".".join([patch_path, "messagebox"]),
                     patched_messagebox,
                 )
+
+        # mock savefile-dialog to allow tests pass
+        def mocked_save_file(parent, title, path, suffix):
+            return f"{self.dirpath}/results.csv", None
+
+        PyQt5.QtWidgets.QFileDialog.getSaveFileName = mocked_save_file
 
         # call the action handler
         data = data.copy()

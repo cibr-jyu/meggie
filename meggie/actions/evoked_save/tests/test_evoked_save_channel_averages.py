@@ -5,7 +5,6 @@ from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 
 class TestEvokedSaveChannelAverages(BaseTestAction):
     def test_evoked_save_channel_averages(self):
-
         data = {"outputs": {"evoked": ["Evoked"]}}
 
         self.run_action(
@@ -13,6 +12,7 @@ class TestEvokedSaveChannelAverages(BaseTestAction):
             handler=SaveEvoked,
             data=data,
         )
+
         dialog = self.find_dialog(OutputOptions)
         dialog.ui.radioButtonChannelAverages.setChecked(True)
         dialog.accept()

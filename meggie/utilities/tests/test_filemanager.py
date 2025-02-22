@@ -3,27 +3,11 @@ import os
 import numpy as np
 import mne
 
-from meggie.experiment import Experiment
-from meggie.utilities.filemanager import create_timestamped_folder
 from meggie.utilities.filemanager import save_csv
 from meggie.utilities.filemanager import load_csv
 from meggie.utilities.filemanager import open_raw
 from meggie.utilities.filemanager import save_raw
 from meggie.utilities.filemanager import get_supported_formats
-
-
-def test_create_timestamped_folder():
-    with tempfile.TemporaryDirectory() as dirpath:
-
-        name = "test_experiment"
-        author = ""
-        path = os.path.join(dirpath, name)
-        experiment = Experiment(name, author, path)
-
-        create_timestamped_folder(experiment)
-
-        contents = os.listdir(os.path.join(experiment.path, "output"))
-        assert len(contents) > 0
 
 
 def test_save_and_load_csv():
