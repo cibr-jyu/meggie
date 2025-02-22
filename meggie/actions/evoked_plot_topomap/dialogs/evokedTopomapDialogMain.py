@@ -1,5 +1,4 @@
-""" Contains a class for logic of the evoked topomap dialog.
-"""
+"""Contains a class for logic of the evoked topomap dialog."""
 
 from PyQt5 import QtWidgets
 

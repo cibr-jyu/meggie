@@ -1,5 +1,4 @@
-""" Contains controlling logic for the filter.
-"""
+"""Contains controlling logic for the filter."""
 
 
 def filter_data(subject, params, preview=False):

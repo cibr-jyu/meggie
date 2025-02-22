@@ -8,7 +8,7 @@ Meggie is structured around three fundamental classes:
 
 ### MainWindow
 
-MainWindow is the central hub of the user interface, built using PyQt5. Key components include:
+MainWindow is the central hub of the user interface, built using PyQt. Key components include:
 
 - Left Panel: Displays experiment-specific details.
 - Bottom Console: Logs user actions and system messages.

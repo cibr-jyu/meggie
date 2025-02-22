@@ -1,6 +1,6 @@
-mne==1.6.1
-numpy==1.26.4
-matplotlib==3.8.3
+mne~=1.9.0
+numpy~=2.2.2
+matplotlib~=3.10.0
 pandas
 scikit-learn
 python-json-logger

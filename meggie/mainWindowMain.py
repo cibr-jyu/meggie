@@ -1,5 +1,4 @@
-""" Contains the class for main window logic.
-"""
+"""Contains the class for main window logic."""
 
 import os
 import sys
@@ -9,7 +8,6 @@ import warnings
 from pythonjsonlogger import jsonlogger
 
 from PyQt5.QtWidgets import QApplication
-from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
@@ -363,14 +361,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _normal_output_written(self, text):
         cursor = self.ui.textEditConsole.textCursor()
-        cursor.movePosition(QtGui.QTextCursor.End)
+        cursor.movePosition(cursor.MoveOperation.End)
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
 
     def _error_output_written(self, text):
         cursor = self.ui.textEditConsole.textCursor()
-        cursor.movePosition(QtGui.QTextCursor.End)
+        cursor.movePosition(cursor.MoveOperation.End)
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
@@ -454,4 +452,4 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow(app)
     window.showMaximized()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

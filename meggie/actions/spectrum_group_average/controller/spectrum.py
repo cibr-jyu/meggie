@@ -1,5 +1,4 @@
-""" Contains group average implementation.
-"""
+"""Contains group average implementation."""
 
 import logging
 

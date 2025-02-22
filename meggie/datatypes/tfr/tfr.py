@@ -1,5 +1,4 @@
-""" Defines TFR class, wraps mne.AverageTFR objects.
-"""
+"""Defines TFR class, wraps mne.AverageTFR objects."""
 
 import os
 import re
@@ -105,7 +104,7 @@ class TFR(Datatype):
 
                     path = os.path.join(self._directory, fname)
             if path:
-                self._content[key] = mne.time_frequency.read_tfrs(path)[0]
+                self._content[key] = mne.time_frequency.read_tfrs(path)
 
     @property
     def content(self):

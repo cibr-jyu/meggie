@@ -1,5 +1,4 @@
-""" Contains implementation for delete epochs
-"""
+"""Contains implementation for delete epochs"""
 
 from meggie.utilities.messaging import exc_messagebox
 

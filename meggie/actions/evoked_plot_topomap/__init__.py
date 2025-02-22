@@ -1,5 +1,4 @@
-""" Contains implementation for evoked topomaps
-"""
+"""Contains implementation for evoked topomaps"""
 
 import matplotlib.pyplot as plt
 import numpy as np

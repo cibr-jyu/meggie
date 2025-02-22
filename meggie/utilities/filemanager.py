@@ -1,5 +1,4 @@
-"""Contains functions for tasks related to file system.
-"""
+"""Contains functions for tasks related to file system."""
 
 import appdirs
 import os

@@ -1,5 +1,4 @@
-""" Contains controlling logic for the evoked implementation.
-"""
+"""Contains controlling logic for the evoked implementation."""
 
 import logging
 

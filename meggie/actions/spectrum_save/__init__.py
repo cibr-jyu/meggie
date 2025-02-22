@@ -1,5 +1,4 @@
-""" Contains save spectrum action handling.
-"""
+"""Contains save spectrum action handling."""
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.validators import assert_arrays_same

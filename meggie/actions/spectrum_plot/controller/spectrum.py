@@ -1,5 +1,4 @@
-""" Contains functions for plot spectrum action
-"""
+"""Contains functions for plot spectrum action"""
 
 import mne
 

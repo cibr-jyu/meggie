@@ -1,10 +1,10 @@
 .PHONY: format
 format:
-	black -t py39 meggie
+	black meggie
 
 .PHONY: check
 check:
-	black --check -t py39 meggie
+	black --check meggie
 	pylama meggie
 
 .PHONY: test

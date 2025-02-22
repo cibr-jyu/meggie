@@ -1,5 +1,4 @@
-""" Contains a class for logic of the resampling dialog.
-"""
+"""Contains a class for logic of the resampling dialog."""
 
 import logging
 

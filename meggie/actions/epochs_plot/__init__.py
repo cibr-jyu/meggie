@@ -1,5 +1,4 @@
-""" Contains implementation for epochs plot
-"""
+"""Contains implementation for epochs plot"""
 
 from meggie.utilities.messaging import exc_messagebox
 

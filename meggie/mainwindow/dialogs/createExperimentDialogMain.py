@@ -1,5 +1,4 @@
-""" Contains a class for logic of experiment creation dialog.
-"""
+"""Contains a class for logic of experiment creation dialog."""
 
 from PyQt5 import QtWidgets
 

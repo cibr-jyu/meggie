@@ -1,5 +1,4 @@
-""" Contains implementation for spectrum info
-"""
+"""Contains implementation for spectrum info"""
 
 from meggie.mainwindow.dynamic import InfoAction
 

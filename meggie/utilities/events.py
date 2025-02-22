@@ -1,5 +1,4 @@
-""" Contains useful functions for handling events.
-"""
+"""Contains useful functions for handling events."""
 
 import logging
 

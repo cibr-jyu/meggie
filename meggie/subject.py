@@ -1,5 +1,4 @@
-""" Contains a class for logic of the Subjects.
-"""
+"""Contains a class for logic of the Subjects."""
 
 import os
 import logging

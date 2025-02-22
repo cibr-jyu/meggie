@@ -1,5 +1,4 @@
-""" Contains implementation for delete spectrum
-"""
+"""Contains implementation for delete spectrum"""
 
 from meggie.utilities.messaging import exc_messagebox
 

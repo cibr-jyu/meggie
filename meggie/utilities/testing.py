@@ -274,17 +274,17 @@ def create_test_experiment(experiment_folder, experiment_name, n_subjects=2):
         decim = 1
         freqs = np.arange(minfreq, maxfreq, interval)
 
-        mne_tfr = mne.time_frequency.tfr.tfr_morlet(
-            mne_epochs,
-            freqs=freqs,
+        mne_tfr = mne_epochs.compute_tfr(
+            "morlet",
+            freqs,
             n_cycles=n_cycles,
             decim=decim,
             average=True,
             return_itc=False,
         )
-        mne_tfr_2 = mne.time_frequency.tfr.tfr_morlet(
-            mne_epochs_2,
-            freqs=freqs,
+        mne_tfr_2 = mne_epochs_2.compute_tfr(
+            "morlet",
+            freqs,
             n_cycles=n_cycles,
             decim=decim,
             average=True,
@@ -322,7 +322,7 @@ def patched_messagebox(parent, message):
     raise Exception(message)
 
 
-def patched_exc_messagebox(parent, exc, exec_=False):
+def patched_exc_messagebox(parent, exc):
     raise exc
 
 
@@ -337,18 +337,26 @@ class BaseTestAction:
         os.environ["QT_QPA_PLATFORM"] = "offscreen"
         self.qtbot = qtbot
         self.monkeypatch = monkeypatch
+
+        # pyqt6 insists of having QApplication before creating the main window
+        self.ensure_app()
+
         self.mock_main_window = MockMainWindow()
         self.temp_dir = tempfile.TemporaryDirectory()
         self.dirpath = self.temp_dir.name
         self.package = "meggie.actions"
         self.setup_experiment()
         yield
-        # after each test
-        self.temp_dir.cleanup()
+
+        # after each test to try clean up to not contaminate others
         for widget in QApplication.topLevelWidgets():
             if widget.isWindow():
                 widget.close()
                 widget.deleteLater()
+
+        QApplication.processEvents()
+
+        self.temp_dir.cleanup()
 
     def setup_experiment(self):
         self.experiment = create_test_experiment(self.dirpath, "test_experiment")
@@ -409,3 +417,8 @@ class BaseTestAction:
 
         assert dialog is not None
         return dialog
+
+    def ensure_app(self):
+        self.app = QApplication.instance()
+        if not self.app:
+            self.app = QApplication([])

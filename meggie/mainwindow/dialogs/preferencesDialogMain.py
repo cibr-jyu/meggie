@@ -1,5 +1,4 @@
-""" Contains a class for logic of preferences dialog.
-"""
+"""Contains a class for logic of preferences dialog."""
 
 import os
 

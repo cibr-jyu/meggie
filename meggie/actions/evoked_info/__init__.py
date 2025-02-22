@@ -1,5 +1,4 @@
-""" Contains implementation for evoked info
-"""
+"""Contains implementation for evoked info"""
 
 from meggie.mainwindow.dynamic import InfoAction
 

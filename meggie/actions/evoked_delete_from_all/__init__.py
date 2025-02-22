@@ -1,5 +1,4 @@
-""" Contains implementation for delete evoked from all
-"""
+"""Contains implementation for delete evoked from all"""
 
 import logging
 

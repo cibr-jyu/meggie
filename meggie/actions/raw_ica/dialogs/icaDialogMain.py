@@ -1,5 +1,4 @@
-""" Contains a class for logic of ica dialog.
-"""
+"""Contains a class for logic of ica dialog."""
 
 import logging
 
@@ -32,10 +31,10 @@ class ICADialog(QtWidgets.QDialog):
 
         # change normal list widgets to multiselect widgets
         self.ui.listWidgetNotRemoved.setSelectionMode(
-            QtWidgets.QAbstractItemView.ExtendedSelection
+            QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
         )
         self.ui.listWidgetRemoved.setSelectionMode(
-            QtWidgets.QAbstractItemView.ExtendedSelection
+            QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
         )
 
         self._reset()

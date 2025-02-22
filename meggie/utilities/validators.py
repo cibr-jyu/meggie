@@ -1,5 +1,4 @@
-""" Functions for validation.
-"""
+"""Functions for validation."""
 
 import re
 import numpy as np

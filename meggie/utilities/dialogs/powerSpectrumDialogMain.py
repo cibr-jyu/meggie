@@ -1,5 +1,4 @@
-""" Contains a class for logic of the power spectrum creation dialog.
-"""
+"""Contains a class for logic of the power spectrum creation dialog."""
 
 import logging
 

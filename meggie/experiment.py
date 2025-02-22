@@ -1,5 +1,4 @@
-""" Contains classes and functions for experiments.
-"""
+"""Contains classes and functions for experiments."""
 
 import os
 import json

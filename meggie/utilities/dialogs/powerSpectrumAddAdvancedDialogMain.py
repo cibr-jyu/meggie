@@ -1,5 +1,4 @@
-""" Contains a class for logic of the add advanced dialog.
-"""
+"""Contains a class for logic of the add advanced dialog."""
 
 from PyQt5 import QtWidgets
 

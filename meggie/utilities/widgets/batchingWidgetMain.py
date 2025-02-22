@@ -1,5 +1,4 @@
-""" Contains a class for logic of the batching widget.
-"""
+"""Contains a class for logic of the batching widget."""
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
@@ -62,8 +61,8 @@ class BatchingWidget(QtWidgets.QWidget):
 
             for name in subject_names:
                 item = QtWidgets.QListWidgetItem(name)
-                item.setCheckState(QtCore.Qt.Unchecked)
-                item.setFlags(QtCore.Qt.ItemIsEnabled)
+                item.setCheckState(QtCore.Qt.CheckState.Unchecked)
+                item.setFlags(QtCore.Qt.ItemFlag.ItemIsEnabled)
                 self.ui.listWidgetSubjects.addItem(item)
 
         else:
@@ -80,10 +79,10 @@ class BatchingWidget(QtWidgets.QWidget):
         if not item:
             return
 
-        if item.checkState() != QtCore.Qt.Checked:
-            item.setCheckState(QtCore.Qt.Checked)
+        if item.checkState() != QtCore.Qt.CheckState.Checked:
+            item.setCheckState(QtCore.Qt.CheckState.Checked)
         else:
-            item.setCheckState(QtCore.Qt.Unchecked)
+            item.setCheckState(QtCore.Qt.CheckState.Unchecked)
 
     def showWidget(self, enabled):
         self.experiment = self.experiment_getter()
@@ -98,7 +97,7 @@ class BatchingWidget(QtWidgets.QWidget):
 
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
-            item.setCheckState(QtCore.Qt.Checked)
+            item.setCheckState(QtCore.Qt.CheckState.Checked)
 
     @property
     def selected_subjects(self):
@@ -106,7 +105,7 @@ class BatchingWidget(QtWidgets.QWidget):
         subject_names = []
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
-            if item.checkState() == QtCore.Qt.Checked:
+            if item.checkState() == QtCore.Qt.CheckState.Checked:
                 subject_names.append(item.text())
 
         return subject_names

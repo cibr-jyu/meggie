@@ -1,5 +1,4 @@
-""" Contains ICA action handling.
-"""
+"""Contains ICA action handling."""
 
 from meggie.actions.raw_ica.dialogs.icaDialogMain import ICADialog
 

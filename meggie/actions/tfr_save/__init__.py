@@ -1,5 +1,4 @@
-""" Contains save tfr action handling.
-"""
+"""Contains save tfr action handling."""
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.validators import assert_arrays_same

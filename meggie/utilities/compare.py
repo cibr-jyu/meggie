@@ -3,6 +3,8 @@
 import mne
 import numpy as np
 
+from mne._fiff.pick import channel_type
+
 
 def _prepare_raw_for_changes(raw_from, raw_to):
     """Creates a new raw with channels interleaved from the two input raws"""
@@ -15,7 +17,7 @@ def _prepare_raw_for_changes(raw_from, raw_to):
     ch_names = []
     ch_types = []
     for ch_idx, ch_name in enumerate(raw_from.info["ch_names"]):
-        ch_type = mne.io.pick.channel_type(raw_from.info, ch_idx)
+        ch_type = channel_type(raw_from.info, ch_idx)
         ch_names.append(ch_name.strip())
         ch_types.append(ch_type)
         ch_names.append(ch_name.strip() + "*")

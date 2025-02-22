@@ -1,5 +1,4 @@
-""" Contains a class for logic of add subject dialog.
-"""
+"""Contains a class for logic of add subject dialog."""
 
 import os
 import mne

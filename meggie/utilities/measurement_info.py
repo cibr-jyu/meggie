@@ -1,5 +1,4 @@
-"""Provides for a class that wraps measurement information from the mne.Info.
-"""
+"""Provides for a class that wraps measurement information from the mne.Info."""
 
 
 class MeasurementInfo(object):

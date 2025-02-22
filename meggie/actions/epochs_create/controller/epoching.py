@@ -1,5 +1,4 @@
-""" Contains controlling logic for the epochs creation.
-"""
+"""Contains controlling logic for the epochs creation."""
 
 import copy
 import logging

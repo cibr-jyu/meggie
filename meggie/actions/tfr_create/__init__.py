@@ -1,5 +1,4 @@
-""" Contains create tfr action handling.
-"""
+"""Contains create tfr action handling."""
 
 from meggie.utilities.names import next_available_name
 

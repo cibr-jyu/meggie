@@ -1,5 +1,4 @@
-""" Contains threading related utilities.
-"""
+"""Contains threading related utilities."""
 
 from queue import Queue
 from queue import Empty
@@ -36,7 +35,9 @@ def threaded(func):
 
         # worker threads should be used on time consuming
         # tasks so add a indicator for user
-        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        QtWidgets.QApplication.setOverrideCursor(
+            QtGui.QCursor(QtCore.Qt.CursorShape.WaitCursor)
+        )
 
         pool = ThreadPool(processes=1)
         do_meanwhile = kwargs.pop("do_meanwhile", None)

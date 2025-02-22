@@ -1,5 +1,4 @@
-""" Contains a class for logic of TFR creation dialog.
-"""
+"""Contains a class for logic of TFR creation dialog."""
 
 import logging
 

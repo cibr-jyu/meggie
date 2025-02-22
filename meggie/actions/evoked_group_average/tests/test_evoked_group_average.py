@@ -19,9 +19,9 @@ class TestEvokedGroupAverage(BaseTestAction):
         )
         dialog = self.find_dialog(GroupSelectionDialog)
 
-        dialog.ui.checkBoxGroup_0.setCheckState(QtCore.Qt.Checked)
+        dialog.ui.checkBoxGroup_0.setCheckState(QtCore.Qt.CheckState.Checked)
         dialog.ui.spinBoxGroup_0.setValue(1)
-        dialog.ui.checkBoxGroup_1.setCheckState(QtCore.Qt.Checked)
+        dialog.ui.checkBoxGroup_1.setCheckState(QtCore.Qt.CheckState.Checked)
         dialog.ui.spinBoxGroup_1.setValue(1)
 
         dialog.accept()

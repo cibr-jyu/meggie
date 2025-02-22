@@ -1,5 +1,4 @@
-""" Contains implementation for raw plot projections
-"""
+"""Contains implementation for raw plot projections"""
 
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox

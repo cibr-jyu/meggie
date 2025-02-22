@@ -26,7 +26,7 @@ def create_limo_experiment(name, author, prefs, set_previous_experiment=True):
     for idx in range(0, 18):
         limo_data = mne.datasets.limo.load_data(idx + 1, update_path=False)
 
-        subject_name = f"subject_{str(idx+1).zfill(2)}-raw"
+        subject_name = f"subject_{str(idx + 1).zfill(2)}-raw"
 
         # create a subject without raw
         subject = experiment.create_subject(subject_name, None)

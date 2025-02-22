@@ -1,9 +1,10 @@
 black
 pylama
-pytest==8.0.1
+pytest
 pytest-qt
 mkdocs
 coverage
 requests
 build
 twine
+setuptools

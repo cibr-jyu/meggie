@@ -1,5 +1,4 @@
-""" Contains create epochs action handling.
-"""
+"""Contains create epochs action handling."""
 
 from meggie.utilities.names import next_available_name
 from meggie.utilities.threading import threaded

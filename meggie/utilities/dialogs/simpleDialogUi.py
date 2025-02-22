@@ -1,5 +1,4 @@
-""" UI layout for simple dialog
-"""
+"""UI layout for simple dialog"""
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
@@ -16,7 +15,10 @@ class Ui_SimpleDialog(object):
         self.gridLayout.setObjectName("gridLayout")
 
         spacerItem = QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+            40,
+            20,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Minimum,
         )
 
         self.horizontalLayoutButtons = QtWidgets.QHBoxLayout()
@@ -69,16 +71,23 @@ class Ui_SimpleDialog(object):
 
         self.labelName = QtWidgets.QLabel(self.groupBoxInfo)
         self.labelName.setObjectName("labelName")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.labelName)
+        self.formLayout.setWidget(
+            2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.labelName
+        )
 
         self.lineEditName = QtWidgets.QLineEdit(self.groupBoxInfo)
         self.lineEditName.setObjectName("lineEditName")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.lineEditName)
+        self.formLayout.setWidget(
+            2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.lineEditName
+        )
 
         self.gridLayoutScrollArea.addWidget(self.groupBoxInfo, 0, 0, 1, 1)
 
         spacerItem = QtWidgets.QSpacerItem(
-            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+            20,
+            40,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Expanding,
         )
         self.gridLayoutScrollArea.addItem(spacerItem, 2, 0, 1, 1)
 

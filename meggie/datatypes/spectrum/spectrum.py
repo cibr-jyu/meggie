@@ -1,5 +1,4 @@
-""" Defines Spectrum class, stores numpy arrays representing PSDs.
-"""
+"""Defines Spectrum class, stores numpy arrays representing PSDs."""
 
 import os
 import re

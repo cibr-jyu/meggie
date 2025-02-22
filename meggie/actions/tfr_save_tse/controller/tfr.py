@@ -1,5 +1,4 @@
-""" Contains controlling logic for saving tse
-"""
+"""Contains controlling logic for saving tse"""
 
 import os
 import logging

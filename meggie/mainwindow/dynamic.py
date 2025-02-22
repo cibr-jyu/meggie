@@ -138,7 +138,7 @@ def find_all_action_specs():
 
 
 def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
-    """Constructs analysis tab dynamically. Returns a QDialog
+    """Constructs analysis tab dynamically. Returns a QWidget
     that can be used within a QTabDialog of the main window.
 
     Parameters
@@ -154,12 +154,12 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
 
     Returns
     -------
-    instance of QDialog
+    instance of QWidget
         The constructed tab than can be added to
         main window.
     """
 
-    class DynamicTab(QtWidgets.QDialog):
+    class DynamicTab(QtWidgets.QWidget):
         """Class defining a tab.
 
         Parameters
@@ -169,7 +169,7 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
         """
 
         def __init__(self, parent):
-            QtWidgets.QDialog.__init__(self)
+            QtWidgets.QWidget.__init__(self)
             self.parent = parent
             self.tab_spec = tab_spec
             self.action_specs = action_specs
@@ -225,7 +225,7 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
                 listWidgetInputElement = QtWidgets.QListWidget(groupBoxInputElement)
 
                 listWidgetInputElement.setSelectionMode(
-                    QtWidgets.QAbstractItemView.ExtendedSelection
+                    QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
                 )
 
                 gridLayoutInputElement.addWidget(listWidgetInputElement, idx, 0, 1, 1)
@@ -260,7 +260,7 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
                 listWidgetOutputElement = QtWidgets.QListWidget(groupBoxOutputElement)
 
                 listWidgetOutputElement.setSelectionMode(
-                    QtWidgets.QAbstractItemView.ExtendedSelection
+                    QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
                 )
 
                 gridLayoutOutputElement.addWidget(listWidgetOutputElement, idx, 0, 1, 1)
@@ -309,8 +309,8 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
                 spacer = QtWidgets.QSpacerItem(
                     20,
                     10,
-                    QtWidgets.QSizePolicy.Minimum,
-                    QtWidgets.QSizePolicy.Expanding,
+                    QtWidgets.QSizePolicy.Policy.Minimum,
+                    QtWidgets.QSizePolicy.Policy.Expanding,
                 )
                 self.gridLayoutInputActions.addItem(spacer, idx + 1, 0, 1, 1)
 
@@ -343,8 +343,8 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
                 spacer = QtWidgets.QSpacerItem(
                     20,
                     10,
-                    QtWidgets.QSizePolicy.Minimum,
-                    QtWidgets.QSizePolicy.Expanding,
+                    QtWidgets.QSizePolicy.Policy.Minimum,
+                    QtWidgets.QSizePolicy.Policy.Expanding,
                 )
                 self.gridLayoutOutputActions.addItem(spacer, idx + 1, 0, 1, 1)
 
@@ -401,11 +401,17 @@ def construct_tab(tab_spec, action_specs, datatype_specs, has_raw, parent):
 
             # add spacers to bottom and right to keep the window concise
             spacerItemVertical = QtWidgets.QSpacerItem(
-                20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+                20,
+                10,
+                QtWidgets.QSizePolicy.Policy.Minimum,
+                QtWidgets.QSizePolicy.Policy.Expanding,
             )
             self.gridLayoutContainer.addItem(spacerItemVertical, 1, 0, 1, 1)
             spacerItemHorizontal = QtWidgets.QSpacerItem(
-                10, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+                10,
+                20,
+                QtWidgets.QSizePolicy.Policy.Expanding,
+                QtWidgets.QSizePolicy.Policy.Minimum,
             )
             self.gridLayoutContainer.addItem(spacerItemHorizontal, 0, 1, 1, 1)
 
@@ -637,7 +643,7 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg, has_raw):
 
     Returns
     -------
-    list of QDialog
+    list of QWidget
         Contains the constructed tabs relevant to the pipeline
     """
 

@@ -2,7 +2,6 @@ import tempfile
 import os
 
 import mne
-from mne.time_frequency import tfr_morlet
 
 from meggie.datatypes.tfr.tfr import TFR
 
@@ -26,7 +25,9 @@ def test_tfr():
         events = find_events(raw, id_=1)
         freqs = [8, 9, 10, 11, 12]
         n_cycles = 2
-        mne_tfr = tfr_morlet(mne.Epochs(raw, events), freqs, n_cycles, return_itc=False)
+        mne_tfr = mne.Epochs(raw, events).compute_tfr(
+            "morlet", freqs, n_cycles=n_cycles, average=True, return_itc=False
+        )
 
         # As meggie-style tfrs can be based on multiple mne TFR objects,
         # content is dict-type. conditions-param is added to avoid accidents

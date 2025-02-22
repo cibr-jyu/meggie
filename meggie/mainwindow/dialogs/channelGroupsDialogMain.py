@@ -1,5 +1,4 @@
-""" Contains a class for logic of channel groups dialog.
-"""
+"""Contains a class for logic of channel groups dialog."""
 
 import logging
 

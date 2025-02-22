@@ -1,11 +1,11 @@
-""" Helpers to handle data units. Data in memory is in standard units, i.e
-    for magnetometers it is T, gradiometers it is T/m, and electrodes it is V.
-    However it is customary to convert these into fT, fT/cm and uV respectively
-    for human reading. For power densities it follows that the units will be
-    T^2/Hz, (T/m)^2/Hz and V^2/Hz. This is because density is the FT of the
-    autocorrelation of the signal, and thus if the original unit is X,
-    the resulting unit is X^2/Hz. Or if the logarithmic transformation is done,
-    unit is dB/Hz for each.)
+"""Helpers to handle data units. Data in memory is in standard units, i.e
+for magnetometers it is T, gradiometers it is T/m, and electrodes it is V.
+However it is customary to convert these into fT, fT/cm and uV respectively
+for human reading. For power densities it follows that the units will be
+T^2/Hz, (T/m)^2/Hz and V^2/Hz. This is because density is the FT of the
+autocorrelation of the signal, and thus if the original unit is X,
+the resulting unit is X^2/Hz. Or if the logarithmic transformation is done,
+unit is dB/Hz for each.)
 """
 
 UNITS = {

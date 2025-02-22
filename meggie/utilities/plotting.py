@@ -1,5 +1,4 @@
-"""Functions for plotting purposes.
-"""
+"""Functions for plotting purposes."""
 
 import itertools
 

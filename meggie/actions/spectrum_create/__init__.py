@@ -1,5 +1,4 @@
-""" Contains create spectrum action handling.
-"""
+"""Contains create spectrum action handling."""
 
 from meggie.utilities.names import next_available_name
 

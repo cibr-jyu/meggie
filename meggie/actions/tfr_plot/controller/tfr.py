@@ -1,5 +1,4 @@
-""" Contains controlling logic for the tfr implementation
-"""
+"""Contains controlling logic for the tfr implementation"""
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -66,8 +65,8 @@ def plot_tfr_averages(
             info = mne.create_info(
                 ch_names=["grand_average"], sfreq=sfreq, ch_types="mag"
             )
-            tfr = mne.time_frequency.tfr.AverageTFR(
-                info, averages[(ch_type, ch_group)][np.newaxis, :], times, freqs, 1
+            tfr = mne.time_frequency.tfr.AverageTFRArray(
+                info, averages[(ch_type, ch_group)][np.newaxis, :], times, freqs, nave=1
             )
 
             # prevent interaction as no topography is involved now

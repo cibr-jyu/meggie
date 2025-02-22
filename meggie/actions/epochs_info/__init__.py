@@ -1,5 +1,4 @@
-""" Contains implementation for epochs info
-"""
+"""Contains implementation for epochs info"""
 
 from meggie.mainwindow.dynamic import InfoAction
 

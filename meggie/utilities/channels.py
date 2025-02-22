@@ -1,5 +1,4 @@
-"""Contains functions that help with channel-related tasks.
-"""
+"""Contains functions that help with channel-related tasks."""
 
 import numpy as np
 import mne

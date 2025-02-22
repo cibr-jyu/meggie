@@ -1,5 +1,4 @@
-""" Contains implementation for delete tfr from all
-"""
+"""Contains implementation for delete tfr from all"""
 
 import logging
 

@@ -1,5 +1,4 @@
-""" Contains create evoked action handling.
-"""
+"""Contains create evoked action handling."""
 
 from meggie.utilities.names import next_available_name
 from meggie.utilities.validators import assert_arrays_same
