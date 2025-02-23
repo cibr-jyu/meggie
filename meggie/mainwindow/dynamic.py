@@ -821,7 +821,12 @@ def subject_action(inner_function):
         )
         logging.getLogger("ui_logger").info(message)
 
+        if self.subject_action_callback:
+            self.subject_action_callback(self.action_spec['id'], subject.name)
+
         return res
+
+    outer_function._is_subject_action = True
 
     return outer_function
 
@@ -833,12 +838,13 @@ class Action:
 
     logged = True
 
-    def __init__(self, experiment, data, window, action_spec):
+    def __init__(self, experiment, data, window, action_spec, subject_action_callback=None):
         """ """
         self.experiment = experiment
         self.data = data
         self.window = window
         self.action_spec = action_spec
+        self.subject_action_callback = subject_action_callback
 
         # generate short temporary uid
         self.uid = generate_uid()
@@ -846,7 +852,9 @@ class Action:
         if self.logged:
             # and log action with it
             message_dict = {
+                "version": 1,
                 "uid": self.uid,
+                "data": self.data,
                 "type": "ACTION_START",
                 "id": action_spec["id"],
                 "desc": self.data["tab_id"],

@@ -63,11 +63,13 @@ class ActionDialog(QtWidgets.QDialog):
 
         for action_uid, action_rows in actions.items():
             action_tree = {}
-            id_ = desc = None
+            id_ = desc = version = data = None
             for row in action_rows:
                 if row["type"] == "ACTION_START":
                     id_ = row["id"]
                     desc = row.get("desc")
+                    version = row.get("version")
+                    data = row.get("data")
 
                 elif row["type"] == "SUBJECT_START":
                     subject_uid = row["subject_uid"]
@@ -86,6 +88,8 @@ class ActionDialog(QtWidgets.QDialog):
                 if branch.get("finished"):
                     branch["id"] = id_
                     branch["desc"] = desc
+                    branch["data"] = data
+                    branch["version"] = version
                     if subject_uid not in subject_tree:
                         subject_tree[subject_uid] = []
                     subject_tree[subject_uid].append(branch)
@@ -126,12 +130,23 @@ class ActionDialog(QtWidgets.QDialog):
 
                 action_item.setText(0, action_name)
 
-                params_item = QtWidgets.QTreeWidgetItem(action_item)
-                params_item.setText(0, "Params")
-                for param_name, param_value in action_data["params"].items():
-                    msg = f"{param_name}: {json.dumps(param_value)}"
-                    param_item = QtWidgets.QTreeWidgetItem(params_item)
-                    param_item.setText(0, msg)
+                params = action_data.get("params") or {}
+                if params:
+                    params_item = QtWidgets.QTreeWidgetItem(action_item)
+                    params_item.setText(0, "Params")
+                    for param_name, param_value in params.items():
+                        msg = f"{param_name}: {json.dumps(param_value)}"
+                        param_item = QtWidgets.QTreeWidgetItem(params_item)
+                        param_item.setText(0, msg)
+
+                data = action_data.get("data") or {}
+                if data:
+                    data_item = QtWidgets.QTreeWidgetItem(action_item)
+                    data_item.setText(0, "Data")
+                    for data_name, data_value in data.items():
+                        msg = f"{data_name}: {json.dumps(data_value)}"
+                        data_row_item = QtWidgets.QTreeWidgetItem(data_item)
+                        data_row_item.setText(0, msg)
 
                 timestamp_re = re.compile(
                     r"([0-9]*-[0-9]*-[0-9]*)T([0-9]*:[0-9]*:[0-9]*)\..*"
