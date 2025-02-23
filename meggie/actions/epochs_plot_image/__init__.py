@@ -9,7 +9,7 @@ from meggie.mainwindow.dynamic import Action
 class PlotEpochsImage(Action):
     """Opens MNE's image plot."""
 
-    def run(self):
+    def run(self, params={}):
 
         try:
             selected_name = self.data["outputs"]["epochs"][0]

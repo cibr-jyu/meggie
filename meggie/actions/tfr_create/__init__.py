@@ -13,7 +13,7 @@ class CreateTFR(Action):
     """Shows a TFR parameter dialog and then
     creates TFR"""
 
-    def run(self):
+    def run(self, params={}):
 
         selected_names = self.data["inputs"]["epochs"]
 
@@ -51,3 +51,4 @@ class CreateTFR(Action):
             subtract_evoked,
             do_meanwhile=self.window.update_ui,
         )
+        self.experiment.save_experiment_settings()

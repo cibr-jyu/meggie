@@ -9,7 +9,7 @@ from meggie.utilities.formats import format_floats
 class Info(InfoAction):
     """Fills up tfr info box"""
 
-    def run(self):
+    def run(self, params={}):
         try:
             selected_name = self.data["outputs"]["tfr"][0]
 

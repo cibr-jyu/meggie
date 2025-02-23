@@ -165,7 +165,6 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
 
         try:
             self.handler(subject, params)
-            self.experiment.save_experiment_settings()
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -210,12 +209,6 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
                     logging.getLogger("ui_logger").exception("")
 
         self.batching_widget.cleanup()
-
-        try:
-            self.experiment.save_experiment_settings()
-        except Exception as exc:
-            exc_messagebox(self, exc)
-            return
 
         self.parent.initialize_ui()
         self.close()

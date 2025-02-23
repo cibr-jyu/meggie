@@ -9,7 +9,7 @@ from meggie.utilities.channels import is_montage_set
 class Info(InfoAction):
     """Shows measurement information on a info box"""
 
-    def run(self):
+    def run(self, params={}):
 
         message = ""
         try:

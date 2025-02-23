@@ -66,7 +66,6 @@ class RereferencingDialog(QtWidgets.QDialog):
         try:
             params = {"selection": selection}
             self.handler(subject, params)
-            experiment.save_experiment_settings()
         except Exception as exc:
             exc_messagebox(self.parent, exc)
             return
@@ -97,11 +96,6 @@ class RereferencingDialog(QtWidgets.QDialog):
                     logging.getLogger("ui_logger").exception("")
 
         self.batching_widget.cleanup()
-
-        try:
-            experiment.save_experiment_settings()
-        except Exception as exc:
-            exc_messagebox(self.parent, exc)
 
         self.parent.initialize_ui()
 

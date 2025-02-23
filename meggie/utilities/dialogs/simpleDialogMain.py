@@ -63,7 +63,6 @@ class SimpleDialog(QtWidgets.QDialog):
         try:
             params = {"name": evoked_name}
             self.handler(subject, params)
-            self.experiment.save_experiment_settings()
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -92,12 +91,6 @@ class SimpleDialog(QtWidgets.QDialog):
                     logging.getLogger("ui_logger").exception("")
 
         self.batching_widget.cleanup()
-
-        try:
-            self.experiment.save_experiment_settings()
-        except Exception as exc:
-            exc_messagebox(self, exc)
-            return
 
         self.parent.initialize_ui()
         self.close()

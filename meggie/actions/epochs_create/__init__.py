@@ -15,11 +15,10 @@ from meggie.actions.epochs_create.controller.epoching import create_epochs_from_
 class CreateEpochs(Action):
     """Shows a dialog for event selection and then creates epochs."""
 
-    def run(self):
+    def run(self, params={}):
         default_name = next_available_name(
             self.experiment.active_subject.epochs.keys(), "Epochs"
         )
-
         dialog = CreateEpochsFromEventsDialog(
             self.experiment, self.window, default_name, self.handler
         )
@@ -34,3 +33,4 @@ class CreateEpochs(Action):
             create_epochs_from_events(subject, params)
 
         create(do_meanwhile=self.window.update_ui)
+        self.experiment.save_experiment_settings()

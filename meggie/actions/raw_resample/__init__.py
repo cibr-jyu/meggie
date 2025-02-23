@@ -13,7 +13,7 @@ class Resample(Action):
     resampling data of the subject.
     """
 
-    def run(self):
+    def run(self, params={}):
         resampling_dialog = ResamplingDialog(self.window, self.experiment, self.handler)
         resampling_dialog.show()
 

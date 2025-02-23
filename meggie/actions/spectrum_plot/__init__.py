@@ -14,7 +14,7 @@ from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 class PlotSpectrum(Action):
     """Plots spectrums."""
 
-    def run(self):
+    def run(self, params={}):
         try:
             selected_name = self.data["outputs"]["spectrum"][0]
         except IndexError:

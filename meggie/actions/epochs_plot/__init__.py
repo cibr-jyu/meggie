@@ -7,7 +7,7 @@ from meggie.mainwindow.dynamic import Action
 class PlotEpochs(Action):
     """Plots all epochs from all channels."""
 
-    def run(self):
+    def run(self, params={}):
 
         try:
             selected_name = self.data["outputs"]["epochs"][0]

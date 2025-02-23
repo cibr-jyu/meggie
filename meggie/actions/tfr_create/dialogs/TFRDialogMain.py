@@ -112,7 +112,6 @@ class TFRDialog(QtWidgets.QDialog):
 
         try:
             self.handler(subject, params)
-            experiment.save_experiment_settings()
         except Exception as exc:
             exc_messagebox(self.parent, exc)
             return
@@ -164,11 +163,6 @@ class TFRDialog(QtWidgets.QDialog):
                     logging.getLogger("ui_logger").exception("")
 
         self.batching_widget.cleanup()
-
-        try:
-            self.experiment.save_experiment_settings()
-        except Exception as exc:
-            exc_messagebox(self.parent, exc)
 
         self.parent.initialize_ui()
 

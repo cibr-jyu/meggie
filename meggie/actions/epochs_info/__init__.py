@@ -8,7 +8,7 @@ from meggie.utilities.formats import format_float
 class Info(InfoAction):
     """Fills up epochs info box"""
 
-    def run(self):
+    def run(self, params={}):
 
         try:
             selected_name = self.data["outputs"]["epochs"][0]

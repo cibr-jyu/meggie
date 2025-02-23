@@ -14,7 +14,7 @@ from meggie.actions.tfr_plot.controller.tfr import plot_tfr_topo
 class PlotTFR(Action):
     """Plots a TFR"""
 
-    def run(self):
+    def run(self, params={}):
         try:
             selected_name = self.data["outputs"]["tfr"][0]
         except IndexError:

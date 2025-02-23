@@ -14,7 +14,7 @@ class Filter(Action):
     filtering the raw data.
     """
 
-    def run(self):
+    def run(self, params={}):
         filter_dialog = FilterDialog(self.window, self.experiment, self.handler)
         filter_dialog.show()
 

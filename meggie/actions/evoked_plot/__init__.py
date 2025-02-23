@@ -14,7 +14,7 @@ from meggie.actions.evoked_plot.controller.evoked import plot_evoked_topo
 class PlotEvoked(Action):
     """Plots evoked time courses"""
 
-    def run(self):
+    def run(self, params={}):
 
         try:
             selected_name = self.data["outputs"]["evoked"][0]

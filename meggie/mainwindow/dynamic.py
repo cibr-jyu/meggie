@@ -853,7 +853,7 @@ class Action:
             }
             logging.getLogger("action_logger").info(message_dict)
 
-    def run(self):
+    def run(self, params={}):
         """Called when action is initiated"""
         messagebox("Running action " + self.action_spec["id"])
 
@@ -864,6 +864,6 @@ class InfoAction(Action):
 
     logged = False
 
-    def run(self):
+    def run(self, params={}):
         """Called when the info box is filled."""
         return "Returned content."

@@ -18,7 +18,7 @@ class PlotRaw(Action):
     if annotations or bads have changed.
     """
 
-    def run(self):
+    def run(self, params={}):
 
         subject = self.experiment.active_subject
         raw = subject.get_raw()
@@ -54,6 +54,7 @@ class PlotRaw(Action):
                 # only run logged action if there are changes
                 if bads_changed or annotations_changed:
                     self.handler(subject, params)
+                    self.window.initialize_ui()
             except Exception as exc:
                 exc_messagebox(self.window, exc)
 
@@ -71,5 +72,3 @@ class PlotRaw(Action):
 
         if params["bads_changed"] or params["annotations_changed"]:
             subject.save()
-
-        self.window.initialize_ui()

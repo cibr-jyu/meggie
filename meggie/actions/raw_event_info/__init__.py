@@ -10,7 +10,7 @@ from meggie.utilities.events import find_events
 class Info(InfoAction):
     """Shows event information on a info box."""
 
-    def run(self):
+    def run(self, params={}):
         try:
             subject = self.experiment.active_subject
             if not subject:

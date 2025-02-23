@@ -10,7 +10,7 @@ from meggie.mainwindow.dynamic import Action
 class PlotProjections(Action):
     """Shows a plot of existing projection vectors."""
 
-    def run(self):
+    def run(self, params={}):
 
         subject = self.experiment.active_subject
         try:

@@ -19,7 +19,7 @@ from meggie.actions.tfr_save_tse.controller.tfr import save_tse_all_channels
 class SaveTSE(Action):
     """Saves TSE's to csv files"""
 
-    def run(self):
+    def run(self, params={}):
         try:
             selected_name = self.data["outputs"]["tfr"][0]
         except IndexError:
@@ -37,8 +37,6 @@ class SaveTSE(Action):
         assert_arrays_same(freq_arrays, "Freqs do no match")
 
         def option_handler(params):
-            params["channel_groups"] = self.experiment.channel_groups
-            params["name"] = selected_name
 
             default_filename = (
                 selected_name + "_all_subjects_channel_averages_tse.csv"
@@ -55,8 +53,12 @@ class SaveTSE(Action):
             if not filepath:
                 return
 
+            params["channel_groups"] = self.experiment.channel_groups
+            params["name"] = selected_name
+            params["filepath"] = filepath
+
             try:
-                self.handler(self.experiment.active_subject, filepath, params)
+                self.handler(self.experiment.active_subject, params)
             except Exception as exc:
                 exc_messagebox(self.window, exc)
 
@@ -65,7 +67,7 @@ class SaveTSE(Action):
         )
         dialog.show()
 
-    def handler(self, subject, filepath, params):
+    def handler(self, subject, params):
         """ """
         if params["output_option"] == "all_channels":
             save_tse_all_channels(
@@ -78,7 +80,7 @@ class SaveTSE(Action):
                 params["tmax"],
                 params["fmin"],
                 params["fmax"],
-                filepath,
+                params["filepath"],
                 do_meanwhile=self.window.update_ui,
             )
         else:
@@ -93,6 +95,6 @@ class SaveTSE(Action):
                 params["fmin"],
                 params["fmax"],
                 params["channel_groups"],
-                filepath,
+                params["filepath"],
                 do_meanwhile=self.window.update_ui,
             )

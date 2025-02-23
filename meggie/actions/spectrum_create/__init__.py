@@ -13,7 +13,7 @@ class CreateSpectrum(Action):
     """Shows a dialog to get parameters for spectrum creation and
     then allows creating spectrums"""
 
-    def run(self):
+    def run(self, params={}):
         default_name = next_available_name(
             self.experiment.active_subject.spectrum.keys(), "Spectrum"
         )
@@ -43,3 +43,4 @@ class CreateSpectrum(Action):
             overlap,
             do_meanwhile=self.window.update_ui,
         )
+        self.experiment.save_experiment_settings()

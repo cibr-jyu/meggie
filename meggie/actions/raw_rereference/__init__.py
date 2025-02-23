@@ -13,7 +13,7 @@ from meggie.mainwindow.dynamic import subject_action
 class Rereference(Action):
     """Shows a dialog and then allows rereferencing eeg data."""
 
-    def run(self):
+    def run(self, params={}):
         rereference_dialog = RereferencingDialog(
             self.window, self.experiment, self.handler
         )
@@ -34,3 +34,4 @@ class Rereference(Action):
         rereference_fun(do_meanwhile=self.window.update_ui)
         subject.rereferenced = True
         subject.save()
+        self.experiment.save_experiment_settings()

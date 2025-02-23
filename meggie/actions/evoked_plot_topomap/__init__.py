@@ -18,7 +18,7 @@ from meggie.actions.evoked_plot_topomap.dialogs.evokedTopomapDialogMain import (
 class PlotEvokedTopomap(Action):
     """Plots a sequence of topomaps."""
 
-    def run(self):
+    def run(self, params={}):
 
         try:
             selected_name = self.data["outputs"]["evoked"][0]
