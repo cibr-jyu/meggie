@@ -822,7 +822,7 @@ def subject_action(inner_function):
         logging.getLogger("ui_logger").info(message)
 
         if self.subject_action_callback:
-            self.subject_action_callback(self.action_spec['id'], subject.name)
+            self.subject_action_callback(self.action_spec["id"], subject.name)
 
         return res
 
@@ -838,7 +838,9 @@ class Action:
 
     logged = True
 
-    def __init__(self, experiment, data, window, action_spec, subject_action_callback=None):
+    def __init__(
+        self, experiment, data, window, action_spec, subject_action_callback=None
+    ):
         """ """
         self.experiment = experiment
         self.data = data
