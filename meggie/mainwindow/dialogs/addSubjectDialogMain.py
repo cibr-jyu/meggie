@@ -14,6 +14,7 @@ from meggie.utilities.messaging import messagebox
 from meggie.utilities.threading import threaded
 from meggie.utilities.names import next_available_name
 from meggie.utilities.filemanager import get_supported_formats
+from meggie.utilities.filemanager import homepath
 
 
 class AddSubjectDialog(QtWidgets.QDialog):
@@ -124,7 +125,7 @@ class AddSubjectDialog(QtWidgets.QDialog):
         self.fnames = QtWidgets.QFileDialog.getOpenFileNames(
             self,
             "Select one or more files to open.",
-            os.path.expanduser("~"),
+            homepath(),
             filter_string,
         )[0]
 

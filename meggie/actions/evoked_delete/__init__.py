@@ -9,7 +9,7 @@ from meggie.mainwindow.dynamic import subject_action
 class DeleteEvoked(Action):
     """Deletes evoked of selected name"""
 
-    def run(self):
+    def run(self, params={}):
 
         subject = self.experiment.active_subject
 
@@ -20,7 +20,6 @@ class DeleteEvoked(Action):
 
         try:
             self.handler(subject, {"name": selected_name})
-            self.experiment.save_experiment_settings()
         except Exception as exc:
             exc_messagebox(self.window, exc)
 
@@ -29,3 +28,4 @@ class DeleteEvoked(Action):
     @subject_action
     def handler(self, subject, params):
         subject.remove(params["name"], "evoked")
+        self.experiment.save_experiment_settings()

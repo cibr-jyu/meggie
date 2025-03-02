@@ -118,6 +118,8 @@ class MontageDialog(QtWidgets.QDialog):
 
         params = self._get_params()
 
+        params["run_in_batch"] = True
+
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:

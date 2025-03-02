@@ -15,7 +15,7 @@ from meggie.utilities.dialogs.simpleDialogMain import SimpleDialog
 class CreateEvoked(Action):
     """Allows averaging epochs to evoked"""
 
-    def run(self):
+    def run(self, params={}):
 
         selected_names = self.data["inputs"]["epochs"]
 
@@ -70,3 +70,4 @@ class CreateEvoked(Action):
         evoked = Evoked(params["name"], evoked_directory, params, content=evokeds)
         evoked.save_content()
         subject.add(evoked, "evoked")
+        self.experiment.save_experiment_settings()

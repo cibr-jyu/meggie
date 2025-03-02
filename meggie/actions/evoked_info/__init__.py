@@ -6,7 +6,7 @@ from meggie.mainwindow.dynamic import InfoAction
 class Info(InfoAction):
     """Fills up evoked info box"""
 
-    def run(self):
+    def run(self, params={}):
         try:
             selected_name = self.data["outputs"]["evoked"][0]
             evoked = self.experiment.active_subject.evoked[selected_name]

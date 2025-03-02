@@ -693,25 +693,30 @@ def construct_tabs(selected_pipeline, window, prefs, include_eeg, has_raw):
         if "name" not in pipeline:
             pipeline["name"] = pipeline["id"]
 
-    found = False
-    pipeline_spec = None
+    pipeline_specs = []
     for pipeline in pipelines:
+        # there might be multiple configuration for the same pipeline from addons
         if pipeline["id"] == selected_pipeline:
-            found = True
-            pipeline_spec = pipeline
-            break
-    if not found:
+            pipeline_specs.append(pipeline)
+
+    if not pipeline_specs:
         # Use classic
-        pipeline_spec = {"id": "classic", "name": "Include everything"}
+        pipeline_specs = [{"id": "classic", "name": "Include everything"}]
 
     # merges tab specification from others to first and
     # filters to tabs specified by the pipeline
     combined_tabs = []
     for tab_spec in tabs:
+
         # Include only tabs relevant to the pipeline
-        if pipeline_spec.get("include_tabs"):
-            if tab_spec["id"] not in pipeline_spec["include_tabs"]:
-                continue
+        if all(
+            [
+                spec["id"] != "classic"
+                and tab_spec["id"] not in spec.get("include_tabs", [])
+                for spec in pipeline_specs
+            ]
+        ):
+            continue
 
         # if a completely new tab, initialize it
         if tab_spec["id"] not in [tab["id"] for tab in combined_tabs]:
@@ -816,7 +821,12 @@ def subject_action(inner_function):
         )
         logging.getLogger("ui_logger").info(message)
 
+        if self.subject_action_callback:
+            self.subject_action_callback(self.action_spec["id"], subject.name)
+
         return res
+
+    outer_function._is_subject_action = True
 
     return outer_function
 
@@ -828,12 +838,15 @@ class Action:
 
     logged = True
 
-    def __init__(self, experiment, data, window, action_spec):
+    def __init__(
+        self, experiment, data, window, action_spec, subject_action_callback=None
+    ):
         """ """
         self.experiment = experiment
         self.data = data
         self.window = window
         self.action_spec = action_spec
+        self.subject_action_callback = subject_action_callback
 
         # generate short temporary uid
         self.uid = generate_uid()
@@ -841,14 +854,16 @@ class Action:
         if self.logged:
             # and log action with it
             message_dict = {
+                "version": 1,
                 "uid": self.uid,
+                "data": self.data,
                 "type": "ACTION_START",
                 "id": action_spec["id"],
                 "desc": self.data["tab_id"],
             }
             logging.getLogger("action_logger").info(message_dict)
 
-    def run(self):
+    def run(self, params={}):
         """Called when action is initiated"""
         messagebox("Running action " + self.action_spec["id"])
 
@@ -859,6 +874,6 @@ class InfoAction(Action):
 
     logged = False
 
-    def run(self):
+    def run(self, params={}):
         """Called when the info box is filled."""
         return "Returned content."

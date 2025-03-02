@@ -13,7 +13,7 @@ class ICA(Action):
 
     random_state = 10
 
-    def run(self):
+    def run(self, params={}):
         ica_dialog = ICADialog(
             self.window, self.experiment, self.random_state, on_apply=self.handler
         )

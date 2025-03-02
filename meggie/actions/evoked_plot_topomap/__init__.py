@@ -9,7 +9,6 @@ from meggie.utilities.channels import get_channels_by_type
 from meggie.utilities.plotting import set_figure_title
 
 from meggie.mainwindow.dynamic import Action
-from meggie.mainwindow.dynamic import subject_action
 
 from meggie.actions.evoked_plot_topomap.dialogs.evokedTopomapDialogMain import (
     EvokedTopomapDialog,
@@ -19,7 +18,7 @@ from meggie.actions.evoked_plot_topomap.dialogs.evokedTopomapDialogMain import (
 class PlotEvokedTopomap(Action):
     """Plots a sequence of topomaps."""
 
-    def run(self):
+    def run(self, params={}):
 
         try:
             selected_name = self.data["outputs"]["evoked"][0]
@@ -42,7 +41,6 @@ class PlotEvokedTopomap(Action):
         dialog = EvokedTopomapDialog(self.window, evoked, handle_close)
         dialog.show()
 
-    @subject_action
     def handler(self, subject, params):
         name = params["name"]
         tmin = params["tmin"]

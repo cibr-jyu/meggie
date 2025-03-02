@@ -3,15 +3,13 @@
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.plotting import set_figure_title
 from meggie.utilities.plotting import get_figure_title
-
 from meggie.mainwindow.dynamic import Action
-from meggie.mainwindow.dynamic import subject_action
 
 
 class PlotEpochsImage(Action):
     """Opens MNE's image plot."""
 
-    def run(self):
+    def run(self, params={}):
 
         try:
             selected_name = self.data["outputs"]["epochs"][0]
@@ -24,7 +22,6 @@ class PlotEpochsImage(Action):
         except Exception as exc:
             exc_messagebox(self.window, exc)
 
-    @subject_action
     def handler(self, subject, params):
         epochs = subject.epochs.get(params["name"])
         mne_epochs = epochs.content

@@ -19,7 +19,7 @@ from meggie.actions.tfr_save.controller.tfr import save_tfr_all_channels
 class SaveTFR(Action):
     """Saves TFR items to csv files"""
 
-    def run(self):
+    def run(self, params={}):
         """ """
         try:
             selected_name = self.data["outputs"]["tfr"][0]
@@ -38,8 +38,6 @@ class SaveTFR(Action):
         assert_arrays_same(freq_arrays, "Freqs do no match")
 
         def option_handler(params):
-            params["channel_groups"] = self.experiment.channel_groups
-            params["name"] = selected_name
 
             default_filename = (
                 selected_name + "_all_subjects_channel_averages_tfr.csv"
@@ -55,8 +53,12 @@ class SaveTFR(Action):
             if not filepath:
                 return
 
+            params["channel_groups"] = self.experiment.channel_groups
+            params["name"] = selected_name
+            params["filepath"] = filepath
+
             try:
-                self.handler(self.experiment.active_subject, filepath, params)
+                self.handler(self.experiment.active_subject, params)
             except Exception as exc:
                 exc_messagebox(self.window, exc)
 
@@ -65,7 +67,7 @@ class SaveTFR(Action):
         )
         dialog.show()
 
-    def handler(self, subject, filepath, params):
+    def handler(self, subject, params):
         """ """
         if params["output_option"] == "all_channels":
             save_tfr_all_channels(
@@ -78,7 +80,7 @@ class SaveTFR(Action):
                 params["tmax"],
                 params["fmin"],
                 params["fmax"],
-                filepath,
+                params["filepath"],
                 do_meanwhile=self.window.update_ui,
             )
         else:
@@ -93,6 +95,6 @@ class SaveTFR(Action):
                 params["fmin"],
                 params["fmax"],
                 params["channel_groups"],
-                filepath,
+                params["filepath"],
                 do_meanwhile=self.window.update_ui,
             )

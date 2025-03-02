@@ -1,15 +1,13 @@
 """Contains implementation for epochs plot"""
 
 from meggie.utilities.messaging import exc_messagebox
-
 from meggie.mainwindow.dynamic import Action
-from meggie.mainwindow.dynamic import subject_action
 
 
 class PlotEpochs(Action):
     """Plots all epochs from all channels."""
 
-    def run(self):
+    def run(self, params={}):
 
         try:
             selected_name = self.data["outputs"]["epochs"][0]
@@ -22,7 +20,6 @@ class PlotEpochs(Action):
         except Exception as exc:
             exc_messagebox(self.window, exc)
 
-    @subject_action
     def handler(self, subject, params):
         epochs = subject.epochs.get(params["name"])
         mne_epochs = epochs.content

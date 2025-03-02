@@ -4,7 +4,6 @@ from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.channels import get_channels_by_type
 
 from meggie.mainwindow.dynamic import Action
-from meggie.mainwindow.dynamic import subject_action
 
 from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 
@@ -15,7 +14,7 @@ from meggie.actions.evoked_plot.controller.evoked import plot_evoked_topo
 class PlotEvoked(Action):
     """Plots evoked time courses"""
 
-    def run(self):
+    def run(self, params={}):
 
         try:
             selected_name = self.data["outputs"]["evoked"][0]
@@ -36,7 +35,6 @@ class PlotEvoked(Action):
         dialog = OutputOptions(self.window, handler=option_handler)
         dialog.show()
 
-    @subject_action
     def handler(self, subject, params):
         """ """
         evoked = subject.evoked.get(params["name"])

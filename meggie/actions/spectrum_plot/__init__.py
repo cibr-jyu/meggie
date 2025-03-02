@@ -4,7 +4,6 @@ from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.channels import get_channels_by_type
 
 from meggie.mainwindow.dynamic import Action
-from meggie.mainwindow.dynamic import subject_action
 
 from meggie.actions.spectrum_plot.controller.spectrum import plot_spectrum_topo
 from meggie.actions.spectrum_plot.controller.spectrum import plot_spectrum_averages
@@ -15,7 +14,7 @@ from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 class PlotSpectrum(Action):
     """Plots spectrums."""
 
-    def run(self):
+    def run(self, params={}):
         try:
             selected_name = self.data["outputs"]["spectrum"][0]
         except IndexError:
@@ -35,7 +34,6 @@ class PlotSpectrum(Action):
         dialog = OutputOptions(self.window, handler=option_handler)
         dialog.show()
 
-    @subject_action
     def handler(self, subject, params):
         """ """
         if params["output_option"] == "channel_averages":

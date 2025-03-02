@@ -81,6 +81,8 @@ class FilterDialog(QtWidgets.QDialog):
             messagebox(self.parent, message)
             return
 
+        params["run_in_batch"] = True
+
         for name, subject in self.experiment.subjects.items():
             if name in subject_names:
                 try:

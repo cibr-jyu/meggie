@@ -4,7 +4,6 @@ from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.channels import get_channels_by_type
 
 from meggie.mainwindow.dynamic import Action
-from meggie.mainwindow.dynamic import subject_action
 
 from meggie.utilities.dialogs.TFROutputOptionsMain import TFROutputOptions
 
@@ -13,7 +12,8 @@ from meggie.actions.tfr_plot_tse.controller.tfr import plot_tse_topo
 
 
 class PlotTSE(Action):
-    def run(self):
+
+    def run(self, params={}):
         """Plots a TSE from TFR object."""
         try:
             selected_name = self.data["outputs"]["tfr"][0]
@@ -38,7 +38,6 @@ class PlotTSE(Action):
         )
         dialog.show()
 
-    @subject_action
     def handler(self, subject, params):
         """ """
         info = subject.tfr[params["name"]].info

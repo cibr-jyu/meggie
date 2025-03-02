@@ -15,6 +15,10 @@ class Montage(Action):
     allows setting montage for EEG.
     """
 
+    def run(self, params={}):
+        montage_dialog = MontageDialog(self.window, self.experiment, self.handler)
+        montage_dialog.show()
+
     @subject_action
     def handler(self, subject, params):
         """ """
@@ -43,7 +47,3 @@ class Montage(Action):
             subject.save()
 
         montage_fun(do_meanwhile=self.window.update_ui)
-
-    def run(self):
-        montage_dialog = MontageDialog(self.window, self.experiment, self.handler)
-        montage_dialog.show()
