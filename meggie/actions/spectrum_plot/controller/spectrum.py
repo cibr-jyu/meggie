@@ -5,6 +5,8 @@ import mne
 import numpy as np
 import matplotlib.pyplot as plt
 
+from mne._fiff.pick import channel_type
+
 from meggie.utilities.plotting import color_cycle
 from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.channels import average_to_channel_groups
@@ -19,6 +21,9 @@ def plot_spectrum_averages(subject, channel_groups, name, log_transformed=True):
     """Plots spectrum averages."""
 
     spectrum = subject.spectrum.get(name)
+
+    if spectrum.params.get("scalar") is False:
+        log_transformed = False
 
     data = spectrum.content
     freqs = spectrum.freqs
@@ -69,6 +74,10 @@ def plot_spectrum_topo(subject, name, log_transformed=True, ch_type="meg"):
     """Plots spectrum topography."""
 
     spectrum = subject.spectrum.get(name)
+
+    if spectrum.params.get("scalar") is False:
+        log_transformed = False
+
     data = spectrum.content
     freqs = spectrum.freqs
     ch_names = spectrum.ch_names
@@ -113,9 +122,7 @@ def plot_spectrum_topo(subject, name, log_transformed=True, ch_type="meg"):
         ax.set_xlabel("Frequency (Hz)")
         ax.set_ylabel(
             "Power ({})".format(
-                get_power_unit(
-                    mne.io.pick.channel_type(info, info_idx), log_transformed
-                )
+                get_power_unit(channel_type(info, info_idx), log_transformed)
             )
         )
 

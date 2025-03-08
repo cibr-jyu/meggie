@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import mne
 
+from mne._fiff.pick import channel_type
+
 from meggie.utilities.plotting import color_cycle
 from meggie.utilities.plotting import create_channel_average_plot
 from meggie.utilities.plotting import set_figure_title
@@ -106,7 +108,7 @@ def plot_tse_topo(
         else:
             ax.set_ylabel(
                 "Power ({})".format(
-                    get_power_unit(mne.io.pick.channel_type(info, info_idx), log=False)
+                    get_power_unit(channel_type(info, info_idx), log=False)
                 )
             )
 
