@@ -35,21 +35,22 @@ class TFR(Datatype):
             for key in self._content.keys():
                 self._content[key].comment = key
 
-    def _get_fname(self, tfr_name):
-        """A helper to get fname that work with old versions of meggie too."""
-        if tfr_name == "":
-            name = self._name + "-tfr.h5"
-        else:
-            name = self._name + "-" + tfr_name + "-tfr.h5"
-
-        fname = os.path.join(self._directory, name)
-        return fname
+    def _clean_condition_name(self, name):
+        return str(name).replace(" ", "_")
 
     def save_content(self):
         """Saves the mne.AverageTFR to h5 files in the tfr directory."""
         try:
             for tfr_name, mne_tfr in self._content.items():
-                fname = self._get_fname(tfr_name)
+
+                # fail quickly for very old-style tfr's
+                assert tfr_name
+
+                fname = os.path.join(
+                    self._directory,
+                    self._name + "-" + self._clean_condition_name(tfr_name) + "-tfr.h5",
+                )
+
                 mne_tfr.save(fname, overwrite=True)
         except Exception:
             raise Exception(
@@ -60,7 +61,7 @@ class TFR(Datatype):
     def delete_content(self):
         """Deletes the correct h5 files in the tfr directory"""
 
-        template = self._name + "-" + r"([a-zA-Z1-9_]+)\-tfr\.h5"
+        template = self._name + "-" + r"([a-zA-Z1-9_-]+)\-tfr\.h5"
         for fname in os.listdir(self._directory):
             match = re.match(template, fname)
             if match:
@@ -72,7 +73,10 @@ class TFR(Datatype):
                 # if proper condition parameters set,
                 # check if the key is in there
                 if "conditions" in self._params:
-                    if key not in [str(elem) for elem in self._params["conditions"]]:
+                    if key not in [
+                        self._clean_condition_name(elem)
+                        for elem in self._params["conditions"]
+                    ]:
                         continue
 
                 os.remove(os.path.join(self._directory, fname))
@@ -80,31 +84,28 @@ class TFR(Datatype):
     def _load_content(self):
         """Handle the loading of the content."""
         self._content = {}
-        template = self._name + "-" + r"([a-zA-Z1-9_]+)\-tfr\.h5"
+        template = self._name + "-" + r"([a-zA-Z1-9_-]+)\-tfr\.h5"
         for fname in os.listdir(self._directory):
-            path = None
-            if fname == self._name + "-tfr.h5":
+            match = re.match(template, fname)
+            if match:
+                try:
+                    fname_key = str(match.group(1))
+                except Exception:
+                    raise Exception("Unknown file name format.")
+
+                condition_key = fname_key
+
+                # skip this for old-style tfrs
+                if "conditions" in self._params:
+                    for condition_name in self._params["conditions"]:
+                        if fname_key == self._clean_condition_name(condition_name):
+                            condition_key = condition_name
+                            break
+                    else:
+                        continue
+
                 path = os.path.join(self._directory, fname)
-                key = ""
-            else:
-                match = re.match(template, fname)
-                if match:
-                    try:
-                        key = str(match.group(1))
-                    except Exception:
-                        raise Exception("Unknown file name format.")
-
-                    # if proper condition parameters set,
-                    # check if the key is in there
-                    if "conditions" in self._params:
-                        if key not in [
-                            str(elem) for elem in self._params["conditions"]
-                        ]:
-                            continue
-
-                    path = os.path.join(self._directory, fname)
-            if path:
-                self._content[key] = mne.time_frequency.read_tfrs(path)
+                self._content[condition_key] = mne.time_frequency.read_tfrs(path)
 
     @property
     def content(self):

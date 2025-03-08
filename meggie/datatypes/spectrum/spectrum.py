@@ -70,24 +70,34 @@ class Spectrum(Datatype):
 
         return info
 
+    def _clean_condition_name(self, name):
+        return str(name).replace(" ", "_")
+
     def _get_content(self):
         """Handles the file loading."""
 
         # load data
         data_dict = {}
-        template = self.name + "_" + r"([a-zA-Z1-9_]+)\.csv"
+        freqs, ch_names = None, None
+        template = self.name + "_" + r"([a-zA-Z1-9_-]+)\.csv"
+
         for fname in os.listdir(self._directory):
             match = re.match(template, fname)
             if match:
                 try:
-                    key = str(match.group(1))
+                    fname_key = str(match.group(1))
                 except Exception:
                     raise Exception("Unknown file name format.")
 
-                # if proper condition parameters set,
-                # check if the key is in there.
+                condition_key = fname_key
+
+                # skip this for old-style spectrums
                 if "conditions" in self._params:
-                    if key not in [str(elem) for elem in self._params["conditions"]]:
+                    for condition_name in self._params["conditions"]:
+                        if fname_key == self._clean_condition_name(condition_name):
+                            condition_key = condition_name
+                            break
+                    else:
                         continue
 
                 freqs, row_descs, psd = filemanager.load_csv(
@@ -105,7 +115,10 @@ class Spectrum(Datatype):
                             psd = 10 ** (psd / 10.0)
 
                 freqs = np.array(freqs).astype(float)
-                data_dict[key] = np.array(psd)
+                data_dict[condition_key] = np.array(psd)
+
+        if freqs is None or ch_names is None:
+            raise Exception("Could not read freqs or ch_names of the spectrum data.")
 
         return data_dict, freqs, ch_names
 
@@ -125,7 +138,8 @@ class Spectrum(Datatype):
                 data = psd.tolist()
 
                 path = os.path.join(
-                    self._directory, self._name + "_" + str(key) + ".csv"
+                    self._directory,
+                    self._name + "_" + self._clean_condition_name(key) + ".csv",
                 )
 
                 filemanager.save_csv(path, data, column_names, row_descs)
@@ -146,7 +160,7 @@ class Spectrum(Datatype):
             os.remove(info_path)
 
         # delete data
-        template = self.name + "_" + r"([a-zA-Z1-9_]+)\.csv"
+        template = self.name + "_" + r"([a-zA-Z1-9_-]+)\.csv"
         for fname in os.listdir(self._directory):
             match = re.match(template, fname)
             if match:
@@ -158,7 +172,10 @@ class Spectrum(Datatype):
                 # if proper condition parameters set,
                 # check if the key is in there.
                 if "conditions" in self._params:
-                    if key not in [str(elem) for elem in self._params["conditions"]]:
+                    if key not in [
+                        self._clean_condition_name(elem)
+                        for elem in self._params["conditions"]
+                    ]:
                         continue
 
                 os.remove(os.path.join(self._directory, fname))
