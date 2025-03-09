@@ -345,17 +345,15 @@ class BaseTestAction:
         self.mock_main_window = MockMainWindow()
         self.temp_dir = tempfile.TemporaryDirectory()
         self.dirpath = self.temp_dir.name
-        self.package = "meggie.actions"
         self.setup_experiment()
         yield
 
-        # after each test to try clean up to not contaminate others
-        for widget in QApplication.topLevelWidgets():
-            if widget.isWindow():
-                widget.close()
-                widget.deleteLater()
-
-        QApplication.processEvents()
+        # # after each test to try clean up to not contaminate others
+        # for widget in QApplication.topLevelWidgets():
+        #     if widget.isWindow():
+        #         widget.close()
+        #         widget.deleteLater()
+        # QApplication.processEvents()
 
         self.temp_dir.cleanup()
 
@@ -368,7 +366,7 @@ class BaseTestAction:
         logger = logging.getLogger("ui_logger")
         self.monkeypatch.setattr(logger, "exception", patched_logger_exception)
 
-        basepath = f"{self.package}.{action_name}"
+        basepath = f"meggie.actions.{action_name}"
         if basepath not in patch_paths:
             patch_paths.append(basepath)
 
@@ -377,7 +375,6 @@ class BaseTestAction:
             try:
                 module = importlib.import_module(patch_path)
             except ModuleNotFoundError:
-                # the action is probably not within self.package
                 continue
 
             if getattr(module, "exc_messagebox", None):
@@ -418,6 +415,9 @@ class BaseTestAction:
         count = 0
         for widget in QApplication.topLevelWidgets():
             if isinstance(widget, dialog_class):
+                # check that the dialog isn't closed
+                if not widget.isVisible():
+                    continue
                 count += 1
                 dialog = widget
         assert count == 1
