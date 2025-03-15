@@ -176,6 +176,7 @@ def mne_functions_by_actions():
             exact_blacklist = [
                 "pick",
                 "drop_channels",
+                "channel_type",
                 "_prepare_raw_for_changes",
                 "plot_changes",
                 "func",

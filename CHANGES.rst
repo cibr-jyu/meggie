@@ -1,10 +1,21 @@
 Changelog
 =========
 
-1.8.1 (unreleased)
+1.9.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.9.0 (2025-03-15)
+------------------
+
+- Simplify test functionality for plugins
+- Make internal filename handling more robust for spectrums and tfrs
+- Update to mne==1.9.0
+- Add action log exports
+- For csv's, ask for location instead of using the output folder.
+- Update docs
+- Support non-scalar spectrums, e.g for differences.
 
 1.8.0 (2024-04-16)
 ------------------

@@ -21,3 +21,4 @@ htmlcov
 .eggs
 .meggie-env
 .coverage
+.aider*
