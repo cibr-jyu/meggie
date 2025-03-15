@@ -56,7 +56,7 @@ class Ui_ActionDialog(object):
     def retranslateUi(self, ActionDialog):
         _translate = QtCore.QCoreApplication.translate
         ActionDialog.setWindowTitle(_translate("ActionDialog", "Meggie - Actions"))
-        self.pushButtonExport.setText(_translate("ActionDialog", "Export"))
+        self.pushButtonExport.setText(_translate("ActionDialog", "Export..."))
         self.pushButtonClose.setText(_translate("ActionDialog", "Close"))
         self.treeWidgetActions.headerItem().setText(
             0, _translate("ActionDialog", "Action")
