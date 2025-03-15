@@ -1,6 +1,6 @@
 """Contains a logic for setting active plugins."""
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 
 from meggie.mainwindow.dynamic import find_all_plugins
 from meggie.mainwindow.dynamic import find_all_package_specs
@@ -39,6 +39,29 @@ class ActivePluginsDialog(QtWidgets.QDialog):
             self.ui.listWidgetPlugins.addItem(item)
             if id_ in active_plugins:
                 item.setSelected(True)
+
+        # Create the hyperlink label
+        self.link_label = QtWidgets.QLabel(self)
+        self.link_label.setTextFormat(QtCore.Qt.RichText)
+        self.link_label.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
+        self.link_label.setOpenExternalLinks(True)
+
+        # Define URL as a variable for reuse
+        plugin_url = "https://cibr-jyu.github.io/meggie/user-guide/plugins"
+
+        self.link_label.setText(
+            f'Find and install plugins: <a href="{plugin_url}">Documentation</a>'
+        )
+
+        # Add tooltip with full URL
+        self.link_label.setToolTip(plugin_url)
+
+        # Insert the link label below the plugin list
+        self.ui.gridLayout.addWidget(self.link_label, 1, 0)
+
+        # Move buttons to next row
+        self.ui.gridLayout.removeItem(self.ui.horizontalLayout)
+        self.ui.gridLayout.addLayout(self.ui.horizontalLayout, 2, 0)
 
     def accept(self):
         idxs = [elem.row() for elem in self.ui.listWidgetPlugins.selectedIndexes()]
