@@ -18,11 +18,9 @@ jobs:
       with:
         python-version: 3.13
 
-    - name: Install dependencies
+    - name: Install Meggie
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r dev-requirements.txt
+        pip install .[dev]
 
     - name: Build and deploy
       run: |

@@ -5,6 +5,7 @@ import tarfile
 import zipfile
 import json
 import tempfile
+import toml
 from io import BytesIO
 from scripts.trace_mne_calls import mne_functions_by_actions
 
@@ -18,15 +19,11 @@ def list_files(directory):
             yield os.path.join(root, file)
 
 
+
 def get_version():
-    with open("setup.py", "r") as f:
-        lines = f.readlines()
-    version = [
-        line.split("=")[1].split(",")[0].strip("'")
-        for line in lines
-        if "version" in line
-    ][0]
-    return version
+    with open("pyproject.toml", "r") as f:
+        config = toml.load(f)
+    return config['project']['version']
 
 
 def get_actions(prefix):

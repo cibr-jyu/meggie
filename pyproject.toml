@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "meggie"
+version = "1.9.0"
+description = "User-friendly graphical user interface to do M/EEG analysis."
+license = { text = "BSD" }
+dependencies = [
+    "mne~=1.9.0",
+    "numpy~=2.2.2",
+    "matplotlib~=3.10.0",
+    "pandas",
+    "scikit-learn",
+    "python-json-logger",
+    "h5io",
+    "mne-qt-browser",
+    "pyqt5",
+    "appdirs",
+    "colorama",
+]
+
+[project.urls]
+homepage = "https://github.com/cibr-jyu/meggie"
+
+[project.scripts]
+meggie = "meggie.run:main"
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "pylama",
+    "pytest",
+    "pytest-qt",
+    "build",
+    "twine",
+    "mkdocs",
+    "coverage",
+    "requests",
+    "setuptools",
+    "toml",
+]
+test = [
+    "black",
+    "pylama",
+    "pytest",
+    "pytest-qt",
+    "setuptools"
+]
+
+[tool.setuptools.packages.find]
+include = ['meggie']
