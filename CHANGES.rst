@@ -1,10 +1,16 @@
 Changelog
 =========
 
-1.9.1 (unreleased)
+1.9.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.9.1 (2025-03-16)
+------------------
+
+- Migrate to pyproject.toml
+- Update installation instructions
 
 1.9.0 (2025-03-15)
 ------------------
