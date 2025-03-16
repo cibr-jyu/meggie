@@ -128,6 +128,7 @@ def search_pypi_packages(prefix):
         try:
             metadata = get_package_metadata(package_name)
             version = metadata["info"]["version"]
+            homepage = (metadata["info"].get("project_urls") or {}).get("homepage")
             download_url = metadata["urls"][0]["url"]
             response = requests.get(download_url)
             response.raise_for_status()
@@ -140,6 +141,7 @@ def search_pypi_packages(prefix):
 
             package_info[package_name.replace("-", "_")] = {
                 "version": version,
+                "homepage": homepage,
                 "last_updated": metadata["releases"][version][0]["upload_time"].split(
                     "T"
                 )[0],
@@ -159,8 +161,15 @@ def create_markdown_table(plugin_metadata):
     table += "| " + " | ".join(["---"] * len(headers)) + " |\n"
 
     for plugin, data in plugin_metadata.items():
+
+        homepage = data.get("homepage", "")
+        if homepage:
+            plugin_link = f"[{plugin}]({homepage})"
+        else:
+            plugin_link = plugin
+
         row = [
-            plugin,
+            plugin_link,
             data.get("version", ""),
             data.get("last_updated", ""),
             data.get("author", "").replace("|", "\\|"),
