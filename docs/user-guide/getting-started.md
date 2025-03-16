@@ -43,10 +43,6 @@ Activate the environment:
 ```bash
 $ source meggie-env/bin/activate
 ```
-Install dependencies:
-```bash
-$ pip install -r https://raw.githubusercontent.com/cibr-jyu/meggie/v{{VERSION}}/requirements.txt
-```
 Install Meggie:
 ```bash
 pip install meggie=={{VERSION}}
