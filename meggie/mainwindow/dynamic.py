@@ -14,6 +14,7 @@ from meggie.utilities.uid import generate_uid
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.threading import threaded
+from meggie.utilities.serialization import serialize_dict
 
 
 def find_all_plugins():
@@ -799,11 +800,15 @@ def subject_action(inner_function):
 
     def outer_function(self, subject, params, *args, **kwargs):
 
+        # ensure that we have enough type information to construct
+        # params on the other side
+        serialized_params = serialize_dict(params)
+
         message_dict = {
             "uid": self.uid,
             "type": "SUBJECT_START",
             "subject_uid": subject.uid,
-            "params": params,
+            "params": serialized_params,
         }
         logging.getLogger("action_logger").info(message_dict)
 

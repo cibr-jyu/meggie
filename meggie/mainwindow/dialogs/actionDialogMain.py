@@ -5,12 +5,12 @@ import os
 import json
 import re
 import logging
-from pprint import pformat
 
 from meggie.mainwindow.dynamic import find_all_action_specs
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.filemanager import homepath
+from meggie.utilities.serialization import deserialize_dict
 
 from meggie.mainwindow.dialogs.actionDialogUi import Ui_ActionDialog
 
@@ -132,10 +132,16 @@ class ActionDialog(QtWidgets.QDialog):
 
                 params = action_data.get("params") or {}
                 if params:
+                    # for visual purposes, deserialize params to get correct types
+                    deserialized_params = deserialize_dict(params)
                     params_item = QtWidgets.QTreeWidgetItem(action_item)
                     params_item.setText(0, "Params")
-                    for param_name, param_value in params.items():
-                        msg = f"{param_name}: {json.dumps(param_value)}"
+                    for param_name, param_value in deserialized_params.items():
+                        try:
+                            param_value = json.dumps(param_value)
+                        except TypeError:
+                            pass
+                        msg = f"{param_name}: {param_value}"
                         param_item = QtWidgets.QTreeWidgetItem(params_item)
                         param_item.setText(0, msg)
 
@@ -144,7 +150,7 @@ class ActionDialog(QtWidgets.QDialog):
                     data_item = QtWidgets.QTreeWidgetItem(action_item)
                     data_item.setText(0, "Data")
                     for data_name, data_value in data.items():
-                        msg = f"{data_name}: {json.dumps(data_value)}"
+                        msg = f"{data_name}: {data_value}"
                         data_row_item = QtWidgets.QTreeWidgetItem(data_item)
                         data_row_item.setText(0, msg)
 
@@ -161,14 +167,12 @@ class ActionDialog(QtWidgets.QDialog):
         if item.childCount() == 0:
             # try creating a pretty formatted details dialog
             try:
-                match = re.compile("([a-zA-Z0-9_]*): (.*)").match(item.text(0))
+                match = re.compile("([a-zA-Z0-9_]*): (.*)", re.DOTALL).match(
+                    item.text(0)
+                )
                 if match:
                     val = match.group(2)
-                    try:
-                        obj = json.loads(val)
-                    except Exception:
-                        obj = val
-                    messagebox(self, pformat(obj))
+                    messagebox(self, str(val))
             except Exception:
                 logging.getLogger("ui_logger").exception("")
 

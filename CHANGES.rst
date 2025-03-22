@@ -1,10 +1,15 @@
 Changelog
 =========
 
-1.9.2 (unreleased)
+1.9.3 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.9.2 (2025-03-22)
+------------------
+
+- Fix serialization of action logs so that the types of values can be reliably inferred on the importing side
 
 1.9.1 (2025-03-16)
 ------------------
