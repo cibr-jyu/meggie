@@ -1,10 +1,15 @@
 Changelog
 =========
 
-1.9.3 (unreleased)
+1.9.4 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.9.3 (2025-04-12)
+------------------
+
+- Update epochs_plot and raw_plot to correctly apply the changes of bads, annotations or selections at the subject_action. Helps re-running the action only based on action log.
 
 1.9.2 (2025-03-22)
 ------------------
