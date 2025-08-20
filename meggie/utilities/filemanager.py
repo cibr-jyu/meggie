@@ -6,6 +6,9 @@ import shutil
 import re
 import logging
 
+import importlib.resources as _resources
+import importlib.metadata as _metadata
+
 import numpy as np
 import mne
 
@@ -180,6 +183,75 @@ def load_csv(path):
     return column_names, row_descs, data
 
 
+def get_resource_filename(package, resource_name):
+    """
+    Locate a file or folder inside a distribution package, supporting nested paths.
+
+    Parameters
+    ----------
+    package : str
+        Name of the distribution package to search.
+    resource_name : str
+        Relative path to the resource within the package.
+
+    Returns
+    -------
+    str
+        Absolute filesystem path to the resource.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the resource cannot be found in the given package.
+    """
+    parts = os.path.normpath(resource_name).split(os.sep)
+    try:
+        resource_path = _resources.files(package).joinpath(*parts)
+        with _resources.as_file(resource_path) as p:
+            return str(p)
+    except Exception as e:
+        raise FileNotFoundError(
+            f"Resource {resource_name!r} not found in package {package!r}: {e}"
+        )
+
+
+def get_distribution_version(dist_name):
+    """
+    Return the installed version of a distribution, or empty string if missing.
+
+    Parameters
+    ----------
+    dist_name : str
+        Name of the distribution package to query.
+
+    Returns
+    -------
+    str
+        Version string, or '' if the package is not installed.
+    """
+    try:
+        return _metadata.version(dist_name)
+    except _metadata.PackageNotFoundError:
+        return ""
+
+
+def get_package_keys():
+    """
+    Return all installed distribution package names as lowercase with dashes replaced by underscores.
+
+    Returns
+    -------
+    list of str
+        Installed package names, lowercased and with '-' converted to '_'.
+    """
+    keys = []
+    for dist in _metadata.distributions():
+        name = dist.metadata.get("Name", "")
+        if name:
+            keys.append(name.lower().replace("-", "_"))
+    return keys
+
+
 def homepath():
     """Tries to find correct path for home folder.
 
@@ -223,6 +295,14 @@ def datapath():
 
 
 def get_supported_formats():
+    """
+    Get all raw‐file formats supported by MNE.
+
+    Returns
+    -------
+    list of tuple
+        Each tuple is (file extension, [reader names]) supported by MNE.
+    """
     mne_supported = mne_get_supported()
 
     items = []

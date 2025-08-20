@@ -5,7 +5,7 @@ import matplotlib
 import pytest
 import json
 import os
-import pkg_resources
+from meggie.utilities.filemanager import get_resource_filename
 import mne
 import shutil
 import numpy as np
@@ -399,7 +399,7 @@ class BaseTestAction:
 
     def load_action_spec(self, action_name):
         package_name = self.__class__.__module__.split(".")[0]
-        action_path = pkg_resources.resource_filename(package_name, "actions")
+        action_path = get_resource_filename(package_name, "actions")
         config_path = os.path.join(action_path, action_name, "configuration.json")
         with open(config_path, "r") as f:
             action_spec = json.load(f)
