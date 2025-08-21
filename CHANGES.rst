@@ -1,10 +1,15 @@
 Changelog
 =========
 
-1.9.4 (unreleased)
+1.9.5 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+1.9.4 (2025-08-21)
+------------------
+
+- Remove use of deprecated pkg_resources, use importlib instead
 
 1.9.3 (2025-04-12)
 ------------------
