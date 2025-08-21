@@ -1,10 +1,54 @@
-# Installation
+# Getting Started
 
-Meggie does not have standalone installers, but it can be easily installed on Windows, macOS, or Linux systems with Python 3.9 or higher using either of the following methods:
+Meggie can be installed on Windows, macOS, or Linux (Python 3.10+).
+Follow one of the three methods below.
 
-## Using conda
+---
 
-### Installing miniconda
+## 1. Installing via uv
+
+### Installation
+
+Meggie can be installed via [uv](https://github.com/astral-sh/uv) with:
+
+```bash
+$ uv tool install meggie=={{VERSION}}
+```
+
+### Running Meggie
+
+Simply run:
+
+```bash
+meggie
+```
+
+---
+
+## 2. Installing via pip
+
+### Installation
+Create a virtual environment and install Meggie:
+
+```bash
+python -m venv meggie-env
+source meggie-env/bin/activate
+pip install meggie=={{VERSION}}
+```
+
+### Running Meggie
+
+With the venv activated, run:
+
+```bash
+meggie
+```
+
+---
+
+## 3. Installing via conda
+
+### Installation
 
 If conda is not already installed on your system, follow these steps:
 
@@ -18,46 +62,19 @@ If conda is not already installed on your system, follow these steps:
 
 3. Run the downloaded installer and follow the on-screen instructions to complete the installation.
 
-### Opening the Anaconda Prompt
+#### Installing Meggie
 
-- **Windows**: After installation, you can access the Anaconda Prompt from the Start Menu. This opens a terminal window with conda commands available.
+Create a new conda environment and install Meggie:
 
-- **Linux/macOS**: During installation, Miniconda updates the `.zshrc` or `.bashrc` file (depending on your default shell). Use the standard terminal application, and you may need to open a new terminal window to access the conda commands. The prompt should display “(base)” to indicate that conda is active.
-
-### Installing Meggie
-
-Install Meggie in a conda environment:
 ```bash
-$ conda create -n meggie-env -c conda-forge --solver libmamba meggie=={{VERSION}}
-```
-
-## Using pip:
-
-Alternatively, if you have a standard python installation, you can directly use venv and pip to install Meggie in a virtual environment.
-
-Create a virtual environment folder:
-```bash
-$ python -m venv meggie-env
-```
-Activate the environment:
-```bash
-$ source meggie-env/bin/activate
-```
-Install Meggie:
-```bash
-pip install meggie=={{VERSION}}
-```
-
-# Starting Meggie for the first time
-Activate the environment in which Meggie was installed. For conda:
-```bash
+conda create -n meggie-env -c conda-forge --solver libmamba meggie=={{VERSION}}
 conda activate meggie-env
 ```
-Or, for pip:
+
+### Running Meggie
+
+With the conda environment activated, run:
+
 ```bash
-source meggie-env/bin/activate
-```
-Then run Meggie:
-```bash
-$ meggie
+meggie
 ```
