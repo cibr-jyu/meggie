@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://cibr-jyu.github.io/meggie/</loc>
+         <lastmod>2025-08-21</lastmod>
+    </url>
+    <url>
+         <loc>https://cibr-jyu.github.io/meggie/about/</loc>
+         <lastmod>2025-08-21</lastmod>
+    </url>
+    <url>
+         <loc>https://cibr-jyu.github.io/meggie/developer-guide/architecture/</loc>
+         <lastmod>2025-08-21</lastmod>
+    </url>
+    <url>
+         <loc>https://cibr-jyu.github.io/meggie/developer-guide/development/</loc>
+         <lastmod>2025-08-21</lastmod>
+    </url>
+    <url>
+         <loc>https://cibr-jyu.github.io/meggie/user-guide/actions/</loc>
+         <lastmod>2025-08-21</lastmod>
+    </url>
+    <url>
+         <loc>https://cibr-jyu.github.io/meggie/user-guide/experiments/</loc>
+         <lastmod>2025-08-21</lastmod>
+    </url>
+    <url>
+         <loc>https://cibr-jyu.github.io/meggie/user-guide/getting-started/</loc>
+         <lastmod>2025-08-21</lastmod>
+    </url>
+    <url>
+         <loc>https://cibr-jyu.github.io/meggie/user-guide/plugins/</loc>
+         <lastmod>2025-08-21</lastmod>
+    </url>
+</urlset>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://cibr-jyu.github.io/meggie/user-guide/actions/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Actions - Meggie</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Actions";
+        var mkdocs_page_input_path = "user-guide/actions.md";
+        var mkdocs_page_url = "/meggie/user-guide/actions/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Meggie
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../about/">About</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/">Getting Started</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../experiments/">Experiments</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Actions</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#preprocessing">Preprocessing</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#events-from-annotations-raw_events_from_annotations">Events from annotations (raw_events_from_annotations)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#filter-raw_filter">Filter (raw_filter)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#artifact-removal-raw_ica">Artifact removal (raw_ica)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#montage-raw_montage">Montage (raw_montage)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plot-raw-raw_plot">Plot raw (raw_plot)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plot-projections-raw_plot_projections">Plot projections (raw_plot_projections)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rereference-raw_rereference">Rereference (raw_rereference)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#resample-raw_resample">Resample (raw_resample)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#continuous-data">Continuous data</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#create-spectrum-spectrum_create">Create spectrum (spectrum_create)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#delete-spectrum_delete">Delete (spectrum_delete)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#delete-from-all-spectrum_delete_from_all">Delete from all (spectrum_delete_from_all)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#average-over-subjects-spectrum_group_average">Average over subjects (spectrum_group_average)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plot-spectrum_plot">Plot (spectrum_plot)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#save-to-csv-spectrum_save">Save to csv (spectrum_save)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#epochs">Epochs</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#create-epochs-epochs_create">Create epochs (epochs_create)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#delete-epochs_delete">Delete (epochs_delete)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#delete-from-all-epochs_delete_from_all">Delete from all (epochs_delete_from_all)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plot-epochs_plot">Plot (epochs_plot)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plot-image-epochs_plot_image">Plot image (epochs_plot_image)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#evoked-responses">Evoked responses</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#create-evoked-evoked_create">Create evoked (evoked_create)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#delete-evoked_delete">Delete (evoked_delete)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#delete-from-all-evoked_delete_from_all">Delete from all (evoked_delete_from_all)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#average-over-subjects-evoked_group_average">Average over subjects (evoked_group_average)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plot-evoked_plot">Plot (evoked_plot)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plot-topomaps-evoked_plot_topomap">Plot topomaps (evoked_plot_topomap)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#save-to-csv-evoked_save">Save to csv (evoked_save)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#induced-responses-tfr">Induced responses (TFR)</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#create-tfr-tfr_create">Create TFR (tfr_create)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#delete-tfr_delete">Delete (tfr_delete)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#delete-from-all-tfr_delete_from_all">Delete from all (tfr_delete_from_all)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#average-over-subjects-tfr_group_average">Average over subjects (tfr_group_average)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plot-tfr-tfr_plot">Plot TFR (tfr_plot)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plot-tse-tfr_plot_tse">Plot TSE (tfr_plot_tse)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#save-tfr-to-csv-tfr_save">Save TFR to csv (tfr_save)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#save-tse-to-csv-tfr_save_tse">Save TSE to csv (tfr_save_tse)</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugins/">Plugins</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Developer Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../developer-guide/architecture/">Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../developer-guide/development/">Development</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">External Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="https://meggie.teekuningas.net">Meggie Tutorial</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Meggie</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+      <li class="breadcrumb-item active">Actions</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="actions">Actions<a class="headerlink" href="#actions" title="Permanent link">&para;</a></h1>
+<p>Actions serve as the primary analytical tools within Meggie. Upon establishing an experiment and incorporating the raw data files for each subject, these actions are systematically employed to progressively convert the raw magnetic or electric signals into meaningful behavioral outcomes. Below is a catalog of the available actions along with their respective descriptions.</p>
+<h2 id="preprocessing">Preprocessing<a class="headerlink" href="#preprocessing" title="Permanent link">&para;</a></h2>
+<h3 id="events-from-annotations-raw_events_from_annotations">Events from annotations (raw_events_from_annotations)<a class="headerlink" href="#events-from-annotations-raw_events_from_annotations" title="Permanent link">&para;</a></h3>
+<p>Create events from annotations for further analysis.</p>
+<p>The following MNE functions are used:<br />
+- mne.utils.config._get_stim_channel<br />
+- raw.load_data<br />
+- raw.save  </p>
+<h3 id="filter-raw_filter">Filter (raw_filter)<a class="headerlink" href="#filter-raw_filter" title="Permanent link">&para;</a></h3>
+<p>Apply low-pass, high-pass, band-pass, and band-stop filters to raw data to isolate specific frequency ranges or remove unwanted frequencies.</p>
+<p>The following MNE functions are used:<br />
+- raw.filter<br />
+- raw.load_data<br />
+- raw.save  </p>
+<h3 id="artifact-removal-raw_ica">Artifact removal (raw_ica)<a class="headerlink" href="#artifact-removal-raw_ica" title="Permanent link">&para;</a></h3>
+<p>Apply Independent Component Analysis (ICA) to raw data to identify and remove artifacts such as heartbeats and eye blinks.</p>
+<p>The following MNE functions are used:<br />
+- ica.apply<br />
+- ica.fit<br />
+- ica.get_sources<br />
+- ica.plot_components<br />
+- ica.plot_properties<br />
+- mne.create_info<br />
+- mne.io.RawArray<br />
+- mne.preprocessing.ICA<br />
+- raw.drop_channels<br />
+- raw.load_data<br />
+- raw.plot<br />
+- raw.save  </p>
+<h3 id="montage-raw_montage">Montage (raw_montage)<a class="headerlink" href="#montage-raw_montage" title="Permanent link">&para;</a></h3>
+<p>Apply a montage to the EEG dataset, enabling the creation of topographical plots.</p>
+<p>The following MNE functions are used:<br />
+- mne.channels.make_standard_montage<br />
+- montage.save<br />
+- raw.load_data<br />
+- raw.save  </p>
+<h3 id="plot-raw-raw_plot">Plot raw (raw_plot)<a class="headerlink" href="#plot-raw-raw_plot" title="Permanent link">&para;</a></h3>
+<p>Produce a time series plot of the raw data.</p>
+<p>The following MNE functions are used:<br />
+- mne.find_events<br />
+- mne.utils.config._get_stim_channel<br />
+- raw.load_data<br />
+- raw.plot  </p>
+<h3 id="plot-projections-raw_plot_projections">Plot projections (raw_plot_projections)<a class="headerlink" href="#plot-projections-raw_plot_projections" title="Permanent link">&para;</a></h3>
+<p>Generate a plot to visualize the projection vectors contained within the raw data.</p>
+<p>The following MNE functions are used:<br />
+- raw.load_data<br />
+- raw.plot_projs_topomap  </p>
+<h3 id="rereference-raw_rereference">Rereference (raw_rereference)<a class="headerlink" href="#rereference-raw_rereference" title="Permanent link">&para;</a></h3>
+<p>Re-reference the raw data to an average reference, which can be computed from one or more selected channels or all channels.</p>
+<p>The following MNE functions are used:<br />
+- mne.pick_types<br />
+- raw.load_data<br />
+- raw.save  </p>
+<h3 id="resample-raw_resample">Resample (raw_resample)<a class="headerlink" href="#resample-raw_resample" title="Permanent link">&para;</a></h3>
+<p>Adjust the dataset by resampling it to a different sampling frequency.</p>
+<p>The following MNE functions are used:<br />
+- raw.load_data<br />
+- raw.resample<br />
+- raw.save  </p>
+<h2 id="continuous-data">Continuous data<a class="headerlink" href="#continuous-data" title="Permanent link">&para;</a></h2>
+<h3 id="create-spectrum-spectrum_create">Create spectrum (spectrum_create)<a class="headerlink" href="#create-spectrum-spectrum_create" title="Permanent link">&para;</a></h3>
+<p>Calculate the spectral data at specified time intervals for the current subject.</p>
+<p>The following MNE functions are used:<br />
+- mne.io.write_info<br />
+- mne.pick_info<br />
+- mne.pick_types<br />
+- mne_spectrum.get_data<br />
+- raw.compute_psd<br />
+- raw.load_data  </p>
+<h3 id="delete-spectrum_delete">Delete (spectrum_delete)<a class="headerlink" href="#delete-spectrum_delete" title="Permanent link">&para;</a></h3>
+<p>Permanently remove the selected spectrum object from the current subject.</p>
+<h3 id="delete-from-all-spectrum_delete_from_all">Delete from all (spectrum_delete_from_all)<a class="headerlink" href="#delete-from-all-spectrum_delete_from_all" title="Permanent link">&para;</a></h3>
+<p>Permanently remove the selected spectrum object from all matching subjects.</p>
+<h3 id="average-over-subjects-spectrum_group_average">Average over subjects (spectrum_group_average)<a class="headerlink" href="#average-over-subjects-spectrum_group_average" title="Permanent link">&para;</a></h3>
+<p>Calculate the average of the selected spectrum object across subjects, with options to group subjects before averaging.</p>
+<p>The following MNE functions are used:<br />
+- mne.io.write_info<br />
+- mne.pick_info  </p>
+<h3 id="plot-spectrum_plot">Plot (spectrum_plot)<a class="headerlink" href="#plot-spectrum_plot" title="Permanent link">&para;</a></h3>
+<p>Generate a plot for the selected spectrum object. The spectrum object may be visualized for all channels individually or as an average across specified channel groups.</p>
+<p>The following MNE functions are used:<br />
+- mne.channels._divide_to_regions<br />
+- mne.pick_info<br />
+- mne.pick_types<br />
+- mne.viz.iter_topography<br />
+- raw.load_data  </p>
+<h3 id="save-to-csv-spectrum_save">Save to csv (spectrum_save)<a class="headerlink" href="#save-to-csv-spectrum_save" title="Permanent link">&para;</a></h3>
+<p>Export the numerical data from the spectrum object for all matching subjects into a CSV file.</p>
+<p>The following MNE functions are used:<br />
+- mne.channels._divide_to_regions<br />
+- mne.pick_info<br />
+- mne.pick_types  </p>
+<h2 id="epochs">Epochs<a class="headerlink" href="#epochs" title="Permanent link">&para;</a></h2>
+<h3 id="create-epochs-epochs_create">Create epochs (epochs_create)<a class="headerlink" href="#create-epochs-epochs_create" title="Permanent link">&para;</a></h3>
+<p>Create a new epoch collection for the current subject.</p>
+<p>The following MNE functions are used:<br />
+- epochs.get_data<br />
+- epochs.save<br />
+- mne.Epochs<br />
+- mne.find_events<br />
+- mne.pick_types<br />
+- mne.utils.config._get_stim_channel<br />
+- raw.load_data  </p>
+<h3 id="delete-epochs_delete">Delete (epochs_delete)<a class="headerlink" href="#delete-epochs_delete" title="Permanent link">&para;</a></h3>
+<p>Permanently remove the selected epoch collection from the current subject.</p>
+<h3 id="delete-from-all-epochs_delete_from_all">Delete from all (epochs_delete_from_all)<a class="headerlink" href="#delete-from-all-epochs_delete_from_all" title="Permanent link">&para;</a></h3>
+<p>Permanently remove the selected epoch collection from all matching subjects.</p>
+<h3 id="plot-epochs_plot">Plot (epochs_plot)<a class="headerlink" href="#plot-epochs_plot" title="Permanent link">&para;</a></h3>
+<p>Generate a simple plot for the selected epoch collection.</p>
+<p>The following MNE functions are used:<br />
+- epochs.plot  </p>
+<h3 id="plot-image-epochs_plot_image">Plot image (epochs_plot_image)<a class="headerlink" href="#plot-image-epochs_plot_image" title="Permanent link">&para;</a></h3>
+<p>Generate an image plot for the selected epoch collection.</p>
+<p>The following MNE functions are used:<br />
+- epochs.plot_image  </p>
+<h2 id="evoked-responses">Evoked responses<a class="headerlink" href="#evoked-responses" title="Permanent link">&para;</a></h2>
+<h3 id="create-evoked-evoked_create">Create evoked (evoked_create)<a class="headerlink" href="#create-evoked-evoked_create" title="Permanent link">&para;</a></h3>
+<p>Compute the average of selected epoch collections independently. Each collection is averaged separately, resulting in a distinct average curve for each.</p>
+<p>The following MNE functions are used:<br />
+- epochs.average<br />
+- mne.write_evokeds  </p>
+<h3 id="delete-evoked_delete">Delete (evoked_delete)<a class="headerlink" href="#delete-evoked_delete" title="Permanent link">&para;</a></h3>
+<p>Permanently remove the selected evoked response object from the current subject.</p>
+<h3 id="delete-from-all-evoked_delete_from_all">Delete from all (evoked_delete_from_all)<a class="headerlink" href="#delete-from-all-evoked_delete_from_all" title="Permanent link">&para;</a></h3>
+<p>Permanently remove the selected evoked response object from all matching subjects.</p>
+<h3 id="average-over-subjects-evoked_group_average">Average over subjects (evoked_group_average)<a class="headerlink" href="#average-over-subjects-evoked_group_average" title="Permanent link">&para;</a></h3>
+<p>Calculate the average of the selected evoked response object across subjects, with options to group subjects before averaging.</p>
+<p>The following MNE functions are used:<br />
+- mne.grand_average<br />
+- mne.pick_types<br />
+- mne.write_evokeds  </p>
+<h3 id="plot-evoked_plot">Plot (evoked_plot)<a class="headerlink" href="#plot-evoked_plot" title="Permanent link">&para;</a></h3>
+<p>Generate a plot for the selected evoked response object. The response may be visualized for all channels individually or as an average across specified channel groups.</p>
+<p>The following MNE functions are used:<br />
+- mne.channels._divide_to_regions<br />
+- mne.pick_info<br />
+- mne.pick_types<br />
+- mne.viz.plot_evoked_topo  </p>
+<h3 id="plot-topomaps-evoked_plot_topomap">Plot topomaps (evoked_plot_topomap)<a class="headerlink" href="#plot-topomaps-evoked_plot_topomap" title="Permanent link">&para;</a></h3>
+<p>Produce a series of topographical maps at specified time intervals for the selected evoked response object.</p>
+<p>The following MNE functions are used:<br />
+- evoked.plot_topomap<br />
+- mne.pick_types  </p>
+<h3 id="save-to-csv-evoked_save">Save to csv (evoked_save)<a class="headerlink" href="#save-to-csv-evoked_save" title="Permanent link">&para;</a></h3>
+<p>Export the numerical data from the evoked response object for all matching subjects into a CSV file.</p>
+<p>The following MNE functions are used:<br />
+- mne.channels._divide_to_regions<br />
+- mne.pick_info<br />
+- mne.pick_types  </p>
+<h2 id="induced-responses-tfr">Induced responses (TFR)<a class="headerlink" href="#induced-responses-tfr" title="Permanent link">&para;</a></h2>
+<h3 id="create-tfr-tfr_create">Create TFR (tfr_create)<a class="headerlink" href="#create-tfr-tfr_create" title="Permanent link">&para;</a></h3>
+<p>Calculate time-frequency representations (TFRs) for selected epoch collections independently, with each collection yielding a unique TFR.</p>
+<p>The following MNE functions are used:<br />
+- epochs.compute_tfr<br />
+- tfr.save  </p>
+<h3 id="delete-tfr_delete">Delete (tfr_delete)<a class="headerlink" href="#delete-tfr_delete" title="Permanent link">&para;</a></h3>
+<p>Permanently remove the selected TFR object from the current subject.</p>
+<h3 id="delete-from-all-tfr_delete_from_all">Delete from all (tfr_delete_from_all)<a class="headerlink" href="#delete-from-all-tfr_delete_from_all" title="Permanent link">&para;</a></h3>
+<p>Permanently remove the selected TFR object from all matching subjects.</p>
+<h3 id="average-over-subjects-tfr_group_average">Average over subjects (tfr_group_average)<a class="headerlink" href="#average-over-subjects-tfr_group_average" title="Permanent link">&para;</a></h3>
+<p>Calculate the average of the selected TFR object across subjects, with options to group subjects before averaging.</p>
+<p>The following MNE functions are used:<br />
+- mne.grand_average<br />
+- tfr.save  </p>
+<h3 id="plot-tfr-tfr_plot">Plot TFR (tfr_plot)<a class="headerlink" href="#plot-tfr-tfr_plot" title="Permanent link">&para;</a></h3>
+<p>Visualize the selected TFR object as a heatmap, with options for individual channel visualization or averaging across channel groups.</p>
+<p>The following MNE functions are used:<br />
+- mne.baseline.rescale<br />
+- mne.channels._divide_to_regions<br />
+- mne.create_info<br />
+- mne.pick_info<br />
+- mne.pick_types<br />
+- mne.time_frequency.tfr.AverageTFRArray<br />
+- tfr.apply_baseline<br />
+- tfr.plot<br />
+- tfr.plot_topo  </p>
+<h3 id="plot-tse-tfr_plot_tse">Plot TSE (tfr_plot_tse)<a class="headerlink" href="#plot-tse-tfr_plot_tse" title="Permanent link">&para;</a></h3>
+<p>Visualize the Temporal Spectral Evolution (TSE) of the selected TFR object, collapsing the frequency dimension over a specified interval, for individual channels or averaged across channel groups.</p>
+<p>The following MNE functions are used:<br />
+- mne.baseline.rescale<br />
+- mne.channels._divide_to_regions<br />
+- mne.pick_info<br />
+- mne.pick_types<br />
+- mne.viz.iter_topography  </p>
+<h3 id="save-tfr-to-csv-tfr_save">Save TFR to csv (tfr_save)<a class="headerlink" href="#save-tfr-to-csv-tfr_save" title="Permanent link">&para;</a></h3>
+<p>Export the numerical data from the TFR object for all matching subjects into a CSV file.</p>
+<p>The following MNE functions are used:<br />
+- mne.baseline.rescale<br />
+- mne.channels._divide_to_regions<br />
+- mne.pick_info<br />
+- mne.pick_types  </p>
+<h3 id="save-tse-to-csv-tfr_save_tse">Save TSE to csv (tfr_save_tse)<a class="headerlink" href="#save-tse-to-csv-tfr_save_tse" title="Permanent link">&para;</a></h3>
+<p>Export the TSE data from the TFR object, collapsing the frequency dimension over a specified interval, into a CSV file for all matching subjects.</p>
+<p>The following MNE functions are used:<br />
+- mne.baseline.rescale<br />
+- mne.channels._divide_to_regions<br />
+- mne.pick_info<br />
+- mne.pick_types  </p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../experiments/" class="btn btn-neutral float-left" title="Experiments"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../plugins/" class="btn btn-neutral float-right" title="Plugins">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../experiments/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../plugins/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
