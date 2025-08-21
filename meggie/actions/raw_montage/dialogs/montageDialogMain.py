@@ -1,7 +1,7 @@
 """Contains a class for logic of montage dialog."""
 
 import os
-import pkg_resources
+from meggie.utilities.filemanager import get_resource_filename
 import logging
 
 from PyQt5 import QtCore
@@ -28,7 +28,7 @@ class MontageDialog(QtWidgets.QDialog):
         self.experiment = experiment
         self.handler = handler
 
-        montage_dir = pkg_resources.resource_filename(
+        montage_dir = get_resource_filename(
             "mne", os.path.join("channels", "data", "montages")
         )
 

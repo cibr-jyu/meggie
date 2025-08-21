@@ -4,9 +4,10 @@ of tabs and datatypes. Can be used both internally and externally.
 
 import os
 import json
-import pkg_resources
 import importlib
 import logging
+
+from meggie.utilities.filemanager import get_resource_filename, get_package_keys
 
 from PyQt5 import QtWidgets
 
@@ -21,14 +22,12 @@ def find_all_plugins():
     """Looks for plugins (installed packages with name meggie_*), that
     can contain tabs or datatypes"""
     plugins = []
-    package_keys = [dist.key.replace("-", "_") for dist in pkg_resources.working_set]
+    package_keys = get_package_keys()
     for key in package_keys:
         try:
             if key.startswith("meggie_"):
                 # check that there exists configuration.json
-                if not os.path.exists(
-                    pkg_resources.resource_filename(key, "configuration.json")
-                ):
+                if not os.path.exists(get_resource_filename(key, "configuration.json")):
                     continue
                 plugins.append(key)
         except Exception:
@@ -47,7 +46,7 @@ def find_all_package_specs():
 
     sources = find_all_sources()
     for source in sources:
-        config_path = pkg_resources.resource_filename(source, "configuration.json")
+        config_path = get_resource_filename(source, "configuration.json")
         if not os.path.exists(config_path):
             continue
         with open(config_path, "r") as f:
@@ -76,7 +75,7 @@ def find_all_datatype_specs():
 
     sources = find_all_sources()
     for source in sources:
-        datatype_path = pkg_resources.resource_filename(source, "datatypes")
+        datatype_path = get_resource_filename(source, "datatypes")
         if not os.path.exists(datatype_path):
             continue
         for package in os.listdir(datatype_path):
@@ -110,7 +109,7 @@ def find_all_action_specs():
 
     sources = find_all_sources()
     for source in sources:
-        action_path = pkg_resources.resource_filename(source, "actions")
+        action_path = get_resource_filename(source, "actions")
         if not os.path.exists(action_path):
             continue
         for package in os.listdir(action_path):

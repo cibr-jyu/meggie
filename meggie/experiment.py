@@ -5,7 +5,7 @@ import json
 import importlib
 import shutil
 import logging
-import pkg_resources
+from meggie.utilities.filemanager import get_distribution_version
 
 from meggie.subject import Subject
 
@@ -275,10 +275,7 @@ class Experiment:
             "selected_pipeline": self._selected_pipeline,
         }
 
-        try:
-            version = pkg_resources.get_distribution("meggie").version
-        except BaseException:
-            version = ""
+        version = get_distribution_version("meggie")
 
         save_dict["version"] = version
 

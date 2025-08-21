@@ -3,6 +3,7 @@
 from PyQt5 import QtWidgets
 
 from meggie.mainwindow.dialogs.aboutDialogUi import Ui_Dialog
+from meggie.utilities.filemanager import get_distribution_version
 
 
 class AboutDialog(QtWidgets.QDialog):
@@ -13,13 +14,7 @@ class AboutDialog(QtWidgets.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
-        version = ""
-        try:
-            import pkg_resources
-
-            version = pkg_resources.get_distribution("meggie").version
-        except BaseException:
-            pass
+        version = get_distribution_version("meggie")
 
         self.ui.lineEditVersion.setText(str(version))
 
