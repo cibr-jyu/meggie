@@ -1,13 +1,18 @@
 Changelog
 =========
 
-1.10.1 (unreleased)
+1.10.2 (unreleased)
 ------------------
 
 - nothing changed yet.
 
+1.10.1 (2026-12-13)
+------------------
 
-1.10.0 (unreleased)
+- Fix mne-scipy version conflict.
+
+
+1.10.0 (2025-10-02)
 ------------------
 
 - Add epochs_save action to both get epochs data out more easily and to allow channel average outputs.
