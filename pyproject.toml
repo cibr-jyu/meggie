@@ -9,9 +9,10 @@ description = "User-friendly graphical user interface to do M/EEG analysis."
 license = { text = "BSD" }
 requires-python = ">= 3.10"
 dependencies = [
-    "mne~=1.9.0",
-    "numpy~=2.2.2",
-    "matplotlib~=3.10.0",
+    "mne~=1.11.0",
+    "numpy~=2.4.2",
+    "matplotlib~=3.10.8",
+    "scipy~=1.17.0",
     "pandas",
     "scikit-learn",
     "python-json-logger",
@@ -31,7 +32,7 @@ meggie = "meggie.run:main"
 [project.optional-dependencies]
 dev = [
     "black",
-    "pylama",
+    "ruff",
     "pytest",
     "pytest-qt",
     "build",
@@ -44,7 +45,7 @@ dev = [
 ]
 test = [
     "black",
-    "pylama",
+    "ruff",
     "pytest",
     "pytest-qt",
     "setuptools"
@@ -52,3 +53,27 @@ test = [
 
 [tool.setuptools.packages.find]
 include = ['meggie']
+
+[tool.pytest.ini_options]
+addopts = "-p no:pylama"
+
+[tool.ruff]
+line-length = 88  # Match black's default
+target-version = "py310"
+
+[tool.ruff.lint]
+# Enable pycodestyle (E) and pyflakes (F) rules, similar to pylama defaults
+select = ["E", "F", "W"]
+# Ignore the same rules as pylama
+ignore = [
+    "E501",  # Line too long (handled by black)
+    "E203",  # Whitespace before ':'
+]
+
+[tool.ruff.lint.mccabe]
+# Ignore complexity checks (was C901 in pylama)
+max-complexity = 999
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore unused imports in UI files (was W0611 in pylama)
+"*Ui.py" = ["F401"]

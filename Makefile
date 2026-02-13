@@ -5,7 +5,7 @@ format:
 .PHONY: check
 check:
 	black --check meggie
-	pylama meggie
+	ruff check meggie
 
 .PHONY: test
 test:
