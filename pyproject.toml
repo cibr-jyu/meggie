@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "meggie"
-version = "1.10.1"
+version = "1.10.2"
 description = "User-friendly graphical user interface to do M/EEG analysis."
 license = { text = "BSD" }
 requires-python = ">= 3.10"

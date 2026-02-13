@@ -1,6 +1,31 @@
+import os
+import sys
 import mne
 from meggie.experiment import initialize_new_experiment
 from meggie.datatypes.epochs.epochs import Epochs
+
+# Ensure MNE data directory exists before downloading datasets
+_mne_data_path = mne.get_config("MNE_DATA") or os.path.join(
+    os.path.expanduser("~"), "mne_data"
+)
+os.makedirs(_mne_data_path, exist_ok=True)
+
+# Fix for Python 3.13+ tarfile security that rejects absolute symlinks in MNE datasets
+# Pooch's Untar processor calls extractall() which uses the new strict filter
+if sys.version_info >= (3, 13):
+    import pooch.processors
+
+    # Save original extract method
+    _original_extract_file = pooch.processors.Untar._extract_file
+
+    # Patch to use fully_trusted filter for MNE datasets (trusted source)
+    def _patched_extract_file(self, fname, extract_dir):
+        import tarfile
+
+        with tarfile.open(fname) as tar_file:
+            tar_file.extractall(path=extract_dir, filter="fully_trusted")
+
+    pooch.processors.Untar._extract_file = _patched_extract_file
 
 
 def create_limo_experiment(name, author, prefs, set_previous_experiment=True):

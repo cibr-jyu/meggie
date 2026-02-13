@@ -1,10 +1,16 @@
 Changelog
 =========
 
-1.10.2 (unreleased)
+1.10.3 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+
+1.10.2 (2026-12-13)
+------------------
+
+- Fix regression with tarfile security for somato dataset
 
 1.10.1 (2026-12-13)
 ------------------
