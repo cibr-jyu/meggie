@@ -244,12 +244,12 @@ def get_package_keys():
     list of str
         Installed package names, lowercased and with '-' converted to '_'.
     """
-    keys = []
+    keys = set()
     for dist in _metadata.distributions():
         name = dist.metadata.get("Name", "")
         if name:
-            keys.append(name.lower().replace("-", "_"))
-    return keys
+            keys.add(name.lower().replace("-", "_"))
+    return list(keys)
 
 
 def homepath():
