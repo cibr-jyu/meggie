@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://cibr-jyu.github.io/meggie/developer-guide/architecture/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Architecture - Meggie</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Architecture";
+        var mkdocs_page_input_path = "developer-guide/architecture.md";
+        var mkdocs_page_url = "/meggie/developer-guide/architecture/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Meggie
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../about/">About</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/getting-started/">Getting Started</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/experiments/">Experiments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/actions/">Actions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/plugins/">Plugins</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Developer Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Architecture</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#main-classes">Main Classes</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#mainwindow">MainWindow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#experiment">Experiment</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#subject">Subject</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#actions-pipelines-and-datatypes">Actions, Pipelines, and Datatypes</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#datatypes">Datatypes</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#actions">Actions</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pipelines">Pipelines</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#plugins">Plugins</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#api">API</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development/">Development</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">External Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="https://meggie.teekuningas.net">Meggie Tutorial</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Meggie</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Developer Guide</li>
+      <li class="breadcrumb-item active">Architecture</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="architecture-overview">Architecture Overview<a class="headerlink" href="#architecture-overview" title="Permanent link">&para;</a></h1>
+<p>This document outlines the core structure of Meggie, offering insights into its construction and how developers can leverage its architecture.</p>
+<h2 id="main-classes">Main Classes<a class="headerlink" href="#main-classes" title="Permanent link">&para;</a></h2>
+<p>Meggie is structured around three fundamental classes:</p>
+<h3 id="mainwindow">MainWindow<a class="headerlink" href="#mainwindow" title="Permanent link">&para;</a></h3>
+<p>MainWindow is the central hub of the user interface, built using PyQt. Key components include:</p>
+<ul>
+<li>Left Panel: Displays experiment-specific details.</li>
+<li>Bottom Console: Logs user actions and system messages.</li>
+<li>Right Panel: Hosts tabs for data transformation actions.</li>
+</ul>
+<h3 id="experiment">Experiment<a class="headerlink" href="#experiment" title="Permanent link">&para;</a></h3>
+<p>The Experiment class serves as the top-level container for all data, handling the saving and loading of experiments, and maintaining a collection of subjects.</p>
+<h3 id="subject">Subject<a class="headerlink" href="#subject" title="Permanent link">&para;</a></h3>
+<p>Subject instances are nested within experiments and are tasked with managing subject-specific data. Their primary roles are to handle the saving and loading of raw data and to hold instances of various datatypes.</p>
+<h2 id="actions-pipelines-and-datatypes">Actions, Pipelines, and Datatypes<a class="headerlink" href="#actions-pipelines-and-datatypes" title="Permanent link">&para;</a></h2>
+<p>Meggie's analytical capabilities are structured into actions, pipelines, and datatypes.</p>
+<h3 id="datatypes">Datatypes<a class="headerlink" href="#datatypes" title="Permanent link">&para;</a></h3>
+<p>Datatypes are templates for summarizing raw data into meaningful structures for analysis, such as epochs, evokeds, spectrums, and TFRs. These templates are defined within the datatypes folder and instantiated as needed to store within subjects.</p>
+<h3 id="actions">Actions<a class="headerlink" href="#actions" title="Permanent link">&para;</a></h3>
+<p>Actions represent fundamental analysis steps, like "filter" or "create epochs." Each action, located in its respective folder within the actions directory, comprises metadata in configuration.json and Python code. Actions inherit from the Action class in mainwindow/dynamic.py and can be integrated into pipelines and are automatically logged.</p>
+<h3 id="pipelines">Pipelines<a class="headerlink" href="#pipelines" title="Permanent link">&para;</a></h3>
+<p>Pipelines organize actions into a sequence represented as buttons within the GUI tabs. They guide the user through a complete analysis workflow, such as "Sensor-level continuous data analysis." Pipelines are specified in the main configuration.json and rely on actions for implementation, thus containing no Python code themselves.</p>
+<h2 id="plugins">Plugins<a class="headerlink" href="#plugins" title="Permanent link">&para;</a></h2>
+<p>Creating plugins for Meggie is designed to be straightforward. The system dynamically locates pipelines, datatypes, and actions at runtime, allowing them to be loaded from external Python packages within the Meggie namespace. To create a plugin, one simply needs to develop a Python package named within the Meggie namespace that introduces new pipelines, actions, and/or datatypes.</p>
+<h2 id="api">API<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
+<p>The core of Meggie, excluding the actions, is intended to be stable and reusable. Plugin developers are encouraged to utilize the API provided by the MainWindow, Subject, and Experiment classes. Additionally, developers have access to the four datatypes in the datatypes folder and various utilities, including functions, dialogs, and widgets, found in the utilities folder.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../user-guide/plugins/" class="btn btn-neutral float-left" title="Plugins"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../development/" class="btn btn-neutral float-right" title="Development">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../../user-guide/plugins/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../development/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
