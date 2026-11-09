@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://cibr-jyu.github.io/meggie/user-guide/experiments/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Experiments - Meggie</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Experiments";
+        var mkdocs_page_input_path = "user-guide/experiments.md";
+        var mkdocs_page_url = "/meggie/user-guide/experiments/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Meggie
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../about/">About</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/">Getting Started</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Experiments</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#layout-overview">Layout Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#starting-an-experiment">Starting an Experiment</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#adding-subjects">Adding Subjects</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#applying-actions">Applying Actions</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#preprocessing">Preprocessing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#working-with-eeg-and-meg-data">Working with EEG and MEG Data</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#managing-events">Managing Events</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#progressing-through-analysis">Progressing Through Analysis</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../actions/">Actions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugins/">Plugins</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Developer Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../developer-guide/architecture/">Architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../developer-guide/development/">Development</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">External Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="https://meggie.teekuningas.net">Meggie Tutorial</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Meggie</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+      <li class="breadcrumb-item active">Experiments</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="experiments-in-meggie">Experiments in Meggie<a class="headerlink" href="#experiments-in-meggie" title="Permanent link">&para;</a></h1>
+<p>This section provides a straightforward overview of Meggie's layout and the steps for starting and managing experiments with subjects.</p>
+<h2 id="layout-overview">Layout Overview<a class="headerlink" href="#layout-overview" title="Permanent link">&para;</a></h2>
+<p>Meggie's interface is organized into two main columns:</p>
+<ul>
+<li>
+<p>Left Column: This area is your control panel for the experiment. Here, you add new subjects to your experiment and adjust settings like channel groups. It's the organizational hub for your data.</p>
+</li>
+<li>
+<p>Right Column: This column contains the analysis tools, referred to as actions, which you'll apply to your data. These tools are arranged in tabs and are used to process the data step by step.</p>
+</li>
+</ul>
+<h2 id="starting-an-experiment">Starting an Experiment<a class="headerlink" href="#starting-an-experiment" title="Permanent link">&para;</a></h2>
+<p>Begin by creating an experiment where you'll enter basic information such as the experiment's name and the person conducting it. You'll also choose a pipeline that fits your research needs. This helps keep the interface focused and guides you through the necessary steps. A folder for the experiment will be created to store all related files.</p>
+<h2 id="adding-subjects">Adding Subjects<a class="headerlink" href="#adding-subjects" title="Permanent link">&para;</a></h2>
+<p>After setting up your experiment, you can add subjects, which are your individual recordings, using the "Add new..." option in the left column.</p>
+<h2 id="applying-actions">Applying Actions<a class="headerlink" href="#applying-actions" title="Permanent link">&para;</a></h2>
+<p>In the right column, you'll find the actions you can apply to your data. These actions are designed to be used on all your subjects at once, making it efficient to process multiple datasets.</p>
+<h2 id="preprocessing">Preprocessing<a class="headerlink" href="#preprocessing" title="Permanent link">&para;</a></h2>
+<p>Meggie includes basic preprocessing features to improve the quality of your data. You can remove unwanted noise and apply filters to clean up the signals before further analysis.</p>
+<h2 id="working-with-eeg-and-meg-data">Working with EEG and MEG Data<a class="headerlink" href="#working-with-eeg-and-meg-data" title="Permanent link">&para;</a></h2>
+<p>Meggie is equipped to handle both EEG and MEG data. For EEG, it offers tools to add sensor locations and adjust channel references when necessary.</p>
+<h2 id="managing-events">Managing Events<a class="headerlink" href="#managing-events" title="Permanent link">&para;</a></h2>
+<p>Events, which are significant points in your recordings, can be managed within Meggie. This ensures you have control over important data points for analysis.</p>
+<h2 id="progressing-through-analysis">Progressing Through Analysis<a class="headerlink" href="#progressing-through-analysis" title="Permanent link">&para;</a></h2>
+<p>The goal is to transform raw recordings into data that can inform your research. You'll use actions to move through analysis stages, each tailored to bring out specific features of your data.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../getting-started/" class="btn btn-neutral float-left" title="Getting Started"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../actions/" class="btn btn-neutral float-right" title="Actions">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../getting-started/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../actions/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
